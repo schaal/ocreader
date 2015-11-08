@@ -1,0 +1,313 @@
+/*
+ * Copyright (C) 2015 Daniel Schaal <daniel@schaal.email>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+package email.schaal.cloudreader.database;
+
+import android.content.Context;
+import android.support.annotation.Nullable;
+
+import java.util.Iterator;
+
+import email.schaal.cloudreader.model.AllUnreadFolder;
+import email.schaal.cloudreader.model.ChangedItems;
+import email.schaal.cloudreader.model.Feed;
+import email.schaal.cloudreader.model.Folder;
+import email.schaal.cloudreader.model.Item;
+import email.schaal.cloudreader.model.StarredFolder;
+import email.schaal.cloudreader.model.TemporaryFeed;
+import email.schaal.cloudreader.model.TreeItem;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
+import io.realm.exceptions.RealmException;
+import io.realm.exceptions.RealmMigrationNeededException;
+
+/**
+ * Created by daniel on 08.11.15.
+ */
+public class Queries {
+    private final static String TAG = Queries.class.getSimpleName();
+
+    private static Queries instance;
+
+    private final RealmConfiguration realmConfiguration;
+
+    public Queries(Context context) {
+        realmConfiguration = new RealmConfiguration.Builder(context)
+                .schemaVersion(1)
+                .build();
+
+        Realm.setDefaultConfiguration(realmConfiguration);
+
+        Realm realm = null;
+        try {
+            Realm.compactRealm(realmConfiguration);
+            realm = Realm.getDefaultInstance();
+        } catch (RealmMigrationNeededException ex) {
+            resetDatabase();
+        } finally {
+            if(realm != null)
+                realm.close();
+        }
+    }
+
+    public static Queries getInstance() {
+        if(instance == null)
+            throw new IllegalStateException("Initialize first");
+        return instance;
+    }
+
+    public static void init(Context context) {
+        instance = new Queries(context);
+    }
+
+    public void resetDatabase() {
+        Realm.deleteRealm(realmConfiguration);
+        Realm realm = null;
+        try {
+            realm = Realm.getDefaultInstance();
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    realm.createObject(TemporaryFeed.class);
+                    realm.createObject(ChangedItems.class);
+                }
+            });
+        } finally {
+            if(realm != null)
+                realm.close();
+        }
+    }
+
+    public Folder getFolder(Realm realm, long id) {
+        Folder folder = realm.where(Folder.class).equalTo(Folder.ID, id).findFirst();
+        if(folder == null)
+            folder = new Folder(id);
+        return folder;
+    }
+
+    public Feed getFeed(Realm realm, long id) {
+        Feed feed = realm.where(Feed.class).equalTo(Feed.ID, id).findFirst();
+        if(feed == null)
+            feed = new Feed(id);
+        return feed;
+    }
+
+    public RealmResults<Item> getItems(Realm realm, TreeItem treeItem, String sortFieldname, boolean sortAscending) {
+        RealmQuery<Item> query = null;
+        if(treeItem instanceof Feed)
+            query = realm.where(Item.class).equalTo(Item.FEED_ID, treeItem.getId());
+        else if(treeItem instanceof Folder) {
+            RealmResults<Feed> feeds = getFeedsForTreeItem(realm, treeItem);
+            if(feeds.size() > 0) {
+                Iterator<Feed> feedIterator = feeds.iterator();
+                query = realm.where(Item.class)
+                        .equalTo(Item.FEED_ID, feedIterator.next().getId());
+                while (feedIterator.hasNext()) {
+                    query.or().equalTo(Item.FEED_ID, feedIterator.next().getId());
+                }
+            }
+        } else if(treeItem instanceof AllUnreadFolder) {
+            query = realm.where(Item.class).equalTo(Item.UNREAD, true);
+        } else if(treeItem instanceof StarredFolder) {
+            query = realm.where(Item.class).equalTo(Item.STARRED, true);
+        }
+        if (query != null) {
+            return query.findAllSorted(sortFieldname, sortAscending);
+        } else
+            return null;
+    }
+
+    public RealmResults<Folder> getFolders(Realm realm, boolean onlyUnread) {
+        RealmQuery<Folder> query = null;
+        if(onlyUnread) {
+            RealmResults<Feed> unreadFeeds = realm.where(Feed.class).greaterThan(Feed.UNREAD_COUNT, 0).notEqualTo(Feed.FOLDER_ID, 0).findAll();
+            if(unreadFeeds.size() > 0) {
+                Iterator<Feed> feedIterator = unreadFeeds.iterator();
+                query = realm.where(Folder.class)
+                        .equalTo(Folder.ID, feedIterator.next().getFolderId());
+                while (feedIterator.hasNext()) {
+                    query.or().equalTo(Folder.ID, feedIterator.next().getFolderId());
+                }
+            }
+        } else {
+            query = realm.where(Folder.class);
+        }
+
+        return query != null ? query.findAllSorted(Folder.TITLE, RealmResults.SORT_ORDER_ASCENDING) : null;
+    }
+
+    public RealmResults<Feed> getFeeds(Realm realm) {
+        return realm.where(Feed.class).findAllSorted(Feed.PINNED, RealmResults.SORT_ORDER_ASCENDING, Feed.TITLE, RealmResults.SORT_ORDER_ASCENDING);
+    }
+
+    public <T extends RealmObject> void insert(Realm realm, final Iterable<T> elements) {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.copyToRealmOrUpdate(elements);
+            }
+        });
+    }
+
+    public <T extends RealmObject> void insert(Realm realm, final T element) {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.copyToRealmOrUpdate(element);
+            }
+        });
+    }
+
+    public <T extends RealmObject> void deleteAndInsert(Realm realm, final Class<T> clazz, final Iterable<T> elements) {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.clear(clazz);
+                realm.copyToRealm(elements);
+            }
+        });
+    }
+
+    public RealmResults<Feed> getFeedsWithoutFolder(Realm realm, boolean onlyUnread) {
+        RealmQuery<Feed> query = realm.where(Feed.class).equalTo(Feed.FOLDER_ID, 0);
+        if(onlyUnread) {
+            query.greaterThan(Feed.UNREAD_COUNT, 0);
+        }
+        return query.findAllSorted(Feed.TITLE, RealmResults.SORT_ORDER_ASCENDING);
+    }
+
+    public int getCount(Realm realm, TreeItem item) {
+        int count = 0;
+        if(item instanceof AllUnreadFolder) {
+            count = realm.where(Feed.class).sum(Feed.UNREAD_COUNT).intValue();
+        } else if (item instanceof StarredFolder) {
+            count = (int) realm.where(Item.class).equalTo(Item.STARRED, true).count();
+        } else if (item instanceof Folder) {
+            count = realm.where(Feed.class).equalTo(Feed.FOLDER_ID, item.getId()).sum(Feed.UNREAD_COUNT).intValue();
+        } else if(item instanceof Feed) {
+            count = ((Feed)item).getUnreadCount();
+        }
+        return count;
+    }
+
+    public RealmResults<Feed> getFeedsForTreeItem(Realm realm, TreeItem item) {
+        RealmResults<Feed> feeds = null;
+        if(item instanceof AllUnreadFolder) {
+            feeds = realm.where(Feed.class).greaterThan(Feed.UNREAD_COUNT, 0).findAllSorted(Feed.TITLE, RealmResults.SORT_ORDER_ASCENDING);
+        } else if(item instanceof StarredFolder) {
+            feeds = realm.where(Feed.class).greaterThan(Feed.STARRED_COUNT, 0).findAllSorted(Feed.TITLE, RealmResults.SORT_ORDER_ASCENDING);
+        } else if(item instanceof Folder) {
+            feeds = realm.where(Feed.class).equalTo(Feed.FOLDER_ID, item.getId()).findAllSorted(Feed.TITLE, RealmResults.SORT_ORDER_ASCENDING);
+        }
+        return feeds;
+    }
+
+    public void removeExcessItems(Realm realm, final int max_items) {
+        final RealmResults<Item> expendableItems = realm.where(Item.class)
+                .equalTo(Item.UNREAD, false)
+                .equalTo(Item.STARRED, false)
+                .findAllSorted(Item.LAST_MODIFIED, RealmResults.SORT_ORDER_ASCENDING);
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                if(expendableItems.size() <= max_items)
+                    expendableItems.clear();
+                else {
+                    for(int i = 0; i< max_items; i++) {
+                        expendableItems.remove(0);
+                    }
+                }
+            }
+        });
+    }
+
+    public void setItemUnreadState(Realm realm, final Item item, final boolean newUnread, @Nullable final Realm.Transaction.Callback transactionCallback) {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                try {
+                    boolean oldUnread = item.isUnread();
+                    if(oldUnread != newUnread) {
+                        item.setUnread(newUnread);
+
+                        RealmList<Item> unreadChangedItems = realm.where(ChangedItems.class).findFirst().getUnreadChangedItems();
+                        addToChangedList(unreadChangedItems, item);
+
+                        Feed feed = Item.feed(item);
+                        if (newUnread)
+                            feed.setUnreadCount(feed.getUnreadCount() + 1);
+                        else
+                            feed.setUnreadCount(feed.getUnreadCount() - 1);
+                    }
+
+                    if (transactionCallback != null) {
+                        transactionCallback.onSuccess();
+                    }
+                } catch (RealmException e) {
+                    e.printStackTrace();
+                    if (transactionCallback != null) {
+                        transactionCallback.onError(e);
+                    }
+                }
+            }
+        });
+    }
+
+    public void setItemStarredState(Realm realm, final Item item, final boolean newStarred, @Nullable final Realm.Transaction.Callback transactionCallback) {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                try {
+                    boolean oldStarred = item.isStarred();
+                    if(oldStarred != newStarred) {
+                        item.setStarred(newStarred);
+
+                        RealmList<Item> starredChangedItems = realm.where(ChangedItems.class).findFirst().getStarredChangedItems();
+                        addToChangedList(starredChangedItems, item);
+
+                        Feed feed = Item.feed(item);
+                        if (newStarred)
+                            feed.setStarredCount(feed.getStarredCount() + 1);
+                        else
+                            feed.setStarredCount(feed.getStarredCount() - 1);
+                    }
+
+                    if (transactionCallback != null) {
+                        transactionCallback.onSuccess();
+                    }
+                } catch (RealmException e) {
+                    e.printStackTrace();
+                    if (transactionCallback != null) {
+                        transactionCallback.onError(e);
+                    }
+                }
+            }
+        });
+    }
+
+    private void addToChangedList(RealmList<Item> changedItems, Item item) {
+        if (changedItems.contains(item))
+            changedItems.remove(item);
+        else
+            changedItems.add(item);
+    }
+}

@@ -1,0 +1,33 @@
+body, blockquote, img, iframe, video, div, table, tbody, tr, td, pre, code, blockquote, p, em, b, span {
+    width: auto !important;
+    height: auto !important;
+    max-width: 100% !important;
+}
+
+body {
+    font-size: 1em;
+    font-weight: normal;
+    word-wrap break-word !important;
+}
+
+pre, code, blockquote, p, em, b {
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+}
+
+blockquote {
+    white-space:pre-line !important;
+    padding-left: 10px;
+    border-left: 3px solid #ccc;
+}
+
+.title {
+    font-size: 1.1em;
+    font-weight: normal;
+    margin-bottom: 4px;
+    text-decoration: none;
+}
+
+.byline {
+    font-size: 0.7em;
+}
