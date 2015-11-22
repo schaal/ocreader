@@ -18,10 +18,12 @@
 
 package email.schaal.cloudreader.service;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
@@ -122,11 +124,15 @@ public class SyncService extends IntentService {
         notifySyncStatus(SYNC_FINISHED);
     }
 
+    // not on main thread, use commit() to store SharedPreferences
+    @SuppressLint("CommitPrefEdits")
     private void notifySyncStatus(@NonNull String action) {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         if(action.equals(SYNC_FINISHED))
-            PreferenceManager.getDefaultSharedPreferences(this).edit()
-                    .putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), true).commit();
+            editor.putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), true);
         LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(action));
+        editor.putBoolean(Preferences.SYS_SYNC_RUNNING.getKey(), action.equals(SYNC_STARTED));
+        editor.commit();
     }
 
     private final APIService.APICallback apiCallback = new APIService.APICallback() {

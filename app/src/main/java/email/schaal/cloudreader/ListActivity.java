@@ -71,15 +71,18 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(SyncService.SYNC_FINISHED))
+            if(intent.getAction().equals(SyncService.SYNC_STARTED) || intent.getAction().equals(SyncService.SYNC_FINISHED))
                 updateSyncStatus();
         }
     };
 
     private void updateSyncStatus() {
-        boolean needsUpdate = Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getBoolean(PreferenceManager.getDefaultSharedPreferences(ListActivity.this));
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ListActivity.this);
 
-        Log.d(TAG, "needs update: " + needsUpdate);
+        boolean needsUpdate = Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getBoolean(sharedPreferences);
+        boolean syncRunning = Preferences.SYS_SYNC_RUNNING.getBoolean(sharedPreferences);
+
+        Log.d(TAG, "needs update/sync running: " + needsUpdate + "/" + syncRunning);
 
         if(needsUpdate) {
             drawerManager.getState().updateDrawerItems(getRealm());
@@ -87,23 +90,23 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             getListFragment().setItem(drawerManager.getState().getTreeItem());
 
             updateUserProfile();
-
-            if (syncMenuItem != null) {
-                syncMenuItem.setEnabled(true);
-            }
-
-            if (refreshDrawerItem != null) {
-                refreshDrawerItem.withEnabled(true);
-                startDrawer.updateStickyFooterItem(refreshDrawerItem);
-            }
-
-            if (swipeRefreshLayout != null) {
-                swipeRefreshLayout.setRefreshing(false);
-            }
-
-            PreferenceManager.getDefaultSharedPreferences(this).edit()
-                    .putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), false).apply();
         }
+
+        if (syncMenuItem != null) {
+            syncMenuItem.setEnabled(!syncRunning);
+        }
+
+        if (refreshDrawerItem != null) {
+            refreshDrawerItem.withEnabled(!syncRunning);
+            startDrawer.updateStickyFooterItem(refreshDrawerItem);
+        }
+
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setRefreshing(syncRunning);
+        }
+
+        PreferenceManager.getDefaultSharedPreferences(this).edit()
+                .putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), false).apply();
     }
 
     private MenuItem syncMenuItem;

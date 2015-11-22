@@ -29,8 +29,10 @@ public enum Preferences {
     USERNAME("username",null),
     PASSWORD("password", null),
     URL("url", null),
+
     /** System preferences **/
-    SYS_NEEDS_UPDATE_AFTER_SYNC("needs_update_after_sync", false);
+    SYS_NEEDS_UPDATE_AFTER_SYNC("needs_update_after_sync", false),
+    SYS_SYNC_RUNNING("is_sync_running", false);
 
     private final String key;
     private final Object defaultValue;

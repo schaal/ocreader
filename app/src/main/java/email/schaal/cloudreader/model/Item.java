@@ -159,7 +159,7 @@ public class Item extends RealmObject {
 
     public static Feed feed(@NonNull Item item) {
         if(item.feed == null)
-            item.feed = item.realm.where(Feed.class).equalTo("id", item.getFeedId()).findFirst();
+            item.feed = item.realm.where(Feed.class).equalTo(ID, item.getFeedId()).findFirst();
         return item.feed;
     }
 
