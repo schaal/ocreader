@@ -22,6 +22,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.SystemClock;
 
 import email.schaal.cloudreader.service.SyncService;
 
@@ -29,7 +30,7 @@ import email.schaal.cloudreader.service.SyncService;
  * Created by daniel on 17.11.15.
  */
 public class AlarmUtils {
-    public static final int DELAY_MILLIS = 5 * 60 * 1000;
+    public static final int INTERVAL_FIVE_MINUTES = 5 * 60 * 1000;
 
     private static AlarmUtils instance;
 
@@ -65,7 +66,7 @@ public class AlarmUtils {
         if(pendingIntent == null) {
             pendingIntent = PendingIntent.getService(context, 0, syncChangesIntent, PendingIntent.FLAG_ONE_SHOT);
 
-            alarmManager.set(AlarmManager.ELAPSED_REALTIME, DELAY_MILLIS, pendingIntent);
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + INTERVAL_FIVE_MINUTES, pendingIntent);
         }
     }
 }
