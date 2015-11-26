@@ -33,7 +33,8 @@
         android:layout_height="wrap_content"
         android:maxLines="2"
         android:textSize="16sp"
-        tools:text="This is a title"
+        android:ellipsize="end"
+        tools:text="This is a very long title that will get ellipsized: Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy"
         android:layout_alignTop="@+id/imageview_favicon"
         android:layout_toRightOf="@+id/imageview_favicon"
         android:layout_toEndOf="@+id/imageview_favicon"/>
