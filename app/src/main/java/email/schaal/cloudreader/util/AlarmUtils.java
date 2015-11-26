@@ -34,11 +34,13 @@ public class AlarmUtils {
     private static AlarmUtils instance;
 
     private final AlarmManager alarmManager;
+    private final Context context;
 
     private PendingIntent pendingIntent = null;
     private final Intent syncChangesIntent;
 
     private AlarmUtils(Context context) {
+        this.context = context;
         this.alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         syncChangesIntent = new Intent(SyncService.ACTION_SYNC_CHANGES_ONLY, null, context, SyncService.class);
     }
@@ -59,7 +61,7 @@ public class AlarmUtils {
         pendingIntent = null;
     }
 
-    public synchronized void setAlarm(Context context) {
+    public synchronized void setAlarm() {
         if(pendingIntent == null) {
             pendingIntent = PendingIntent.getService(context, 0, syncChangesIntent, PendingIntent.FLAG_ONE_SHOT);
 

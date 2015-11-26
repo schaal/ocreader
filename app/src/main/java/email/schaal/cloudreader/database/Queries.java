@@ -31,6 +31,7 @@ import email.schaal.cloudreader.model.Item;
 import email.schaal.cloudreader.model.StarredFolder;
 import email.schaal.cloudreader.model.TemporaryFeed;
 import email.schaal.cloudreader.model.TreeItem;
+import email.schaal.cloudreader.util.AlarmUtils;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmList;
@@ -249,7 +250,9 @@ public class Queries {
                     if(oldUnread != newUnread) {
                         item.setUnread(newUnread);
 
-                        RealmList<Item> unreadChangedItems = realm.where(ChangedItems.class).findFirst().getUnreadChangedItems();
+                        ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
+
+                        RealmList<Item> unreadChangedItems = changedItems.getUnreadChangedItems();
                         addToChangedList(unreadChangedItems, item);
 
                         Feed feed = Item.feed(item);
@@ -257,7 +260,10 @@ public class Queries {
                             feed.setUnreadCount(feed.getUnreadCount() + 1);
                         else
                             feed.setUnreadCount(feed.getUnreadCount() - 1);
+
+                        checkAlarm(changedItems);
                     }
+
 
                     if (transactionCallback != null) {
                         transactionCallback.onSuccess();
@@ -281,7 +287,9 @@ public class Queries {
                     if(oldStarred != newStarred) {
                         item.setStarred(newStarred);
 
-                        RealmList<Item> starredChangedItems = realm.where(ChangedItems.class).findFirst().getStarredChangedItems();
+                        ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
+
+                        RealmList<Item> starredChangedItems = changedItems.getStarredChangedItems();
                         addToChangedList(starredChangedItems, item);
 
                         Feed feed = Item.feed(item);
@@ -289,6 +297,8 @@ public class Queries {
                             feed.setStarredCount(feed.getStarredCount() + 1);
                         else
                             feed.setStarredCount(feed.getStarredCount() - 1);
+
+                        checkAlarm(changedItems);
                     }
 
                     if (transactionCallback != null) {
@@ -302,6 +312,14 @@ public class Queries {
                 }
             }
         });
+    }
+
+    private void checkAlarm(ChangedItems changedItems) {
+        boolean alarmNeeded = !changedItems.getStarredChangedItems().isEmpty() || !changedItems.getUnreadChangedItems().isEmpty();
+        if(alarmNeeded)
+            AlarmUtils.getInstance().setAlarm();
+        else
+            AlarmUtils.getInstance().cancelAlarm();
     }
 
     private void addToChangedList(RealmList<Item> changedItems, Item item) {
