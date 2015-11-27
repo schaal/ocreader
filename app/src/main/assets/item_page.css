@@ -18,7 +18,7 @@ pre, code, blockquote, p, em, b {
 blockquote {
     white-space:pre-line !important;
     padding-left: 10px;
-    border-left: 3px solid #ccc;
+    background-color: #ccc;
 }
 
 .title {
@@ -29,5 +29,5 @@ blockquote {
 }
 
 .byline {
-    font-size: 0.7em;
+    font-size: 0.8em;
 }
