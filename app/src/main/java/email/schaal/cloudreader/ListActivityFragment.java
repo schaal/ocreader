@@ -79,4 +79,8 @@ public class ListActivityFragment extends Fragment {
     public void setItem(TreeItem item) {
         adapter.setTreeItem(item);
     }
+
+    public int getCount() {
+        return adapter.getItemCount();
+    }
 }
