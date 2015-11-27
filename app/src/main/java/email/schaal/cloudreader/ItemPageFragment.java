@@ -25,6 +25,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,7 +88,7 @@ public class ItemPageFragment extends Fragment {
         webView.loadDataWithBaseURL(null, getHtml(context, item, palette), "text/html", "UTF-8", null);
     }
 
-    private final static Cleaner cleaner = new Cleaner(Whitelist.basicWithImages());
+    private final static Cleaner cleaner = new Cleaner(Whitelist.relaxed());
 
     private static String css = null;
 
