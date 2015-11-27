@@ -23,6 +23,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.util.Log;
@@ -84,7 +85,7 @@ public class ItemPageFragment extends Fragment {
         });
     }
 
-    private void loadWebViewData(Context context, Palette palette) {
+    private void loadWebViewData(Context context, @Nullable Palette palette) {
         webView.loadDataWithBaseURL(null, getHtml(context, item, palette), "text/html", "UTF-8", null);
     }
 
@@ -92,7 +93,7 @@ public class ItemPageFragment extends Fragment {
 
     private static String css = null;
 
-    private String getHtml(Context context, Item item, Palette palette) {
+    private String getHtml(Context context, Item item, @Nullable Palette palette) {
         if(css == null)
             try {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open("item_page.css")));
@@ -124,7 +125,7 @@ public class ItemPageFragment extends Fragment {
         Feed feed = Item.feed(item);
 
         pageBuilder.append(String.format(
-                "<a href=\"%s\" class=\"title\">%s</a><p class=\"byline\">%s</p>",
+                        "<a href=\"%s\" class=\"title\">%s</a><p class=\"byline\">%s</p>",
                         item.getUrl(),
                         item.getTitle(),
                         StringUtils.getByLine(context, item.getAuthor(), String.format("<a href=\"%s\">%s</a>", feed.getLink(), feed.getTitle()))
