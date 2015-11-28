@@ -90,7 +90,7 @@ public class DrawerManager {
     public void setSelectedTreeItem(TreeItem selectedItem) {
         state.setStartDrawerItem(selectedItem);
         state.setEndDrawerItem(null);
-        startAdapter.reload();
+
         endAdapter.reload();
     }
 
