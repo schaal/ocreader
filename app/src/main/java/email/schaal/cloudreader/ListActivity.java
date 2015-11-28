@@ -272,8 +272,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         endDrawer = endDrawerBuilder.append(startDrawer);
 
         try {
-            // increase the size of the drag margin to prevent starting a swipe when
-            // trying to open the drawers.
+            // increase the size of the drag margin for opening the drawers.
             DrawerLayout drawerLayout = startDrawer.getDrawerLayout();
 
             Field mLeftDragger = drawerLayout.getClass()
