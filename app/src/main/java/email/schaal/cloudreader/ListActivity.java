@@ -151,9 +151,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         drawerManager = new DrawerManager(this);
         drawerManager.getState().restoreInstanceState(savedInstanceState);
 
-        //noinspection ConstantConditions
-        getSupportActionBar().setTitle(drawerManager.getState().getTreeItem().getTitle());
-
         profileDrawerItem = new ProfileDrawerItem()
                 .withName(preferences.getString(Preferences.USERNAME.getKey(), getString(R.string.app_name)))
                 .withEmail(Preferences.URL.getString(preferences));
@@ -293,10 +290,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         drawerManager.reloadStartAdapter();
         drawerManager.reloadEndAdapter();
 
-        if(getListFragment().getCount() > 0)
-            textViewNoArticles.setVisibility(View.GONE);
-        else
-            textViewNoArticles.setVisibility(View.VISIBLE);
+        reloadListFragment(drawerManager.getState().getTreeItem());
     }
 
     private static void setDraggerEdgeSize(Field mDragger, DrawerLayout drawerLayout) throws IllegalAccessException, NoSuchFieldException {
