@@ -114,14 +114,14 @@ public class DrawerManager {
         protected abstract ArrayList<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread);
 
         public void updateUnreadCount() {
-            ListIterator<IDrawerItem> itemIterator = getDrawerItems().listIterator();
-            int headerItemCount = getHeaderItemCount();
-
             Realm realm = null;
             try {
                 realm = Realm.getDefaultInstance();
+
+                ListIterator<IDrawerItem> itemIterator = getDrawerItems().listIterator();
+
                 while (itemIterator.hasNext()) {
-                    int position = itemIterator.nextIndex() + headerItemCount;
+                    int position = itemIterator.nextIndex() + getHeaderItemCount();
                     IDrawerItem drawerItem = itemIterator.next();
                     if (drawerItem instanceof Badgeable) {
                         Badgeable badgeable = (Badgeable) drawerItem;
