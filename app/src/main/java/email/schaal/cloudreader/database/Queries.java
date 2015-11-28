@@ -54,10 +54,14 @@ public class Queries {
 
     private final RealmConfiguration realmConfiguration;
 
-    public Queries(Context context) {
-        realmConfiguration = new RealmConfiguration.Builder(context)
+    private Queries(Context context) {
+        this(new RealmConfiguration.Builder(context)
                 .schemaVersion(1)
-                .build();
+                .build());
+    }
+
+    private Queries(RealmConfiguration realmConfiguration) {
+        this.realmConfiguration = realmConfiguration;
 
         Realm.setDefaultConfiguration(realmConfiguration);
 
@@ -65,7 +69,8 @@ public class Queries {
         try {
             Realm.compactRealm(realmConfiguration);
             realm = Realm.getDefaultInstance();
-        } catch (RealmMigrationNeededException ex) {
+        } catch (Exception ex) {
+            ex.printStackTrace();
             resetDatabase();
         } finally {
             if(realm != null)
@@ -80,7 +85,13 @@ public class Queries {
     }
 
     public static void init(Context context) {
-        instance = new Queries(context);
+        if(instance == null)
+            instance = new Queries(context);
+    }
+
+    // For instrumentation tests
+    public static void init(RealmConfiguration realmConfiguration) {
+        instance = new Queries(realmConfiguration);
     }
 
     public void resetDatabase() {
