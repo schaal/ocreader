@@ -1,7 +1,7 @@
 <component name="CopyrightManager">
-  <settings default="Affero GPLv3">
+  <settings default="GPLv3">
     <module2copyright>
-      <element module="All" copyright="Affero GPLv3" />
+      <element module="All" copyright="GPLv3" />
     </module2copyright>
   </settings>
 </component>
