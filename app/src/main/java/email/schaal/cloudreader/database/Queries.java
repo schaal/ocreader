@@ -20,6 +20,7 @@ package email.schaal.cloudreader.database;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.Iterator;
 
@@ -81,6 +82,8 @@ public class Queries {
     }
 
     public void resetDatabase() {
+        Log.w(TAG, "Database will be reset");
+
         Realm.deleteRealm(realmConfiguration);
         Realm realm = null;
         try {
