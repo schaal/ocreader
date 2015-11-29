@@ -89,7 +89,9 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         if(needsUpdate) {
             drawerManager.getState().updateDrawerItems(getRealm());
             drawerManager.reloadStartAdapter();
-            getListFragment().setItem(drawerManager.getState().getTreeItem());
+
+            getListFragment().update(true);
+            checkNoItems();
 
             updateUserProfile();
         }
@@ -291,7 +293,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         drawerManager.reloadStartAdapter();
         drawerManager.reloadEndAdapter();
 
-        reloadListFragment(drawerManager.getState().getTreeItem());
+        checkNoItems();
     }
 
     private static void setDraggerEdgeSize(Field mDragger, DrawerLayout drawerLayout) throws IllegalAccessException, NoSuchFieldException {
@@ -324,9 +326,12 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private void reloadListFragment(TreeItem item) {
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(item.getTitle());
-        ListActivityFragment listFragment = getListFragment();
-        listFragment.setItem(item);
-        if(listFragment.getCount() > 0)
+        getListFragment().setItem(item);
+        checkNoItems();
+    }
+
+    private void checkNoItems() {
+        if(getListFragment().getCount() > 0)
             textViewNoArticles.setVisibility(View.GONE);
         else
             textViewNoArticles.setVisibility(View.VISIBLE);

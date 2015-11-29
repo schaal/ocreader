@@ -71,6 +71,10 @@ public class ListActivityFragment extends Fragment {
         adapter.setTreeItem(item);
     }
 
+    public void update(boolean updateTempFeed) {
+        adapter.updateItems(updateTempFeed);
+    }
+
     public int getCount() {
         return adapter.getItemCount();
     }
