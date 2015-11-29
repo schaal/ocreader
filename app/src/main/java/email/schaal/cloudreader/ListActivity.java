@@ -109,7 +109,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             swipeRefreshLayout.setRefreshing(syncRunning);
         }
 
-        PreferenceManager.getDefaultSharedPreferences(this).edit()
+        sharedPreferences.edit()
                 .putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), false).apply();
     }
 
