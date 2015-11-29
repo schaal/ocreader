@@ -46,6 +46,13 @@ public class ListActivityFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        adapter.updateItems(false);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }

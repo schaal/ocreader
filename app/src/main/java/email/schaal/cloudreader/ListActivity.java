@@ -288,6 +288,9 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         drawerManager.reloadStartAdapter();
         drawerManager.reloadEndAdapter();
+
+        //noinspection ConstantConditions
+        getSupportActionBar().setTitle(drawerManager.getState().getTreeItem().getTitle());
     }
 
     private static void setDraggerEdgeSize(Field mDragger, DrawerLayout drawerLayout) throws IllegalAccessException, NoSuchFieldException {
