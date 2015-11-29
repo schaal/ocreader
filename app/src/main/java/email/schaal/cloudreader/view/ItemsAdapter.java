@@ -20,14 +20,20 @@
 
 package email.schaal.cloudreader.view;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import email.schaal.cloudreader.R;
 import email.schaal.cloudreader.database.Queries;
+import email.schaal.cloudreader.model.Feed;
+import email.schaal.cloudreader.model.Folder;
 import email.schaal.cloudreader.model.Item;
 import email.schaal.cloudreader.model.TemporaryFeed;
 import email.schaal.cloudreader.model.TreeItem;
@@ -45,6 +51,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private final static int VIEW_TYPE_ITEM = 0;
     private final static int VIEW_TYPE_EMPTY = 1;
+    private final static int VIEW_TYPE_LOADMORE = 2;
 
     public ItemsAdapter(TreeItem treeItem, ItemViewHolder.OnClickListener clickListener) {
         this.treeItem = treeItem;
@@ -84,6 +91,9 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
+        if(hasLoadMore() && position + 1 == getItemCount())
+            return VIEW_TYPE_LOADMORE;
+
         if(hasItems())
             return VIEW_TYPE_ITEM;
         else
@@ -92,6 +102,10 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private boolean hasItems() {
         return items != null && items.size() > 0;
+    }
+
+    private boolean hasLoadMore() {
+        return treeItem instanceof Feed || treeItem instanceof Folder;
     }
 
     @Override
@@ -106,6 +120,11 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             case VIEW_TYPE_EMPTY:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_empty, parent, false);
                 holder = new EmptyStateViewHolder(view);
+                break;
+            case VIEW_TYPE_LOADMORE:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_loadmore, parent, false);
+                holder = new LoadMoreViewHolder(view);
+                break;
         }
         return holder;
     }
@@ -114,20 +133,28 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof ItemViewHolder)
             ((ItemViewHolder) holder).bindItem(items.get(position), position);
-    }
-
-    @Override
-    public int getItemCount() {
-        if (hasItems()) {
-            return items.size();
-        } else {
-            return 1;
+        else if(holder instanceof LoadMoreViewHolder) {
+            ((LoadMoreViewHolder) holder).resetView();
         }
     }
 
     @Override
+    public int getItemCount() {
+        int itemCount = getActualItemCount();
+        if(itemCount == 0)
+            itemCount = 1;
+        if(hasLoadMore())
+            itemCount++;
+        return itemCount;
+    }
+
+    private int getActualItemCount() {
+        return items != null ? items.size() : 0;
+    }
+
+    @Override
     public long getItemId(int position) {
-        if(hasItems())
+        if(hasItems() && position < getActualItemCount())
             return items.get(position).getId();
         else
             return -1;
@@ -141,6 +168,32 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private class EmptyStateViewHolder extends RecyclerView.ViewHolder {
         public EmptyStateViewHolder(View itemView) {
             super(itemView);
+        }
+    }
+
+    private class LoadMoreViewHolder extends RecyclerView.ViewHolder {
+        private final static int CHILD_BUTTON_INDEX = 0;
+        private final static int CHILD_PROGRESS_INDEX = 1;
+
+        private Button loadMoreButton;
+        private ViewSwitcher loadMoreViewSwitcher;
+
+        public LoadMoreViewHolder(View itemView) {
+            super(itemView);
+            loadMoreButton = (Button) itemView.findViewById(R.id.buttonLoadMore);
+            loadMoreViewSwitcher = (ViewSwitcher) itemView.findViewById(R.id.loadMoreViewSwitcher);
+
+            loadMoreButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    loadMoreViewSwitcher.setDisplayedChild(CHILD_PROGRESS_INDEX);
+                    // TODO: 29.11.15 actually load more!
+                }
+            });
+        }
+
+        public void resetView() {
+            loadMoreViewSwitcher.setDisplayedChild(CHILD_BUTTON_INDEX);
         }
     }
 }
