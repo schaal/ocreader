@@ -48,17 +48,11 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <FrameLayout android:layout_width="match_parent"
-                     android:layout_height="match_parent">
-
-            <include layout="@layout/no_articles"/>
-
-            <fragment android:id="@+id/fragment_itemlist"
-                      android:name="email.schaal.cloudreader.ListActivityFragment"
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      tools:layout="@layout/fragment_itemlist"/>
-        </FrameLayout>
+        <fragment android:id="@+id/fragment_itemlist"
+                  android:name="email.schaal.cloudreader.ListActivityFragment"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  tools:layout="@layout/fragment_itemlist"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

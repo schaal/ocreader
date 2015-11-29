@@ -24,6 +24,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import email.schaal.cloudreader.R;
 import email.schaal.cloudreader.database.Queries;
@@ -37,10 +38,13 @@ import io.realm.RealmResults;
 /**
  * Created by daniel on 08.11.15.
  */
-public class ItemsAdapter extends RecyclerView.Adapter<ItemViewHolder> {
+public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private RealmList<Item> items;
     private TreeItem treeItem;
     private final ItemViewHolder.OnClickListener clickListener;
+
+    private final static int VIEW_TYPE_ITEM = 0;
+    private final static int VIEW_TYPE_EMPTY = 1;
 
     public ItemsAdapter(TreeItem treeItem, ItemViewHolder.OnClickListener clickListener) {
         this.treeItem = treeItem;
@@ -79,28 +83,64 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemViewHolder> {
     }
 
     @Override
-    public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
-        return new ItemViewHolder(view, clickListener);
+    public int getItemViewType(int position) {
+        if(hasItems())
+            return VIEW_TYPE_ITEM;
+        else
+            return VIEW_TYPE_EMPTY;
+    }
+
+    private boolean hasItems() {
+        return items != null && items.size() > 0;
     }
 
     @Override
-    public void onBindViewHolder(ItemViewHolder holder, int position) {
-        holder.bindItem(items.get(position), position);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view;
+        RecyclerView.ViewHolder holder = null;
+        switch (viewType) {
+            case VIEW_TYPE_ITEM:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
+                holder = new ItemViewHolder(view, clickListener);
+                break;
+            case VIEW_TYPE_EMPTY:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_empty, parent, false);
+                holder = new EmptyStateViewHolder(view);
+        }
+        return holder;
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if(holder instanceof ItemViewHolder)
+            ((ItemViewHolder) holder).bindItem(items.get(position), position);
     }
 
     @Override
     public int getItemCount() {
-        return items != null ? items.size() : 0;
+        if (hasItems()) {
+            return items.size();
+        } else {
+            return 1;
+        }
     }
 
     @Override
     public long getItemId(int position) {
-        return items.get(position).getId();
+        if(hasItems())
+            return items.get(position).getId();
+        else
+            return -1;
     }
 
     public void setTreeItem(TreeItem item) {
         treeItem = item;
         updateItems(true);
+    }
+
+    private class EmptyStateViewHolder extends RecyclerView.ViewHolder {
+        public EmptyStateViewHolder(View itemView) {
+            super(itemView);
+        }
     }
 }

@@ -91,7 +91,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             drawerManager.reloadStartAdapter();
 
             getListFragment().update(true);
-            checkNoItems();
 
             updateUserProfile();
         }
@@ -122,7 +121,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private AccountHeader accountHeader;
 
     private SwipeRefreshLayout swipeRefreshLayout;
-    private View textViewNoArticles;
 
     @Override
     protected void onPause() {
@@ -149,8 +147,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setColorSchemeResources(R.color.primary);
         swipeRefreshLayout.setOnRefreshListener(this);
-
-        textViewNoArticles = findViewById(R.id.textViewNoArticles);
 
         drawerManager = new DrawerManager(this);
         drawerManager.getState().restoreInstanceState(savedInstanceState);
@@ -292,8 +288,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         drawerManager.reloadStartAdapter();
         drawerManager.reloadEndAdapter();
-
-        checkNoItems();
     }
 
     private static void setDraggerEdgeSize(Field mDragger, DrawerLayout drawerLayout) throws IllegalAccessException, NoSuchFieldException {
@@ -327,14 +321,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(item.getTitle());
         getListFragment().setItem(item);
-        checkNoItems();
-    }
-
-    private void checkNoItems() {
-        if(getListFragment().getCount() > 0)
-            textViewNoArticles.setVisibility(View.GONE);
-        else
-            textViewNoArticles.setVisibility(View.VISIBLE);
     }
 
     private ListActivityFragment getListFragment() {
