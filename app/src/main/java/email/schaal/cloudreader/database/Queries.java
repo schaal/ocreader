@@ -246,12 +246,10 @@ public class Queries {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                if(expendableItems.size() <= max_items)
-                    expendableItems.clear();
-                else {
-                    for(int i = 0; i< max_items; i++) {
-                        expendableItems.remove(0);
-                    }
+                int itemsToDelete = expendableItems.size() - max_items;
+                Log.d(TAG, "no. of excess items: " + itemsToDelete);
+                for (int i = 0; i < itemsToDelete; i++) {
+                    expendableItems.remove(0);
                 }
             }
         });
