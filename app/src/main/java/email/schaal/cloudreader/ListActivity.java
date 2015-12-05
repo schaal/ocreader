@@ -87,7 +87,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         Log.d(TAG, "needs update/sync running: " + needsUpdate + "/" + syncRunning);
 
         if(needsUpdate) {
-            drawerManager.getState().updateDrawerItems(getRealm());
             drawerManager.reloadStartAdapter();
 
             getListFragment().update(true);

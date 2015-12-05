@@ -351,17 +351,6 @@ public class DrawerManager {
             }
         }
 
-        public void updateDrawerItems(Realm realm) {
-            if (startDrawerItemId != null && startDrawerItemId >= 0) {
-                if (isFeedSelected())
-                    startDrawerItem = Queries.getInstance().getFeed(realm, startDrawerItemId);
-                else
-                    startDrawerItem = Queries.getInstance().getFolder(realm, startDrawerItemId);
-            }
-            if (endDrawerItemId != null)
-                endDrawerItem = Queries.getInstance().getFeed(realm, endDrawerItemId);
-        }
-
         public TreeItem getStartDrawerItem() {
             return startDrawerItem;
         }
