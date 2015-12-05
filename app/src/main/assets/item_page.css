@@ -7,24 +7,17 @@ body, blockquote, img, iframe, video, div, table, tbody, tr, td, pre, code, bloc
 body {
     font-size: 1em;
     font-weight: normal;
-    word-wrap break-word !important;
-}
-
-pre, code, blockquote, p, em, b {
-    white-space: pre-wrap !important;
-    word-wrap: break-word !important;
 }
 
 blockquote {
-    white-space:pre-line !important;
-    padding-left: 10px;
-    background-color: #ccc;
+    padding: 5px;
+    background-color: #eee;
 }
 
 .title {
     font-size: 1.1em;
     font-weight: normal;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
     text-decoration: none;
 }
 
