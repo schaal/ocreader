@@ -24,7 +24,10 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import email.schaal.cloudreader.model.AllUnreadFolder;
 import email.schaal.cloudreader.model.ChangedItems;
@@ -195,12 +198,33 @@ public class Queries {
         });
     }
 
-    public <T extends RealmObject> void deleteAndInsert(Realm realm, final Class<T> clazz, final Iterable<T> elements) {
+    public <T extends RealmObject & TreeItem> void deleteAndInsert(Realm realm, final Class<T> clazz, final Collection<T> elements) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                realm.clear(clazz);
-                realm.copyToRealm(elements);
+                //realm.clear(clazz);
+                realm.copyToRealmOrUpdate(elements);
+                RealmResults<T> results = realm.where(clazz).findAll();
+                List<T> itemsToRemove = new ArrayList<T>();
+                // TODO: 05.12.15 optimize (maybe binary search using id?)
+                for (T result : results) {
+                    boolean found = false;
+                    for (T element : elements) {
+                        if (element.getId() == result.getId()) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                        itemsToRemove.add(result);
+                }
+                for(T toRemove: itemsToRemove) {
+                    if(clazz == Feed.class) {
+                        // Also remove items belonging to feed being removed from database
+                        realm.where(Item.class).equalTo(Item.FEED_ID, toRemove.getId()).findAll().clear();
+                    }
+                    toRemove.removeFromRealm();
+                }
             }
         });
     }
