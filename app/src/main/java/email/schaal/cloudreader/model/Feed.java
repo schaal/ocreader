@@ -24,6 +24,7 @@ import android.support.annotation.ColorInt;
 
 import java.util.Date;
 
+import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
@@ -131,7 +132,7 @@ public class Feed extends RealmObject implements TreeItem {
     /* Realm doesn't like non-realm getters, use static method */
     public static Folder folder(Feed feed) {
         if(feed.folder == null)
-            feed.folder = feed.realm.where(Folder.class).equalTo(ID, feed.getFolderId()).findFirst();
+            feed.folder = ((Realm)feed.realm).where(Folder.class).equalTo(ID, feed.getFolderId()).findFirst();
         return feed.folder;
     }
 

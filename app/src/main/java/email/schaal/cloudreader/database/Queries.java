@@ -41,6 +41,7 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
+import io.realm.Sort;
 import io.realm.exceptions.RealmException;
 import io.realm.exceptions.RealmMigrationNeededException;
 
@@ -128,7 +129,7 @@ public class Queries {
         return feed;
     }
 
-    public RealmResults<Item> getItems(Realm realm, TreeItem treeItem, String sortFieldname, boolean sortAscending) {
+    public RealmResults<Item> getItems(Realm realm, TreeItem treeItem, String sortFieldname, Sort sortAscending) {
         RealmQuery<Item> query = null;
         if(treeItem instanceof Feed)
             query = realm.where(Item.class).equalTo(Item.FEED_ID, treeItem.getId());
@@ -169,11 +170,11 @@ public class Queries {
             query = realm.where(Folder.class);
         }
 
-        return query != null ? query.findAllSorted(Folder.TITLE, RealmResults.SORT_ORDER_ASCENDING) : null;
+        return query != null ? query.findAllSorted(Folder.TITLE, Sort.ASCENDING) : null;
     }
 
     public RealmResults<Feed> getFeeds(Realm realm) {
-        return realm.where(Feed.class).findAllSorted(Feed.PINNED, RealmResults.SORT_ORDER_ASCENDING, Feed.TITLE, RealmResults.SORT_ORDER_ASCENDING);
+        return realm.where(Feed.class).findAllSorted(Feed.PINNED, Sort.ASCENDING, Feed.TITLE, Sort.ASCENDING);
     }
 
     public <T extends RealmObject> void insert(Realm realm, final Iterable<T> elements) {
@@ -209,7 +210,7 @@ public class Queries {
         if(onlyUnread) {
             query.greaterThan(Feed.UNREAD_COUNT, 0);
         }
-        return query.findAllSorted(Feed.TITLE, RealmResults.SORT_ORDER_ASCENDING);
+        return query.findAllSorted(Feed.TITLE, Sort.ASCENDING);
     }
 
     public int getCount(Realm realm, TreeItem item) {
@@ -229,11 +230,11 @@ public class Queries {
     public RealmResults<Feed> getFeedsForTreeItem(Realm realm, TreeItem item) {
         RealmResults<Feed> feeds = null;
         if(item instanceof AllUnreadFolder) {
-            feeds = realm.where(Feed.class).greaterThan(Feed.UNREAD_COUNT, 0).findAllSorted(Feed.TITLE, RealmResults.SORT_ORDER_ASCENDING);
+            feeds = realm.where(Feed.class).greaterThan(Feed.UNREAD_COUNT, 0).findAllSorted(Feed.TITLE, Sort.ASCENDING);
         } else if(item instanceof StarredFolder) {
-            feeds = realm.where(Feed.class).greaterThan(Feed.STARRED_COUNT, 0).findAllSorted(Feed.TITLE, RealmResults.SORT_ORDER_ASCENDING);
+            feeds = realm.where(Feed.class).greaterThan(Feed.STARRED_COUNT, 0).findAllSorted(Feed.TITLE, Sort.ASCENDING);
         } else if(item instanceof Folder) {
-            feeds = realm.where(Feed.class).equalTo(Feed.FOLDER_ID, item.getId()).findAllSorted(Feed.TITLE, RealmResults.SORT_ORDER_ASCENDING);
+            feeds = realm.where(Feed.class).equalTo(Feed.FOLDER_ID, item.getId()).findAllSorted(Feed.TITLE, Sort.ASCENDING);
         }
         return feeds;
     }
@@ -242,7 +243,7 @@ public class Queries {
         final RealmResults<Item> expendableItems = realm.where(Item.class)
                 .equalTo(Item.UNREAD, false)
                 .equalTo(Item.STARRED, false)
-                .findAllSorted(Item.LAST_MODIFIED, RealmResults.SORT_ORDER_ASCENDING);
+                .findAllSorted(Item.LAST_MODIFIED, Sort.ASCENDING);
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {

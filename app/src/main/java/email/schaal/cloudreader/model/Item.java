@@ -24,6 +24,7 @@ import android.support.annotation.NonNull;
 
 import java.util.Date;
 
+import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
@@ -161,7 +162,7 @@ public class Item extends RealmObject {
 
     public static Feed feed(@NonNull Item item) {
         if(item.feed == null)
-            item.feed = item.realm.where(Feed.class).equalTo(ID, item.getFeedId()).findFirst();
+            item.feed = ((Realm)item.realm).where(Feed.class).equalTo(ID, item.getFeedId()).findFirst();
         return item.feed;
     }
 

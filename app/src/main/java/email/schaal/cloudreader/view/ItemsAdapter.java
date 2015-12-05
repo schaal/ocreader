@@ -40,6 +40,7 @@ import email.schaal.cloudreader.model.TreeItem;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 /**
  * Created by daniel on 08.11.15.
@@ -71,7 +72,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
-                        RealmResults<Item> tempItems = Queries.getInstance().getItems(realm, treeItem, Item.PUB_DATE, false);
+                        RealmResults<Item> tempItems = Queries.getInstance().getItems(realm, treeItem, Item.PUB_DATE, Sort.DESCENDING);
                         temporaryFeed.setTitle(treeItem.getTitle());
                         temporaryFeed.getItems().clear();
                         temporaryFeed.getItems().addAll(tempItems);
