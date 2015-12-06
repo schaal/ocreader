@@ -131,13 +131,23 @@ public class Queries {
         return feed;
     }
 
-    public RealmResults<Item> getItems(Realm realm, TreeItem treeItem, String sortFieldname, Sort sortAscending) {
+    /**
+     * Get all items belonging to treeItem, sorted by sortFieldname using order
+     * @param realm Realm object to query
+     * @param treeItem TreeItem to query items from
+     * @param sortFieldname Sort using this fieldname
+     * @param order Sort using this order
+     * @return items belonging to TreeItem
+     */
+    public RealmResults<Item> getItems(Realm realm, TreeItem treeItem, String sortFieldname, Sort order) {
         RealmQuery<Item> query = null;
         if(treeItem instanceof Feed)
             query = realm.where(Item.class).equalTo(Item.FEED_ID, treeItem.getId());
         else if(treeItem instanceof Folder) {
+            // Get all feeds belonging to Folder treeItem
             RealmResults<Feed> feeds = getFeedsForTreeItem(realm, treeItem);
             if(feeds.size() > 0) {
+                // Find all items belonging to any feed from this folder
                 Iterator<Feed> feedIterator = feeds.iterator();
                 query = realm.where(Item.class)
                         .equalTo(Item.FEED_ID, feedIterator.next().getId());
@@ -150,8 +160,9 @@ public class Queries {
         } else if(treeItem instanceof StarredFolder) {
             query = realm.where(Item.class).equalTo(Item.STARRED, true);
         }
+
         if (query != null) {
-            return query.findAllSorted(sortFieldname, sortAscending);
+            return query.findAllSorted(sortFieldname, order);
         } else
             return null;
     }
