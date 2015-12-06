@@ -4,6 +4,11 @@ body, blockquote, img, iframe, video, div, table, tbody, tr, td, pre, code, bloc
     max-width: 100% !important;
 }
 
+pre, code, blockquote {
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+}
+
 body {
     font-size: 1em;
     font-weight: normal;
