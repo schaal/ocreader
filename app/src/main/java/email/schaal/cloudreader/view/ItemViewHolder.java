@@ -112,22 +112,10 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void setUnreadState(boolean unread) {
-        int alpha = unread ? 255 : 128;
+        float alpha = unread ? 1.0f : 0.5f;
         for(View view: alphaViews) {
-            if(view instanceof TextView) {
-                TextView textView = (TextView) view;
-                textView.setTextColor(adjustAlpha(textView.getCurrentTextColor(), alpha));
-            } else {
-                view.setAlpha(alpha/255.0f);
-            }
+            view.setAlpha(alpha);
         }
-    }
-
-    private int adjustAlpha(int color, int alpha) {
-        int red = Color.red(color);
-        int green = Color.green(color);
-        int blue = Color.blue(color);
-        return Color.argb(alpha, red, green, blue);
     }
 
     public interface OnClickListener {
