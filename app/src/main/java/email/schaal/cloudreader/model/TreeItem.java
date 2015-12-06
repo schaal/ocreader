@@ -20,10 +20,22 @@
 
 package email.schaal.cloudreader.model;
 
+import java.util.Comparator;
+
 /**
  * Created by daniel on 08.11.15.
  */
 public interface TreeItem {
+    String ID = "id";
+    String TITLE = "title";
+
+    Comparator<TreeItem> COMPARATOR = new Comparator<TreeItem>() {
+        @Override
+        public int compare(TreeItem lhs, TreeItem rhs) {
+            return lhs.getId() < rhs.getId() ? -1 : (lhs.getId() == rhs.getId() ? 0 : 1);
+        }
+    };
+
     long getId();
     String getTitle();
 }

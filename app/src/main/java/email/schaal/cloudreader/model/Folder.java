@@ -29,13 +29,11 @@ import io.realm.annotations.PrimaryKey;
 public class Folder extends RealmObject implements TreeItem {
     @PrimaryKey
     private long id;
-    public static final String ID = "id";
 
     /**
      * This is called "name" in the json response, but use "title" for consistency with feed
      */
     private String title;
-    public static final String TITLE = "title";
 
     public Folder() {
     }

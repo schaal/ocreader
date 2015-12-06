@@ -35,11 +35,9 @@ import io.realm.annotations.PrimaryKey;
 public class Feed extends RealmObject implements TreeItem {
     @PrimaryKey
     private long id;
-    public static final String ID = "id";
 
     private String url;
     private String title;
-    public static final String TITLE = "title";
     private String link;
     private String faviconLink;
     public static final String FAVICON_LINK = "faviconLink";

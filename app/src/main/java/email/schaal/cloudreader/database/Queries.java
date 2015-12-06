@@ -25,7 +25,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -46,7 +46,6 @@ import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import io.realm.exceptions.RealmException;
-import io.realm.exceptions.RealmMigrationNeededException;
 
 /**
  * Created by daniel on 08.11.15.
@@ -198,26 +197,26 @@ public class Queries {
         });
     }
 
-    public <T extends RealmObject & TreeItem> void deleteAndInsert(Realm realm, final Class<T> clazz, final Collection<T> elements) {
+    public <T extends RealmObject & TreeItem> void deleteAndInsert(Realm realm, final Class<T> clazz, final List<T> elements) {
+        // Sort elements for binary search
+        Collections.sort(elements, TreeItem.COMPARATOR);
+
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                //realm.clear(clazz);
                 realm.copyToRealmOrUpdate(elements);
-                RealmResults<T> results = realm.where(clazz).findAll();
-                List<T> itemsToRemove = new ArrayList<T>();
-                // TODO: 05.12.15 optimize (maybe binary search using id?)
+
+                RealmResults<T> results = realm.allObjects(clazz);
+
+                List<T> itemsToRemove = new ArrayList<>();
+
+                // iterate through items in database and add items not in elements to itemsToRemove
                 for (T result : results) {
-                    boolean found = false;
-                    for (T element : elements) {
-                        if (element.getId() == result.getId()) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found)
+                    final int found = Collections.binarySearch(elements, result, TreeItem.COMPARATOR);
+                    if (found < 0)
                         itemsToRemove.add(result);
                 }
+
                 for(T toRemove: itemsToRemove) {
                     if(clazz == Feed.class) {
                         // Also remove items belonging to feed being removed from database
