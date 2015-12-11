@@ -357,10 +357,15 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == R.id.action_sync) {
-            SyncService.startSync(this);
+        switch (id) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_sync:
+                SyncService.startSync(this);
+                break;
+            case R.id.action_mark_all_read:
+                // TODO: 11.12.15 Mark all as read
+                break;
         }
 
         return super.onOptionsItemSelected(item);
