@@ -320,24 +320,11 @@ public class APIService {
         });
     }
 
-    public void items(QueryType type, final APICallback callback) {
-        items(type, 0, 0, callback);
+    public void items(long lastSync, QueryType type, final APICallback callback) {
+        items(lastSync, type, 0, 0, callback);
     }
 
-    public void items(final QueryType type, final long offset, final long id, final APICallback callback) {
-        long lastSync = 0;
-        Realm realm = null;
-        try {
-            realm = Realm.getDefaultInstance();
-            Date maximumDate = realm.where(Item.class).maximumDate(Item.LAST_MODIFIED);
-            if(maximumDate != null)
-                lastSync = maximumDate.getTime() / 1000 + 1;
-        } finally {
-            if(realm != null)
-                realm.close();
-        }
-        Log.d(TAG, "Last sync timestamp: " + lastSync);
-
+    public void items(long lastSync, final QueryType type, final long offset, final long id, final APICallback callback) {
         // get all unread items on first sync, updatedItems on further syncs
         if(lastSync == 0) {
             api.items(offset, type.getType(), id, false, false).enqueue(new RealmRetrofitCallback<Items>(callback) {

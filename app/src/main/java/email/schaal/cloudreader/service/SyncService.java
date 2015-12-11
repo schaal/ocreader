@@ -31,6 +31,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 
 import email.schaal.cloudreader.Preferences;
@@ -83,27 +84,39 @@ public class SyncService extends IntentService {
 
     }
 
+    private long getLastSyncTimestamp(Realm realm) {
+        long lastSync = 0;
+        Date maximumDate = realm.where(Item.class).maximumDate(Item.LAST_MODIFIED);
+        if (maximumDate != null)
+            lastSync = maximumDate.getTime() / 1000 + 1;
+
+        Log.d(TAG, "Last sync timestamp: " + lastSync);
+        return lastSync;
+    }
+
     private void fullSync() {
         notifySyncStatus(SYNC_STARTED);
 
-        APIService.getInstance().syncChanges();
-
-        countDownLatch = new CountDownLatch(4);
-
-        APIService.getInstance().user(apiCallback);
-        APIService.getInstance().folders(apiCallback);
-        APIService.getInstance().feeds(apiCallback, true);
-        APIService.getInstance().items(APIService.QueryType.ALL, apiCallback);
-
-        try {
-            countDownLatch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        // Post-process feeds: add starredCount
         Realm realm = null;
         try {
             realm = Realm.getDefaultInstance();
+
+            APIService.getInstance().syncChanges();
+
+            countDownLatch = new CountDownLatch(4);
+
+            APIService.getInstance().user(apiCallback);
+            APIService.getInstance().folders(apiCallback);
+            APIService.getInstance().feeds(apiCallback, true);
+            APIService.getInstance().items(getLastSyncTimestamp(realm), APIService.QueryType.ALL, apiCallback);
+
+            try {
+                countDownLatch.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            // Post-process feeds: add starredCount and update unreadCount
             final RealmResults<Feed> feeds = realm.where(Feed.class).findAll();
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
@@ -114,6 +127,10 @@ public class SyncService extends IntentService {
                                         .equalTo(Item.FEED_ID, feed.getId())
                                         .equalTo(Item.STARRED, true).count()
                         );
+                        feed.setUnreadCount((int) realm.where(Item.class)
+                                        .equalTo(Item.FEED_ID, feed.getId())
+                                        .equalTo(Item.UNREAD, true).count()
+                        );
                     }
                 }
             });
@@ -121,9 +138,8 @@ public class SyncService extends IntentService {
             if (realm != null) {
                 realm.close();
             }
+            notifySyncStatus(SYNC_FINISHED);
         }
-
-        notifySyncStatus(SYNC_FINISHED);
     }
 
     // not on main thread, use commit() to store SharedPreferences
