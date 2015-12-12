@@ -79,13 +79,15 @@ public class ItemPageFragment extends Fragment {
         item = activity.getItemForPosition(getArguments().getInt(ARG_POSITION));
         final Feed feed = Item.feed(item);
 
-        FaviconUtils.getInstance().loadFavicon(activity, feed, new FaviconUtils.PaletteBitmapAsyncListener() {
-            @Override
-            public void onGenerated(Palette palette, Bitmap bitmap) {
-                loadWebViewData(getActivity(), palette);
-            }
-        });
+        FaviconUtils.getInstance().loadFavicon(activity, feed, paletteAsyncListener);
     }
+
+    private final FaviconUtils.PaletteBitmapAsyncListener paletteAsyncListener = new FaviconUtils.PaletteBitmapAsyncListener() {
+        @Override
+        public void onGenerated(Palette palette, Bitmap bitmap) {
+            loadWebViewData(getActivity(), palette);
+        }
+    };
 
     private void loadWebViewData(Context context, @Nullable Palette palette) {
         webView.loadDataWithBaseURL(null, getHtml(context, item, palette), "text/html", "UTF-8", null);
