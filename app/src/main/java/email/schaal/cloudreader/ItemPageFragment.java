@@ -20,7 +20,6 @@
 
 package email.schaal.cloudreader;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -28,11 +27,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.webkit.WebView;
+import android.webkit.WebViewFragment;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -51,12 +46,10 @@ import email.schaal.cloudreader.util.StringUtils;
 /**
  * Created by daniel on 15.11.15.
  */
-public class ItemPageFragment extends Fragment {
+public class ItemPageFragment extends WebViewFragment {
     private static final String TAG = ItemPageFragment.class.getSimpleName();
 
     public static final String ARG_POSITION = "ARG_POSITION";
-
-    private WebView webView;
 
     private Item item;
 
@@ -90,7 +83,7 @@ public class ItemPageFragment extends Fragment {
     };
 
     private void loadWebViewData(Context context, @Nullable Palette palette) {
-        webView.loadDataWithBaseURL(null, getHtml(context, item, palette), "text/html", "UTF-8", null);
+        getWebView().loadDataWithBaseURL(null, getHtml(context, item, palette), "text/html", "UTF-8", null);
     }
 
     private final static Cleaner cleaner = new Cleaner(Whitelist.relaxed());
@@ -136,13 +129,12 @@ public class ItemPageFragment extends Fragment {
                 )
         );
 
+        document.outputSettings().prettyPrint(false);
         pageBuilder.append(document.body().html());
 
         pageBuilder.append("</body></html>");
 
-        String page = pageBuilder.toString();
-
-        return page;
+        return pageBuilder.toString();
     }
 
     public static String getCssColor(int color) {
@@ -153,29 +145,5 @@ public class ItemPageFragment extends Fragment {
                 Color.green(color),
                 Color.blue(color),
                 Double.toString(Color.alpha(color)/255.0));
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if(webView != null)
-            webView.onPause();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(webView != null)
-            webView.onResume();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_item_pager, container, false);
-
-        webView = (WebView) rootView.findViewById(R.id.webview);
-
-        return rootView;
     }
 }
