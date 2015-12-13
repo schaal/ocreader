@@ -92,6 +92,9 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             getListFragment().update(true);
 
             updateUserProfile();
+
+            sharedPreferences.edit()
+                    .putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), false).apply();
         }
 
         if (syncMenuItem != null) {
@@ -106,9 +109,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setRefreshing(syncRunning);
         }
-
-        sharedPreferences.edit()
-                .putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), false).apply();
     }
 
     private MenuItem syncMenuItem;
