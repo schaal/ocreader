@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
+import android.view.View;
 import android.webkit.WebViewFragment;
 
 import org.jsoup.Jsoup;
@@ -144,6 +145,12 @@ public class ItemPageFragment extends WebViewFragment {
                 Color.red(color),
                 Color.green(color),
                 Color.blue(color),
-                Double.toString(Color.alpha(color)/255.0));
+                Double.toString(Color.alpha(color) / 255.0));
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        // set to software to prevent freezes on some devices (e.g. Moto X Play)
+        getWebView().setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
 }
