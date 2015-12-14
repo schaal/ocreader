@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2015 Daniel Schaal <daniel@schaal.email>
   ~
@@ -17,21 +18,10 @@
   ~ along with Cloudreader.  If not, see <http://www.gnu.org/licenses/>.
   ~
   -->
-
-<LinearLayout
+<android.support.v4.widget.NestedScrollView
+    android:id="@+id/nestedscrollview"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ItemPageFragment">
+    android:layout_height="match_parent">
 
-    <!-- use software layer type to prevent freeze when swiping on some devices -->
-    <WebView
-        android:id="@+id/webview"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layerType="software" />
-
-</LinearLayout>
+</android.support.v4.widget.NestedScrollView>
