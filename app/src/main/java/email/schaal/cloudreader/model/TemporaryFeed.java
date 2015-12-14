@@ -27,6 +27,9 @@ import io.realm.RealmObject;
  * Created by daniel on 15.11.15.
  */
 public class TemporaryFeed extends RealmObject {
+    private long id;
+    public static final String ID = "id";
+
     private String title;
     public static final String TITLE = "title";
 
@@ -34,6 +37,14 @@ public class TemporaryFeed extends RealmObject {
     public static final String ITEMS = "items";
 
     public TemporaryFeed() {
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getTitle() {

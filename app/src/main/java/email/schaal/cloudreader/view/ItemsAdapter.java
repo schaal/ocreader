@@ -68,11 +68,12 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             final TemporaryFeed temporaryFeed = realm.where(TemporaryFeed.class).findFirst();
 
-            if (updateTemporaryFeed) {
+            if (updateTemporaryFeed || temporaryFeed.getId() != treeItem.getId()) {
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
                         RealmResults<Item> tempItems = Queries.getInstance().getItems(realm, treeItem, Item.PUB_DATE, Sort.DESCENDING);
+                        temporaryFeed.setId(treeItem.getId());
                         temporaryFeed.setTitle(treeItem.getTitle());
                         temporaryFeed.getItems().clear();
                         temporaryFeed.getItems().addAll(tempItems);
