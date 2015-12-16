@@ -19,6 +19,11 @@ blockquote {
     background-color: #eee;
 }
 
+blockquote > p {
+    margin: 0;
+    padding: 0;
+}
+
 .title {
     font-size: 1.1em;
     font-weight: normal;
