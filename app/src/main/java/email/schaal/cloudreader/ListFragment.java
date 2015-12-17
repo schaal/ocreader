@@ -35,14 +35,14 @@ import email.schaal.cloudreader.view.DividerItemDecoration;
 import email.schaal.cloudreader.view.ItemViewHolder;
 import email.schaal.cloudreader.view.ItemsAdapter;
 
-public class ListActivityFragment extends Fragment {
-    private final static String TAG = ListActivityFragment.class.getSimpleName();
+public class ListFragment extends Fragment {
+    private final static String TAG = ListFragment.class.getSimpleName();
 
     private RecyclerView itemsRecyclerView;
 
     private ItemsAdapter adapter;
 
-    public ListActivityFragment() {
+    public ListFragment() {
     }
 
     @Override

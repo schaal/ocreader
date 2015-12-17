@@ -325,8 +325,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         getListFragment().setItem(item);
     }
 
-    private ListActivityFragment getListFragment() {
-        return (ListActivityFragment) getFragmentManager().findFragmentById(R.id.fragment_itemlist);
+    private ListFragment getListFragment() {
+        return (ListFragment) getFragmentManager().findFragmentById(R.id.fragment_itemlist);
     }
 
     @Override
