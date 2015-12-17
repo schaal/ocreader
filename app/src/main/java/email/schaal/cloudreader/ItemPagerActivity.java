@@ -24,8 +24,11 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v13.app.FragmentStatePagerAdapter;
@@ -36,6 +39,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 
 import java.util.WeakHashMap;
 
@@ -191,7 +195,7 @@ public class ItemPagerActivity extends RealmActivity {
         });
     }
 
-    private void setColorsFromPalette(Palette palette) {
+    private void setColorsFromPalette(@Nullable Palette palette) {
         int toolbarColor;
         if (palette != null) {
             toolbarColor = palette.getDarkVibrantColor(defaultToolbarColor);
@@ -199,6 +203,15 @@ public class ItemPagerActivity extends RealmActivity {
             toolbarColor = defaultToolbarColor;
         }
         toolbar.setBackgroundColor(toolbarColor);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int statusbarColor = Color.rgb(
+                    (int) (Color.red(toolbarColor) * 0.7),
+                    (int) (Color.green(toolbarColor) * 0.7),
+                    (int) (Color.blue(toolbarColor) * 0.7)
+            );
+            getWindow().setStatusBarColor(statusbarColor);
+        }
     }
 
     /**
