@@ -64,6 +64,7 @@
     <string name="hours">%dh</string>
     <string name="days">%dd</string>
     <string name="no_articles">There are no articles here</string>
+    <string name="load_more">Load more</string>
 
     <plurals name="downloaded_x_items">
         <item quantity="one">Downloaded %d item</item>

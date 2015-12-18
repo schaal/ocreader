@@ -20,14 +20,11 @@
 
 package email.schaal.cloudreader.view;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import email.schaal.cloudreader.R;

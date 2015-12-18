@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Load more"
+            android:text="@string/load_more"
             android:textColor="?android:attr/textColorSecondary"/>
 
     <ProgressBar style="@style/Widget.AppCompat.ProgressBar"

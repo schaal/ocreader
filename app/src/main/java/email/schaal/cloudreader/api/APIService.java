@@ -21,7 +21,6 @@
 package email.schaal.cloudreader.api;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.ExclusionStrategy;
@@ -32,7 +31,6 @@ import com.squareup.okhttp.HttpUrl;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -427,7 +425,7 @@ public class APIService {
         /**
          * Handle the response
          *
-         * @param realm
+         * @param realm Realm to insert/update items
          * @param response Retrofit response
          * @return true iff sync event is finished, false iff another run is necessary.
          */
