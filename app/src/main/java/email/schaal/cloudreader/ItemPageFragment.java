@@ -20,6 +20,7 @@
 
 package email.schaal.cloudreader;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -28,10 +29,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.graphics.Palette;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.webkit.WebViewFragment;
 
 import org.jsoup.Jsoup;
@@ -51,12 +52,24 @@ import email.schaal.cloudreader.util.StringUtils;
 /**
  * Created by daniel on 15.11.15.
  */
-public class ItemPageFragment extends WebViewFragment {
+public class ItemPageFragment extends Fragment {
     private static final String TAG = ItemPageFragment.class.getSimpleName();
 
     public static final String ARG_POSITION = "ARG_POSITION";
 
+    private final static Cleaner cleaner = new Cleaner(Whitelist.relaxed());
+
+    private static String css = null;
+
     private Item item;
+
+    private final FaviconUtils.PaletteBitmapAsyncListener paletteAsyncListener = new FaviconUtils.PaletteBitmapAsyncListener() {
+        @Override
+        public void onGenerated(Palette palette, Bitmap bitmap) {
+            loadWebViewData(getActivity(), palette);
+        }
+    };
+    private WebView webView;
 
     public ItemPageFragment() {
     }
@@ -67,6 +80,16 @@ public class ItemPageFragment extends WebViewFragment {
         bundle.putInt(ARG_POSITION, position);
         fragment.setArguments(bundle);
         return fragment;
+    }
+
+    public static String getCssColor(int color) {
+        // using %f for the double value would result in a localized string, e.g. 0,12 which
+        // would be an invalid css color string
+        return String.format("rgba(%d,%d,%d,%s)",
+                Color.red(color),
+                Color.green(color),
+                Color.blue(color),
+                Double.toString(Color.alpha(color) / 255.0));
     }
 
     @Override
@@ -80,28 +103,17 @@ public class ItemPageFragment extends WebViewFragment {
         FaviconUtils.getInstance().loadFavicon(activity, feed, paletteAsyncListener);
     }
 
-    private final FaviconUtils.PaletteBitmapAsyncListener paletteAsyncListener = new FaviconUtils.PaletteBitmapAsyncListener() {
-        @Override
-        public void onGenerated(Palette palette, Bitmap bitmap) {
-            loadWebViewData(getActivity(), palette);
-        }
-    };
-
     private void loadWebViewData(Context context, @Nullable Palette palette) {
-        getWebView().loadDataWithBaseURL(null, getHtml(context, item, palette), "text/html", "UTF-8", null);
+        webView.loadDataWithBaseURL(null, getHtml(context, item, palette), "text/html", "UTF-8", null);
     }
 
-    private final static Cleaner cleaner = new Cleaner(Whitelist.relaxed());
-
-    private static String css = null;
-
     private String getHtml(Context context, Item item, @Nullable Palette palette) {
-        if(css == null)
+        if (css == null)
             try {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open("item_page.css")));
                 String line;
                 StringBuilder cssBuilder = new StringBuilder();
-                while((line = bufferedReader.readLine()) != null) {
+                while ((line = bufferedReader.readLine()) != null) {
                     cssBuilder.append(line);
                 }
                 css = cssBuilder.toString();
@@ -110,7 +122,7 @@ public class ItemPageFragment extends WebViewFragment {
             }
 
         int titleColor = ContextCompat.getColor(context, R.color.primary_text);
-        if(palette != null) {
+        if (palette != null) {
             titleColor = palette.getDarkVibrantColor(titleColor);
         }
 
@@ -142,19 +154,23 @@ public class ItemPageFragment extends WebViewFragment {
         return pageBuilder.toString();
     }
 
-    public static String getCssColor(int color) {
-        // using %f for the double value would result in a localized string, e.g. 0,12 which
-        // would be an invalid css color string
-        return String.format("rgba(%d,%d,%d,%s)",
-                Color.red(color),
-                Color.green(color),
-                Color.blue(color),
-                Double.toString(Color.alpha(color) / 255.0));
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_item_pager, container, false);
+        webView = (WebView) rootView.findViewById(R.id.webview);
+
+        return rootView;
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        // set to software to prevent freezes on some devices (e.g. Moto X Play)
-        getWebView().setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+    public void onPause() {
+        super.onPause();
+        webView.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        webView.onResume();
     }
 }

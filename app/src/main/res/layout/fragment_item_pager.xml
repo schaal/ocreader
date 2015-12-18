@@ -18,10 +18,16 @@
   ~ along with Cloudreader.  If not, see <http://www.gnu.org/licenses/>.
   ~
   -->
+
+<!-- Using software rendering to prevent frozen or blank webviews -->
 <android.support.v4.widget.NestedScrollView
     android:id="@+id/nestedscrollview"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layerType="software">
 
+    <WebView android:id="@+id/webview"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"/>
 </android.support.v4.widget.NestedScrollView>
