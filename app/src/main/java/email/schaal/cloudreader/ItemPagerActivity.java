@@ -22,10 +22,12 @@ package email.schaal.cloudreader;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
@@ -40,6 +42,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.util.WeakHashMap;
 
@@ -119,6 +122,14 @@ public class ItemPagerActivity extends RealmActivity {
                 Log.d(TAG, "onPageSelected: " + position);
                 item = getItemForPosition(position);
                 setItemUnread(false);
+
+                fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.getUrl()));
+                        startActivity(intent);
+                    }
+                });
 
                 Feed feed = Item.feed(item);
                 setActionBarColors(feed);
