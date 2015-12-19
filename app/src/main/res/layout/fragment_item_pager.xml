@@ -19,14 +19,12 @@
   ~
   -->
 
-<!-- Using software rendering to prevent frozen or blank webviews -->
 <android.support.v4.widget.NestedScrollView
     android:id="@+id/nestedscrollview"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:layerType="software">
+    android:background="@android:color/white">
 
     <WebView android:id="@+id/webview"
              android:layout_width="match_parent"

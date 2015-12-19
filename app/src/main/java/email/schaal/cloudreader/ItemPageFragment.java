@@ -24,10 +24,12 @@ import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -156,6 +158,13 @@ public class ItemPageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_item_pager, container, false);
         webView = (WebView) rootView.findViewById(R.id.webview);
+
+        // Using software rendering to prevent frozen or blank webviews
+        // See https://code.google.com/p/chromium/issues/detail?id=501901
+        if(Build.HARDWARE.equals("qcom") && Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+            Log.w(TAG, "Using software rendering");
+            rootView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
 
         return rootView;
     }
