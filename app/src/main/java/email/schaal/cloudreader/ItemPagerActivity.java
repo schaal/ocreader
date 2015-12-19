@@ -22,6 +22,7 @@ package email.schaal.cloudreader;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -29,6 +30,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
@@ -74,6 +76,7 @@ public class ItemPagerActivity extends RealmActivity {
 
     private MenuItem menuItemMarkRead;
     private MenuItem menuItemMarkStarred;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +102,7 @@ public class ItemPagerActivity extends RealmActivity {
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
 
+        fab = (FloatingActionButton) findViewById(R.id.fab_open_in_browser);
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -201,6 +205,7 @@ public class ItemPagerActivity extends RealmActivity {
             toolbarColor = defaultToolbarColor;
         }
         toolbar.setBackgroundColor(toolbarColor);
+        fab.setBackgroundTintList(ColorStateList.valueOf(toolbarColor));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int statusbarColor = Color.rgb(
