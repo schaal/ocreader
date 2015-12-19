@@ -70,13 +70,13 @@ public class ItemPagerActivity extends RealmActivity {
     private ViewPager mViewPager;
     private TemporaryFeed temporaryFeed;
     private Toolbar toolbar;
+    private FloatingActionButton fab;
 
     @ColorInt private int defaultToolbarColor;
     private Item item;
 
     private MenuItem menuItemMarkRead;
     private MenuItem menuItemMarkStarred;
-    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +103,7 @@ public class ItemPagerActivity extends RealmActivity {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
 
         fab = (FloatingActionButton) findViewById(R.id.fab_open_in_browser);
+
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -121,6 +122,8 @@ public class ItemPagerActivity extends RealmActivity {
 
                 Feed feed = Item.feed(item);
                 setActionBarColors(feed);
+
+                fab.show();
             }
 
             @Override
