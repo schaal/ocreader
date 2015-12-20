@@ -168,10 +168,8 @@ public class ItemPagerActivity extends RealmActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         menuItemMarkRead.setChecked(!item.isUnread());
         menuItemMarkRead.setIcon(menuItemMarkRead.isChecked() ? R.drawable.ic_check_box : R.drawable.ic_check_box_outline_blank);
-        menuItemMarkRead.setIcon(menuItemMarkRead.isChecked() ? R.drawable.ic_check_box : R.drawable.ic_check_box_outline_blank);
 
         menuItemMarkStarred.setChecked(item.isStarred());
-        menuItemMarkStarred.setIcon(menuItemMarkStarred.isChecked() ? R.drawable.ic_star : R.drawable.ic_star_outline);
         menuItemMarkStarred.setIcon(menuItemMarkStarred.isChecked() ? R.drawable.ic_star : R.drawable.ic_star_outline);
 
         return super.onPrepareOptionsMenu(menu);
