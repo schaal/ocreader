@@ -29,6 +29,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
@@ -57,8 +58,10 @@ import java.io.ByteArrayInputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+import email.schaal.cloudreader.database.Queries;
 import email.schaal.cloudreader.model.Feed;
 import email.schaal.cloudreader.model.Item;
+import email.schaal.cloudreader.model.TemporaryFeed;
 import email.schaal.cloudreader.model.TreeItem;
 import email.schaal.cloudreader.model.User;
 import email.schaal.cloudreader.service.SyncService;
@@ -120,6 +123,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private AccountHeader accountHeader;
 
     private SwipeRefreshLayout swipeRefreshLayout;
+    private FloatingActionButton fab_mark_all_read;
 
     @Override
     protected void onPause() {
@@ -149,6 +153,16 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         drawerManager = new DrawerManager(this);
         drawerManager.getState().restoreInstanceState(savedInstanceState);
+
+        fab_mark_all_read = (FloatingActionButton) findViewById(R.id.fab_mark_all_read);
+        fab_mark_all_read.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TemporaryFeed temporaryFeed = getRealm().where(TemporaryFeed.class).findFirst();
+                Queries.getInstance().setItemsUnreadState(getRealm(), false, null, temporaryFeed.getItems().where().equalTo(Item.UNREAD, true).findAll());
+                getListFragment().update(false);
+            }
+        });
 
         profileDrawerItem = new ProfileDrawerItem()
                 .withName(preferences.getString(Preferences.USERNAME.getKey(), getString(R.string.app_name)))
@@ -362,9 +376,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 return true;
             case R.id.action_sync:
                 SyncService.startSync(this);
-                break;
-            case R.id.action_mark_all_read:
-                // TODO: 11.12.15 Mark all as read
                 break;
         }
 

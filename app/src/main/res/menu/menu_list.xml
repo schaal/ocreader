@@ -23,11 +23,6 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="email.schaal.cloudreader.ListActivity">
 
-    <item android:id="@+id/action_mark_all_read"
-          android:icon="@drawable/ic_done_all"
-          android:title="@string/mark_all_as_read"
-          app:showAsAction="never" />
-
     <item android:id="@+id/action_settings"
           android:icon="@drawable/ic_settings"
           android:orderInCategory="100"

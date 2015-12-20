@@ -289,30 +289,30 @@ public class Queries {
             }
         });
     }
+    public void setItemUnreadState(Realm realm, final boolean newUnread, @Nullable final Realm.Transaction.Callback transactionCallback, final Item item) {
+        setItemsUnreadState(realm, newUnread, transactionCallback, Collections.singletonList(item));
+    }
 
-    public void setItemUnreadState(Realm realm, final Item item, final boolean newUnread, @Nullable final Realm.Transaction.Callback transactionCallback) {
+    public void setItemsUnreadState(Realm realm, final boolean newUnread, @Nullable final Realm.Transaction.Callback transactionCallback, final List<Item> items) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
+                ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
+                RealmList<Item> unreadChangedItems = changedItems.getUnreadChangedItems();
+
                 try {
-                    boolean oldUnread = item.isUnread();
-                    if(oldUnread != newUnread) {
-                        item.setUnread(newUnread);
+                    for (int i = 0, itemsSize = items.size(); i < itemsSize; i++) {
+                        Item item = items.get(i);
+                        boolean oldUnread = item.isUnread();
+                        if (oldUnread != newUnread) {
+                            item.setUnread(newUnread);
 
-                        ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
+                            addToChangedList(unreadChangedItems, item);
 
-                        RealmList<Item> unreadChangedItems = changedItems.getUnreadChangedItems();
-                        addToChangedList(unreadChangedItems, item);
-
-                        Feed feed = Item.feed(item);
-                        if (newUnread)
-                            feed.setUnreadCount(feed.getUnreadCount() + 1);
-                        else
-                            feed.setUnreadCount(feed.getUnreadCount() - 1);
-
-                        checkAlarm(changedItems);
+                            Feed feed = Item.feed(item);
+                            feed.setUnreadCount(feed.getUnreadCount() + (newUnread ? 1 : -1));
+                        }
                     }
-
 
                     if (transactionCallback != null) {
                         transactionCallback.onSuccess();
@@ -322,6 +322,8 @@ public class Queries {
                     if (transactionCallback != null) {
                         transactionCallback.onError(e);
                     }
+                } finally {
+                    checkAlarm(changedItems);
                 }
             }
         });

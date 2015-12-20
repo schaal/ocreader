@@ -176,7 +176,7 @@ public class ItemPagerActivity extends RealmActivity {
     }
 
     private void setItemUnread(boolean unread) {
-        Queries.getInstance().setItemUnreadState(getRealm(), this.item, unread, null);
+        Queries.getInstance().setItemUnreadState(getRealm(), unread, null, this.item);
         invalidateOptionsMenu();
     }
 
