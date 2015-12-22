@@ -289,11 +289,8 @@ public class Queries {
             }
         });
     }
-    public void setItemUnreadState(Realm realm, final boolean newUnread, @Nullable final Realm.Transaction.Callback transactionCallback, final Item item) {
-        setItemsUnreadState(realm, newUnread, transactionCallback, Collections.singletonList(item));
-    }
 
-    public void setItemsUnreadState(Realm realm, final boolean newUnread, @Nullable final Realm.Transaction.Callback transactionCallback, final List<Item> items) {
+    public void setItemsUnreadState(Realm realm, final boolean newUnread, @Nullable final Realm.Transaction.Callback transactionCallback, final Item... items) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -301,8 +298,7 @@ public class Queries {
                 RealmList<Item> unreadChangedItems = changedItems.getUnreadChangedItems();
 
                 try {
-                    for (int i = 0, itemsSize = items.size(); i < itemsSize; i++) {
-                        Item item = items.get(i);
+                    for (Item item : items) {
                         if (item.isUnread() != newUnread) {
                             item.setUnread(newUnread);
 

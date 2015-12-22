@@ -67,6 +67,7 @@ import email.schaal.cloudreader.model.User;
 import email.schaal.cloudreader.service.SyncService;
 import email.schaal.cloudreader.view.ItemViewHolder;
 import email.schaal.cloudreader.view.drawer.DrawerManager;
+import io.realm.RealmResults;
 
 public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
     private static final String TAG = ListActivity.class.getSimpleName();
@@ -159,7 +160,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             @Override
             public void onClick(View v) {
                 TemporaryFeed temporaryFeed = getRealm().where(TemporaryFeed.class).findFirst();
-                Queries.getInstance().setItemsUnreadState(getRealm(), false, null, temporaryFeed.getItems().where().equalTo(Item.UNREAD, true).findAll());
+                final RealmResults<Item> items = temporaryFeed.getItems().where().equalTo(Item.UNREAD, true).findAll();
+                Queries.getInstance().setItemsUnreadState(getRealm(), false, null, items.toArray(new Item[items.size()]));
                 getListFragment().update(false);
             }
         });
