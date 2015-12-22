@@ -303,8 +303,7 @@ public class Queries {
                 try {
                     for (int i = 0, itemsSize = items.size(); i < itemsSize; i++) {
                         Item item = items.get(i);
-                        boolean oldUnread = item.isUnread();
-                        if (oldUnread != newUnread) {
+                        if (item.isUnread() != newUnread) {
                             item.setUnread(newUnread);
 
                             addToChangedList(unreadChangedItems, item);
