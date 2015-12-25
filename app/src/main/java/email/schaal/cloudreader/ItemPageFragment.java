@@ -37,8 +37,10 @@ import android.webkit.WebView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.safety.Cleaner;
 import org.jsoup.safety.Whitelist;
+import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -127,6 +129,7 @@ public class ItemPageFragment extends Fragment {
         }
 
         Document document = Jsoup.parse(item.getBody());
+        prepareDocument(document);
         document = cleaner.clean(document);
 
         String cssColor = getCssColor(titleColor);
@@ -152,6 +155,17 @@ public class ItemPageFragment extends Fragment {
         pageBuilder.append("</body></html>");
 
         return pageBuilder.toString();
+    }
+
+    private void prepareDocument(Document document) {
+        Elements iframes = document.getElementsByTag("iframe");
+        for(Element iframe: iframes) {
+            final String src = iframe.attr("src");
+            iframe.tagName("a");
+            iframe.removeAttr("src");
+            iframe.attr("href", src);
+            iframe.html(src);
+        }
     }
 
     @Override

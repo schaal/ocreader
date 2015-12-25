@@ -5,7 +5,6 @@ body, blockquote, img, iframe, video, div, table, tbody, tr, td, pre, code, bloc
 }
 
 pre, code, blockquote {
-    white-space: pre-wrap !important;
     word-wrap: break-word !important;
 }
 
