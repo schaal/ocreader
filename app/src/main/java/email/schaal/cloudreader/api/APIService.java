@@ -35,6 +35,7 @@ import com.squareup.okhttp.HttpUrl;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -113,8 +114,9 @@ public class APIService {
         final ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
         final CountDownLatch countDownLatch = new CountDownLatch(MarkAction.values().length);
 
+        final Set<List<Item>> itemsToClear = new HashSet<>(4);
         for (MarkAction action : MarkAction.values()) {
-            markItems(action, changedItems, countDownLatch);
+            markItems(action, changedItems, countDownLatch, itemsToClear);
         }
 
         executor.execute(new Runnable() {
@@ -132,9 +134,8 @@ public class APIService {
                         realm.executeTransaction(new Realm.Transaction() {
                             @Override
                             public void execute(Realm realm) {
-                                // TODO: 25.12.15 Only clear items when api call was successful
-                                changedItems.getStarredChangedItems().clear();
-                                changedItems.getUnreadChangedItems().clear();
+                                for(List<Item> itemList: itemsToClear)
+                                        itemList.clear();
                             }
                         });
                         if(callback != null)
@@ -146,7 +147,7 @@ public class APIService {
 
     }
 
-    private void markItems(MarkAction action, ChangedItems changedItems, final CountDownLatch countDownLatch) {
+    private void markItems(MarkAction action, ChangedItems changedItems, final CountDownLatch countDownLatch, final Set<List<Item>> itemsToClear) {
         RealmResults<Item> results;
         final RealmList<Item> items;
 
@@ -178,6 +179,7 @@ public class APIService {
             @Override
             public void onResponse(Response<Void> response, Retrofit retrofit) {
                 countDownLatch.countDown();
+                itemsToClear.add(items);
             }
 
             @Override
