@@ -25,6 +25,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 
@@ -46,6 +47,10 @@ public class CloudReaderApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putBoolean(Preferences.SYS_SYNC_RUNNING.getKey(), false)
+                .apply();
         HttpManager.init(this);
         Queries.init(this);
         APIService.init(this);
