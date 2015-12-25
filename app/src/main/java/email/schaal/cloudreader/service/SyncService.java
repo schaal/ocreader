@@ -39,6 +39,7 @@ import email.schaal.cloudreader.api.APIService;
 import email.schaal.cloudreader.model.Feed;
 import email.schaal.cloudreader.model.Item;
 import email.schaal.cloudreader.util.AlarmUtils;
+import hugo.weaving.DebugLog;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -65,11 +66,10 @@ public class SyncService extends IntentService {
         super("SyncService");
     }
 
+    @DebugLog
     @Override
     protected void onHandleIntent(Intent intent) {
         AlarmUtils.getInstance().cancelAlarm();
-
-        Log.d(TAG, "sync started: " + intent.getAction());
 
         // do a full sync or only sync read/starred changes?
         if (ACTION_FULL_SYNC.equals(intent.getAction())) {
@@ -79,9 +79,6 @@ public class SyncService extends IntentService {
         } else {
             Log.w(TAG, "unknown Intent received: " + intent.getAction());
         }
-
-        Log.d(TAG, "sync finished");
-
     }
 
     private long getLastSyncTimestamp(Realm realm) {
