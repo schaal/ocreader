@@ -39,6 +39,7 @@
         tools:text="This is a very long title that will get ellipsized: Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy"
         android:layout_alignTop="@+id/imageview_favicon"
         android:layout_toRightOf="@+id/imageview_favicon"
+        android:layout_toStartOf="@+id/imageview_star"
         android:layout_toEndOf="@+id/imageview_favicon"/>
 
     <TextView
@@ -62,6 +63,16 @@
         android:src="@drawable/ic_feed_icon"
         android:contentDescription="@string/feed_icon_description"
         android:layout_margin="4dp"/>
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:id="@+id/imageview_star"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="4dp"
+        android:src="@drawable/ic_star"
+        android:tint="#FFA000"
+        android:visibility="gone"/>
 
     <TextView
         android:layout_width="wrap_content"

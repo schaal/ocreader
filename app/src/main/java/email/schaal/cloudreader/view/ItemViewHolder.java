@@ -45,6 +45,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     private final TextView textViewFeedTitle;
     private final TextView textViewTime;
     private final ImageView faviconImageView;
+    private final ImageView starImageView;
 
     private final int defaultFeedTextColor;
 
@@ -60,6 +61,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         textViewTime = (TextView) itemView.findViewById(R.id.textViewTime);
 
         faviconImageView = (ImageView) itemView.findViewById(R.id.imageview_favicon);
+        starImageView = (ImageView) itemView.findViewById(R.id.imageview_star);
 
         defaultFeedTextColor = ContextCompat.getColor(itemView.getContext(),R.color.secondary_text);
 
@@ -83,7 +85,8 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
                 textViewTitle,
                 textViewFeedTitle,
                 textViewTime,
-                faviconImageView
+                faviconImageView,
+                starImageView
         };
     }
 
@@ -108,6 +111,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         });
 
         setUnreadState(item.isUnread());
+        setStarredState(item.isStarred());
     }
 
     private void setUnreadState(boolean unread) {
@@ -115,6 +119,10 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         for(View view: alphaViews) {
             view.setAlpha(alpha);
         }
+    }
+
+    private void setStarredState(boolean starred) {
+        starImageView.setVisibility(starred ? View.VISIBLE : View.GONE);
     }
 
     public interface OnClickListener {
