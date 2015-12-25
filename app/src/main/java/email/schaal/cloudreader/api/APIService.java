@@ -78,22 +78,6 @@ public class APIService {
     private final Context context;
     private final Gson gson;
 
-    public void syncChanges() {
-        Realm realm = null;
-        try {
-            realm = Realm.getDefaultInstance();
-
-            for(MarkAction action: MarkAction.values()) {
-                markItems(realm, action);
-            }
-
-        } finally {
-            if(realm != null)
-                realm.close();
-        }
-
-    }
-
     private enum MarkAction {
         MARK_READ(Item.UNREAD, false),
         MARK_UNREAD(Item.UNREAD, true),
@@ -117,14 +101,21 @@ public class APIService {
         }
     }
 
-    private void markItems(Realm realm, MarkAction action) {
+    public void syncChanges(Realm realm) {
+        ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
+        for (MarkAction action : MarkAction.values()) {
+            markItems(realm, action, changedItems);
+        }
+    }
+
+    private void markItems(Realm realm, MarkAction action, ChangedItems changedItems) {
         RealmResults<Item> results;
         final RealmList<Item> items;
 
         if(action.getKey().equals(Item.UNREAD))
-            items = realm.where(ChangedItems.class).findFirst().getUnreadChangedItems();
+            items = changedItems.getUnreadChangedItems();
         else
-            items = realm.where(ChangedItems.class).findFirst().getStarredChangedItems();
+            items = changedItems.getStarredChangedItems();
 
         results = items.where().equalTo(action.getKey(), action.getValue()).findAll();
 

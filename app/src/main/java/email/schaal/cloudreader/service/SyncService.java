@@ -71,13 +71,20 @@ public class SyncService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         AlarmUtils.getInstance().cancelAlarm();
 
-        // do a full sync or only sync read/starred changes?
-        if (ACTION_FULL_SYNC.equals(intent.getAction())) {
-            fullSync();
-        } else if (ACTION_SYNC_CHANGES_ONLY.equals(intent.getAction())) {
-            APIService.getInstance().syncChanges();
-        } else {
-            Log.w(TAG, "unknown Intent received: " + intent.getAction());
+        Realm realm = null;
+        try {
+            realm = Realm.getDefaultInstance();
+            // do a full sync or only sync read/starred changes?
+            if (ACTION_FULL_SYNC.equals(intent.getAction())) {
+                fullSync(realm);
+            } else if (ACTION_SYNC_CHANGES_ONLY.equals(intent.getAction())) {
+                APIService.getInstance().syncChanges(realm);
+            } else {
+                Log.w(TAG, "unknown Intent received: " + intent.getAction());
+            }
+        } finally {
+            if(realm != null)
+                realm.close();
         }
     }
 
@@ -91,14 +98,11 @@ public class SyncService extends IntentService {
         return lastSync;
     }
 
-    private void fullSync() {
+    private void fullSync(Realm realm) {
         notifySyncStatus(SYNC_STARTED);
 
-        Realm realm = null;
         try {
-            realm = Realm.getDefaultInstance();
-
-            APIService.getInstance().syncChanges();
+            APIService.getInstance().syncChanges(realm);
 
             countDownLatch = new CountDownLatch(4);
 
@@ -132,9 +136,6 @@ public class SyncService extends IntentService {
                 }
             });
         } finally {
-            if (realm != null) {
-                realm.close();
-            }
             notifySyncStatus(SYNC_FINISHED);
         }
     }
