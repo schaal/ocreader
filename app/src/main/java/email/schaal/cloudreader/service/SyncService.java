@@ -20,30 +20,34 @@
 
 package email.schaal.cloudreader.service;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.IntentService;
+import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import email.schaal.cloudreader.Preferences;
 import email.schaal.cloudreader.api.APIService;
 import email.schaal.cloudreader.model.Feed;
 import email.schaal.cloudreader.model.Item;
 import email.schaal.cloudreader.util.AlarmUtils;
-import hugo.weaving.DebugLog;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class SyncService extends IntentService {
+public class SyncService extends Service {
     private static final String TAG = SyncService.class.getSimpleName();
 
     public static final String SYNC_FINISHED = "email.schaal.cloudreader.action.SYNC_FINISHED";
@@ -54,6 +58,9 @@ public class SyncService extends IntentService {
 
     public static final IntentFilter syncFilter;
 
+    private final Executor executor = Executors.newSingleThreadExecutor();
+    private Realm realm;
+
     static {
         syncFilter = new IntentFilter();
         syncFilter.addAction(SYNC_STARTED);
@@ -63,29 +70,49 @@ public class SyncService extends IntentService {
     private CountDownLatch countDownLatch;
 
     public SyncService() {
-        super("SyncService");
     }
 
-    @DebugLog
+    @Nullable
     @Override
-    protected void onHandleIntent(Intent intent) {
-        AlarmUtils.getInstance().cancelAlarm();
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 
-        Realm realm = null;
-        try {
-            realm = Realm.getDefaultInstance();
-            // do a full sync or only sync read/starred changes?
-            if (ACTION_FULL_SYNC.equals(intent.getAction())) {
-                fullSync(realm);
-            } else if (ACTION_SYNC_CHANGES_ONLY.equals(intent.getAction())) {
-                APIService.getInstance().syncChanges(realm);
-            } else {
-                Log.w(TAG, "unknown Intent received: " + intent.getAction());
-            }
-        } finally {
-            if(realm != null)
-                realm.close();
+    @Override
+    public void onCreate() {
+        realm = Realm.getDefaultInstance();
+        super.onCreate();
+    }
+
+    @Override
+    public void onDestroy() {
+        realm.close();
+        super.onDestroy();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, final int startId) {
+        // do a full sync or only sync read/starred changes?
+        if (ACTION_FULL_SYNC.equals(intent.getAction())) {
+            AlarmUtils.getInstance().cancelAlarm();
+            fullSync(startId);
+        } else if (ACTION_SYNC_CHANGES_ONLY.equals(intent.getAction())) {
+            AlarmUtils.getInstance().cancelAlarm();
+            APIService.getInstance().syncChanges(realm, new APIService.APICallback() {
+                @Override
+                public void onSuccess() {
+                    stopSelf(startId);
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+
+                }
+            });
+        } else {
+            Log.w(TAG, "unknown Intent received: " + intent.getAction());
         }
+        return START_NOT_STICKY;
     }
 
     private long getLastSyncTimestamp(Realm realm) {
@@ -94,61 +121,80 @@ public class SyncService extends IntentService {
         if (maximumDate != null)
             lastSync = maximumDate.getTime() / 1000 + 1;
 
-        Log.d(TAG, "Last sync timestamp: " + lastSync);
         return lastSync;
     }
 
-    private void fullSync(Realm realm) {
+    private final Handler handler = new Handler(Looper.getMainLooper());
+
+    private void fullSync(final int startId) {
         notifySyncStatus(SYNC_STARTED);
 
-        try {
-            APIService.getInstance().syncChanges(realm);
+        APIService.getInstance().syncChanges(realm, new APIService.APICallback() {
+            @Override
+            public void onSuccess() {
+                countDownLatch = new CountDownLatch(4);
 
-            countDownLatch = new CountDownLatch(4);
+                APIService.getInstance().user(apiCallback);
+                APIService.getInstance().folders(apiCallback);
+                APIService.getInstance().feeds(apiCallback, true);
+                APIService.getInstance().items(getLastSyncTimestamp(realm), APIService.QueryType.ALL, apiCallback);
 
-            APIService.getInstance().user(apiCallback);
-            APIService.getInstance().folders(apiCallback);
-            APIService.getInstance().feeds(apiCallback, true);
-            APIService.getInstance().items(getLastSyncTimestamp(realm), APIService.QueryType.ALL, apiCallback);
-
-            try {
-                countDownLatch.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            countDownLatch.await();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                postProcessFeeds(realm);
+                                notifySyncStatus(SYNC_FINISHED);
+                                stopSelf(startId);
+                            }
+                        });
+                    }
+                });
             }
 
-            // Post-process feeds: add starredCount and update unreadCount
-            final RealmResults<Feed> feeds = realm.where(Feed.class).findAll();
-            realm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    for (int i = 0, feedsSize = feeds.size(); i < feedsSize; i++) {
-                        Feed feed = feeds.get(i);
-                        feed.setStarredCount((int) realm.where(Item.class)
-                                        .equalTo(Item.FEED_ID, feed.getId())
-                                        .equalTo(Item.STARRED, true).count()
-                        );
-                        feed.setUnreadCount((int) realm.where(Item.class)
-                                        .equalTo(Item.FEED_ID, feed.getId())
-                                        .equalTo(Item.UNREAD, true).count()
-                        );
-                    }
-                }
-            });
-        } finally {
-            notifySyncStatus(SYNC_FINISHED);
-        }
+            @Override
+            public void onFailure(String errorMessage) {
+
+            }
+        });
     }
 
-    // not on main thread, use commit() to store SharedPreferences
-    @SuppressLint("CommitPrefEdits")
+    private void postProcessFeeds(Realm realm) {
+        // Post-process feeds: add starredCount and update unreadCount
+        final RealmResults<Feed> feeds = realm.where(Feed.class).findAll();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                for (int i = 0, feedsSize = feeds.size(); i < feedsSize; i++) {
+                    Feed feed = feeds.get(i);
+                    feed.setStarredCount((int) realm.where(Item.class)
+                                    .equalTo(Item.FEED_ID, feed.getId())
+                                    .equalTo(Item.STARRED, true).count()
+                    );
+                    feed.setUnreadCount((int) realm.where(Item.class)
+                                    .equalTo(Item.FEED_ID, feed.getId())
+                                    .equalTo(Item.UNREAD, true).count()
+                    );
+                }
+            }
+        });
+    }
+
     private void notifySyncStatus(@NonNull String action) {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         if(action.equals(SYNC_FINISHED))
             editor.putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), true);
         LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(action));
         editor.putBoolean(Preferences.SYS_SYNC_RUNNING.getKey(), action.equals(SYNC_STARTED));
-        editor.commit();
+        editor.apply();
+        Log.d(TAG, action);
     }
 
     private final APIService.APICallback apiCallback = new APIService.APICallback() {

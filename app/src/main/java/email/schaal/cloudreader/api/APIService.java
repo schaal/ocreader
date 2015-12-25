@@ -21,6 +21,10 @@
 package email.schaal.cloudreader.api;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.widget.Toast;
 
 import com.google.gson.ExclusionStrategy;
@@ -30,11 +34,13 @@ import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.HttpUrl;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import email.schaal.cloudreader.R;
 import email.schaal.cloudreader.database.Queries;
@@ -78,6 +84,8 @@ public class APIService {
     private final Context context;
     private final Gson gson;
 
+    private final Executor executor = Executors.newSingleThreadExecutor();
+
     private enum MarkAction {
         MARK_READ(Item.UNREAD, false),
         MARK_UNREAD(Item.UNREAD, true),
@@ -101,14 +109,44 @@ public class APIService {
         }
     }
 
-    public void syncChanges(Realm realm) {
-        ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
+    public void syncChanges(@NonNull final Realm realm, @Nullable final APICallback callback) {
+        final ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
+        final CountDownLatch countDownLatch = new CountDownLatch(MarkAction.values().length);
+
         for (MarkAction action : MarkAction.values()) {
-            markItems(realm, action, changedItems);
+            markItems(action, changedItems, countDownLatch);
         }
+
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    countDownLatch.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        realm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                // TODO: 25.12.15 Only clear items when api call was successful
+                                changedItems.getStarredChangedItems().clear();
+                                changedItems.getUnreadChangedItems().clear();
+                            }
+                        });
+                        if(callback != null)
+                            callback.onSuccess();
+                    }
+                });
+            }
+        });
+
     }
 
-    private void markItems(Realm realm, MarkAction action, ChangedItems changedItems) {
+    private void markItems(MarkAction action, ChangedItems changedItems, final CountDownLatch countDownLatch) {
         RealmResults<Item> results;
         final RealmList<Item> items;
 
@@ -121,9 +159,11 @@ public class APIService {
 
         int size = results.size();
 
-        // Nothing to do, just return
-        if(size == 0)
+        // Nothing to do, countdown and return
+        if(size == 0) {
+            countDownLatch.countDown();
             return;
+        }
 
         ItemMap itemMap = new ItemMap();
         itemMap.put(results);
@@ -134,29 +174,32 @@ public class APIService {
             ids.setItems(itemMap.getKeys());
         }
 
-        try {
-            switch (action) {
-                case MARK_READ:
-                    api.markItemsRead(ids).execute();
-                    break;
-                case MARK_UNREAD:
-                    api.markItemsUnread(ids).execute();
-                    break;
-                case MARK_STARRED:
-                    api.markItemsStarred(itemMap).execute();
-                    break;
-                case MARK_UNSTARRED:
-                    api.markItemsUnstarred(itemMap).execute();
-                    break;
+        Callback<Void> markCallback = new Callback<Void>() {
+            @Override
+            public void onResponse(Response<Void> response, Retrofit retrofit) {
+                countDownLatch.countDown();
             }
-            realm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    items.clear();
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
+
+            @Override
+            public void onFailure(Throwable t) {
+                t.printStackTrace();
+                countDownLatch.countDown();
+            }
+        };
+
+        switch (action) {
+            case MARK_READ:
+                api.markItemsRead(ids).enqueue(markCallback);
+                break;
+            case MARK_UNREAD:
+                api.markItemsUnread(ids).enqueue(markCallback);
+                break;
+            case MARK_STARRED:
+                api.markItemsStarred(itemMap).enqueue(markCallback);
+                break;
+            case MARK_UNSTARRED:
+                api.markItemsUnstarred(itemMap).enqueue(markCallback);
+                break;
         }
     }
 
