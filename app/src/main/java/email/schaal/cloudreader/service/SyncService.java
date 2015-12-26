@@ -146,15 +146,16 @@ public class SyncService extends Service {
                             countDownLatch.await();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
+                        } finally {
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    postProcessFeeds(realm);
+                                    notifySyncStatus(SYNC_FINISHED);
+                                    stopSelf(startId);
+                                }
+                            });
                         }
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                postProcessFeeds(realm);
-                                notifySyncStatus(SYNC_FINISHED);
-                                stopSelf(startId);
-                            }
-                        });
                     }
                 });
             }
