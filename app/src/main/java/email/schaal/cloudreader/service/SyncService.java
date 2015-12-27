@@ -35,6 +35,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -53,8 +55,20 @@ public class SyncService extends Service {
     public static final String SYNC_FINISHED = "email.schaal.cloudreader.action.SYNC_FINISHED";
     public static final String SYNC_STARTED = "email.schaal.cloudreader.action.SYNC_STARTED";
 
+    private enum SyncType {
+        FULL_SYNC,
+        SYNC_CHANGES_ONLY
+    }
+
     public static final String ACTION_SYNC_CHANGES_ONLY = "email.schaal.cloudreader.action.SYNC_CHANGES_ONLY";
     public static final String ACTION_FULL_SYNC = "email.schaal.cloudreader.action.FULL_SYNC";
+
+    private static final Map<String, SyncType> syncTypeMap;
+    static {
+        syncTypeMap = new HashMap<>(SyncType.values().length);
+        syncTypeMap.put(ACTION_FULL_SYNC, SyncType.FULL_SYNC);
+        syncTypeMap.put(ACTION_SYNC_CHANGES_ONLY, SyncType.SYNC_CHANGES_ONLY);
+    }
 
     public static final IntentFilter syncFilter;
 
@@ -92,21 +106,55 @@ public class SyncService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, final int startId) {
-        // do a full sync or only sync read/starred changes?
-        if (ACTION_FULL_SYNC.equals(intent.getAction())) {
-            AlarmUtils.getInstance().cancelAlarm();
-            fullSync(startId);
-        } else if (ACTION_SYNC_CHANGES_ONLY.equals(intent.getAction())) {
+        final SyncType syncType = syncTypeMap.get(intent.getAction());
+
+        if(syncType != null) {
+            notifySyncStatus(SYNC_STARTED);
+
             AlarmUtils.getInstance().cancelAlarm();
             APIService.getInstance().syncChanges(realm, new APIService.OnCompletionListener() {
                 @Override
                 public void onCompleted() {
-                    stopSelf(startId);
+                    switch (syncType) {
+                        case SYNC_CHANGES_ONLY:
+                            notifySyncStatus(SYNC_FINISHED);
+                            stopSelf(startId);
+                            break;
+                        case FULL_SYNC:
+                            countDownLatch = new CountDownLatch(4);
+
+                            APIService.getInstance().user(apiCallback);
+                            APIService.getInstance().folders(apiCallback);
+                            APIService.getInstance().feeds(apiCallback, true);
+                            APIService.getInstance().items(getLastSyncTimestamp(realm), APIService.QueryType.ALL, apiCallback);
+
+                            executor.execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        countDownLatch.await();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    } finally {
+                                        handler.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                postProcessFeeds(realm);
+                                                notifySyncStatus(SYNC_FINISHED);
+                                                stopSelf(startId);
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                            break;
+                    }
                 }
             });
         } else {
             Log.w(TAG, "unknown Intent received: " + intent.getAction());
         }
+
         return START_NOT_STICKY;
     }
 
@@ -120,42 +168,6 @@ public class SyncService extends Service {
     }
 
     private final Handler handler = new Handler(Looper.getMainLooper());
-
-    private void fullSync(final int startId) {
-        notifySyncStatus(SYNC_STARTED);
-
-        APIService.getInstance().syncChanges(realm, new APIService.OnCompletionListener() {
-            @Override
-            public void onCompleted() {
-                countDownLatch = new CountDownLatch(4);
-
-                APIService.getInstance().user(apiCallback);
-                APIService.getInstance().folders(apiCallback);
-                APIService.getInstance().feeds(apiCallback, true);
-                APIService.getInstance().items(getLastSyncTimestamp(realm), APIService.QueryType.ALL, apiCallback);
-
-                executor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            countDownLatch.await();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } finally {
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    postProcessFeeds(realm);
-                                    notifySyncStatus(SYNC_FINISHED);
-                                    stopSelf(startId);
-                                }
-                            });
-                        }
-                    }
-                });
-            }
-        });
-    }
 
     private void postProcessFeeds(Realm realm) {
         // Post-process feeds: add starredCount and update unreadCount
