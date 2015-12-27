@@ -39,7 +39,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -175,12 +174,12 @@ public class ItemPagerActivity extends RealmActivity {
     }
 
     private void setItemUnread(boolean unread) {
-        Queries.getInstance().setItemsUnreadState(getRealm(), unread, null, this.item);
+        Queries.getInstance().setItemsUnread(getRealm(), unread, null, this.item);
         invalidateOptionsMenu();
     }
 
     private void setItemStarred(boolean starred) {
-        Queries.getInstance().setItemStarredState(getRealm(), this.item, starred, null);
+        Queries.getInstance().setItemStarred(getRealm(), starred, null, this.item);
         invalidateOptionsMenu();
     }
 

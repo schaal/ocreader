@@ -324,7 +324,7 @@ public class Queries {
         }, callback);
     }
 
-    public void setItemsUnreadState(Realm realm, final boolean newUnread, @Nullable final Realm.Transaction.Callback transactionCallback, final Item... items) {
+    public void setItemsUnread(Realm realm, final boolean newUnread, @Nullable final Realm.Transaction.Callback transactionCallback, final Item... items) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -358,27 +358,22 @@ public class Queries {
         });
     }
 
-    public void setItemStarredState(Realm realm, final Item item, final boolean newStarred, @Nullable final Realm.Transaction.Callback transactionCallback) {
+    public void setItemStarred(Realm realm, final boolean newStarred, @Nullable final Realm.Transaction.Callback transactionCallback, final Item item) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
+                ChangedItems changedItems = null;
                 try {
-                    boolean oldStarred = item.isStarred();
-                    if(oldStarred != newStarred) {
+                    if(item.isStarred() != newStarred) {
+                        changedItems = realm.where(ChangedItems.class).findFirst();
+                        RealmList<Item> starredChangedItems = changedItems.getStarredChangedItems();
+
                         item.setStarred(newStarred);
 
-                        ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
-
-                        RealmList<Item> starredChangedItems = changedItems.getStarredChangedItems();
                         addToChangedList(starredChangedItems, item);
 
                         Feed feed = Item.feed(item);
-                        if (newStarred)
-                            feed.setStarredCount(feed.getStarredCount() + 1);
-                        else
-                            feed.setStarredCount(feed.getStarredCount() - 1);
-
-                        checkAlarm(changedItems);
+                        feed.setStarredCount(feed.getStarredCount() + (newStarred ? 1 : -1));
                     }
 
                     if (transactionCallback != null) {
@@ -389,17 +384,21 @@ public class Queries {
                     if (transactionCallback != null) {
                         transactionCallback.onError(e);
                     }
+                } finally {
+                    checkAlarm(changedItems);
                 }
             }
         });
     }
 
-    private void checkAlarm(ChangedItems changedItems) {
-        boolean alarmNeeded = !changedItems.getStarredChangedItems().isEmpty() || !changedItems.getUnreadChangedItems().isEmpty();
-        if(alarmNeeded)
-            AlarmUtils.getInstance().setAlarm();
-        else
-            AlarmUtils.getInstance().cancelAlarm();
+    private void checkAlarm(@Nullable ChangedItems changedItems) {
+        if(changedItems != null) {
+            boolean alarmNeeded = !changedItems.getStarredChangedItems().isEmpty() || !changedItems.getUnreadChangedItems().isEmpty();
+            if (alarmNeeded)
+                AlarmUtils.getInstance().setAlarm();
+            else
+                AlarmUtils.getInstance().cancelAlarm();
+        }
     }
 
     private void addToChangedList(RealmList<Item> changedItems, Item item) {
