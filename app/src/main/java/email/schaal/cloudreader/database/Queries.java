@@ -275,7 +275,7 @@ public class Queries {
         return feeds;
     }
 
-    public void removeExcessItems(Realm realm, final int max_items) {
+    public void removeExcessItems(Realm realm, final int maxItems) {
         final RealmResults<Item> expendableItems = realm.where(Item.class)
                 .equalTo(Item.UNREAD, false)
                 .equalTo(Item.STARRED, false)
@@ -283,8 +283,7 @@ public class Queries {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                int itemsToDelete = expendableItems.size() - max_items;
-                Log.d(TAG, "no. of excess items: " + itemsToDelete);
+                int itemsToDelete = expendableItems.size() - maxItems;
                 for (int i = 0; i < itemsToDelete; i++) {
                     expendableItems.remove(0);
                 }

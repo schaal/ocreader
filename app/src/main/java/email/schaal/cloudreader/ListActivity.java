@@ -87,8 +87,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         boolean needsUpdate = Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getBoolean(sharedPreferences);
         boolean syncRunning = Preferences.SYS_SYNC_RUNNING.getBoolean(sharedPreferences);
 
-        Log.d(TAG, "needs update/sync running: " + needsUpdate + "/" + syncRunning);
-
         if(needsUpdate) {
             drawerManager.reloadStartAdapter(isShowOnlyUnread());
 
