@@ -71,7 +71,7 @@
         android:layout_alignParentEnd="true"
         android:layout_margin="4dp"
         android:src="@drawable/ic_star"
-        android:tint="#FFA000"
+        android:tint="@color/star"
         android:visibility="gone"/>
 
     <TextView
