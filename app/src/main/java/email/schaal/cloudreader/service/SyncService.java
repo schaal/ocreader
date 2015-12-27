@@ -33,6 +33,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -216,6 +217,8 @@ public class SyncService extends Service {
         @Override
         public void onFailure(String errorMessage) {
             countDownLatch.countDown();
+
+            Toast.makeText(SyncService.this, errorMessage, Toast.LENGTH_LONG).show();
             Log.w(TAG, errorMessage);
         }
     };
