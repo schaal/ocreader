@@ -26,8 +26,10 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import email.schaal.cloudreader.model.AllUnreadFolder;
 import email.schaal.cloudreader.model.ChangedItems;
@@ -288,6 +290,38 @@ public class Queries {
                 }
             }
         });
+    }
+
+    public void markTemporaryFeedAsRead(Realm realm, Realm.Transaction.Callback callback) {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
+                RealmList<Item> unreadChangedItems = changedItems.getUnreadChangedItems();
+
+                TemporaryFeed temporaryFeed = realm.where(TemporaryFeed.class).findFirst();
+
+                // TODO: 27.12.15 Find a way to only iterate over unread items
+                List<Item> unreadItems = temporaryFeed.getItems();
+
+                Set<Feed> feeds = new HashSet<>();
+
+                for (int i = 0, unreadItemsSize = unreadItems.size(); i < unreadItemsSize; i++) {
+                    Item item = unreadItems.get(i);
+                    if(item.isUnread()) {
+                        item.setUnread(false);
+                        addToChangedList(unreadChangedItems, item);
+                        feeds.add(Item.feed(item));
+                    }
+                }
+                for(Feed feed: feeds) {
+                    feed.setUnreadCount((int) realm.where(Item.class)
+                                    .equalTo(Item.FEED_ID, feed.getId())
+                                    .equalTo(Item.UNREAD, true).count()
+                    );
+                }
+            }
+        }, callback);
     }
 
     public void setItemsUnreadState(Realm realm, final boolean newUnread, @Nullable final Realm.Transaction.Callback transactionCallback, final Item... items) {

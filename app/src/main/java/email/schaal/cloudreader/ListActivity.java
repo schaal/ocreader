@@ -67,6 +67,7 @@ import email.schaal.cloudreader.model.User;
 import email.schaal.cloudreader.service.SyncService;
 import email.schaal.cloudreader.view.ItemViewHolder;
 import email.schaal.cloudreader.view.drawer.DrawerManager;
+import io.realm.Realm;
 import io.realm.RealmResults;
 
 public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
@@ -158,11 +159,21 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         fab_mark_all_read = (FloatingActionButton) findViewById(R.id.fab_mark_all_read);
         fab_mark_all_read.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                TemporaryFeed temporaryFeed = getRealm().where(TemporaryFeed.class).findFirst();
-                final RealmResults<Item> items = temporaryFeed.getItems().where().equalTo(Item.UNREAD, true).findAll();
-                Queries.getInstance().setItemsUnreadState(getRealm(), false, null, items.toArray(new Item[items.size()]));
-                getListFragment().update(false);
+            public void onClick(final View v) {
+                v.setEnabled(false);
+                Queries.getInstance().markTemporaryFeedAsRead(getRealm(), new Realm.Transaction.Callback() {
+                    @Override
+                    public void onError(Exception e) {
+                        e.printStackTrace();
+                        onSuccess();
+                    }
+
+                    @Override
+                    public void onSuccess() {
+                        getListFragment().update(false);
+                        v.setEnabled(true);
+                    }
+                });
             }
         });
 
