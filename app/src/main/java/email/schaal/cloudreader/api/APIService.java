@@ -110,7 +110,11 @@ public class APIService {
         }
     }
 
-    public void syncChanges(@NonNull final Realm realm, @Nullable final APICallback callback) {
+    public interface OnCompletionListener {
+        void onCompleted();
+    }
+
+    public void syncChanges(@NonNull final Realm realm, @Nullable final OnCompletionListener completionListener) {
         final ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
         final CountDownLatch countDownLatch = new CountDownLatch(MarkAction.values().length);
 
@@ -138,8 +142,8 @@ public class APIService {
                                         itemList.clear();
                             }
                         });
-                        if(callback != null)
-                            callback.onSuccess();
+                        if(completionListener != null)
+                            completionListener.onCompleted();
                     }
                 });
             }

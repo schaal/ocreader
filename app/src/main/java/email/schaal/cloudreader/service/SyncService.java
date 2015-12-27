@@ -98,15 +98,10 @@ public class SyncService extends Service {
             fullSync(startId);
         } else if (ACTION_SYNC_CHANGES_ONLY.equals(intent.getAction())) {
             AlarmUtils.getInstance().cancelAlarm();
-            APIService.getInstance().syncChanges(realm, new APIService.APICallback() {
+            APIService.getInstance().syncChanges(realm, new APIService.OnCompletionListener() {
                 @Override
-                public void onSuccess() {
+                public void onCompleted() {
                     stopSelf(startId);
-                }
-
-                @Override
-                public void onFailure(String errorMessage) {
-
                 }
             });
         } else {
@@ -129,9 +124,9 @@ public class SyncService extends Service {
     private void fullSync(final int startId) {
         notifySyncStatus(SYNC_STARTED);
 
-        APIService.getInstance().syncChanges(realm, new APIService.APICallback() {
+        APIService.getInstance().syncChanges(realm, new APIService.OnCompletionListener() {
             @Override
-            public void onSuccess() {
+            public void onCompleted() {
                 countDownLatch = new CountDownLatch(4);
 
                 APIService.getInstance().user(apiCallback);
@@ -158,11 +153,6 @@ public class SyncService extends Service {
                         }
                     }
                 });
-            }
-
-            @Override
-            public void onFailure(String errorMessage) {
-
             }
         });
     }
