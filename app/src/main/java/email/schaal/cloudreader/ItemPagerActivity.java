@@ -106,6 +106,15 @@ public class ItemPagerActivity extends RealmActivity {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
 
         fab = (FloatingActionButton) findViewById(R.id.fab_open_in_browser);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(item != null) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.getUrl()));
+                    startActivity(intent);
+                }
+            }
+        });
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -119,20 +128,10 @@ public class ItemPagerActivity extends RealmActivity {
 
             @Override
             public void onPageSelected(int position) {
-                Log.d(TAG, "onPageSelected: " + position);
                 item = getItemForPosition(position);
                 setItemUnread(false);
 
-                fab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.getUrl()));
-                        startActivity(intent);
-                    }
-                });
-
-                Feed feed = Item.feed(item);
-                setActionBarColors(feed);
+                setActionBarColors(Item.feed(item));
 
                 fab.show();
             }
