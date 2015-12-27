@@ -296,29 +296,34 @@ public class Queries {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
-                RealmList<Item> unreadChangedItems = changedItems.getUnreadChangedItems();
+                ChangedItems changedItems = null;
+                try {
+                    changedItems = realm.where(ChangedItems.class).findFirst();
+                    RealmList<Item> unreadChangedItems = changedItems.getUnreadChangedItems();
 
-                TemporaryFeed temporaryFeed = realm.where(TemporaryFeed.class).findFirst();
+                    TemporaryFeed temporaryFeed = realm.where(TemporaryFeed.class).findFirst();
 
-                // TODO: 27.12.15 Find a way to only iterate over unread items
-                List<Item> unreadItems = temporaryFeed.getItems();
+                    // TODO: 27.12.15 Find a way to only iterate over unread items
+                    List<Item> unreadItems = temporaryFeed.getItems();
 
-                Set<Feed> feeds = new HashSet<>();
+                    Set<Feed> feeds = new HashSet<>();
 
-                for (int i = 0, unreadItemsSize = unreadItems.size(); i < unreadItemsSize; i++) {
-                    Item item = unreadItems.get(i);
-                    if(item.isUnread()) {
-                        item.setUnread(false);
-                        addToChangedList(unreadChangedItems, item);
-                        feeds.add(Item.feed(item));
+                    for (int i = 0, unreadItemsSize = unreadItems.size(); i < unreadItemsSize; i++) {
+                        Item item = unreadItems.get(i);
+                        if (item.isUnread()) {
+                            item.setUnread(false);
+                            addToChangedList(unreadChangedItems, item);
+                            feeds.add(Item.feed(item));
+                        }
                     }
-                }
-                for(Feed feed: feeds) {
-                    feed.setUnreadCount((int) realm.where(Item.class)
-                                    .equalTo(Item.FEED_ID, feed.getId())
-                                    .equalTo(Item.UNREAD, true).count()
-                    );
+                    for (Feed feed : feeds) {
+                        feed.setUnreadCount((int) realm.where(Item.class)
+                                        .equalTo(Item.FEED_ID, feed.getId())
+                                        .equalTo(Item.UNREAD, true).count()
+                        );
+                    }
+                } finally {
+                    checkAlarm(changedItems);
                 }
             }
         }, callback);
