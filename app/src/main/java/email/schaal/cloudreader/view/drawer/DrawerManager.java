@@ -82,19 +82,19 @@ public class DrawerManager {
         return endAdapter;
     }
 
-    public void reloadStartAdapter() {
-        startAdapter.reload();
+    public void reloadStartAdapter(boolean showOnlyUnread) {
+        startAdapter.reload(showOnlyUnread);
     }
 
-    public void reloadEndAdapter() {
-        endAdapter.reload();
+    public void reloadEndAdapter(boolean showOnlyUnread) {
+        endAdapter.reload(showOnlyUnread);
     }
 
-    public void setSelectedTreeItem(TreeItem selectedItem) {
+    public void setSelectedTreeItem(TreeItem selectedItem, boolean showOnlyUnread) {
         state.setStartDrawerItem(selectedItem);
         state.setEndDrawerItem(null);
 
-        endAdapter.reload();
+        endAdapter.reload(showOnlyUnread);
     }
 
     public void setSelectedFeed(Feed selectedFeed) {
@@ -102,12 +102,12 @@ public class DrawerManager {
     }
 
     private abstract class BaseDrawerAdapter extends DrawerAdapter {
-        public final void reload() {
+        public final void reload(boolean showOnlyUnread) {
             Realm realm = null;
             try {
                 realm = Realm.getDefaultInstance();
                 clearDrawerItems();
-                setDrawerItems(reloadDrawerItems(realm, isShowOnlyUnread()));
+                setDrawerItems(reloadDrawerItems(realm, showOnlyUnread));
             } finally {
                 if(realm != null)
                     realm.close();
@@ -116,7 +116,7 @@ public class DrawerManager {
 
         protected abstract ArrayList<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread);
 
-        public void updateUnreadCount() {
+        public void updateUnreadCount(boolean showOnlyUnread) {
             Realm realm = null;
             try {
                 realm = Realm.getDefaultInstance();
@@ -131,7 +131,7 @@ public class DrawerManager {
                         Integer count = Queries.getInstance().getCount(realm, (TreeItem) drawerItem.getTag());
 
                         if (count <= 0) {
-                            if (isShowOnlyUnread()) {
+                            if (showOnlyUnread) {
                                 itemIterator.remove();
                                 notifyItemRemoved(position);
                             } else {
@@ -155,10 +155,6 @@ public class DrawerManager {
                 notifyItemChanged(position);
             }
         }
-    }
-
-    private boolean isShowOnlyUnread() {
-        return Preferences.SHOW_ONLY_UNREAD.getBoolean(PreferenceManager.getDefaultSharedPreferences(context));
     }
 
     protected static class UrlPrimaryDrawerItem extends PrimaryDrawerItem {
