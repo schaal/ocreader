@@ -191,12 +191,19 @@ public class SyncService extends Service {
     }
 
     private void notifySyncStatus(@NonNull String action) {
+        final boolean syncStarted = action.equals(SYNC_STARTED);
+
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        if(action.equals(SYNC_FINISHED))
+
+        if(!syncStarted)
             editor.putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), true);
+
         LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(action));
-        editor.putBoolean(Preferences.SYS_SYNC_RUNNING.getKey(), action.equals(SYNC_STARTED));
+
+        editor.putBoolean(Preferences.SYS_SYNC_RUNNING.getKey(), syncStarted);
+
         editor.apply();
+
         Log.d(TAG, action);
     }
 
