@@ -22,25 +22,14 @@ package email.schaal.cloudreader.view.drawer;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.view.View;
-import android.widget.ImageView;
 
-import com.mikepenz.materialdrawer.adapter.DrawerAdapter;
-import com.mikepenz.materialdrawer.holder.ImageHolder;
-import com.mikepenz.materialdrawer.holder.StringHolder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.Badgeable;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
-import email.schaal.cloudreader.Preferences;
 import email.schaal.cloudreader.R;
 import email.schaal.cloudreader.database.Queries;
 import email.schaal.cloudreader.model.AllUnreadFolder;
@@ -99,80 +88,6 @@ public class DrawerManager {
 
     public void setSelectedFeed(Feed selectedFeed) {
         state.setEndDrawerItem(selectedFeed);
-    }
-
-    private abstract class BaseDrawerAdapter extends DrawerAdapter {
-        public final void reload(boolean showOnlyUnread) {
-            Realm realm = null;
-            try {
-                realm = Realm.getDefaultInstance();
-                clearDrawerItems();
-                setDrawerItems(reloadDrawerItems(realm, showOnlyUnread));
-            } finally {
-                if(realm != null)
-                    realm.close();
-            }
-        }
-
-        protected abstract ArrayList<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread);
-
-        public void updateUnreadCount(boolean showOnlyUnread) {
-            Realm realm = null;
-            try {
-                realm = Realm.getDefaultInstance();
-
-                ListIterator<IDrawerItem> itemIterator = getDrawerItems().listIterator();
-
-                while (itemIterator.hasNext()) {
-                    int position = itemIterator.nextIndex() + getHeaderItemCount();
-                    IDrawerItem drawerItem = itemIterator.next();
-                    if (drawerItem instanceof Badgeable) {
-                        Badgeable badgeable = (Badgeable) drawerItem;
-                        Integer count = Queries.getInstance().getCount(realm, (TreeItem) drawerItem.getTag());
-
-                        if (count <= 0) {
-                            if (showOnlyUnread) {
-                                itemIterator.remove();
-                                notifyItemRemoved(position);
-                            } else {
-                                updateBadge(badgeable, null, position);
-                            }
-                        } else {
-                            updateBadge(badgeable, String.valueOf(count), position);
-                        }
-                    }
-                }
-            } finally {
-                if(realm != null)
-                    realm.close();
-            }
-        }
-
-        private void updateBadge(Badgeable badgeable, @Nullable String badge, int position) {
-            StringHolder oldBadge = badgeable.getBadge();
-            if (badge != null && !badge.equals(oldBadge == null ? null : oldBadge.getText())) {
-                badgeable.withBadge(badge);
-                notifyItemChanged(position);
-            }
-        }
-    }
-
-    protected static class UrlPrimaryDrawerItem extends PrimaryDrawerItem {
-        @Override
-        protected void bindViewHelper(BaseViewHolder viewHolder) {
-            super.bindViewHelper(viewHolder);
-
-            if (icon != null && icon.getUri() != null) {
-                ImageView imageView = (ImageView) viewHolder.itemView.findViewById(com.mikepenz.materialdrawer.R.id.material_drawer_icon);
-                imageView.setVisibility(View.VISIBLE);
-                ImageHolder.applyTo(icon, imageView);
-            }
-        }
-
-        public UrlPrimaryDrawerItem withIcon(String url) {
-            icon = new ImageHolder(url);
-            return this;
-        }
     }
 
     /**
