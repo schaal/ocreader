@@ -23,6 +23,7 @@ package email.schaal.cloudreader.view.drawer;
 import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -134,7 +135,7 @@ public class DrawerManager {
                                 itemIterator.remove();
                                 notifyItemRemoved(position);
                             } else {
-                                updateBadge(badgeable, "", position);
+                                updateBadge(badgeable, null, position);
                             }
                         } else {
                             updateBadge(badgeable, String.valueOf(count), position);
@@ -147,9 +148,9 @@ public class DrawerManager {
             }
         }
 
-        private void updateBadge(Badgeable badgeable, String badge, int position) {
+        private void updateBadge(Badgeable badgeable, @Nullable String badge, int position) {
             StringHolder oldBadge = badgeable.getBadge();
-            if (oldBadge == null || !badge.equals(oldBadge.getText())) {
+            if (badge != null && !badge.equals(oldBadge == null ? null : oldBadge.getText())) {
                 badgeable.withBadge(badge);
                 notifyItemChanged(position);
             }
