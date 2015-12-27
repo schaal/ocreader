@@ -329,7 +329,7 @@ public class Queries {
         }, callback);
     }
 
-    public void setItemsUnread(Realm realm, final boolean newUnread, @Nullable final Realm.Transaction.Callback transactionCallback, final Item... items) {
+    public void setItemsUnread(Realm realm, final boolean newUnread, final Item... items) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -347,15 +347,8 @@ public class Queries {
                             feed.setUnreadCount(feed.getUnreadCount() + (newUnread ? 1 : -1));
                         }
                     }
-
-                    if (transactionCallback != null) {
-                        transactionCallback.onSuccess();
-                    }
                 } catch (RealmException e) {
                     e.printStackTrace();
-                    if (transactionCallback != null) {
-                        transactionCallback.onError(e);
-                    }
                 } finally {
                     checkAlarm(changedItems);
                 }
@@ -363,7 +356,7 @@ public class Queries {
         });
     }
 
-    public void setItemStarred(Realm realm, final boolean newStarred, @Nullable final Realm.Transaction.Callback transactionCallback, final Item item) {
+    public void setItemStarred(Realm realm, final boolean newStarred, final Item item) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -380,15 +373,8 @@ public class Queries {
                         Feed feed = Item.feed(item);
                         feed.setStarredCount(feed.getStarredCount() + (newStarred ? 1 : -1));
                     }
-
-                    if (transactionCallback != null) {
-                        transactionCallback.onSuccess();
-                    }
                 } catch (RealmException e) {
                     e.printStackTrace();
-                    if (transactionCallback != null) {
-                        transactionCallback.onError(e);
-                    }
                 } finally {
                     checkAlarm(changedItems);
                 }
