@@ -138,7 +138,7 @@ public class SyncService extends Service {
                             APIService.getInstance().user(apiCallback);
                             APIService.getInstance().folders(apiCallback);
                             APIService.getInstance().feeds(apiCallback, true);
-                            APIService.getInstance().items(getLastSyncTimestamp(realm), APIService.QueryType.ALL, apiCallback);
+                            APIService.getInstance().items(getLastSyncTimestamp(realm), apiCallback);
 
                             waitForCountdownLatch(startId, action);
                             break;
