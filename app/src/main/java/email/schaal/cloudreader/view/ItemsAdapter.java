@@ -46,14 +46,18 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private RealmList<Item> items;
     private TreeItem treeItem;
     private final ItemViewHolder.OnClickListener clickListener;
+    private final OnLoadMoreListener loadMoreListener;
 
     private final static int VIEW_TYPE_ITEM = 0;
     private final static int VIEW_TYPE_EMPTY = 1;
     private final static int VIEW_TYPE_LOADMORE = 2;
 
-    public ItemsAdapter(TreeItem treeItem, ItemViewHolder.OnClickListener clickListener) {
+    private TreeItem loadingMoreTreeItem;
+
+    public ItemsAdapter(TreeItem treeItem, ItemViewHolder.OnClickListener clickListener, OnLoadMoreListener loadMoreListener) {
         this.treeItem = treeItem;
         this.clickListener = clickListener;
+        this.loadMoreListener = loadMoreListener;
         setHasStableIds(true);
         updateItems(false);
     }
@@ -133,7 +137,8 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if(holder instanceof ItemViewHolder)
             ((ItemViewHolder) holder).bindItem(items.get(position), position);
         else if(holder instanceof LoadMoreViewHolder) {
-            ((LoadMoreViewHolder) holder).resetView();
+            ((LoadMoreViewHolder) holder).showProgress(
+                    loadingMoreTreeItem != null && loadingMoreTreeItem.equals(treeItem));
         }
     }
 
@@ -164,18 +169,22 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         updateItems(true);
     }
 
+    public void resetLoadMore() {
+        loadingMoreTreeItem = null;
+    }
+
     private class EmptyStateViewHolder extends RecyclerView.ViewHolder {
         public EmptyStateViewHolder(View itemView) {
             super(itemView);
         }
     }
 
-    private class LoadMoreViewHolder extends RecyclerView.ViewHolder {
+    public class LoadMoreViewHolder extends RecyclerView.ViewHolder {
         private final static int CHILD_BUTTON_INDEX = 0;
         private final static int CHILD_PROGRESS_INDEX = 1;
 
-        private Button loadMoreButton;
-        private ViewSwitcher loadMoreViewSwitcher;
+        private final Button loadMoreButton;
+        private final ViewSwitcher loadMoreViewSwitcher;
 
         public LoadMoreViewHolder(View itemView) {
             super(itemView);
@@ -185,14 +194,22 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             loadMoreButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    loadMoreViewSwitcher.setDisplayedChild(CHILD_PROGRESS_INDEX);
-                    // TODO: 29.11.15 actually load more!
+                    showProgress(true);
+                    loadingMoreTreeItem = treeItem;
+                    loadMoreListener.onLoadMore(treeItem);
                 }
             });
         }
 
-        public void resetView() {
-            loadMoreViewSwitcher.setDisplayedChild(CHILD_BUTTON_INDEX);
+        public void showProgress(boolean loading) {
+            if(loading)
+                loadMoreViewSwitcher.setDisplayedChild(CHILD_PROGRESS_INDEX);
+            else
+                loadMoreViewSwitcher.setDisplayedChild(CHILD_BUTTON_INDEX);
         }
+    }
+
+    public interface OnLoadMoreListener {
+        void onLoadMore(TreeItem treeItem);
     }
 }

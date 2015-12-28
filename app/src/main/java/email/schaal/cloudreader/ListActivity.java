@@ -29,6 +29,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -38,7 +39,6 @@ import android.support.v4.widget.ViewDragHelper;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Base64InputStream;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -61,28 +61,40 @@ import java.util.ArrayList;
 import email.schaal.cloudreader.database.Queries;
 import email.schaal.cloudreader.model.Feed;
 import email.schaal.cloudreader.model.Item;
+import email.schaal.cloudreader.model.TemporaryFeed;
 import email.schaal.cloudreader.model.TreeItem;
 import email.schaal.cloudreader.model.User;
 import email.schaal.cloudreader.service.SyncService;
 import email.schaal.cloudreader.view.ItemViewHolder;
+import email.schaal.cloudreader.view.ItemsAdapter;
 import email.schaal.cloudreader.view.drawer.DrawerManager;
 import io.realm.Realm;
 
-public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ItemsAdapter.OnLoadMoreListener {
     private static final String TAG = ListActivity.class.getSimpleName();
 
     private static final int REFRESH_DRAWER_ITEM_ID = 999;
 
+    private ItemsAdapter itemsAdapter;
+
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(SyncService.SYNC_STARTED) || intent.getAction().equals(SyncService.SYNC_FINISHED))
-                updateSyncStatus();
+            if(intent.getAction().equals(SyncService.SYNC_STARTED) || intent.getAction().equals(SyncService.SYNC_FINISHED)) {
+                if(SyncService.ACTION_LOAD_MORE.equals(intent.getStringExtra(SyncService.EXTRA_TYPE))) {
+                    if(intent.getAction().equals(SyncService.SYNC_FINISHED)) {
+                        getListFragment().update(true);
+                        getListFragment().resetLoadMore();
+                    }
+                } else {
+                    updateSyncStatus();
+                }
+            }
         }
     };
 
     private void updateSyncStatus() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ListActivity.this);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         boolean needsUpdate = Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getBoolean(sharedPreferences);
         boolean syncRunning = Preferences.SYS_SYNC_RUNNING.getBoolean(sharedPreferences);
@@ -110,6 +122,9 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setRefreshing(syncRunning);
         }
+
+        if(!syncRunning)
+            getListFragment().resetLoadMore();
     }
 
     private MenuItem syncMenuItem;
@@ -350,6 +365,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(item.getTitle());
         getListFragment().setItem(item);
+        fab_mark_all_read.show();
     }
 
     private ListFragment getListFragment() {
@@ -419,5 +435,15 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             if(accountHeader != null)
                 accountHeader.updateProfile(profileDrawerItem);
         }
+    }
+
+    @Override
+    public void onLoadMore(@NonNull TreeItem treeItem) {
+        TemporaryFeed temporaryFeed = getRealm().where(TemporaryFeed.class).findFirst();
+        long id = treeItem.getId();
+        long offset = temporaryFeed.getItems().where().min(Item.ID).longValue();
+        boolean isFeed = treeItem instanceof Feed;
+
+        SyncService.startLoadMore(this, id, offset, isFeed);
     }
 }

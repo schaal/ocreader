@@ -46,6 +46,7 @@ import email.schaal.cloudreader.Preferences;
 import email.schaal.cloudreader.api.APIService;
 import email.schaal.cloudreader.model.Feed;
 import email.schaal.cloudreader.model.Item;
+import email.schaal.cloudreader.model.StarredFolder;
 import email.schaal.cloudreader.util.AlarmUtils;
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -56,19 +57,27 @@ public class SyncService extends Service {
     public static final String SYNC_FINISHED = "email.schaal.cloudreader.action.SYNC_FINISHED";
     public static final String SYNC_STARTED = "email.schaal.cloudreader.action.SYNC_STARTED";
 
-    private enum SyncType {
-        FULL_SYNC,
-        SYNC_CHANGES_ONLY
-    }
-
     public static final String ACTION_SYNC_CHANGES_ONLY = "email.schaal.cloudreader.action.SYNC_CHANGES_ONLY";
     public static final String ACTION_FULL_SYNC = "email.schaal.cloudreader.action.FULL_SYNC";
+    public static final String ACTION_LOAD_MORE = "email.schaal.cloudreader.action.LOAD_MORE";
+
+    public static final String EXTRA_ID = "email.schaal.cloudreader.action.extra.ID";
+    public static final String EXTRA_IS_FEED = "email.schaal.cloudreader.action.extra.IS_FEED";
+    public static final String EXTRA_OFFSET = "email.schaal.cloudreader.action.extra.OFFSET";
+    public static final String EXTRA_TYPE = "email.schaal.cloudreader.action.extra.TYPE";
+
+    private enum SyncType {
+        FULL_SYNC,
+        SYNC_CHANGES_ONLY,
+        LOAD_MORE
+    }
 
     private static final Map<String, SyncType> syncTypeMap;
     static {
         syncTypeMap = new HashMap<>(SyncType.values().length);
         syncTypeMap.put(ACTION_FULL_SYNC, SyncType.FULL_SYNC);
         syncTypeMap.put(ACTION_SYNC_CHANGES_ONLY, SyncType.SYNC_CHANGES_ONLY);
+        syncTypeMap.put(ACTION_LOAD_MORE, SyncType.LOAD_MORE);
     }
 
     public static final IntentFilter syncFilter;
@@ -106,11 +115,13 @@ public class SyncService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, final int startId) {
-        final SyncType syncType = syncTypeMap.get(intent.getAction());
+    public int onStartCommand(final Intent intent, int flags, final int startId) {
+        final String action = intent.getAction();
+
+        final SyncType syncType = syncTypeMap.get(action);
 
         if(syncType != null) {
-            notifySyncStatus(SYNC_STARTED);
+            notifySyncStatus(SYNC_STARTED, action);
 
             AlarmUtils.getInstance().cancelAlarm();
             APIService.getInstance().syncChanges(realm, new APIService.OnCompletionListener() {
@@ -118,7 +129,7 @@ public class SyncService extends Service {
                 public void onCompleted() {
                     switch (syncType) {
                         case SYNC_CHANGES_ONLY:
-                            notifySyncStatus(SYNC_FINISHED);
+                            notifySyncStatus(SYNC_FINISHED, action);
                             stopSelf(startId);
                             break;
                         case FULL_SYNC:
@@ -129,34 +140,58 @@ public class SyncService extends Service {
                             APIService.getInstance().feeds(apiCallback, true);
                             APIService.getInstance().items(getLastSyncTimestamp(realm), APIService.QueryType.ALL, apiCallback);
 
-                            executor.execute(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        countDownLatch.await();
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    } finally {
-                                        handler.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                postProcessFeeds(realm);
-                                                notifySyncStatus(SYNC_FINISHED);
-                                                stopSelf(startId);
-                                            }
-                                        });
-                                    }
-                                }
-                            });
+                            waitForCountdownLatch(startId, action);
+                            break;
+                        case LOAD_MORE:
+                            long id = intent.getLongExtra(EXTRA_ID, -1);
+                            long offset = intent.getLongExtra(EXTRA_OFFSET, 0);
+                            boolean isFeed = intent.getBooleanExtra(EXTRA_IS_FEED, false);
+
+                            APIService.QueryType queryType;
+
+                            if(id == StarredFolder.ID) {
+                                queryType = APIService.QueryType.STARRED;
+                                id = 0;
+                            } else {
+                                queryType = isFeed ? APIService.QueryType.FEED : APIService.QueryType.FOLDER;
+                            }
+
+                            countDownLatch = new CountDownLatch(1);
+
+                            APIService.getInstance().moreItems(queryType, offset, id, true, apiCallback);
+
+                            waitForCountdownLatch(startId, action);
                             break;
                     }
                 }
             });
         } else {
-            Log.w(TAG, "unknown Intent received: " + intent.getAction());
+            Log.w(TAG, "unknown Intent received: " + action);
         }
 
         return START_NOT_STICKY;
+    }
+
+    private void waitForCountdownLatch(final int startId, final String action) {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    countDownLatch.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            postProcessFeeds(realm);
+                            notifySyncStatus(SYNC_FINISHED, action);
+                            stopSelf(startId);
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private long getLastSyncTimestamp(Realm realm) {
@@ -191,7 +226,7 @@ public class SyncService extends Service {
         });
     }
 
-    private void notifySyncStatus(@NonNull String action) {
+    private void notifySyncStatus(@NonNull String action, String type) {
         final boolean syncStarted = action.equals(SYNC_STARTED);
 
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
@@ -199,7 +234,9 @@ public class SyncService extends Service {
         if(!syncStarted)
             editor.putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), true);
 
-        LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(action));
+        final Intent intent = new Intent(action);
+        intent.putExtra(EXTRA_TYPE, type);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
         editor.putBoolean(Preferences.SYS_SYNC_RUNNING.getKey(), syncStarted);
 
@@ -224,7 +261,15 @@ public class SyncService extends Service {
     };
 
     public static void startSync(Activity activity) {
-        Intent syncIntent = new Intent(SyncService.ACTION_FULL_SYNC, null, activity, SyncService.class);
+        Intent syncIntent = new Intent(ACTION_FULL_SYNC, null, activity, SyncService.class);
         activity.startService(syncIntent);
+    }
+
+    public static void startLoadMore(Activity activity, long id, long offset, boolean isFeed) {
+        Intent loadMoreIntent = new Intent(ACTION_LOAD_MORE, null, activity, SyncService.class);
+        loadMoreIntent.putExtra(EXTRA_ID, id);
+        loadMoreIntent.putExtra(EXTRA_OFFSET, offset);
+        loadMoreIntent.putExtra(EXTRA_IS_FEED, isFeed);
+        activity.startService(loadMoreIntent);
     }
 }

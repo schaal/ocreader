@@ -64,7 +64,7 @@ public class ListFragment extends Fragment {
 
         itemsRecyclerView = (RecyclerView) rootView.findViewById(R.id.items_recyclerview);
 
-        adapter = new ItemsAdapter(new AllUnreadFolder(getActivity()), (ItemViewHolder.OnClickListener)getActivity());
+        adapter = new ItemsAdapter(new AllUnreadFolder(getActivity()), (ItemViewHolder.OnClickListener)getActivity(), (ItemsAdapter.OnLoadMoreListener)getActivity());
 
         itemsRecyclerView.setAdapter(adapter);
         itemsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -72,6 +72,10 @@ public class ListFragment extends Fragment {
         itemsRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         return rootView;
+    }
+
+    public void resetLoadMore() {
+        adapter.resetLoadMore();
     }
 
     public void setItem(TreeItem item) {

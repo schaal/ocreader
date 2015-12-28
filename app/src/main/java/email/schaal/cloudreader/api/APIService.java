@@ -398,6 +398,17 @@ public class APIService {
         }
     }
 
+    public void moreItems(final QueryType type, final long offset, final long id, final boolean getRead, final APICallback callback) {
+        api.items(offset, type.getType(), id, getRead, false).enqueue(new RealmRetrofitCallback<Items>(callback) {
+            @Override
+            public boolean onResponseReal(Realm realm, Response<Items> response) {
+                final List<Item> items = response.body().getItems();
+                Queries.getInstance().insert(realm, items);
+                return true;
+            }
+        });
+    }
+
     public void folders(final APICallback callback) {
         api.folders().enqueue(new RealmRetrofitCallback<Folders>(callback) {
             @Override
