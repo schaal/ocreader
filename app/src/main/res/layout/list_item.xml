@@ -72,6 +72,7 @@
         android:layout_margin="4dp"
         android:src="@drawable/ic_star"
         android:tint="@color/star"
+        android:contentDescription="@string/starred"
         android:visibility="gone"/>
 
     <TextView
