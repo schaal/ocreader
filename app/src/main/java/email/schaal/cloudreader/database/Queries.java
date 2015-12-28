@@ -302,19 +302,17 @@ public class Queries {
 
                     TemporaryFeed temporaryFeed = realm.where(TemporaryFeed.class).findFirst();
 
-                    // TODO: 27.12.15 Find a way to only iterate over unread items
-                    List<Item> unreadItems = temporaryFeed.getItems();
+                    RealmResults<Item> unreadItems = temporaryFeed.getItems().where().equalTo(Item.UNREAD, true).findAll();
 
                     Set<Feed> feeds = new HashSet<>();
 
-                    for (int i = 0, unreadItemsSize = unreadItems.size(); i < unreadItemsSize; i++) {
-                        Item item = unreadItems.get(i);
-                        if (item.isUnread()) {
-                            item.setUnread(false);
-                            addToChangedList(unreadChangedItems, item);
-                            feeds.add(Item.feed(item));
-                        }
+                    while(!unreadItems.isEmpty()) {
+                        Item item = unreadItems.first();
+                        item.setUnread(false);
+                        addToChangedList(unreadChangedItems, item);
+                        feeds.add(Item.feed(item));
                     }
+
                     for (Feed feed : feeds) {
                         feed.setUnreadCount((int) realm.where(Item.class)
                                         .equalTo(Item.FEED_ID, feed.getId())
@@ -381,7 +379,7 @@ public class Queries {
         });
     }
 
-    private void checkAlarm(@Nullable ChangedItems changedItems) {
+    private synchronized void checkAlarm(@Nullable ChangedItems changedItems) {
         if(changedItems != null) {
             boolean alarmNeeded = !changedItems.getStarredChangedItems().isEmpty() || !changedItems.getUnreadChangedItems().isEmpty();
             if (alarmNeeded)
