@@ -20,6 +20,7 @@
 
 package email.schaal.cloudreader.view.drawer;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.mikepenz.materialdrawer.adapter.DrawerAdapter;
@@ -28,6 +29,7 @@ import com.mikepenz.materialdrawer.model.interfaces.Badgeable;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.ListIterator;
 
 import email.schaal.cloudreader.database.Queries;
@@ -84,10 +86,18 @@ abstract class BaseDrawerAdapter extends DrawerAdapter {
         }
     }
 
-    private void updateBadge(Badgeable badgeable, @Nullable String badge, int position) {
+    private boolean compareBadges(@Nullable StringHolder lhs, @Nullable StringHolder rhs) {
+        String l = lhs != null ? lhs.getText() : null;
+        String r = rhs != null ? rhs.getText() : null;
+
+        return l == null ? r == null : l.equals(r);
+    }
+
+    private void updateBadge(@NonNull Badgeable badgeable, @Nullable String badgeString, int position) {
         StringHolder oldBadge = badgeable.getBadge();
-        if (badge != null && !badge.equals(oldBadge == null ? null : oldBadge.getText())) {
-            badgeable.withBadge(badge);
+        StringHolder newBadge = new StringHolder(badgeString);
+        if (!compareBadges(oldBadge, newBadge)) {
+            badgeable.withBadge(newBadge);
             notifyItemChanged(position);
         }
     }
