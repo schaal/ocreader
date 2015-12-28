@@ -254,7 +254,6 @@ public class SyncService extends Service {
 
         editor.apply();
 
-        Log.d(TAG, "countdownLatches: " + countDownLatches.size());
         Log.d(TAG, action);
     }
 
