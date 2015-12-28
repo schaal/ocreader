@@ -35,8 +35,10 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
@@ -91,7 +93,8 @@ public class SyncService extends Service {
         syncFilter.addAction(SYNC_FINISHED);
     }
 
-    private CountDownLatch countDownLatch;
+    private final Map<Integer, CountDownLatch> countDownLatches = new HashMap<>(4);
+    private final List<Integer> startIds = new ArrayList<>();
 
     public SyncService() {
     }
@@ -127,13 +130,19 @@ public class SyncService extends Service {
             APIService.getInstance().syncChanges(realm, new APIService.OnCompletionListener() {
                 @Override
                 public void onCompleted() {
+                    CountDownLatch countDownLatch;
+                    APIService.APICallback apiCallback;
+                    startIds.add(startId);
+
                     switch (syncType) {
                         case SYNC_CHANGES_ONLY:
                             notifySyncStatus(SYNC_FINISHED, action);
-                            stopSelf(startId);
+                            stopSelf(startIds.remove(0));
                             break;
                         case FULL_SYNC:
                             countDownLatch = new CountDownLatch(4);
+                            countDownLatches.put(startId, countDownLatch);
+                            apiCallback = new CountdownAPICallback(countDownLatch);
 
                             APIService.getInstance().user(apiCallback);
                             APIService.getInstance().folders(apiCallback);
@@ -157,6 +166,8 @@ public class SyncService extends Service {
                             }
 
                             countDownLatch = new CountDownLatch(1);
+                            countDownLatches.put(startId, countDownLatch);
+                            apiCallback = new CountdownAPICallback(countDownLatch);
 
                             APIService.getInstance().moreItems(queryType, offset, id, true, apiCallback);
 
@@ -177,7 +188,7 @@ public class SyncService extends Service {
             @Override
             public void run() {
                 try {
-                    countDownLatch.await();
+                    countDownLatches.get(startId).await();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
@@ -185,8 +196,9 @@ public class SyncService extends Service {
                         @Override
                         public void run() {
                             postProcessFeeds(realm);
+                            countDownLatches.remove(startId);
                             notifySyncStatus(SYNC_FINISHED, action);
-                            stopSelf(startId);
+                            stopSelf(startIds.remove(0));
                         }
                     });
                 }
@@ -242,23 +254,9 @@ public class SyncService extends Service {
 
         editor.apply();
 
+        Log.d(TAG, "countdownLatches: " + countDownLatches.size());
         Log.d(TAG, action);
     }
-
-    private final APIService.APICallback apiCallback = new APIService.APICallback() {
-        @Override
-        public void onSuccess() {
-            countDownLatch.countDown();
-        }
-
-        @Override
-        public void onFailure(String errorMessage) {
-            countDownLatch.countDown();
-
-            Toast.makeText(SyncService.this, errorMessage, Toast.LENGTH_LONG).show();
-            Log.w(TAG, errorMessage);
-        }
-    };
 
     public static void startSync(Activity activity) {
         Intent syncIntent = new Intent(ACTION_FULL_SYNC, null, activity, SyncService.class);
@@ -271,5 +269,26 @@ public class SyncService extends Service {
         loadMoreIntent.putExtra(EXTRA_OFFSET, offset);
         loadMoreIntent.putExtra(EXTRA_IS_FEED, isFeed);
         activity.startService(loadMoreIntent);
+    }
+
+    private class CountdownAPICallback implements APIService.APICallback {
+        private final CountDownLatch countDownLatch;
+
+        private CountdownAPICallback(CountDownLatch countDownLatch) {
+            this.countDownLatch = countDownLatch;
+        }
+
+        @Override
+        public void onSuccess() {
+            countDownLatch.countDown();
+        }
+
+        @Override
+        public void onFailure(String errorMessage) {
+            countDownLatch.countDown();
+
+            Toast.makeText(SyncService.this, errorMessage, Toast.LENGTH_LONG).show();
+            Log.w(TAG, errorMessage);
+        }
     }
 }
