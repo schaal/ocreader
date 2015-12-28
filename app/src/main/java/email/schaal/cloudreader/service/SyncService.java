@@ -32,12 +32,12 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.util.ArrayMap;
 import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -76,24 +76,23 @@ public class SyncService extends Service {
 
     private static final Map<String, SyncType> syncTypeMap;
     static {
-        syncTypeMap = new HashMap<>(SyncType.values().length);
+        syncTypeMap = new ArrayMap<>(SyncType.values().length);
         syncTypeMap.put(ACTION_FULL_SYNC, SyncType.FULL_SYNC);
         syncTypeMap.put(ACTION_SYNC_CHANGES_ONLY, SyncType.SYNC_CHANGES_ONLY);
         syncTypeMap.put(ACTION_LOAD_MORE, SyncType.LOAD_MORE);
     }
 
     public static final IntentFilter syncFilter;
-
-    private final Executor executor = Executors.newSingleThreadExecutor();
-    private Realm realm;
-
     static {
         syncFilter = new IntentFilter();
         syncFilter.addAction(SYNC_STARTED);
         syncFilter.addAction(SYNC_FINISHED);
     }
 
-    private final Map<Integer, CountDownLatch> countDownLatches = new HashMap<>(4);
+    private final Executor executor = Executors.newSingleThreadExecutor();
+    private Realm realm;
+
+    private final Map<Integer, CountDownLatch> countDownLatches = new ArrayMap<>(4);
     private final List<Integer> startIds = new ArrayList<>();
 
     public SyncService() {
@@ -130,8 +129,6 @@ public class SyncService extends Service {
             APIService.getInstance().syncChanges(realm, new APIService.OnCompletionListener() {
                 @Override
                 public void onCompleted() {
-                    CountDownLatch countDownLatch;
-                    APIService.APICallback apiCallback;
                     startIds.add(startId);
 
                     switch (syncType) {
@@ -140,9 +137,7 @@ public class SyncService extends Service {
                             stopSelf(startIds.remove(0));
                             break;
                         case FULL_SYNC:
-                            countDownLatch = new CountDownLatch(4);
-                            countDownLatches.put(startId, countDownLatch);
-                            apiCallback = new CountdownAPICallback(countDownLatch);
+                            APIService.APICallback apiCallback = getApiCallback(startId, 4);
 
                             APIService.getInstance().user(apiCallback);
                             APIService.getInstance().folders(apiCallback);
@@ -165,11 +160,7 @@ public class SyncService extends Service {
                                 queryType = isFeed ? APIService.QueryType.FEED : APIService.QueryType.FOLDER;
                             }
 
-                            countDownLatch = new CountDownLatch(1);
-                            countDownLatches.put(startId, countDownLatch);
-                            apiCallback = new CountdownAPICallback(countDownLatch);
-
-                            APIService.getInstance().moreItems(queryType, offset, id, true, apiCallback);
+                            APIService.getInstance().moreItems(queryType, offset, id, true, getApiCallback(startId, 1));
 
                             waitForCountdownLatch(startId, action);
                             break;
@@ -181,6 +172,15 @@ public class SyncService extends Service {
         }
 
         return START_NOT_STICKY;
+    }
+
+    @NonNull
+    private APIService.APICallback getApiCallback(int startId, int taskCount) {
+        CountDownLatch countDownLatch = new CountDownLatch(taskCount);
+
+        countDownLatches.put(startId, countDownLatch);
+
+        return new CountdownAPICallback(countDownLatch);
     }
 
     private void waitForCountdownLatch(final int startId, final String action) {
