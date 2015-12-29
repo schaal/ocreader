@@ -34,7 +34,7 @@ import com.squareup.picasso.Target;
 import email.schaal.cloudreader.model.Feed;
 
 /**
- * Created by daniel on 17.11.15.
+ * Utility class to manage Feed favicons.
  */
 public class FaviconUtils {
     private final LruCache<Long, Palette> paletteCache = new LruCache<>(32);

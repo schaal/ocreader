@@ -37,7 +37,8 @@ import java.util.concurrent.TimeUnit;
 import email.schaal.cloudreader.Preferences;
 
 /**
- * Created by daniel on 08.11.15.
+ * Utility class to setup the OkHttpClient and manage the credentials used to communicate with
+ * the ownCloud instance.
  */
 public class HttpManager {
     private static final String TAG = HttpManager.class.getSimpleName();

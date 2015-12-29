@@ -72,7 +72,7 @@ import retrofit.http.Path;
 import retrofit.http.Query;
 
 /**
- * Created by daniel on 08.11.15.
+ * This class encapsulates the ownCloud News API and communicates with the remote ownCloud instance.
  */
 public class APIService {
     private static final String TAG = APIService.class.getSimpleName();

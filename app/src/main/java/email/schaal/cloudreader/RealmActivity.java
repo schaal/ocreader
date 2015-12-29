@@ -28,7 +28,7 @@ import email.schaal.cloudreader.http.HttpManager;
 import io.realm.Realm;
 
 /**
- * Created by daniel on 11.11.15.
+ * Base Activity class to setup a Realm database object.
  */
 public abstract class RealmActivity extends AppCompatActivity {
     private Realm realm;

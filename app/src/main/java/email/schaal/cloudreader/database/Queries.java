@@ -50,7 +50,7 @@ import io.realm.Sort;
 import io.realm.exceptions.RealmException;
 
 /**
- * Created by daniel on 08.11.15.
+ * Utility class containing some commonly used Queries for the Realm database.
  */
 public class Queries {
     private final static String TAG = Queries.class.getSimpleName();

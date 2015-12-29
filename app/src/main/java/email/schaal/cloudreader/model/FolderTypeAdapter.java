@@ -30,7 +30,7 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 
 /**
- * Created by daniel on 10.11.15.
+ * TypeAdapter to deserialize the JSON response for Folders.
  */
 public class FolderTypeAdapter extends TypeAdapter<Folder> {
     private final static String TAG = FolderTypeAdapter.class.getSimpleName();

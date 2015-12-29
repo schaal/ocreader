@@ -31,7 +31,7 @@ import java.util.Date;
 import email.schaal.cloudreader.R;
 
 /**
- * Created by daniel on 15.11.15.
+ * Utility class to handle Strings.
  */
 public class StringUtils {
     public static String nullIfEmpty(String source) {

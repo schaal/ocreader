@@ -30,7 +30,7 @@ import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 /**
- * Created by daniel on 08.11.15.
+ * RealmObject representing a feed Item.
  */
 public class Item extends RealmObject {
     @PrimaryKey

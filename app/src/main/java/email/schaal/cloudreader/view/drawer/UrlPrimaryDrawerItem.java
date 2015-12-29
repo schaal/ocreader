@@ -27,7 +27,7 @@ import com.mikepenz.materialdrawer.holder.ImageHolder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 
 /**
- * Created by daniel on 27.12.15.
+ * PrimaryDrawerItem with ability to specify an image url as an Icon.
  */
 class UrlPrimaryDrawerItem extends PrimaryDrawerItem {
     @Override

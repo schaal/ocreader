@@ -24,7 +24,7 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
- * Created by daniel on 08.11.15.
+ * RealmObject representing a Folder.
  */
 public class Folder extends RealmObject implements TreeItem {
     @PrimaryKey

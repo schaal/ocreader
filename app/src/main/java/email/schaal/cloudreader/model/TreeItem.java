@@ -23,7 +23,7 @@ package email.schaal.cloudreader.model;
 import java.util.Comparator;
 
 /**
- * Created by daniel on 08.11.15.
+ * Interface representing a TreeItem (Feed, Folder or "special" Folders such as AllUnreadFolder).
  */
 public interface TreeItem {
     String ID = "id";

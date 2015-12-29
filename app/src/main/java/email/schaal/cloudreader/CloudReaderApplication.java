@@ -39,7 +39,7 @@ import email.schaal.cloudreader.http.HttpManager;
 import email.schaal.cloudreader.util.AlarmUtils;
 
 /**
- * Created by daniel on 08.11.15.
+ * Application class to setup the singletons
  */
 public class CloudReaderApplication extends Application {
     private static final String TAG = CloudReaderApplication.class.getSimpleName();

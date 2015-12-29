@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.util.Date;
 
 /**
- * Created by daniel on 10.11.15.
+ * TypeAdapter to deserialize the JSON response for Users.
  */
 public class UserTypeAdapter extends TypeAdapter<User> {
     private final static String TAG = UserTypeAdapter.class.getSimpleName();

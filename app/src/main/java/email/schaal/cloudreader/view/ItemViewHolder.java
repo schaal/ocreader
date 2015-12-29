@@ -35,7 +35,7 @@ import email.schaal.cloudreader.util.FaviconUtils;
 import email.schaal.cloudreader.util.StringUtils;
 
 /**
- * Created by daniel on 08.11.15.
+ * RecyclerView.ViewHolder to display a feed Item.
  */
 public class ItemViewHolder extends RecyclerView.ViewHolder {
     private static final String TAG = ItemViewHolder.class.getSimpleName();

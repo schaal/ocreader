@@ -37,7 +37,7 @@ import email.schaal.cloudreader.model.TreeItem;
 import io.realm.Realm;
 
 /**
- * Created by daniel on 27.12.15.
+ * Base class for the DrawerAdapter used by the Drawers in {@link email.schaal.cloudreader.ListActivity}
  */
 abstract class BaseDrawerAdapter extends DrawerAdapter {
     public final void reload(boolean showOnlyUnread) {

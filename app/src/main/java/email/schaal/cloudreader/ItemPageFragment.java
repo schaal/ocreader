@@ -52,7 +52,7 @@ import email.schaal.cloudreader.util.FaviconUtils;
 import email.schaal.cloudreader.util.StringUtils;
 
 /**
- * Created by daniel on 15.11.15.
+ * Fragment to display a single feed item using a WebView.
  */
 public class ItemPageFragment extends WebViewFragment {
     private static final String TAG = ItemPageFragment.class.getSimpleName();

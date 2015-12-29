@@ -24,7 +24,7 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 
 /**
- * Created by daniel on 15.11.15.
+ * TemporaryFeed allows to store the currently displayed Items.
  */
 public class TemporaryFeed extends RealmObject {
     private long id;

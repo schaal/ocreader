@@ -40,7 +40,7 @@ import io.realm.RealmResults;
 import io.realm.Sort;
 
 /**
- * Created by daniel on 08.11.15.
+ * Adapter for the RecyclerView to manage Items belonging to a certain TreeItem.
  */
 public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private RealmList<Item> items;

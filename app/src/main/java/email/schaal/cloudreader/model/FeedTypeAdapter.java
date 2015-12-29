@@ -33,7 +33,7 @@ import java.io.IOException;
 import email.schaal.cloudreader.util.StringUtils;
 
 /**
- * Created by daniel on 10.11.15.
+ * TypeAdapter to deserialize the JSON response for Feeds.
  */
 public class FeedTypeAdapter extends TypeAdapter<Feed> {
     private final static String TAG = FeedTypeAdapter.class.getSimpleName();

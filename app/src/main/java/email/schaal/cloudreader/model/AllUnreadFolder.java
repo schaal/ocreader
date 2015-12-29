@@ -25,7 +25,7 @@ import android.content.Context;
 import email.schaal.cloudreader.R;
 
 /**
- * Created by daniel on 08.11.15.
+ * TreeItem representing the folder with all unread items.
  */
 public class AllUnreadFolder implements TreeItem, TreeIconable {
     public final static long ID = -10;

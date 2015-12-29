@@ -33,7 +33,7 @@ import java.util.Date;
 import email.schaal.cloudreader.util.StringUtils;
 
 /**
- * Created by daniel on 10.11.15.
+ * TypeAdapter to deserialize the JSON response for feed Items.
  */
 public class ItemTypeAdapter extends TypeAdapter<Item> {
     private final static String TAG = ItemTypeAdapter.class.getSimpleName();

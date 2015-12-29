@@ -24,7 +24,8 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 
 /**
- * Created by daniel on 22.11.15.
+ * RealmObject to store which items have a changed unread or starred status. This items are then
+ * synchronized with the ownCloud News instance.
  */
 public class ChangedItems extends RealmObject {
     private RealmList<Item> unreadChangedItems;

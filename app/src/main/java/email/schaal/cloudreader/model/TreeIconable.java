@@ -23,7 +23,7 @@ package email.schaal.cloudreader.model;
 import android.support.annotation.DrawableRes;
 
 /**
- * Created by daniel on 14.11.15.
+ * Interface to add an Icon to TreeItems.
  */
 public interface TreeIconable {
     @DrawableRes int getIcon();

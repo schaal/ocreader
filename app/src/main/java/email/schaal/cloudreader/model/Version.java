@@ -23,7 +23,7 @@ package email.schaal.cloudreader.model;
 import android.support.annotation.NonNull;
 
 /**
- * Created by daniel on 13.11.15.
+ * Class to compare different ownCloud News versions.
  */
 public class Version implements Comparable<Version> {
     public Integer[] versions;

@@ -23,7 +23,7 @@ package email.schaal.cloudreader;
 import android.content.SharedPreferences;
 
 /**
- * Created by daniel on 17.11.15.
+ * Manage Preference values to store in SharedPreferences and retrieve those values.
  */
 public enum Preferences {
     /** User preferences **/

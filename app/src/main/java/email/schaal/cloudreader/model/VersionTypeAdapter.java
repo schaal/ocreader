@@ -30,7 +30,7 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 
 /**
- * Created by daniel on 10.11.15.
+ * TypeAdapter to deserialize the JSON response for Versions.
  */
 public class VersionTypeAdapter extends TypeAdapter<Version> {
     private final static String TAG = VersionTypeAdapter.class.getSimpleName();

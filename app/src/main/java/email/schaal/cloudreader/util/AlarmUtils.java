@@ -29,7 +29,8 @@ import android.os.SystemClock;
 import email.schaal.cloudreader.service.SyncService;
 
 /**
- * Created by daniel on 17.11.15.
+ * Collection of methods to set or cancel the Alarm used to handle synchronizing changed items with
+ * the remote server.
  */
 public class AlarmUtils {
     public static final int INTERVAL_FIVE_MINUTES = 5 * 60 * 1000;
