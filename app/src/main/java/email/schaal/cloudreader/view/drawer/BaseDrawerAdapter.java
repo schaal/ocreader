@@ -29,7 +29,6 @@ import com.mikepenz.materialdrawer.model.interfaces.Badgeable;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.ListIterator;
 
 import email.schaal.cloudreader.database.Queries;
