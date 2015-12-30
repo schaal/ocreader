@@ -254,7 +254,7 @@ public class SyncService extends Service {
 
         editor.apply();
 
-        Log.d(TAG, action);
+        Log.d(TAG, String.format("%s: %s", action, type));
     }
 
     public static void startSync(Activity activity) {
