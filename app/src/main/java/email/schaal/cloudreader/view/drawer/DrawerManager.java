@@ -24,6 +24,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
@@ -55,12 +56,14 @@ public class DrawerManager {
 
     private final State state;
 
-    private final SubscriptionDrawerAdapter startAdapter = new SubscriptionDrawerAdapter();
-    private final FolderDrawerAdapter endAdapter = new FolderDrawerAdapter();
+    private final SubscriptionDrawerAdapter startAdapter;
+    private final FolderDrawerAdapter endAdapter;
 
     public DrawerManager(Context context) {
         this.context = context;
         state = new State(context);
+        startAdapter = new SubscriptionDrawerAdapter();
+        endAdapter = new FolderDrawerAdapter();
     }
 
     public SubscriptionDrawerAdapter getStartAdapter() {
@@ -96,17 +99,44 @@ public class DrawerManager {
     public class SubscriptionDrawerAdapter extends BaseDrawerAdapter {
         private final String TAG = getClass().getCanonicalName();
 
+        private final List<IDrawerItem> topDrawerItems = new ArrayList<>(3);
+
         public SubscriptionDrawerAdapter() {
+            AllUnreadFolder unreadFolder = new AllUnreadFolder(context);
+            StarredFolder starredFolder = new StarredFolder(context);
+
+            topDrawerItems.add(new PrimaryDrawerItem()
+                            .withName(unreadFolder.getTitle())
+                            .withIcon(unreadFolder.getIcon())
+                            .withIconTintingEnabled(true)
+                            .withTag(unreadFolder)
+            );
+
+            topDrawerItems.add(new PrimaryDrawerItem()
+                    .withName(starredFolder.getTitle())
+                    .withIcon(starredFolder.getIcon())
+                    .withIconTintingEnabled(true)
+                    .withTag(starredFolder)
+            );
+
+            topDrawerItems.add(new DividerDrawerItem());
         }
 
         @Override
         protected ArrayList<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread) {
             ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
 
-            drawerItems.add(getDrawerItem(realm, new AllUnreadFolder(context)));
-            drawerItems.add(getDrawerItem(realm, new StarredFolder(context)));
+            drawerItems.addAll(topDrawerItems);
 
-            drawerItems.add(new DividerDrawerItem());
+            for(IDrawerItem drawerItem: topDrawerItems) {
+                if(drawerItem.getTag() instanceof TreeItem) {
+                    TreeItem item = (TreeItem) drawerItem.getTag();
+                    if (state.getStartDrawerItem().getId() == item.getId()) {
+                        drawerItem.withSetSelected(true);
+                        break;
+                    }
+                }
+            }
 
             for (Folder folder : Queries.getInstance().getFolders(realm, showOnlyUnread)) {
                 drawerItems.add(getDrawerItem(realm, folder));
