@@ -22,6 +22,8 @@ package email.schaal.cloudreader;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -84,6 +86,12 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        mUsernameView.setText(Preferences.USERNAME.getString(sharedPreferences));
+        mPasswordView.setText(Preferences.PASSWORD.getString(sharedPreferences));
+        mUrlView.setText(Preferences.URL.getString(sharedPreferences));
 
         Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
         mSignInButton.setOnClickListener(new OnClickListener() {
