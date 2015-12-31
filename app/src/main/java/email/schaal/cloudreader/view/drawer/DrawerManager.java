@@ -26,6 +26,7 @@ import android.os.Bundle;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.Badgeable;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import java.util.ArrayList;
@@ -131,6 +132,9 @@ public class DrawerManager {
             for(IDrawerItem drawerItem: topDrawerItems) {
                 if(drawerItem.getTag() instanceof TreeItem) {
                     TreeItem item = (TreeItem) drawerItem.getTag();
+                    int count = Queries.getInstance().getCount(realm, item);
+                    if(count > 0 && drawerItem instanceof Badgeable)
+                        ((Badgeable) drawerItem).withBadge(String.valueOf(count));
                     if (state.getStartDrawerItem().getId() == item.getId()) {
                         drawerItem.withSetSelected(true);
                         break;
@@ -160,15 +164,16 @@ public class DrawerManager {
             int count = Queries.getInstance().getCount(realm, item);
 
             if (item instanceof Feed) {
-                Feed feed = (Feed) item;
-                String favIcon = feed.getFaviconLink();
+                shouldSelect = state.isFeedSelected();
+                String favIcon = ((Feed) item).getFaviconLink();
+
                 if (favIcon != null)
                     drawerItem.withIcon(favIcon);
                 else
                     drawerItem.withIcon(R.drawable.ic_feed_icon);
-                shouldSelect = state.isFeedSelected();
             } else {
                 shouldSelect = !state.isFeedSelected();
+
                 if (item instanceof TreeIconable)
                     drawerItem.withIcon(((TreeIconable) item).getIcon());
                 else
@@ -181,8 +186,7 @@ public class DrawerManager {
                 drawerItem.withBadge(String.valueOf(count));
             }
 
-            drawerItem.withSetSelected(shouldSelect);
-            return drawerItem;
+            return drawerItem.withSetSelected(shouldSelect);
         }
     }
 
