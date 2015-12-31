@@ -68,6 +68,7 @@ import email.schaal.cloudreader.service.SyncService;
 import email.schaal.cloudreader.view.ItemViewHolder;
 import email.schaal.cloudreader.view.ItemsAdapter;
 import email.schaal.cloudreader.view.drawer.DrawerManager;
+import hugo.weaving.DebugLog;
 import io.realm.Realm;
 
 public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ItemsAdapter.OnLoadMoreListener {
@@ -100,7 +101,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         boolean syncRunning = Preferences.SYS_SYNC_RUNNING.getBoolean(sharedPreferences);
 
         if(needsUpdate) {
-            drawerManager.reloadStartAdapter(isShowOnlyUnread());
+            drawerManager.reloadStartAdapter(getRealm(), isShowOnlyUnread());
 
             getListFragment().update(true);
 
@@ -151,6 +152,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, SyncService.syncFilter);
     }
 
+    @DebugLog
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -242,7 +244,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 .withOnDrawerListener(new Drawer.OnDrawerListener() {
                     @Override
                     public void onDrawerOpened(View drawerView) {
-                        drawerManager.getStartAdapter().updateUnreadCount(isShowOnlyUnread());
+                        drawerManager.getStartAdapter().updateUnreadCount(getRealm(), isShowOnlyUnread());
                     }
 
                     @Override
@@ -279,7 +281,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 .withOnDrawerListener(new Drawer.OnDrawerListener() {
                     @Override
                     public void onDrawerOpened(View drawerView) {
-                        drawerManager.getEndAdapter().updateUnreadCount(isShowOnlyUnread());
+                        drawerManager.getEndAdapter().updateUnreadCount(getRealm(), isShowOnlyUnread());
                     }
 
                     @Override
@@ -323,8 +325,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             e.printStackTrace();
         }
 
-        drawerManager.reloadStartAdapter(isShowOnlyUnread());
-        drawerManager.reloadEndAdapter(isShowOnlyUnread());
+        drawerManager.reloadAdapters(getRealm(), isShowOnlyUnread());
 
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(drawerManager.getState().getTreeItem().getTitle());
@@ -352,7 +353,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     }
 
     private void onStartDrawerItemClicked(TreeItem item) {
-        drawerManager.setSelectedTreeItem(item, isShowOnlyUnread());
+        drawerManager.setSelectedTreeItem(getRealm(), item, isShowOnlyUnread());
         reloadListFragment(item);
     }
 

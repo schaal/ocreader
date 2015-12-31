@@ -39,49 +39,34 @@ import io.realm.Realm;
  * Base class for the DrawerAdapter used by the Drawers in {@link email.schaal.cloudreader.ListActivity}
  */
 abstract class BaseDrawerAdapter extends DrawerAdapter {
-    public final void reload(boolean showOnlyUnread) {
-        Realm realm = null;
-        try {
-            realm = Realm.getDefaultInstance();
-            clearDrawerItems();
-            setDrawerItems(reloadDrawerItems(realm, showOnlyUnread));
-        } finally {
-            if (realm != null)
-                realm.close();
-        }
+    public final void reload(Realm realm, boolean showOnlyUnread) {
+        clearDrawerItems();
+        setDrawerItems(reloadDrawerItems(realm, showOnlyUnread));
     }
 
     protected abstract ArrayList<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread);
 
-    public void updateUnreadCount(boolean showOnlyUnread) {
-        Realm realm = null;
-        try {
-            realm = Realm.getDefaultInstance();
+    public void updateUnreadCount(Realm realm, boolean showOnlyUnread) {
+        ListIterator<IDrawerItem> itemIterator = getDrawerItems().listIterator();
 
-            ListIterator<IDrawerItem> itemIterator = getDrawerItems().listIterator();
+        while (itemIterator.hasNext()) {
+            int position = itemIterator.nextIndex() + getHeaderItemCount();
+            IDrawerItem drawerItem = itemIterator.next();
+            if (drawerItem instanceof Badgeable) {
+                Badgeable badgeable = (Badgeable) drawerItem;
+                Integer count = Queries.getInstance().getCount(realm, (TreeItem) drawerItem.getTag());
 
-            while (itemIterator.hasNext()) {
-                int position = itemIterator.nextIndex() + getHeaderItemCount();
-                IDrawerItem drawerItem = itemIterator.next();
-                if (drawerItem instanceof Badgeable) {
-                    Badgeable badgeable = (Badgeable) drawerItem;
-                    Integer count = Queries.getInstance().getCount(realm, (TreeItem) drawerItem.getTag());
-
-                    if (count <= 0) {
-                        if (showOnlyUnread) {
-                            itemIterator.remove();
-                            notifyItemRemoved(position);
-                        } else {
-                            updateBadge(badgeable, null, position);
-                        }
+                if (count <= 0) {
+                    if (showOnlyUnread) {
+                        itemIterator.remove();
+                        notifyItemRemoved(position);
                     } else {
-                        updateBadge(badgeable, String.valueOf(count), position);
+                        updateBadge(badgeable, null, position);
                     }
+                } else {
+                    updateBadge(badgeable, String.valueOf(count), position);
                 }
             }
-        } finally {
-            if (realm != null)
-                realm.close();
         }
     }
 
