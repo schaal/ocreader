@@ -111,10 +111,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                     .putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), false).apply();
         }
 
-        if (syncMenuItem != null) {
-            syncMenuItem.setEnabled(!syncRunning);
-        }
-
         if (refreshDrawerItem != null) {
             refreshDrawerItem.withEnabled(!syncRunning);
             startDrawer.updateStickyFooterItem(refreshDrawerItem);
@@ -128,7 +124,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             getListFragment().resetLoadMore();
     }
 
-    private MenuItem syncMenuItem;
     private Drawer startDrawer;
     private Drawer endDrawer;
     private DrawerManager drawerManager;
@@ -391,7 +386,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_list, menu);
-        syncMenuItem = menu.findItem(R.id.action_sync);
+
         return true;
     }
 
@@ -405,9 +400,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         switch (id) {
             case R.id.action_settings:
                 return true;
-            case R.id.action_sync:
-                SyncService.startSync(this);
-                break;
         }
 
         return super.onOptionsItemSelected(item);

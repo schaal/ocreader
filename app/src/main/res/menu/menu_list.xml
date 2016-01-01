@@ -28,9 +28,4 @@
           android:orderInCategory="100"
           android:title="@string/action_settings"
           app:showAsAction="never"/>
-
-    <item android:id="@+id/action_sync"
-          android:icon="@drawable/ic_refresh"
-          android:title="@string/action_sync"
-          app:showAsAction="never"/>
 </menu>
