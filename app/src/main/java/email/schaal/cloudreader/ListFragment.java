@@ -29,7 +29,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import email.schaal.cloudreader.model.AllUnreadFolder;
 import email.schaal.cloudreader.model.TreeItem;
 import email.schaal.cloudreader.view.DividerItemDecoration;
 import email.schaal.cloudreader.view.ItemViewHolder;
@@ -59,7 +58,7 @@ public class ListFragment extends Fragment {
 
         itemsRecyclerView = (RecyclerView) rootView.findViewById(R.id.items_recyclerview);
 
-        adapter = new ItemsAdapter(new AllUnreadFolder(getActivity()), (ItemViewHolder.OnClickListener)getActivity(), (ItemsAdapter.OnLoadMoreListener)getActivity());
+        adapter = new ItemsAdapter((ItemViewHolder.OnClickListener)getActivity(), (ItemsAdapter.OnLoadMoreListener)getActivity());
 
         itemsRecyclerView.setAdapter(adapter);
         itemsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

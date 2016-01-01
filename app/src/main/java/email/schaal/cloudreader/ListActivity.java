@@ -168,6 +168,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         drawerManager = new DrawerManager(this);
         drawerManager.getState().restoreInstanceState(savedInstanceState);
+        getListFragment().setItem(drawerManager.getState().getTreeItem());
 
         fab_mark_all_read = (FloatingActionButton) findViewById(R.id.fab_mark_all_read);
         fab_mark_all_read.setOnClickListener(new View.OnClickListener() {

@@ -20,6 +20,8 @@
 
 package email.schaal.cloudreader.view;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,7 +46,7 @@ import io.realm.Sort;
  */
 public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private RealmList<Item> items;
-    private TreeItem treeItem;
+    @Nullable private TreeItem treeItem;
     private final ItemViewHolder.OnClickListener clickListener;
     private final OnLoadMoreListener loadMoreListener;
 
@@ -54,15 +56,30 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private TreeItem loadingMoreTreeItem;
 
-    public ItemsAdapter(TreeItem treeItem, ItemViewHolder.OnClickListener clickListener, OnLoadMoreListener loadMoreListener) {
+    public ItemsAdapter(ItemViewHolder.OnClickListener clickListener, OnLoadMoreListener loadMoreListener) {
+        this.clickListener = clickListener;
+        this.loadMoreListener = loadMoreListener;
+
+        init();
+    }
+
+    public ItemsAdapter(@Nullable TreeItem treeItem, ItemViewHolder.OnClickListener clickListener, OnLoadMoreListener loadMoreListener) {
         this.treeItem = treeItem;
         this.clickListener = clickListener;
         this.loadMoreListener = loadMoreListener;
+
+        init();
+    }
+
+    private void init() {
         setHasStableIds(true);
         updateItems(false);
     }
 
     public void updateItems(boolean updateTemporaryFeed) {
+        if(treeItem == null)
+            return;
+
         Realm realm = null;
         try {
             realm = Realm.getDefaultInstance();
@@ -164,7 +181,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             return -1;
     }
 
-    public void setTreeItem(TreeItem item) {
+    public void setTreeItem(@NonNull TreeItem item) {
         treeItem = item;
         updateItems(true);
     }
