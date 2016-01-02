@@ -361,8 +361,8 @@ public class APIService {
 
     public void items(long lastSync, final APICallback callback) {
         // get all unread items on first sync, updatedItems on further syncs
-        if(lastSync == 0) {
-            api.items((long) 0, QueryType.ALL.getType(), (long) 0, false, false).enqueue(new RealmRetrofitCallback<Items>(callback) {
+        if(lastSync == 0L) {
+            api.items(0L, QueryType.ALL.getType(), 0L, false, false).enqueue(new RealmRetrofitCallback<Items>(callback) {
                 private int totalCount = 0;
 
                 @Override
@@ -375,7 +375,7 @@ public class APIService {
                     if (items.size() == BATCH_SIZE) {
                         Toast.makeText(context, context.getResources().getQuantityString(R.plurals.downloaded_x_items, totalCount, totalCount), Toast.LENGTH_SHORT).show();
                         long newOffset = realm.where(Item.class).min(Item.ID).longValue();
-                        api.items(newOffset, QueryType.ALL.getType(), (long) 0, false, false).enqueue(this);
+                        api.items(newOffset, QueryType.ALL.getType(), 0L, false, false).enqueue(this);
                         return false;
                     } else {
                         return true;
@@ -383,7 +383,7 @@ public class APIService {
                 }
             });
         } else {
-            api.updatedItems(lastSync, QueryType.ALL.getType(), (long) 0).enqueue(new RealmRetrofitCallback<Items>(callback) {
+            api.updatedItems(lastSync, QueryType.ALL.getType(), 0L).enqueue(new RealmRetrofitCallback<Items>(callback) {
                 @Override
                 protected boolean onResponseReal(Realm realm, Response<Items> response) {
                     Queries.getInstance().removeExcessItems(realm, MAX_ITEMS);
