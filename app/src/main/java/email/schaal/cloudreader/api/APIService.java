@@ -114,6 +114,8 @@ public class APIService {
         void onCompleted();
     }
 
+    private final Handler handler = new Handler(Looper.getMainLooper());
+
     public void syncChanges(@NonNull final Realm realm, @Nullable final OnCompletionListener completionListener) {
         final ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
         final CountDownLatch countDownLatch = new CountDownLatch(MarkAction.values().length);
@@ -131,7 +133,6 @@ public class APIService {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                Handler handler = new Handler(Looper.getMainLooper());
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -151,7 +152,7 @@ public class APIService {
 
     }
 
-    private void markItems(MarkAction action, ChangedItems changedItems, final CountDownLatch countDownLatch, final Set<List<Item>> itemsToClear) {
+    private void markItems(final MarkAction action, ChangedItems changedItems, final CountDownLatch countDownLatch, final Set<List<Item>> itemsToClear) {
         RealmResults<Item> results;
         final RealmList<Item> items;
 
@@ -179,7 +180,7 @@ public class APIService {
             ids.setItems(itemMap.getKeys());
         }
 
-        Callback<Void> markCallback = new Callback<Void>() {
+        final Callback<Void> markCallback = new Callback<Void>() {
             @Override
             public void onResponse(Response<Void> response, Retrofit retrofit) {
                 countDownLatch.countDown();
