@@ -76,8 +76,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
     private static final int REFRESH_DRAWER_ITEM_ID = 999;
 
-    private ItemsAdapter itemsAdapter;
-
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
