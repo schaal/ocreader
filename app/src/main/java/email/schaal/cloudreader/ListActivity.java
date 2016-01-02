@@ -425,6 +425,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             if(encodedImage != null) {
                 Bitmap avatarBitmap = BitmapFactory.decodeStream(new Base64InputStream(new ByteArrayInputStream(encodedImage.getBytes()), Base64.DEFAULT));
                 profileDrawerItem.withIcon(avatarBitmap);
+            } else {
+                profileDrawerItem.withIcon(R.mipmap.ic_launcher);
             }
             if(accountHeader != null)
                 accountHeader.updateProfile(profileDrawerItem);
