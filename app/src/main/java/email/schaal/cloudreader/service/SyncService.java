@@ -215,7 +215,7 @@ public class SyncService extends Service {
         long lastSync = 0;
         Date maximumDate = realm.where(Item.class).maximumDate(Item.LAST_MODIFIED);
         if (maximumDate != null)
-            lastSync = maximumDate.getTime() / 1000 + 1;
+            lastSync = maximumDate.getTime() / 1000;
 
         return lastSync;
     }
@@ -251,11 +251,11 @@ public class SyncService extends Service {
 
         final Intent intent = new Intent(action);
         intent.putExtra(EXTRA_TYPE, type);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
         editor.putBoolean(Preferences.SYS_SYNC_RUNNING.getKey(), syncStarted);
-
         editor.apply();
+
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
         Log.d(TAG, String.format("%s: %s", action, type));
     }
