@@ -68,6 +68,8 @@ public class SyncService extends Service {
     public static final String EXTRA_OFFSET = "email.schaal.cloudreader.action.extra.OFFSET";
     public static final String EXTRA_TYPE = "email.schaal.cloudreader.action.extra.TYPE";
 
+    private SharedPreferences sharedPreferences;
+
     private enum SyncType {
         FULL_SYNC,
         SYNC_CHANGES_ONLY,
@@ -107,6 +109,7 @@ public class SyncService extends Service {
     @Override
     public void onCreate() {
         realm = Realm.getDefaultInstance();
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         super.onCreate();
     }
 
@@ -237,7 +240,7 @@ public class SyncService extends Service {
     private void notifySyncStatus(@NonNull String action, String type) {
         final boolean syncStarted = action.equals(SYNC_STARTED);
 
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         if(!syncStarted)
             editor.putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), true);
