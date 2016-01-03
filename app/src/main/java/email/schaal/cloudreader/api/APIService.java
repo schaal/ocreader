@@ -27,6 +27,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
+import com.github.zafarkhaja.semver.Version;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
@@ -54,7 +55,7 @@ import email.schaal.cloudreader.model.Item;
 import email.schaal.cloudreader.model.ItemTypeAdapter;
 import email.schaal.cloudreader.model.User;
 import email.schaal.cloudreader.model.UserTypeAdapter;
-import email.schaal.cloudreader.model.Version;
+import email.schaal.cloudreader.model.VersionTypeAdapter;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -229,7 +230,6 @@ public class APIService {
     private static APIService instance;
 
     private API api;
-    private Version version;
 
     public static void init(Context context) {
         instance = new APIService(context);
@@ -249,6 +249,7 @@ public class APIService {
                 .registerTypeAdapter(Feed.class, new FeedTypeAdapter())
                 .registerTypeAdapter(Item.class, new ItemTypeAdapter())
                 .registerTypeAdapter(User.class, new UserTypeAdapter())
+                .registerTypeAdapter(Version.class, new VersionTypeAdapter())
                 .setExclusionStrategies(new ExclusionStrategy() {
                     @Override
                     public boolean shouldSkipField(FieldAttributes f) {

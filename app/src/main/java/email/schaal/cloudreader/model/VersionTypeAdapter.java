@@ -22,6 +22,7 @@ package email.schaal.cloudreader.model;
 
 import android.util.Log;
 
+import com.github.zafarkhaja.semver.Version;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
@@ -45,13 +46,13 @@ public class VersionTypeAdapter extends TypeAdapter<Version> {
             in.nextNull();
             return null;
         }
-        Version version = new Version();
+        Version version = null;
         in.beginObject();
         while (in.hasNext()) {
             String name = in.nextName();
             switch (name) {
                 case "version":
-                    version.setVersion(in.nextString());
+                    version = Version.valueOf(in.nextString());
                     break;
                 default:
                     Log.w(TAG, "Unknown value in version json: " + name);

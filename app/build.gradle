@@ -67,6 +67,8 @@ dependencies {
     compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
     compile 'com.squareup.picasso:picasso:2.5.2'
 
+    compile 'com.github.zafarkhaja:java-semver:0.9.0'
+
     // Explicitly set version for support-annotations to prevent version conflicts
     androidTestCompile 'com.android.support:support-annotations:23.1.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'

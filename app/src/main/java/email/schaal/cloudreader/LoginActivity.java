@@ -36,11 +36,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.github.zafarkhaja.semver.Version;
 import com.squareup.okhttp.HttpUrl;
 
 import email.schaal.cloudreader.api.APIService;
 import email.schaal.cloudreader.http.HttpManager;
-import email.schaal.cloudreader.model.Version;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -175,6 +175,7 @@ public class LoginActivity extends AppCompatActivity {
         public void onResponse(Response<Version> response, Retrofit retrofit) {
             onCompletion();
 
+            // TODO: 03.01.16 Check if version is new enough
             HttpManager.getInstance().persistCredentials(LoginActivity.this);
 
             setResult(RESULT_OK);
@@ -185,6 +186,9 @@ public class LoginActivity extends AppCompatActivity {
         public void onFailure(Throwable t) {
             onCompletion();
 
+            t.printStackTrace();
+
+            // TODO: 03.01.16 Get the actual reason for the failure
             mPasswordView.setError(getString(R.string.error_incorrect_password));
             mPasswordView.requestFocus();
         }
