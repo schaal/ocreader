@@ -37,6 +37,8 @@ import email.schaal.cloudreader.view.ItemsAdapter;
 public class ListFragment extends Fragment {
     private final static String TAG = ListFragment.class.getSimpleName();
 
+    public static final String LAYOUT_MANAGER_STATE = "LAYOUT_MANAGER_STATE";
+
     private RecyclerView itemsRecyclerView;
 
     private ItemsAdapter adapter;
@@ -61,11 +63,21 @@ public class ListFragment extends Fragment {
         adapter = new ItemsAdapter((ItemViewHolder.OnClickListener)getActivity(), (ItemsAdapter.OnLoadMoreListener)getActivity());
 
         itemsRecyclerView.setAdapter(adapter);
+
         itemsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        if(savedInstanceState != null)
+            itemsRecyclerView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE));
+
         itemsRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity()));
         itemsRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(LAYOUT_MANAGER_STATE, itemsRecyclerView.getLayoutManager().onSaveInstanceState());
     }
 
     public void resetLoadMore() {
