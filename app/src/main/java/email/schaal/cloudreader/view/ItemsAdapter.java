@@ -94,7 +94,9 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         temporaryFeed.setId(treeItem.getId());
                         temporaryFeed.setTitle(treeItem.getTitle());
                         temporaryFeed.getItems().clear();
-                        temporaryFeed.getItems().addAll(tempItems);
+                        if (tempItems != null) {
+                            temporaryFeed.getItems().addAll(tempItems);
+                        }
                     }
                 });
             }

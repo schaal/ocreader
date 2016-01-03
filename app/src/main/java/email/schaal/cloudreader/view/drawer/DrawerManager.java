@@ -22,6 +22,7 @@ package email.schaal.cloudreader.view.drawer;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
@@ -42,6 +43,7 @@ import email.schaal.cloudreader.model.TreeIconable;
 import email.schaal.cloudreader.model.TreeItem;
 import io.realm.Realm;
 import io.realm.RealmObject;
+import io.realm.RealmResults;
 
 /**
  * Manages the drawers displaying feeds and folders.
@@ -147,9 +149,11 @@ public class DrawerManager {
                 }
             }
 
-            for (Folder folder : Queries.getInstance().getFolders(realm, showOnlyUnread)) {
-                drawerItems.add(getDrawerItem(realm, folder));
-            }
+            final RealmResults<Folder> folders = Queries.getInstance().getFolders(realm, showOnlyUnread);
+            if(folders != null)
+                for (Folder folder : folders) {
+                    drawerItems.add(getDrawerItem(realm, folder));
+                }
 
             for (Feed feed : Queries.getInstance().getFeedsWithoutFolder(realm, showOnlyUnread)) {
                 drawerItems.add(getDrawerItem(realm, feed));
@@ -219,7 +223,7 @@ public class DrawerManager {
             return drawerItems;
         }
 
-        private List<IDrawerItem> getDrawerItems(Iterable<Feed> feedItemList) {
+        private List<IDrawerItem> getDrawerItems(@Nullable Iterable<Feed> feedItemList) {
             List<IDrawerItem> children = new ArrayList<>();
             if (feedItemList != null) {
                 for (Feed feed : feedItemList) {

@@ -21,6 +21,7 @@
 package email.schaal.cloudreader.database;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -119,18 +120,14 @@ public class Queries {
         }
     }
 
+    @Nullable
     public Folder getFolder(Realm realm, long id) {
-        Folder folder = realm.where(Folder.class).equalTo(Folder.ID, id).findFirst();
-        if(folder == null)
-            folder = new Folder(id);
-        return folder;
+        return realm.where(Folder.class).equalTo(Folder.ID, id).findFirst();
     }
 
+    @Nullable
     public Feed getFeed(Realm realm, long id) {
-        Feed feed = realm.where(Feed.class).equalTo(Feed.ID, id).findFirst();
-        if(feed == null)
-            feed = new Feed(id);
-        return feed;
+        return realm.where(Feed.class).equalTo(Feed.ID, id).findFirst();
     }
 
     /**
@@ -141,6 +138,7 @@ public class Queries {
      * @param order Sort using this order
      * @return items belonging to TreeItem
      */
+    @Nullable
     public RealmResults<Item> getItems(Realm realm, TreeItem treeItem, String sortFieldname, Sort order) {
         RealmQuery<Item> query = null;
         if(treeItem instanceof Feed)
@@ -148,7 +146,7 @@ public class Queries {
         else if(treeItem instanceof Folder) {
             // Get all feeds belonging to Folder treeItem
             RealmResults<Feed> feeds = getFeedsForTreeItem(realm, treeItem);
-            if(feeds.size() > 0) {
+            if(feeds != null && feeds.size() > 0) {
                 // Find all items belonging to any feed from this folder
                 Iterator<Feed> feedIterator = feeds.iterator();
                 query = realm.where(Item.class)
@@ -169,6 +167,7 @@ public class Queries {
             return null;
     }
 
+    @Nullable
     public RealmResults<Folder> getFolders(Realm realm, boolean onlyUnread) {
         RealmQuery<Folder> query = null;
         if(onlyUnread) {
@@ -188,6 +187,7 @@ public class Queries {
         return query != null ? query.findAllSorted(Folder.TITLE, Sort.ASCENDING) : null;
     }
 
+    @NonNull
     public RealmResults<Feed> getFeeds(Realm realm) {
         return realm.where(Feed.class).findAllSorted(Feed.PINNED, Sort.ASCENDING, Feed.TITLE, Sort.ASCENDING);
     }
@@ -241,6 +241,7 @@ public class Queries {
         });
     }
 
+    @NonNull
     public RealmResults<Feed> getFeedsWithoutFolder(Realm realm, boolean onlyUnread) {
         RealmQuery<Feed> query = realm.where(Feed.class).equalTo(Feed.FOLDER_ID, 0);
         if(onlyUnread) {
@@ -263,16 +264,21 @@ public class Queries {
         return count;
     }
 
+    @Nullable
     public RealmResults<Feed> getFeedsForTreeItem(Realm realm, TreeItem item) {
-        RealmResults<Feed> feeds = null;
+        RealmQuery<Feed> feedQuery = realm.where(Feed.class);
+
         if(item instanceof AllUnreadFolder) {
-            feeds = realm.where(Feed.class).greaterThan(Feed.UNREAD_COUNT, 0).findAllSorted(Feed.TITLE, Sort.ASCENDING);
+            feedQuery.greaterThan(Feed.UNREAD_COUNT, 0);
         } else if(item instanceof StarredFolder) {
-            feeds = realm.where(Feed.class).greaterThan(Feed.STARRED_COUNT, 0).findAllSorted(Feed.TITLE, Sort.ASCENDING);
+            feedQuery.greaterThan(Feed.STARRED_COUNT, 0);
         } else if(item instanceof Folder) {
-            feeds = realm.where(Feed.class).equalTo(Feed.FOLDER_ID, item.getId()).findAllSorted(Feed.TITLE, Sort.ASCENDING);
+            feedQuery.equalTo(Feed.FOLDER_ID, item.getId());
+        } else {
+            feedQuery = null;
         }
-        return feeds;
+
+        return feedQuery != null ? feedQuery.findAllSorted(Feed.TITLE, Sort.ASCENDING) : null;
     }
 
     public void removeExcessItems(Realm realm, final int maxItems) {
