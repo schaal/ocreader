@@ -36,6 +36,8 @@ import android.support.v4.util.ArrayMap;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -144,7 +146,7 @@ public class SyncService extends Service {
 
                             APIService.getInstance().user(apiCallback);
                             APIService.getInstance().folders(apiCallback);
-                            APIService.getInstance().feeds(apiCallback, true);
+                            APIService.getInstance().feeds(apiCallback);
                             APIService.getInstance().items(getLastSyncTimestamp(realm), apiCallback);
 
                             waitForCountdownLatch(startId, action);
@@ -221,7 +223,7 @@ public class SyncService extends Service {
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     private void postProcessFeeds(Realm realm) {
-        // Post-process feeds: add starredCount
+        // Post-process feeds: add starredCount and cache favicons
         final RealmResults<Feed> feeds = realm.where(Feed.class).findAll();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -232,6 +234,8 @@ public class SyncService extends Service {
                                     .equalTo(Item.FEED_ID, feed.getId())
                                     .equalTo(Item.STARRED, true).count()
                     );
+                    if(feed.getFaviconLink() != null)
+                        Picasso.with(SyncService.this).load(feed.getFaviconLink()).fetch();
                 }
             }
         });

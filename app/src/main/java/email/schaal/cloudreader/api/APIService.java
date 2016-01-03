@@ -32,7 +32,6 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.HttpUrl;
-import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -418,7 +417,7 @@ public class APIService {
         });
     }
 
-    public void feeds(final APICallback callback, final boolean cacheFavicons) {
+    public void feeds(final APICallback callback) {
         api.feeds().enqueue(new RealmRetrofitCallback<Feeds>(callback) {
             @Override
             protected boolean onResponseReal(Realm realm, Response<Feeds> response) {
@@ -426,13 +425,6 @@ public class APIService {
                 List<Feed> feeds = feedsBody.getFeeds();
 
                 Queries.getInstance().deleteAndInsert(realm, Feed.class, feeds);
-
-                if(cacheFavicons) {
-                    for(final Feed feed: feeds) {
-                        if(feed.getFaviconLink() != null)
-                            Picasso.with(context).load(feed.getFaviconLink()).fetch();
-                    }
-                }
 
                 return true;
             }
