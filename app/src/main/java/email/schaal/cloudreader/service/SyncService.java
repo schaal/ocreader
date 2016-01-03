@@ -218,7 +218,7 @@ public class SyncService extends Service {
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     private void postProcessFeeds(Realm realm) {
-        // Post-process feeds: add starredCount and update unreadCount
+        // Post-process feeds: add starredCount
         final RealmResults<Feed> feeds = realm.where(Feed.class).findAll();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -228,10 +228,6 @@ public class SyncService extends Service {
                     feed.setStarredCount((int) realm.where(Item.class)
                                     .equalTo(Item.FEED_ID, feed.getId())
                                     .equalTo(Item.STARRED, true).count()
-                    );
-                    feed.setUnreadCount((int) realm.where(Item.class)
-                                    .equalTo(Item.FEED_ID, feed.getId())
-                                    .equalTo(Item.UNREAD, true).count()
                     );
                 }
             }
