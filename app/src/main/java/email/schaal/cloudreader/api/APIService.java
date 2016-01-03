@@ -283,7 +283,7 @@ public class APIService {
         return api;
     }
 
-    @SuppressWarnings("SameParameterValue")
+    @SuppressWarnings("SameParameterValue,unused")
     public interface API {
         /** SERVER **/
         @GET("version")
