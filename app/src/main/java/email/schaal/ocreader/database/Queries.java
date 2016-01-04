@@ -76,8 +76,7 @@ public class Queries {
             Realm.compactRealm(realmConfiguration);
             realm = Realm.getDefaultInstance();
             if(realm.isEmpty()) {
-                realm.close();
-                resetDatabase();
+                initializeSingletons(realm);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -111,17 +110,21 @@ public class Queries {
         Realm realm = null;
         try {
             realm = Realm.getDefaultInstance();
-            realm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    realm.createObject(TemporaryFeed.class);
-                    realm.createObject(ChangedItems.class);
-                }
-            });
+            initializeSingletons(realm);
         } finally {
             if(realm != null)
                 realm.close();
         }
+    }
+
+    private void initializeSingletons(Realm realm) {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.createObject(TemporaryFeed.class);
+                realm.createObject(ChangedItems.class);
+            }
+        });
     }
 
     @Nullable
