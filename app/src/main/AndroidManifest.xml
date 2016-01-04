@@ -2,36 +2,36 @@
 <!--
   ~ Copyright (C) 2015 Daniel Schaal <daniel@schaal.email>
   ~
-  ~ This file is part of Cloudreader.
+  ~ This file is part of OCReader.
   ~
-  ~ Cloudreader is free software: you can redistribute it and/or modify
+  ~ OCReader is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ Cloudreader is distributed in the hope that it will be useful,
+  ~ OCReader is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with Cloudreader.  If not, see <http://www.gnu.org/licenses/>.
+  ~ along with OCReader.  If not, see <http://www.gnu.org/licenses/>.
   ~
   -->
-<manifest package="email.schaal.cloudreader"
+<manifest package="email.schaal.ocreader"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:name=".CloudReaderApplication"
+        android:name="email.schaal.ocreader.OCReaderApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ListActivity"
+            android:name="email.schaal.ocreader.ListActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -42,30 +42,30 @@
         </activity>
 
         <service
-            android:name=".service.SyncService"
+            android:name="email.schaal.ocreader.service.SyncService"
             android:enabled="true"
             android:exported="false">
         </service>
 
         <activity
-            android:name=".LoginActivity"
+            android:name="email.schaal.ocreader.LoginActivity"
             android:label="@string/title_activity_login"/>
         <activity
-            android:name=".ItemPagerActivity"
+            android:name="email.schaal.ocreader.ItemPagerActivity"
             android:label="@string/title_activity_item_pager"
-            android:parentActivityName=".ListActivity"
+            android:parentActivityName="email.schaal.ocreader.ListActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="email.schaal.cloudreader.ListActivity"/>
+                android:value="email.schaal.ocreader.ListActivity"/>
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name="email.schaal.ocreader.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".ListActivity">
+            android:parentActivityName="email.schaal.ocreader.ListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="email.schaal.cloudreader.ListActivity"/>
+                android:value="email.schaal.ocreader.ListActivity"/>
         </activity>
 
     </application>

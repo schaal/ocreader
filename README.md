@@ -1,6 +1,6 @@
-# [Cloudreader][1] - Android client for [ownCloud news][0]
+# [OCReader][1] - Android client for [ownCloud news][0]
 
-Cloudreader is a client for an [ownCloud news][0] instance.
+OCReader is a client for an [ownCloud news][0] instance.
 
 ## License
 It is released under the [GNU General Public License version 3](https://www.gnu.org/licenses/gpl-3.0) (or later versions).
@@ -9,4 +9,4 @@ It is released under the [GNU General Public License version 3](https://www.gnu.
 Maintainer: [Daniel Schaal]((https://github.com/schaal)) <daniel@schaal.email>
 
 [0]: https://github.com/owncloud/news
-[1]: https://github.com/schaal/cloudreader
+[1]: https://github.com/schaal/ocreader

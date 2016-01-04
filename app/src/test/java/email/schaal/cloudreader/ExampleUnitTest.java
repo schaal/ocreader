@@ -1,4 +1,4 @@
-package email.schaal.cloudreader;
+package email.schaal.ocreader;
 
 import org.junit.Test;
 
