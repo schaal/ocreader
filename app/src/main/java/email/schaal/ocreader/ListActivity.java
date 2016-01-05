@@ -435,7 +435,16 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     public void onLoadMore(@NonNull TreeItem treeItem) {
         TemporaryFeed temporaryFeed = getRealm().where(TemporaryFeed.class).findFirst();
         long id = treeItem.getId();
-        long offset = temporaryFeed.getItems().where().min(Item.ID).longValue();
+
+        final Number minId = temporaryFeed.getItems().where().min(Item.ID);
+        long offset;
+
+        // minId is null if there are no feed items in treeItem
+        if(minId != null)
+            offset = minId.longValue();
+        else
+            offset = 0;
+
         boolean isFeed = treeItem instanceof Feed;
 
         SyncService.startLoadMore(this, id, offset, isFeed);
