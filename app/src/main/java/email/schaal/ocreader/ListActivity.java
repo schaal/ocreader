@@ -99,7 +99,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         boolean syncRunning = Preferences.SYS_SYNC_RUNNING.getBoolean(sharedPreferences);
 
         if(needsUpdate) {
-            drawerManager.reloadStartAdapter(getRealm(), isShowOnlyUnread());
+            drawerManager.reloadAdapters(getRealm(), isShowOnlyUnread());
 
             getListFragment().update(true);
 
