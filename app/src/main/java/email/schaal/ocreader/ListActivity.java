@@ -170,7 +170,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         swipeRefreshLayout.setColorSchemeResources(R.color.primary);
         swipeRefreshLayout.setOnRefreshListener(this);
 
-        drawerManager = new DrawerManager(this, (OnCheckedChangeListener) this);
+        drawerManager = new DrawerManager(this, this);
         drawerManager.getState().restoreInstanceState(savedInstanceState);
         getListFragment().setItem(drawerManager.getState().getTreeItem());
 
