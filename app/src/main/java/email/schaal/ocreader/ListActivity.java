@@ -28,6 +28,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -43,11 +44,13 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
@@ -71,7 +74,7 @@ import email.schaal.ocreader.view.drawer.DrawerManager;
 import hugo.weaving.DebugLog;
 import io.realm.Realm;
 
-public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ItemsAdapter.OnLoadMoreListener {
+public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ItemsAdapter.OnLoadMoreListener, OnCheckedChangeListener {
     private static final String TAG = ListActivity.class.getSimpleName();
 
     private static final int REFRESH_DRAWER_ITEM_ID = 999;
@@ -145,6 +148,14 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, SyncService.syncFilter);
     }
 
+    private Preference.OnPreferenceChangeListener onOnlyUnreadChangeListener = new Preference.OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+            return true;
+        }
+    };
+
     @DebugLog
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,7 +170,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         swipeRefreshLayout.setColorSchemeResources(R.color.primary);
         swipeRefreshLayout.setOnRefreshListener(this);
 
-        drawerManager = new DrawerManager(this);
+        drawerManager = new DrawerManager(this, (OnCheckedChangeListener) this);
         drawerManager.getState().restoreInstanceState(savedInstanceState);
         getListFragment().setItem(drawerManager.getState().getTreeItem());
 
@@ -448,5 +459,11 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         boolean isFeed = treeItem instanceof Feed;
 
         SyncService.startLoadMore(this, id, offset, isFeed);
+    }
+
+    @Override
+    public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(Preferences.SHOW_ONLY_UNREAD.getKey(), isChecked).apply();
+        drawerManager.reloadAdapters(getRealm(), isChecked);
     }
 }

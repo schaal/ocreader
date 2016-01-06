@@ -57,7 +57,8 @@ abstract class BaseDrawerAdapter extends DrawerAdapter {
                 Integer count = Queries.getInstance().getCount(realm, (TreeItem) drawerItem.getTag());
 
                 if (count <= 0) {
-                    if (showOnlyUnread) {
+                    // Don't remove "special" folders (AllUnread, Starred), which have an identifier < 0
+                    if (showOnlyUnread && drawerItem.getIdentifier() > 0) {
                         itemIterator.remove();
                         notifyItemRemoved(position);
                     } else {

@@ -22,10 +22,14 @@ package email.schaal.ocreader.view.drawer;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.widget.CompoundButton;
 
+import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondarySwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Badgeable;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
@@ -33,6 +37,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.model.AllUnreadFolder;
@@ -62,10 +67,10 @@ public class DrawerManager {
     private final SubscriptionDrawerAdapter startAdapter;
     private final FolderDrawerAdapter endAdapter;
 
-    public DrawerManager(Context context) {
+    public DrawerManager(Context context, OnCheckedChangeListener onlyUnreadChangeListener) {
         this.context = context;
         state = new State(context);
-        startAdapter = new SubscriptionDrawerAdapter();
+        startAdapter = new SubscriptionDrawerAdapter(onlyUnreadChangeListener);
         endAdapter = new FolderDrawerAdapter();
     }
 
@@ -109,7 +114,7 @@ public class DrawerManager {
 
         private final List<IDrawerItem> topDrawerItems = new ArrayList<>(3);
 
-        public SubscriptionDrawerAdapter() {
+        public SubscriptionDrawerAdapter(OnCheckedChangeListener onlyUnreadChangeListener) {
             AllUnreadFolder unreadFolder = new AllUnreadFolder(context);
             StarredFolder starredFolder = new StarredFolder(context);
 
@@ -127,7 +132,11 @@ public class DrawerManager {
                     .withTag(starredFolder)
             );
 
-            topDrawerItems.add(new DividerDrawerItem());
+            topDrawerItems.add(new SecondarySwitchDrawerItem()
+                    .withName(R.string.only_unread)
+                    .withSelectable(false)
+                    .withOnCheckedChangeListener(onlyUnreadChangeListener)
+            );
         }
 
         @Override
