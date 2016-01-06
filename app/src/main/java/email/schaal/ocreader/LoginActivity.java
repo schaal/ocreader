@@ -23,10 +23,9 @@ package email.schaal.ocreader;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -35,9 +34,12 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.zafarkhaja.semver.Version;
 import com.squareup.okhttp.HttpUrl;
+
+import java.net.UnknownHostException;
 
 import email.schaal.ocreader.api.APIService;
 import email.schaal.ocreader.http.HttpManager;
@@ -171,15 +173,37 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
         }
 
+        private void showError(String message) {
+            Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
+        }
+
+        private void showError(TextView errorView, String message) {
+            errorView.setError(message);
+            errorView.requestFocus();
+        }
+
         @Override
         public void onResponse(Response<Version> response, Retrofit retrofit) {
             onCompletion();
 
-            // TODO: 03.01.16 Check if version is new enough
-            HttpManager.getInstance().persistCredentials(LoginActivity.this);
+            if(response.isSuccess()) {
+                // TODO: 03.01.16 Check if version is new enough
+                HttpManager.getInstance().persistCredentials(LoginActivity.this);
 
-            setResult(RESULT_OK);
-            finish();
+                setResult(RESULT_OK);
+                finish();
+            } else {
+                switch (response.code()) {
+                    case 401:
+                        showError(mUsernameView, getString(R.string.error_incorrect_username_or_password));
+                        break;
+                    case 404:
+                        showError(mUrlView, getString(R.string.error_url_not_found));
+                        break;
+                    default:
+                        showError(response.message());
+                }
+            }
         }
 
         @Override
@@ -188,9 +212,11 @@ public class LoginActivity extends AppCompatActivity {
 
             t.printStackTrace();
 
-            // TODO: 03.01.16 Get the actual reason for the failure
-            mPasswordView.setError(getString(R.string.error_incorrect_password));
-            mPasswordView.requestFocus();
+            if(t instanceof UnknownHostException) {
+                showError(mUrlView, t.getLocalizedMessage());
+            } else {
+                showError(t.getLocalizedMessage());
+            }
         }
     }
 

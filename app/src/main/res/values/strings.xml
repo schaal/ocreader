@@ -35,7 +35,8 @@
     <string name="prompt_url">Url</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_incorrect_username_or_password">Username or password is incorrect</string>
+    <string name="error_url_not_found">Url could not be found</string>
     <string name="error_incorrect_url">This url is invalid</string>
     <string name="error_field_required">This field is required</string>
 
