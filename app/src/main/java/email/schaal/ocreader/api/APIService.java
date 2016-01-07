@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.github.zafarkhaja.semver.Version;
@@ -34,6 +35,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.HttpUrl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -169,13 +171,15 @@ public class APIService {
             return;
         }
 
-        ItemMap itemMap = new ItemMap();
-        itemMap.put(results);
 
         ItemIds ids = null;
+        ItemMap itemMap = null;
+
         if(action == MarkAction.MARK_UNREAD || action == MarkAction.MARK_READ) {
-            ids = new ItemIds();
-            ids.setItems(itemMap.getKeys());
+            ids = new ItemIds(results);
+        } else {
+            itemMap = new ItemMap(results);
+            Log.d(TAG, gson.toJson(itemMap));
         }
 
         final Callback<Void> markCallback = new Callback<Void>() {
@@ -338,14 +342,14 @@ public class APIService {
         @PUT("items/{itemId}/{guidHash}/read")
         Call<Void> markItemStarred(@Path("itemId") int itemId, @Path("guidHash") String guidHash);
 
-        @PUT("items/starred/multiple")
-        Call<Void> markItemsStarred(@Body ItemMap... itemIds);
+        @PUT("items/star/multiple")
+        Call<Void> markItemsStarred(@Body ItemMap itemMap);
 
         @PUT("items/{itemId}/{guidHash}/unstarred")
         Call<Void> markItemUnstarred(@Path("itemId") int itemId, @Path("guidHash") String guidHash);
 
-        @PUT("items/unstarred/multiple")
-        Call<Void> markItemsUnstarred(@Body ItemMap... itemIds);
+        @PUT("items/unstar/multiple")
+        Call<Void> markItemsUnstarred(@Body ItemMap itemMap);
     }
 
     public void user(final APICallback callback) {
@@ -478,36 +482,33 @@ public class APIService {
     }
 
     private static class ItemMap {
-        private Map<Long, String> items = new HashMap<>();
+        private final List<Map<String,Object>> items = new ArrayList<>();
 
-        public Map<Long, String> getItems() {
-            return items;
-        }
-
-        public void setItems(Map<Long, String> items) {
-            this.items = items;
-        }
-
-        public Set<Long> getKeys() {
-            return items.keySet();
-        }
-
-        public void put(Iterable<Item> items) {
+        public ItemMap(Iterable<Item> items) {
             for(Item item: items) {
-                this.items.put(item.getId(), item.getGuidHash());
+                HashMap<String, Object> itemMap = new HashMap<>();
+                itemMap.put("feedId", item.getFeedId());
+                itemMap.put("guidHash", item.getGuidHash());
+                this.items.add(itemMap);
             }
+        }
+
+        public List<Map<String, Object>> getItems() {
+            return items;
         }
     }
 
     private static class ItemIds {
-        private Set<Long> items;
+        private final Set<Long> items = new HashSet<>();
+
+        private ItemIds(Iterable<Item> items) {
+            for(Item item: items) {
+                this.items.add(item.getId());
+            }
+        }
 
         public Set<Long> getItems() {
             return items;
-        }
-
-        public void setItems(Set<Long> items) {
-            this.items = items;
         }
     }
 
