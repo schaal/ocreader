@@ -129,13 +129,12 @@ public class SyncService extends Service {
 
         if(syncType != null) {
             notifySyncStatus(SYNC_STARTED, action);
+            startIds.add(startId);
 
             AlarmUtils.getInstance().cancelAlarm();
             APIService.getInstance().syncChanges(realm, new APIService.OnCompletionListener() {
                 @Override
                 public void onCompleted() {
-                    startIds.add(startId);
-
                     switch (syncType) {
                         case SYNC_CHANGES_ONLY:
                             notifySyncStatus(SYNC_FINISHED, action);
