@@ -120,7 +120,7 @@ public class APIService {
         final ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
         final CountDownLatch countDownLatch = new CountDownLatch(MarkAction.values().length);
 
-        final Set<List<Item>> itemsToClear = new HashSet<>(4);
+        final Set<List<Item>> itemsToClear = new HashSet<>(MarkAction.values().length);
         for (MarkAction action : MarkAction.values()) {
             markItems(action, changedItems, countDownLatch, itemsToClear);
         }
@@ -163,10 +163,8 @@ public class APIService {
 
         results = items.where().equalTo(action.getKey(), action.getValue()).findAll();
 
-        int size = results.size();
-
-        // Nothing to do, countdown and return
-        if(size == 0) {
+        if(results.size() == 0) {
+            // Nothing to do, countdown and return
             countDownLatch.countDown();
             return;
         }
@@ -184,7 +182,8 @@ public class APIService {
             @Override
             public void onResponse(Response<Void> response, Retrofit retrofit) {
                 countDownLatch.countDown();
-                itemsToClear.add(items);
+                if(response.isSuccess())
+                    itemsToClear.add(items);
             }
 
             @Override
