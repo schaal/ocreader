@@ -28,7 +28,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -147,14 +146,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         updateSyncStatus();
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, SyncService.syncFilter);
     }
-
-    private Preference.OnPreferenceChangeListener onOnlyUnreadChangeListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-
-            return true;
-        }
-    };
 
     @DebugLog
     @Override
