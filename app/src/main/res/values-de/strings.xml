@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_mark_read">Als gelesen markieren</string>
+    <string name="action_mark_starred">Favorisieren</string>
+    <string name="action_sign_in">Anmelden</string>
+    <string name="action_sign_in_short">Anmelden</string>
+    <string name="action_sync">Synchronisieren</string>
+    <string name="article_by_from">von %1$s von %2$s</string>
+    <string name="error_field_required">Pflichtfeld</string>
+    <string name="error_incorrect_url">Diese URL ist ungültig</string>
+    <string name="error_incorrect_username_or_password">Benutzername oder Password sind falsch</string>
+    <string name="error_url_not_found">URL nicht gefunden</string>
+    <string name="feed_icon_description">Feed icon</string>
+    <string name="load_more">Weitere laden</string>
+    <string name="mark_all_as_read">Alles als gelesen markieren</string>
+    <string name="no_articles">Keine Artikel vorhanden</string>
+    <string name="now">jetzt</string>
+    <string name="only_unread">Nur ungelesene</string>
+    <string name="prompt_password">Passwort</string>
+    <string name="prompt_url">URL</string>
+    <string name="prompt_username">Benutzername</string>
+    <string name="starred">Favorisiert</string>
+    <string name="starred_items">Favorisierte Artikel</string>
+    <string name="title_activity_login">Anmelden</string>
+    <string name="unread_items">Ungelesene Artikel</string>
+    <string name="article_from">von %1$s</string>
+    <string name="days">%dd</string>
+    <string name="hours">%dh</string>
+    <string name="minutes">%dm</string>
+    <string name="title_activity_item_pager">Artikel</string>
+    <plurals name="downloaded_x_items">
+        <item quantity="one">%d Artikel heruntergeladen</item>
+        <item quantity="other">%d Artikel heruntergeladen</item>
+    </plurals>
+</resources>

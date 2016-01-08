@@ -59,14 +59,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="email.schaal.ocreader.ListActivity"/>
         </activity>
-        <activity
-            android:name="email.schaal.ocreader.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName="email.schaal.ocreader.ListActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="email.schaal.ocreader.ListActivity"/>
-        </activity>
 
     </application>
 
