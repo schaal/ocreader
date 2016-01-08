@@ -65,6 +65,7 @@ public class DatabaseTest extends ApplicationTestCase<OCReaderApplication> {
 
             Folder dbFolder = Queries.getInstance().getFolder(realm, 1);
 
+            assertNotNull(dbFolder);
             assertEquals(dbFolder.getTitle(), "TestFolderTitle");
 
         } finally {
@@ -85,6 +86,7 @@ public class DatabaseTest extends ApplicationTestCase<OCReaderApplication> {
 
             feed = Queries.getInstance().getFeed(realm, 1);
 
+            assertNotNull(feed);
             assertEquals(feed.getTitle(), "TestFeedTitle");
 
         } finally {
