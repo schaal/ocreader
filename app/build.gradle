@@ -54,7 +54,7 @@ dependencies {
 
     compile 'com.android.support:support-v13:23.1.1'
 
-    compile 'io.realm:realm-android:0.87.1'
+    compile 'io.realm:realm-android:0.87.2'
 
     compile('com.mikepenz:materialdrawer:4.6.3@aar') {
         transitive = true
