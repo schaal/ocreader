@@ -25,7 +25,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.github.zafarkhaja.semver.Version;
@@ -353,7 +352,7 @@ public class APIService {
     }
 
     public void user(final Realm realm, final APICallback callback) {
-        api.user().enqueue(new RealmRetrofitCallback<User>(callback) {
+        api.user().enqueue(new BaseRetrofitCallback<User>(callback) {
             @Override
             protected boolean onResponseReal(Response<User> response) {
                 Queries.getInstance().insert(realm, response.body());
@@ -365,7 +364,7 @@ public class APIService {
     public void items(final Realm realm, long lastSync, final APICallback callback) {
         // get all unread items on first sync, updatedItems on further syncs
         if(lastSync == 0L) {
-            api.items(0L, QueryType.ALL.getType(), 0L, false, false).enqueue(new RealmRetrofitCallback<Items>(callback) {
+            api.items(0L, QueryType.ALL.getType(), 0L, false, false).enqueue(new BaseRetrofitCallback<Items>(callback) {
                 private int totalCount = 0;
 
                 @Override
@@ -386,7 +385,7 @@ public class APIService {
                 }
             });
         } else {
-            api.updatedItems(lastSync, QueryType.ALL.getType(), 0L).enqueue(new RealmRetrofitCallback<Items>(callback) {
+            api.updatedItems(lastSync, QueryType.ALL.getType(), 0L).enqueue(new BaseRetrofitCallback<Items>(callback) {
                 @Override
                 protected boolean onResponseReal(Response<Items> response) {
                     Queries.getInstance().removeExcessItems(realm, MAX_ITEMS);
@@ -399,7 +398,7 @@ public class APIService {
     }
 
     public void moreItems(final Realm realm, final QueryType type, final long offset, final long id, final boolean getRead, final APICallback callback) {
-        api.items(offset, type.getType(), id, getRead, false).enqueue(new RealmRetrofitCallback<Items>(callback) {
+        api.items(offset, type.getType(), id, getRead, false).enqueue(new BaseRetrofitCallback<Items>(callback) {
             @Override
             public boolean onResponseReal(Response<Items> response) {
                 final List<Item> items = response.body().getItems();
@@ -410,7 +409,7 @@ public class APIService {
     }
 
     public void folders(final Realm realm, final APICallback callback) {
-        api.folders().enqueue(new RealmRetrofitCallback<Folders>(callback) {
+        api.folders().enqueue(new BaseRetrofitCallback<Folders>(callback) {
             @Override
             public boolean onResponseReal(Response<Folders> response) {
                 List<Folder> folders = response.body().getFolders();
@@ -422,7 +421,7 @@ public class APIService {
     }
 
     public void feeds(final Realm realm, final APICallback callback) {
-        api.feeds().enqueue(new RealmRetrofitCallback<Feeds>(callback) {
+        api.feeds().enqueue(new BaseRetrofitCallback<Feeds>(callback) {
             @Override
             protected boolean onResponseReal(Response<Feeds> response) {
                 Feeds feedsBody = response.body();
@@ -440,10 +439,10 @@ public class APIService {
         void onFailure(String errorMessage);
     }
 
-    private abstract class RealmRetrofitCallback<T> implements Callback<T> {
+    private abstract class BaseRetrofitCallback<T> implements Callback<T> {
         final APICallback callback;
 
-        public RealmRetrofitCallback(APICallback callback) {
+        public BaseRetrofitCallback(APICallback callback) {
             this.callback = callback;
         }
 
