@@ -180,7 +180,6 @@ public class APIService {
             ids = new ItemIds(results);
         } else {
             itemMap = new ItemMap(results);
-            Log.d(TAG, gson.toJson(itemMap));
         }
 
         final Callback<Void> markCallback = new Callback<Void>() {
@@ -353,24 +352,24 @@ public class APIService {
         Call<Void> markItemsUnstarred(@Body ItemMap itemMap);
     }
 
-    public void user(final APICallback callback) {
+    public void user(final Realm realm, final APICallback callback) {
         api.user().enqueue(new RealmRetrofitCallback<User>(callback) {
             @Override
-            protected boolean onResponseReal(Realm realm, Response<User> response) {
+            protected boolean onResponseReal(Response<User> response) {
                 Queries.getInstance().insert(realm, response.body());
                 return true;
             }
         });
     }
 
-    public void items(long lastSync, final APICallback callback) {
+    public void items(final Realm realm, long lastSync, final APICallback callback) {
         // get all unread items on first sync, updatedItems on further syncs
         if(lastSync == 0L) {
             api.items(0L, QueryType.ALL.getType(), 0L, false, false).enqueue(new RealmRetrofitCallback<Items>(callback) {
                 private int totalCount = 0;
 
                 @Override
-                public boolean onResponseReal(Realm realm, Response<Items> response) {
+                public boolean onResponseReal(Response<Items> response) {
                     final List<Item> items = response.body().getItems();
                     totalCount += items.size();
 
@@ -389,7 +388,7 @@ public class APIService {
         } else {
             api.updatedItems(lastSync, QueryType.ALL.getType(), 0L).enqueue(new RealmRetrofitCallback<Items>(callback) {
                 @Override
-                protected boolean onResponseReal(Realm realm, Response<Items> response) {
+                protected boolean onResponseReal(Response<Items> response) {
                     Queries.getInstance().removeExcessItems(realm, MAX_ITEMS);
                     List<Item> items = response.body().getItems();
                     Queries.getInstance().insert(realm, items);
@@ -399,10 +398,10 @@ public class APIService {
         }
     }
 
-    public void moreItems(final QueryType type, final long offset, final long id, final boolean getRead, final APICallback callback) {
+    public void moreItems(final Realm realm, final QueryType type, final long offset, final long id, final boolean getRead, final APICallback callback) {
         api.items(offset, type.getType(), id, getRead, false).enqueue(new RealmRetrofitCallback<Items>(callback) {
             @Override
-            public boolean onResponseReal(Realm realm, Response<Items> response) {
+            public boolean onResponseReal(Response<Items> response) {
                 final List<Item> items = response.body().getItems();
                 Queries.getInstance().insert(realm, items);
                 return true;
@@ -410,10 +409,10 @@ public class APIService {
         });
     }
 
-    public void folders(final APICallback callback) {
+    public void folders(final Realm realm, final APICallback callback) {
         api.folders().enqueue(new RealmRetrofitCallback<Folders>(callback) {
             @Override
-            public boolean onResponseReal(Realm realm, Response<Folders> response) {
+            public boolean onResponseReal(Response<Folders> response) {
                 List<Folder> folders = response.body().getFolders();
 
                 Queries.getInstance().deleteAndInsert(realm, Folder.class, folders);
@@ -422,10 +421,10 @@ public class APIService {
         });
     }
 
-    public void feeds(final APICallback callback) {
+    public void feeds(final Realm realm, final APICallback callback) {
         api.feeds().enqueue(new RealmRetrofitCallback<Feeds>(callback) {
             @Override
-            protected boolean onResponseReal(Realm realm, Response<Feeds> response) {
+            protected boolean onResponseReal(Response<Feeds> response) {
                 Feeds feedsBody = response.body();
                 List<Feed> feeds = feedsBody.getFeeds();
 
@@ -450,31 +449,21 @@ public class APIService {
 
         @Override
         public final void onResponse(Response<T> response, Retrofit retrofit) {
-            Realm realm = null;
-            try {
-                if(response.isSuccess()) {
-                    realm = Realm.getDefaultInstance();
-                    if(onResponseReal(realm, response))
-                        callback.onSuccess();
-                } else {
-                    callback.onFailure(String.format("%d: %s", response.code(), response.message()));
-                }
-            } catch(Exception ex) {
-                callback.onFailure(ex.getLocalizedMessage());
-            } finally {
-                if(realm != null)
-                    realm.close();
+            if (response.isSuccess()) {
+                if (onResponseReal(response))
+                    callback.onSuccess();
+            } else {
+                callback.onFailure(String.format("%d: %s", response.code(), response.message()));
             }
         }
 
         /**
          * Handle the response
          *
-         * @param realm Realm to insert/update items
          * @param response Retrofit response
          * @return true iff sync event is finished, false iff another run is necessary.
          */
-        protected abstract boolean onResponseReal(Realm realm, Response<T> response);
+        protected abstract boolean onResponseReal(Response<T> response);
 
         @Override
         public void onFailure(Throwable t) {

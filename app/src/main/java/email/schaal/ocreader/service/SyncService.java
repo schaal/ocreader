@@ -143,10 +143,10 @@ public class SyncService extends Service {
                         case FULL_SYNC:
                             APIService.APICallback apiCallback = getApiCallback(startId, 4);
 
-                            APIService.getInstance().user(apiCallback);
-                            APIService.getInstance().folders(apiCallback);
-                            APIService.getInstance().feeds(apiCallback);
-                            APIService.getInstance().items(getLastSyncTimestamp(realm), apiCallback);
+                            APIService.getInstance().user(realm, apiCallback);
+                            APIService.getInstance().folders(realm, apiCallback);
+                            APIService.getInstance().feeds(realm, apiCallback);
+                            APIService.getInstance().items(realm, getLastSyncTimestamp(realm), apiCallback);
 
                             waitForCountdownLatch(startId, action);
                             break;
@@ -164,7 +164,7 @@ public class SyncService extends Service {
                                 queryType = isFeed ? APIService.QueryType.FEED : APIService.QueryType.FOLDER;
                             }
 
-                            APIService.getInstance().moreItems(queryType, offset, id, true, getApiCallback(startId, 1));
+                            APIService.getInstance().moreItems(realm, queryType, offset, id, true, getApiCallback(startId, 1));
 
                             waitForCountdownLatch(startId, action);
                             break;
