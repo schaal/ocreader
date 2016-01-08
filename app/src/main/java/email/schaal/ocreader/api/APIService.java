@@ -35,17 +35,19 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.HttpUrl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import email.schaal.ocreader.R;
+import email.schaal.ocreader.api.json.Feeds;
+import email.schaal.ocreader.api.json.Folders;
+import email.schaal.ocreader.api.json.ItemIds;
+import email.schaal.ocreader.api.json.ItemMap;
+import email.schaal.ocreader.api.json.Items;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.http.HttpManager;
 import email.schaal.ocreader.model.ChangedItems;
@@ -88,6 +90,7 @@ public class APIService {
     private final Gson gson;
 
     private final Executor executor = Executors.newSingleThreadExecutor();
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     private enum MarkAction {
         MARK_READ(Item.UNREAD, false),
@@ -115,8 +118,6 @@ public class APIService {
     public interface OnCompletionListener {
         void onCompleted();
     }
-
-    private final Handler handler = new Handler(Looper.getMainLooper());
 
     public void syncChanges(@NonNull final Realm realm, @Nullable final OnCompletionListener completionListener) {
         final ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
@@ -481,88 +482,4 @@ public class APIService {
         }
     }
 
-    private static class ItemMap {
-        private final List<Map<String,Object>> items = new ArrayList<>();
-
-        public ItemMap(Iterable<Item> items) {
-            for(Item item: items) {
-                HashMap<String, Object> itemMap = new HashMap<>();
-                itemMap.put("feedId", item.getFeedId());
-                itemMap.put("guidHash", item.getGuidHash());
-                this.items.add(itemMap);
-            }
-        }
-
-        public List<Map<String, Object>> getItems() {
-            return items;
-        }
-    }
-
-    private static class ItemIds {
-        private final Set<Long> items = new HashSet<>();
-
-        private ItemIds(Iterable<Item> items) {
-            for(Item item: items) {
-                this.items.add(item.getId());
-            }
-        }
-
-        public Set<Long> getItems() {
-            return items;
-        }
-    }
-
-    private static class Folders {
-        public List<Folder> getFolders() {
-            return folders;
-        }
-
-        public void setFolders(List<Folder> folders) {
-            this.folders = folders;
-        }
-
-        private List<Folder> folders;
-    }
-
-    private static class Feeds {
-        private List<Feed> feeds;
-        private int starredCount;
-        private Long newestItemId;
-
-        public int getStarredCount() {
-            return starredCount;
-        }
-
-        public void setStarredCount(int starredCount) {
-            this.starredCount = starredCount;
-        }
-
-        public Long getNewestItemId() {
-            return newestItemId;
-        }
-
-        public void setNewestItemId(Long newestItemId) {
-            this.newestItemId = newestItemId;
-        }
-
-        public List<Feed> getFeeds() {
-            return feeds;
-        }
-
-        public void setFeeds(List<Feed> feeds) {
-            this.feeds = feeds;
-        }
-    }
-
-    private static class Items {
-        private List<Item> items;
-
-        public List<Item> getItems() {
-            return items;
-        }
-
-        public void setItems(List<Item> items) {
-            this.items = items;
-        }
-    }
 }
