@@ -397,6 +397,29 @@ public class APIService {
         }
     }
 
+    public void starredItems(final Realm realm, final APICallback callback) {
+        api.items(0L, QueryType.STARRED.getType(), 0L, true, false).enqueue(new BaseRetrofitCallback<Items>(callback) {
+            private int totalCount = 0;
+
+            @Override
+            protected boolean onResponseReal(Response<Items> response) {
+                final List<Item> items = response.body().getItems();
+                totalCount += items.size();
+
+                Queries.getInstance().insert(realm, items);
+
+                if (items.size() == BATCH_SIZE) {
+                    Toast.makeText(context, context.getResources().getQuantityString(R.plurals.downloaded_x_items, totalCount, totalCount), Toast.LENGTH_SHORT).show();
+                    long newOffset = realm.where(Item.class).equalTo(Item.STARRED, true).min(Item.ID).longValue();
+                    api.items(newOffset, QueryType.STARRED.getType(), 0L, true, false).enqueue(this);
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        });
+    }
+
     public void moreItems(final Realm realm, final QueryType type, final long offset, final long id, final boolean getRead, final APICallback callback) {
         api.items(offset, type.getType(), id, getRead, false).enqueue(new BaseRetrofitCallback<Items>(callback) {
             @Override

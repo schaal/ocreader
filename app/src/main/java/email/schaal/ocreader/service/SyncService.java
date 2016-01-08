@@ -141,12 +141,18 @@ public class SyncService extends Service {
                             stopSelf(startIds.remove(0));
                             break;
                         case FULL_SYNC:
-                            APIService.APICallback apiCallback = getApiCallback(startId, 4);
+                            long lastSync = getLastSyncTimestamp(realm);
+
+                            APIService.APICallback apiCallback = getApiCallback(startId, lastSync == 0L ? 5 : 4);
 
                             APIService.getInstance().user(realm, apiCallback);
                             APIService.getInstance().folders(realm, apiCallback);
                             APIService.getInstance().feeds(realm, apiCallback);
-                            APIService.getInstance().items(realm, getLastSyncTimestamp(realm), apiCallback);
+
+                            APIService.getInstance().items(realm, lastSync, apiCallback);
+
+                            if(lastSync == 0L)
+                                APIService.getInstance().starredItems(realm, apiCallback);
 
                             waitForCountdownLatch(startId, action);
                             break;
