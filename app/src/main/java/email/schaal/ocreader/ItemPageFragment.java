@@ -45,6 +45,7 @@ import org.jsoup.select.Elements;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Locale;
 
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Item;
@@ -84,13 +85,12 @@ public class ItemPageFragment extends WebViewFragment {
     }
 
     public static String getCssColor(int color) {
-        // using %f for the double value would result in a localized string, e.g. 0,12 which
-        // would be an invalid css color string
-        return String.format("rgba(%d,%d,%d,%s)",
+        // Use US locale so we always get a . as decimal separator for a valid css value
+        return String.format(Locale.US,"rgba(%d,%d,%d,%.2f)",
                 Color.red(color),
                 Color.green(color),
                 Color.blue(color),
-                Double.toString(Color.alpha(color) / 255.0));
+                Color.alpha(color) / 255.0);
     }
 
     @Override
