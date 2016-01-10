@@ -32,4 +32,6 @@
         <item quantity="one">%d Artikel heruntergeladen</item>
         <item quantity="other">%d Artikel heruntergeladen</item>
     </plurals>
+    <string name="about">Über</string>
+    <string name="about_app">© 2016 Daniel Schaal\n\nDiese Anwendung steht unter der GPLv3 oder einer späteren Version\n\nhttps://github.com/schaal/ocreader</string>
 </resources>

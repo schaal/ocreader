@@ -21,6 +21,9 @@
 <resources>
     <string name="app_name" translatable="false">OCReader</string>
 
+    <string name="about_app">© 2016 Daniel Schaal\n\nLicensed under the GPLv3 or later\n\nhttps://github.com/schaal/ocreader</string>
+    <string name="about">About</string>
+
     <string name="action_mark_read">Mark as read</string>
     <string name="action_mark_starred">Mark as starred</string>
     <string name="mark_all_as_read">Mark all as read</string>

@@ -20,6 +20,7 @@
 
 package email.schaal.ocreader;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -40,6 +41,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Base64InputStream;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 
@@ -378,6 +381,31 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 SyncService.startSync(this);
             }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_item_list, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.menu_about:
+                showAboutDialog();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showAboutDialog() {
+        View aboutView = getLayoutInflater().inflate(R.layout.dialog_about, null, false);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setIcon(R.mipmap.ic_launcher);
+        builder.setTitle(R.string.app_name);
+        builder.setView(aboutView);
+        builder.show();
     }
 
     @Override
