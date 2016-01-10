@@ -20,8 +20,10 @@
 
 <resources>
     <string name="app_name" translatable="false">OCReader</string>
+    <string name="app_year_author" translatable="false">2016 Daniel Schaal</string>
+    <string name="app_url" translatable="false">https://github.com/schaal/ocreader</string>
 
-    <string name="about_app">© 2016 Daniel Schaal\n\nLicensed under the GPLv3 or later\n\nhttps://github.com/schaal/ocreader</string>
+    <string name="about_app"><![CDATA[<h3>Copyright</h3>%1$s<h3>License</h3>This app is licensed under the GPLv3 or later<h3>Source</h3>%2$s]]></string>
     <string name="about">About</string>
 
     <string name="action_mark_read">Mark as read</string>

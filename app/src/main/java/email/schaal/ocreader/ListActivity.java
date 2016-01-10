@@ -38,6 +38,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.ViewDragHelper;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Base64;
 import android.util.Base64InputStream;
 import android.view.Gravity;
@@ -45,6 +46,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -401,9 +403,11 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
     private void showAboutDialog() {
         View aboutView = getLayoutInflater().inflate(R.layout.dialog_about, null, false);
+        TextView textView = (TextView) aboutView.findViewById(R.id.textViewCopyright);
+        textView.setText(Html.fromHtml(getString(R.string.about_app, getString(R.string.app_year_author), getString(R.string.app_url))));
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setIcon(R.mipmap.ic_launcher);
-        builder.setTitle(R.string.app_name);
+        builder.setTitle(String.format("%s %s", getString(R.string.app_name), BuildConfig.VERSION_NAME));
         builder.setView(aboutView);
         builder.show();
     }
