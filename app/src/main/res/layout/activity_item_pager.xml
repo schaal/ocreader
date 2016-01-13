@@ -61,7 +61,6 @@
         android:layout_margin="@dimen/fab_margin"
         android:clickable="true"
         app:layout_behavior="email.schaal.ocreader.view.ScrollAwareFABBehavior"
-        android:tint="@android:color/white"
         android:src="@drawable/ic_open_in_browser" />
 
 </android.support.design.widget.CoordinatorLayout>

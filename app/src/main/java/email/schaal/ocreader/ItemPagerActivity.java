@@ -75,6 +75,7 @@ public class ItemPagerActivity extends RealmActivity {
     private FloatingActionButton fab;
 
     @ColorInt private int defaultToolbarColor;
+    @ColorInt private int defaultAccent;
     private Item item;
 
     private MenuItem menuItemMarkRead;
@@ -88,9 +89,10 @@ public class ItemPagerActivity extends RealmActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        TypedArray typedArray = obtainStyledAttributes(new int[] { R.attr.colorPrimary });
+        TypedArray typedArray = obtainStyledAttributes(new int[] { R.attr.colorPrimary, R.attr.colorAccent });
         try {
             defaultToolbarColor = typedArray.getColor(0, 0);
+            defaultAccent = typedArray.getColor(1 , 0);
         } finally {
             typedArray.recycle();
         }
@@ -203,19 +205,26 @@ public class ItemPagerActivity extends RealmActivity {
             @Override
             public void onGenerated(@Nullable Palette palette, @Nullable Bitmap bitmap) {
                 setColorsFromPalette(palette);
+                if(bitmap != null)
+                    fab.setImageBitmap(bitmap);
+                else
+                    fab.setImageResource(R.drawable.ic_open_in_browser);
             }
         });
     }
 
     private void setColorsFromPalette(@Nullable Palette palette) {
         int toolbarColor;
+        int fabColor;
         if (palette != null) {
             toolbarColor = palette.getDarkVibrantColor(defaultToolbarColor);
+            fabColor = palette.getLightMutedColor(defaultAccent);
         } else {
             toolbarColor = defaultToolbarColor;
+            fabColor = defaultAccent;
         }
         toolbar.setBackgroundColor(toolbarColor);
-        fab.setBackgroundTintList(ColorStateList.valueOf(toolbarColor));
+        fab.setBackgroundTintList(ColorStateList.valueOf(fabColor));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int statusbarColor = Color.rgb(
