@@ -36,4 +36,10 @@
         android:icon="@drawable/ic_star_outline"
         android:title="@string/action_mark_starred"
         app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_share_article"
+        android:title="@string/share_article"
+        app:showAsAction="ifRoom"
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"/>
 </menu>
