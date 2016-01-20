@@ -60,7 +60,7 @@ public class ItemPageFragment extends WebViewFragment {
 
     public static final String ARG_POSITION = "ARG_POSITION";
 
-    private final static Cleaner cleaner = new Cleaner(Whitelist.relaxed());
+    private final static Cleaner cleaner = new Cleaner(Whitelist.relaxed().addTags("video"));
 
     private static String css = null;
 
