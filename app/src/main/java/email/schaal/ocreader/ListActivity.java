@@ -66,6 +66,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import email.schaal.ocreader.database.Queries;
+import email.schaal.ocreader.model.AllUnreadFolder;
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Item;
 import email.schaal.ocreader.model.TemporaryFeed;
@@ -168,7 +169,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         drawerManager = new DrawerManager(this, this);
         drawerManager.getState().restoreInstanceState(savedInstanceState);
-        getListFragment().setItem(drawerManager.getState().getTreeItem());
+        getListFragment().setItem(drawerManager.getState().getTreeItem(), drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder);
 
         fab_mark_all_read = (FloatingActionButton) findViewById(R.id.fab_mark_all_read);
         fab_mark_all_read.setOnClickListener(new View.OnClickListener() {
@@ -366,7 +367,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private void reloadListFragment(TreeItem item) {
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(item.getTitle());
-        getListFragment().setItem(item);
+        getListFragment().setItem(item, drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder);
         fab_mark_all_read.show();
     }
 

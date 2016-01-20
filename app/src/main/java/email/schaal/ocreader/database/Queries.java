@@ -141,12 +141,12 @@ public class Queries {
      * Get all items belonging to treeItem, sorted by sortFieldname using order
      * @param realm Realm object to query
      * @param treeItem TreeItem to query items from
-     * @param sortFieldname Sort using this fieldname
-     * @param order Sort using this order
-     * @return items belonging to TreeItem
+     * @param onlyUnread
+     *@param sortFieldname Sort using this fieldname
+     * @param order Sort using this order   @return items belonging to TreeItem
      */
     @Nullable
-    public RealmResults<Item> getItems(Realm realm, TreeItem treeItem, String sortFieldname, Sort order) {
+    public RealmResults<Item> getItems(Realm realm, TreeItem treeItem, boolean onlyUnread, String sortFieldname, Sort order) {
         RealmQuery<Item> query = null;
         if(treeItem instanceof Feed)
             query = realm.where(Item.class).equalTo(Item.FEED_ID, treeItem.getId());
@@ -164,11 +164,15 @@ public class Queries {
             }
         } else if(treeItem instanceof AllUnreadFolder) {
             query = realm.where(Item.class).equalTo(Item.UNREAD, true);
+            // prevent onlyUnread from adding the same condition again
+            onlyUnread = false;
         } else if(treeItem instanceof StarredFolder) {
             query = realm.where(Item.class).equalTo(Item.STARRED, true);
         }
 
         if (query != null) {
+            if(onlyUnread)
+                query.equalTo(Item.UNREAD, true);
             return query.findAllSorted(sortFieldname, order);
         } else
             return null;

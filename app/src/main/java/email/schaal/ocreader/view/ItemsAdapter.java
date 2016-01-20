@@ -47,6 +47,7 @@ import io.realm.Sort;
 public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private RealmList<Item> items;
     @Nullable private TreeItem treeItem;
+    private boolean onlyUnread;
     private final ItemViewHolder.OnClickListener clickListener;
     private final OnLoadMoreListener loadMoreListener;
 
@@ -78,7 +79,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
-                        RealmResults<Item> tempItems = Queries.getInstance().getItems(realm, treeItem, Item.PUB_DATE, Sort.DESCENDING);
+                        RealmResults<Item> tempItems = Queries.getInstance().getItems(realm, treeItem, onlyUnread, Item.PUB_DATE, Sort.DESCENDING);
                         temporaryFeed.setId(treeItem.getId());
                         temporaryFeed.setTitle(treeItem.getTitle());
                         temporaryFeed.getItems().clear();
@@ -115,7 +116,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private boolean hasLoadMore() {
-        return treeItem instanceof Feed || treeItem instanceof Folder;
+        return !onlyUnread && (treeItem instanceof Feed || treeItem instanceof Folder);
     }
 
     @Override
@@ -171,8 +172,9 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             return -1;
     }
 
-    public void setTreeItem(@NonNull TreeItem item) {
+    public void setTreeItem(@NonNull TreeItem item, boolean onlyUnread) {
         treeItem = item;
+        this.onlyUnread = onlyUnread;
         updateItems(true);
     }
 

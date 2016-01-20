@@ -84,8 +84,8 @@ public class ListFragment extends Fragment {
         adapter.resetLoadMore();
     }
 
-    public void setItem(TreeItem item) {
-        adapter.setTreeItem(item);
+    public void setItem(TreeItem item, boolean onlyUnread) {
+        adapter.setTreeItem(item, onlyUnread);
     }
 
     public void update(boolean updateTempFeed) {
