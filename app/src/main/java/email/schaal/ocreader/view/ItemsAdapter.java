@@ -60,18 +60,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.clickListener = clickListener;
         this.loadMoreListener = loadMoreListener;
 
-        init();
-    }
-
-    public ItemsAdapter(@Nullable TreeItem treeItem, ItemViewHolder.OnClickListener clickListener, OnLoadMoreListener loadMoreListener) {
-        this.treeItem = treeItem;
-        this.clickListener = clickListener;
-        this.loadMoreListener = loadMoreListener;
-
-        init();
-    }
-
-    private void init() {
         setHasStableIds(true);
         updateItems(false);
     }
