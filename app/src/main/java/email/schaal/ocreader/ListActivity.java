@@ -20,6 +20,7 @@
 
 package email.schaal.ocreader;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -45,6 +46,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
@@ -402,7 +404,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     }
 
     private void showAboutDialog() {
-        View aboutView = getLayoutInflater().inflate(R.layout.dialog_about, null, false);
+        View aboutView = getLayoutInflater().inflate(R.layout.dialog_about, (ViewGroup) findViewById(R.id.coordinator_layout), false);
+
         TextView textView = (TextView) aboutView.findViewById(R.id.textViewCopyright);
         textView.setText(Html.fromHtml(getString(R.string.about_app, getString(R.string.app_year_author), getString(R.string.app_url))));
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

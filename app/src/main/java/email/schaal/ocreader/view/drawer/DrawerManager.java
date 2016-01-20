@@ -260,7 +260,7 @@ public class DrawerManager {
         private static final String BUNDLE_DRAWER_ENDITEM_ID = "BUNDLE_DRAWER_ENDITEM_ID";
 
         private TreeItem startDrawerItem;
-        private Feed endDrawerItem;
+        @Nullable private Feed endDrawerItem;
         private Long startDrawerItemId;
         private Long endDrawerItemId;
 
@@ -323,11 +323,12 @@ public class DrawerManager {
                 startDrawerItemId = null;
         }
 
+        @Nullable
         public Feed getEndDrawerItem() {
             return endDrawerItem;
         }
 
-        public void setEndDrawerItem(Feed endDrawerItem) {
+        public void setEndDrawerItem(@Nullable Feed endDrawerItem) {
             this.endDrawerItem = endDrawerItem;
             if (endDrawerItem != null)
                 endDrawerItemId = endDrawerItem.getId();
