@@ -40,6 +40,5 @@
     <item
         android:id="@+id/action_share_article"
         android:title="@string/share_article"
-        app:showAsAction="ifRoom"
-        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"/>
+        app:showAsAction="ifRoom" />
 </menu>

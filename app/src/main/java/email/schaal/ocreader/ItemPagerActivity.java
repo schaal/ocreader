@@ -35,10 +35,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
-import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -67,7 +65,6 @@ public class ItemPagerActivity extends RealmActivity {
 
     private MenuItem menuItemMarkRead;
     private MenuItem menuItemMarkStarred;
-    @Nullable private ShareActionProvider shareActionProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,8 +116,6 @@ public class ItemPagerActivity extends RealmActivity {
                 item = getItemForPosition(position);
                 setItemUnread(false);
 
-                setShareIntent();
-
                 setActionBarColors(Item.feed(item));
 
                 fab.show();
@@ -138,13 +133,11 @@ public class ItemPagerActivity extends RealmActivity {
         mViewPager.setCurrentItem(position, false);
     }
 
-    private void setShareIntent() {
+    private void shareArticle() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, item.getUrl());
-
-        if(shareActionProvider != null)
-            shareActionProvider.setShareIntent(shareIntent);
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_article)));
     }
 
     public Item getItemForPosition(int position) {
@@ -158,9 +151,6 @@ public class ItemPagerActivity extends RealmActivity {
 
         menuItemMarkRead = menu.findItem(R.id.action_mark_read);
         menuItemMarkStarred = menu.findItem(R.id.action_mark_starred);
-
-        shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menu.findItem(R.id.action_share_article));
-        setShareIntent();
 
         return true;
     }
@@ -194,6 +184,9 @@ public class ItemPagerActivity extends RealmActivity {
                 return true;
             case R.id.action_mark_starred:
                 setItemStarred(!this.item.isStarred());
+                return true;
+            case R.id.action_share_article:
+                shareArticle();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
