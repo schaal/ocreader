@@ -188,18 +188,16 @@ public class ItemPagerActivity extends RealmActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        switch (id) {
+        switch (item.getItemId()) {
             case R.id.action_mark_read:
                 setItemUnread(!this.item.isUnread());
                 return true;
             case R.id.action_mark_starred:
                 setItemStarred(!this.item.isStarred());
-                break;
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     public void setActionBarColors(final Feed feed) {
