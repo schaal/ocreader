@@ -271,12 +271,11 @@ public class DrawerManager {
             endDrawerItem = null;
         }
 
-        public Bundle saveInstanceState(Bundle bundle) {
+        public void saveInstanceState(Bundle bundle) {
             bundle.putLong(BUNDLE_DRAWER_STARTITEM_ID, startDrawerItem.getId());
             bundle.putBoolean(BUNDLE_DRAWER_IS_FEED, isFeedSelected());
             if(endDrawerItem != null)
                 bundle.putLong(BUNDLE_DRAWER_ENDITEM_ID, endDrawerItem.getId());
-            return bundle;
         }
 
         public void restoreInstanceState(Bundle bundle) {

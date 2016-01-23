@@ -420,8 +420,8 @@ public class APIService {
         });
     }
 
-    public void moreItems(final Realm realm, final QueryType type, final long offset, final long id, final boolean getRead, final APICallback callback) {
-        api.items(offset, type.getType(), id, getRead, false).enqueue(new BaseRetrofitCallback<Items>(callback) {
+    public void moreItems(final Realm realm, final QueryType type, final long offset, final long id, final APICallback callback) {
+        api.items(offset, type.getType(), id, true, false).enqueue(new BaseRetrofitCallback<Items>(callback) {
             @Override
             public boolean onResponseReal(Response<Items> response) {
                 final List<Item> items = response.body().getItems();

@@ -170,7 +170,7 @@ public class SyncService extends Service {
                                 queryType = isFeed ? APIService.QueryType.FEED : APIService.QueryType.FOLDER;
                             }
 
-                            APIService.getInstance().moreItems(realm, queryType, offset, id, true, getApiCallback(startId, 1));
+                            APIService.getInstance().moreItems(realm, queryType, offset, id, getApiCallback(startId, 1));
 
                             waitForCountdownLatch(startId, action);
                             break;
