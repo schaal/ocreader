@@ -29,7 +29,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import email.schaal.ocreader.model.TreeItem;
 import email.schaal.ocreader.view.DividerItemDecoration;
 import email.schaal.ocreader.view.ItemViewHolder;
 import email.schaal.ocreader.view.ItemsAdapter;
@@ -80,16 +79,8 @@ public class ListFragment extends Fragment {
         outState.putParcelable(LAYOUT_MANAGER_STATE, itemsRecyclerView.getLayoutManager().onSaveInstanceState());
     }
 
-    public void resetLoadMore() {
-        adapter.resetLoadMore();
-    }
-
-    public void setItem(TreeItem item, boolean onlyUnread) {
-        adapter.setTreeItem(item, onlyUnread);
-    }
-
-    public void update(boolean updateTempFeed) {
-        adapter.updateItems(updateTempFeed);
+    public ItemsAdapter getAdapter() {
+        return adapter;
     }
 
     public int getCount() {

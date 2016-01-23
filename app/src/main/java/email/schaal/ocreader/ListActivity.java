@@ -89,8 +89,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             if(intent.getAction().equals(SyncService.SYNC_STARTED) || intent.getAction().equals(SyncService.SYNC_FINISHED)) {
                 if(SyncService.ACTION_LOAD_MORE.equals(intent.getStringExtra(SyncService.EXTRA_TYPE))) {
                     if(intent.getAction().equals(SyncService.SYNC_FINISHED)) {
-                        getListFragment().update(true);
-                        getListFragment().resetLoadMore();
+                        getAdapter().updateItems(true);
+                        getAdapter().resetLoadMore();
                     }
                 } else {
                     updateSyncStatus();
@@ -108,7 +108,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         if(needsUpdate) {
             drawerManager.reloadAdapters(getRealm(), isShowOnlyUnread());
 
-            getListFragment().update(true);
+            getAdapter().updateItems(true);
 
             updateUserProfile();
 
@@ -126,7 +126,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         }
 
         if(!syncRunning)
-            getListFragment().resetLoadMore();
+            getAdapter().resetLoadMore();
     }
 
     private Drawer startDrawer;
@@ -168,7 +168,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         drawerManager = new DrawerManager(this, this);
         drawerManager.getState().restoreInstanceState(savedInstanceState);
-        getListFragment().setItem(drawerManager.getState().getTreeItem(), drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder);
+        getAdapter().setTreeItem(drawerManager.getState().getTreeItem(), drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder, false);
 
         fab_mark_all_read = (FloatingActionButton) findViewById(R.id.fab_mark_all_read);
         fab_mark_all_read.setOnClickListener(new View.OnClickListener() {
@@ -184,7 +184,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
                     @Override
                     public void onSuccess() {
-                        getListFragment().update(false);
+                        getAdapter().updateItems(false);
                         v.setEnabled(true);
                     }
                 });
@@ -366,12 +366,12 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private void reloadListFragment(TreeItem item) {
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(item.getTitle());
-        getListFragment().setItem(item, drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder);
+        getAdapter().setTreeItem(item, drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder);
         fab_mark_all_read.show();
     }
 
-    private ListFragment getListFragment() {
-        return (ListFragment) getFragmentManager().findFragmentById(R.id.fragment_itemlist);
+    private ItemsAdapter getAdapter() {
+        return ((ListFragment) getFragmentManager().findFragmentById(R.id.fragment_itemlist)).getAdapter();
     }
 
     @Override

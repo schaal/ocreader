@@ -173,9 +173,13 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public void setTreeItem(@NonNull TreeItem item, boolean onlyUnread) {
+        setTreeItem(item, onlyUnread, true);
+    }
+
+    public void setTreeItem(@NonNull TreeItem item, boolean onlyUnread, boolean updateTempFeed) {
         treeItem = item;
         this.onlyUnread = onlyUnread;
-        updateItems(true);
+        updateItems(updateTempFeed);
     }
 
     public void resetLoadMore() {
