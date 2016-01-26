@@ -62,7 +62,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.loadMoreListener = loadMoreListener;
 
         setHasStableIds(true);
-        updateItems(false);
     }
 
     public void updateItems(boolean updateTemporaryFeed) {

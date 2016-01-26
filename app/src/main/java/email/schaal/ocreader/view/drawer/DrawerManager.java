@@ -21,7 +21,8 @@
 package email.schaal.ocreader.view.drawer;
 
 import android.content.Context;
-import android.os.Bundle;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
 import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
@@ -34,6 +35,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.model.AllUnreadFolder;
@@ -43,7 +45,6 @@ import email.schaal.ocreader.model.StarredFolder;
 import email.schaal.ocreader.model.TreeIconable;
 import email.schaal.ocreader.model.TreeItem;
 import io.realm.Realm;
-import io.realm.RealmObject;
 import io.realm.RealmResults;
 
 /**
@@ -65,7 +66,7 @@ public class DrawerManager {
 
     public DrawerManager(Context context, OnCheckedChangeListener onlyUnreadChangeListener) {
         this.context = context;
-        state = new State(context);
+        state = new State();
         startAdapter = new SubscriptionDrawerAdapter(onlyUnreadChangeListener);
         endAdapter = new FolderDrawerAdapter();
     }
@@ -251,61 +252,54 @@ public class DrawerManager {
         }
     }
 
-    /**
-     * Created by daniel on 20.11.15.
-     */
     public class State {
-        private static final String BUNDLE_DRAWER_STARTITEM_ID = "BUNDLE_DRAWER_STARTITEM_ID";
-        private static final String BUNDLE_DRAWER_IS_FEED = "BUNDLE_DRAWER_IS_FEED";
-        private static final String BUNDLE_DRAWER_ENDITEM_ID = "BUNDLE_DRAWER_ENDITEM_ID";
-
         private TreeItem startDrawerItem;
-        @Nullable private Feed endDrawerItem;
-        private Long startDrawerItemId;
-        private Long endDrawerItemId;
+        private long startDrawerItemId;
 
-        public State(Context context) {
+        @Nullable private Feed endDrawerItem;
+        @Nullable private Long endDrawerItemId;
+
+        public State() {
             startDrawerItem = new AllUnreadFolder(context);
-            startDrawerItemId = null;
+            startDrawerItemId = AllUnreadFolder.ID;
             endDrawerItemId = null;
             endDrawerItem = null;
         }
 
-        public void saveInstanceState(Bundle bundle) {
-            bundle.putLong(BUNDLE_DRAWER_STARTITEM_ID, startDrawerItem.getId());
-            bundle.putBoolean(BUNDLE_DRAWER_IS_FEED, isFeedSelected());
-            if(endDrawerItem != null)
-                bundle.putLong(BUNDLE_DRAWER_ENDITEM_ID, endDrawerItem.getId());
+        public void saveInstanceState() {
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+
+            editor.putLong(Preferences.SYS_STARTDRAWERITEMID.getKey(), startDrawerItemId);
+            editor.putLong(Preferences.SYS_ENDRAWERITEM_ID.getKey(), endDrawerItemId != null ? endDrawerItemId : -1);
+            editor.putBoolean(Preferences.SYS_ISFEED.getKey(), isFeedSelected());
+
+            editor.apply();
         }
 
-        public void restoreInstanceState(Bundle bundle) {
-            if(bundle != null) {
-                if(bundle.containsKey(BUNDLE_DRAWER_STARTITEM_ID)) {
-                    boolean isFeed = bundle.getBoolean(BUNDLE_DRAWER_IS_FEED);
-                    startDrawerItemId = bundle.getLong(BUNDLE_DRAWER_STARTITEM_ID);
-                    if(startDrawerItemId == AllUnreadFolder.ID) {
-                        startDrawerItem = new AllUnreadFolder(context);
-                    } else if(startDrawerItemId == StarredFolder.ID) {
-                        startDrawerItem = new StarredFolder(context);
-                    } else {
-                        Realm realm = null;
-                        try {
-                            realm = Realm.getDefaultInstance();
-                            if (isFeed) {
-                                startDrawerItem = Queries.getInstance().getFeed(realm, startDrawerItemId);
-                            } else {
-                                startDrawerItem = Queries.getInstance().getFolder(realm, startDrawerItemId);
-                            }
-                            if(bundle.containsKey(BUNDLE_DRAWER_ENDITEM_ID)) {
-                                endDrawerItemId = bundle.getLong(BUNDLE_DRAWER_ENDITEM_ID);
-                                endDrawerItem = Queries.getInstance().getFeed(realm, endDrawerItemId);
-                            }
-                        } finally {
-                            if(realm != null)
-                                realm.close();
-                        }
+        public void restoreInstanceState(Realm realm) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-                    }
+            //noinspection ConstantConditions
+            startDrawerItemId = Preferences.SYS_STARTDRAWERITEMID.getLong(preferences);
+            endDrawerItemId = Preferences.SYS_ENDRAWERITEM_ID.getLong(preferences);
+
+            if(endDrawerItemId != null && endDrawerItemId < 0)
+                endDrawerItemId = null;
+
+            boolean isFeed = Preferences.SYS_ISFEED.getBoolean(preferences);
+
+            if(startDrawerItemId == AllUnreadFolder.ID) {
+                startDrawerItem = new AllUnreadFolder(context);
+            } else if(startDrawerItemId == StarredFolder.ID) {
+                startDrawerItem = new StarredFolder(context);
+            } else {
+                if (isFeed) {
+                    startDrawerItem = Queries.getInstance().getFeed(realm, startDrawerItemId);
+                } else {
+                    startDrawerItem = Queries.getInstance().getFolder(realm, startDrawerItemId);
+                }
+                if(endDrawerItemId != null) {
+                    endDrawerItem = Queries.getInstance().getFeed(realm, endDrawerItemId);
                 }
             }
         }
@@ -316,10 +310,7 @@ public class DrawerManager {
 
         public void setStartDrawerItem(TreeItem startDrawerItem) {
             this.startDrawerItem = startDrawerItem;
-            if (startDrawerItem instanceof RealmObject)
-                startDrawerItemId = startDrawerItem.getId();
-            else
-                startDrawerItemId = null;
+            startDrawerItemId = startDrawerItem.getId();
         }
 
         @Nullable
@@ -329,10 +320,7 @@ public class DrawerManager {
 
         public void setEndDrawerItem(@Nullable Feed endDrawerItem) {
             this.endDrawerItem = endDrawerItem;
-            if (endDrawerItem != null)
-                endDrawerItemId = endDrawerItem.getId();
-            else
-                endDrawerItemId = null;
+            endDrawerItemId = endDrawerItem != null ? endDrawerItem.getId() : null;
         }
 
         public boolean isFeedSelected() {

@@ -22,6 +22,8 @@ package email.schaal.ocreader;
 
 import android.content.SharedPreferences;
 
+import email.schaal.ocreader.model.AllUnreadFolder;
+
 /**
  * Manage Preference values to store in SharedPreferences and retrieve those values.
  */
@@ -34,7 +36,11 @@ public enum Preferences {
 
     /** System preferences **/
     SYS_NEEDS_UPDATE_AFTER_SYNC("needs_update_after_sync", false),
-    SYS_SYNC_RUNNING("is_sync_running", false);
+    SYS_SYNC_RUNNING("is_sync_running", false),
+
+    SYS_STARTDRAWERITEMID("startdrawer_itemid", AllUnreadFolder.ID),
+    SYS_ENDRAWERITEM_ID("enddrawer_itemid", null),
+    SYS_ISFEED("isfeed", false);
 
     private final String key;
     private final Object defaultValue;
@@ -57,6 +63,8 @@ public enum Preferences {
     }
 
     public Long getLong(SharedPreferences preferences) {
+        if(defaultValue == null)
+            return null;
         return preferences.getLong(key, (Long) defaultValue);
     }
 }

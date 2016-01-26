@@ -251,7 +251,8 @@ public class SyncService extends Service {
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        if(!syncStarted)
+        // no need to update after ACTION_SYNC_CHANGES_ONLY
+        if(!syncStarted && !ACTION_SYNC_CHANGES_ONLY.equals(type))
             editor.putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), true);
 
         final Intent intent = new Intent(action);

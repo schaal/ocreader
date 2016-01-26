@@ -75,7 +75,6 @@ import email.schaal.ocreader.service.SyncService;
 import email.schaal.ocreader.view.ItemViewHolder;
 import email.schaal.ocreader.view.ItemsAdapter;
 import email.schaal.ocreader.view.drawer.DrawerManager;
-import hugo.weaving.DebugLog;
 import io.realm.Realm;
 
 public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ItemsAdapter.OnLoadMoreListener, OnCheckedChangeListener {
@@ -87,13 +86,16 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent.getAction().equals(SyncService.SYNC_STARTED) || intent.getAction().equals(SyncService.SYNC_FINISHED)) {
-                if(SyncService.ACTION_LOAD_MORE.equals(intent.getStringExtra(SyncService.EXTRA_TYPE))) {
-                    if(intent.getAction().equals(SyncService.SYNC_FINISHED)) {
-                        getAdapter().updateItems(true);
-                        getAdapter().resetLoadMore();
-                    }
-                } else {
-                    updateSyncStatus();
+                switch (intent.getStringExtra(SyncService.EXTRA_TYPE)) {
+                    case SyncService.ACTION_LOAD_MORE:
+                        if (intent.getAction().equals(SyncService.SYNC_FINISHED)) {
+                            getAdapter().updateItems(true);
+                            getAdapter().resetLoadMore();
+                        }
+                        break;
+                    case SyncService.ACTION_FULL_SYNC:
+                        updateSyncStatus();
+                        break;
                 }
             }
         }
@@ -152,7 +154,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, SyncService.syncFilter);
     }
 
-    @DebugLog
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -167,7 +168,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         swipeRefreshLayout.setOnRefreshListener(this);
 
         drawerManager = new DrawerManager(this, this);
-        drawerManager.getState().restoreInstanceState(savedInstanceState);
+        drawerManager.getState().restoreInstanceState(getRealm());
         getAdapter().setTreeItem(drawerManager.getState().getTreeItem(), drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder, false);
 
         fab_mark_all_read = (FloatingActionButton) findViewById(R.id.fab_mark_all_read);
@@ -350,7 +351,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        drawerManager.getState().saveInstanceState(outState);
+        drawerManager.getState().saveInstanceState();
     }
 
     private void onStartDrawerItemClicked(TreeItem item) {
