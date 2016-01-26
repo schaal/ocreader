@@ -141,9 +141,10 @@ public class Queries {
      * Get all items belonging to treeItem, sorted by sortFieldname using order
      * @param realm Realm object to query
      * @param treeItem TreeItem to query items from
-     * @param onlyUnread
-     *@param sortFieldname Sort using this fieldname
-     * @param order Sort using this order   @return items belonging to TreeItem
+     * @param onlyUnread Return only unread items?
+     * @param sortFieldname Sort using this fieldname
+     * @param order Sort using this order
+     * @return items belonging to TreeItem, only unread if onlyUnread is true
      */
     @Nullable
     public RealmResults<Item> getItems(Realm realm, TreeItem treeItem, boolean onlyUnread, String sortFieldname, Sort order) {
