@@ -20,6 +20,7 @@
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.jakewharton.hugo'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 23
@@ -54,9 +55,7 @@ dependencies {
 
     compile 'com.android.support:support-v13:23.1.1'
 
-    compile 'io.realm:realm-android:0.87.2'
-
-    compile('com.mikepenz:materialdrawer:4.6.3@aar') {
+    compile('com.mikepenz:materialdrawer:4.6.4@aar') {
         transitive = true
     }
 
