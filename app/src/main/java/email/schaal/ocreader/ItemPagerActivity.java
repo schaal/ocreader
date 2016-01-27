@@ -23,7 +23,6 @@ package email.schaal.ocreader;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -32,7 +31,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -49,6 +47,7 @@ import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Item;
 import email.schaal.ocreader.model.TemporaryFeed;
 import email.schaal.ocreader.util.FaviconUtils;
+import email.schaal.ocreader.view.ProgressFloatingActionButton;
 
 public class ItemPagerActivity extends RealmActivity {
     private static final String TAG = ItemPagerActivity.class.getSimpleName();
@@ -57,7 +56,7 @@ public class ItemPagerActivity extends RealmActivity {
 
     private TemporaryFeed temporaryFeed;
     private Toolbar toolbar;
-    private FloatingActionButton fab;
+    private ProgressFloatingActionButton fab;
 
     @ColorInt private int defaultToolbarColor;
     @ColorInt private int defaultAccent;
@@ -89,9 +88,9 @@ public class ItemPagerActivity extends RealmActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(temporaryFeed.getTitle());
 
-        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+        final SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
 
-        fab = (FloatingActionButton) findViewById(R.id.fab_open_in_browser);
+        fab = (ProgressFloatingActionButton) findViewById(R.id.fab_open_in_browser);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,6 +117,7 @@ public class ItemPagerActivity extends RealmActivity {
 
                 setActionBarColors(Item.feed(item));
 
+                fab.setProgress((float)(position+1) / (float)mSectionsPagerAdapter.getCount());
                 fab.show();
             }
 
@@ -218,7 +218,8 @@ public class ItemPagerActivity extends RealmActivity {
             fabColor = defaultAccent;
         }
         toolbar.setBackgroundColor(toolbarColor);
-        fab.setBackgroundTintList(ColorStateList.valueOf(fabColor));
+        //fab.setBackgroundTintList(ColorStateList.valueOf(fabColor));
+        fab.setBackgroundColor(fabColor);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             int statusbarColor = Color.rgb(
