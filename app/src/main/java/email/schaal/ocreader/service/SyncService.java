@@ -193,6 +193,22 @@ public class SyncService extends Service {
         return new CountdownAPICallback(countDownLatch);
     }
 
+    private final Realm.Transaction postProcessFeedTransaction = new Realm.Transaction() {
+        @Override
+        public void execute(Realm realm) {
+            final RealmResults<Feed> feeds = realm.where(Feed.class).findAll();
+            for (int i = 0, feedsSize = feeds.size(); i < feedsSize; i++) {
+                Feed feed = feeds.get(i);
+                feed.setStarredCount((int) realm.where(Item.class)
+                                .equalTo(Item.FEED_ID, feed.getId())
+                                .equalTo(Item.STARRED, true).count()
+                );
+                if (feed.getFaviconLink() != null)
+                    Picasso.with(SyncService.this).load(feed.getFaviconLink()).fetch();
+            }
+        }
+    };
+
     private void waitForCountdownLatch(final int startId, final String action) {
         executor.execute(new Runnable() {
             @Override
@@ -205,7 +221,7 @@ public class SyncService extends Service {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            postProcessFeeds(realm);
+                            realm.executeTransaction(postProcessFeedTransaction);
                             countDownLatches.remove(startId);
                             notifySyncStatus(SYNC_FINISHED, action);
                             stopSelf(startIds.remove(0));
@@ -226,25 +242,6 @@ public class SyncService extends Service {
     }
 
     private final Handler handler = new Handler(Looper.getMainLooper());
-
-    private void postProcessFeeds(Realm realm) {
-        // Post-process feeds: add starredCount and cache favicons
-        final RealmResults<Feed> feeds = realm.where(Feed.class).findAll();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                for (int i = 0, feedsSize = feeds.size(); i < feedsSize; i++) {
-                    Feed feed = feeds.get(i);
-                    feed.setStarredCount((int) realm.where(Item.class)
-                                    .equalTo(Item.FEED_ID, feed.getId())
-                                    .equalTo(Item.STARRED, true).count()
-                    );
-                    if(feed.getFaviconLink() != null)
-                        Picasso.with(SyncService.this).load(feed.getFaviconLink()).fetch();
-                }
-            }
-        });
-    }
 
     private void notifySyncStatus(@NonNull String action, String type) {
         final boolean syncStarted = action.equals(SYNC_STARTED);

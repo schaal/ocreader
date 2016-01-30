@@ -55,6 +55,8 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         outRect.top = size;
     }
 
+    private final Rect dividerRect = new Rect(0,0,0,0);
+
     @Override
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
         if (mDivider == null)
@@ -66,7 +68,6 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
                     "DividerItemDecoration can only be used with a vertical LinearLayoutManager.");
         }
 
-        Rect dividerRect = new Rect(0, 0, 0, 0);
         int childCount = parent.getChildCount();
 
         dividerRect.left = parent.getPaddingLeft();

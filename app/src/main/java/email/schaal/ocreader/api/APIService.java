@@ -118,11 +118,13 @@ public class APIService {
         void onCompleted();
     }
 
+    private final Set<List<Item>> itemsToClear = new HashSet<>(MarkAction.values().length);
+
     public void syncChanges(@NonNull final Realm realm, @Nullable final OnCompletionListener completionListener) {
         final ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
         final CountDownLatch countDownLatch = new CountDownLatch(MarkAction.values().length);
 
-        final Set<List<Item>> itemsToClear = new HashSet<>(MarkAction.values().length);
+        itemsToClear.clear();
         for (MarkAction action : MarkAction.values()) {
             markItems(action, changedItems, countDownLatch, itemsToClear);
         }
