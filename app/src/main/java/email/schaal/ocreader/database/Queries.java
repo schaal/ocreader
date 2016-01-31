@@ -204,11 +204,32 @@ public class Queries {
         return realm.where(Feed.class).findAllSorted(Feed.PINNED, Sort.ASCENDING, Feed.TITLE, Sort.ASCENDING);
     }
 
-    public <T extends RealmObject> void insert(Realm realm, final Iterable<T> elements) {
+    public void insert(Realm realm, final Iterable<Item> items) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                realm.copyToRealmOrUpdate(elements);
+                ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
+                RealmList<Item> unreadChanged = changedItems.getUnreadChangedItems();
+                RealmList<Item> starredChanged = changedItems.getStarredChangedItems();
+
+                // Check if we have unread or starred changes for the items being inserted
+                if(unreadChanged.size() > 0 && starredChanged.size() > 0) {
+                    for (Item item : items) {
+                        for (int i = 0, unreadChangedSize = unreadChanged.size(); i < unreadChangedSize; i++) {
+                            Item unreadItem = unreadChanged.get(i);
+                            if (item.getId() == unreadItem.getId()) {
+                                item.setUnread(unreadItem.isUnread());
+                            }
+                        }
+                        for (int i = 0, starredChangedSize = starredChanged.size(); i < starredChangedSize; i++) {
+                            Item starredItem = starredChanged.get(i);
+                            if (item.getId() == starredItem.getId()) {
+                                item.setStarred(starredItem.isStarred());
+                            }
+                        }
+                    }
+                }
+                realm.copyToRealmOrUpdate(items);
             }
         });
     }
