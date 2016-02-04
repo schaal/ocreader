@@ -4,6 +4,8 @@
 
 OCReader is a client for an [ownCloud news][0] instance.
 
+[![Available on F-Droid](https://raw.githubusercontent.com/schaal/screenshots/master/F-Droid-button_bigger.png)](https://f-droid.org/repository/browse/?fdid=email.schaal.ocreader)
+
 ## Screenshots
 
 ![Drawer](https://raw.githubusercontent.com/schaal/screenshots/master/ocreader/drawer.png)
