@@ -177,7 +177,7 @@ public class ItemPageFragment extends WebViewFragment {
 
         // Using software rendering to prevent frozen or blank webviews
         // See https://code.google.com/p/chromium/issues/detail?id=501901
-        if(Build.HARDWARE.equals("qcom") && Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+        if(Build.HARDWARE.equals("qcom") && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             Log.w(TAG, "Using software rendering");
             rootView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
