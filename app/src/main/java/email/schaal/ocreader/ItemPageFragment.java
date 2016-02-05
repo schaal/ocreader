@@ -20,12 +20,14 @@
 
 package email.schaal.ocreader;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.graphics.Palette;
@@ -33,6 +35,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.webkit.WebViewFragment;
 
 import org.jsoup.Jsoup;
@@ -66,10 +70,17 @@ public class ItemPageFragment extends WebViewFragment {
 
     private Item item;
 
+    private static final String feedColorCss = "a:link, a:active,a:hover { color: %s }";
+
     private final FaviconUtils.PaletteBitmapAsyncListener paletteAsyncListener = new FaviconUtils.PaletteBitmapAsyncListener() {
         @Override
         public void onGenerated(Palette palette, Bitmap bitmap) {
-            loadWebViewData(getActivity(), palette);
+            if (palette != null) {
+                int titleColor = palette.getDarkVibrantColor(ContextCompat.getColor(getActivity(), R.color.primary_text));
+                String cssColor = getCssColor(titleColor);
+                String javascript = String.format("javascript:(function(){document.styleSheets[0].cssRules[0].style.color=\"%s\";})()", cssColor);
+                getWebView().loadUrl(javascript);
+            }
         }
     };
 
@@ -97,18 +108,32 @@ public class ItemPageFragment extends WebViewFragment {
     public void onStart() {
         super.onStart();
 
-        ItemPagerActivity activity = (ItemPagerActivity) getActivity();
+        final ItemPagerActivity activity = (ItemPagerActivity) getActivity();
         item = activity.getItemForPosition(getArguments().getInt(ARG_POSITION));
         final Feed feed = Item.feed(item);
 
-        FaviconUtils.getInstance().loadFavicon(activity, feed, paletteAsyncListener);
+        getWebView().setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                FaviconUtils.getInstance().loadFavicon(activity, feed, paletteAsyncListener);
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+                browserIntent.setData(Uri.parse(url));
+                getActivity().startActivity(browserIntent);
+                return true;
+            }
+        });
+        loadWebViewData(activity);
     }
 
-    private void loadWebViewData(Context context, @Nullable Palette palette) {
-        getWebView().loadDataWithBaseURL(null, getHtml(context, item, palette), "text/html", "UTF-8", null);
+    private void loadWebViewData(Context context) {
+        getWebView().loadDataWithBaseURL(null, getHtml(context, item), "text/html", "UTF-8", null);
     }
 
-    private String getHtml(Context context, Item item, @Nullable Palette palette) {
+    private String getHtml(Context context, Item item) {
         if (css == null)
             try {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open("item_page.css")));
@@ -123,19 +148,16 @@ public class ItemPageFragment extends WebViewFragment {
             }
 
         int titleColor = ContextCompat.getColor(context, R.color.primary_text);
-        if (palette != null) {
-            titleColor = palette.getDarkVibrantColor(titleColor);
-        }
 
         Document document = Jsoup.parse(item.getBody());
         prepareDocument(document);
         document = cleaner.clean(document);
 
-        String cssColor = getCssColor(titleColor);
-        String feedCss = String.format(".feedcolor { color: %s } a:link, a:active,a:hover { color: %s }", cssColor, cssColor);
-
         StringBuilder pageBuilder = new StringBuilder(
-                String.format("<html><head><style type=\"text/css\">%s</style></head><body>", css + feedCss)
+                String.format(
+                        "<html><head><style type=\"text/css\">%s</style></head><body>",
+                        String.format(feedColorCss, getCssColor(titleColor)) + css
+                )
         );
 
         Feed feed = Item.feed(item);
@@ -167,6 +189,8 @@ public class ItemPageFragment extends WebViewFragment {
         }
     }
 
+    // All js from external sites gets stripped using jsoup
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View childView = super.onCreateView(inflater, container, savedInstanceState);
@@ -174,6 +198,8 @@ public class ItemPageFragment extends WebViewFragment {
 
         NestedScrollView nestedScrollView = (NestedScrollView) rootView.findViewById(R.id.nestedscrollview);
         nestedScrollView.addView(childView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+        getWebView().getSettings().setJavaScriptEnabled(true);
 
         // Using software rendering to prevent frozen or blank webviews
         // See https://code.google.com/p/chromium/issues/detail?id=501901
