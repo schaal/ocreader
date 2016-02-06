@@ -36,8 +36,6 @@ import android.support.v4.util.ArrayMap;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -203,8 +201,6 @@ public class SyncService extends Service {
                                 .equalTo(Item.FEED_ID, feed.getId())
                                 .equalTo(Item.STARRED, true).count()
                 );
-                if (feed.getFaviconLink() != null)
-                    Picasso.with(SyncService.this).load(feed.getFaviconLink()).fetch();
             }
         }
     };

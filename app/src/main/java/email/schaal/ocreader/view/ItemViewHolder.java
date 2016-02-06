@@ -21,6 +21,7 @@
 package email.schaal.ocreader.view;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
@@ -41,20 +42,20 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     private static final String TAG = ItemViewHolder.class.getSimpleName();
 
     private final OnClickListener clickListener;
+    private final Drawable defaultFeedDrawable;
     private final TextView textViewTitle;
     private final TextView textViewFeedTitle;
     private final TextView textViewTime;
     private final ImageView faviconImageView;
     private final ImageView starImageView;
 
-    private final int defaultFeedTextColor;
-
     private final View[] alphaViews;
     private final FaviconUtils.PaletteBitmapAsyncListener paletteAsyncListener;
 
-    public ItemViewHolder(final View itemView, final ItemViewHolder.OnClickListener clickListener) {
+    public ItemViewHolder(final View itemView, final OnClickListener clickListener, final Drawable defaultFeedDrawable) {
         super(itemView);
         this.clickListener = clickListener;
+        this.defaultFeedDrawable = defaultFeedDrawable;
 
         textViewTitle = (TextView) itemView.findViewById(R.id.textViewTitle);
         textViewFeedTitle = (TextView) itemView.findViewById(R.id.textViewFeedTitle);
@@ -63,16 +64,13 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         faviconImageView = (ImageView) itemView.findViewById(R.id.imageview_favicon);
         starImageView = (ImageView) itemView.findViewById(R.id.imageview_star);
 
-        defaultFeedTextColor = ContextCompat.getColor(itemView.getContext(),R.color.secondary_text);
+        final int defaultFeedTextColor = ContextCompat.getColor(itemView.getContext(),R.color.secondary_text);
 
         paletteAsyncListener = new FaviconUtils.PaletteBitmapAsyncListener() {
             @Override
             public void onGenerated(Palette palette, Bitmap bitmap) {
-                if (bitmap != null) {
+                if (bitmap != null)
                     faviconImageView.setImageBitmap(bitmap);
-                } else {
-                    faviconImageView.setImageDrawable(ContextCompat.getDrawable(itemView.getContext(), R.drawable.ic_feed_icon));
-                }
 
                 if (palette != null)
                     textViewFeedTitle.setTextColor(palette.getDarkVibrantColor(defaultFeedTextColor));
@@ -101,6 +99,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
             textViewFeedTitle.setText("");
         textViewTime.setText(StringUtils.getTimeSpanString(itemView.getContext(), item.getPubDate()));
 
+        faviconImageView.setImageDrawable(defaultFeedDrawable);
         FaviconUtils.getInstance().loadFavicon(itemView.getContext(), feed, paletteAsyncListener);
 
         itemView.setOnClickListener(new View.OnClickListener() {

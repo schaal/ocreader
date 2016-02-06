@@ -55,7 +55,8 @@ public class FaviconUtils {
             Picasso.with(context).load(feed.getFaviconLink()).into(new Target() {
                 @Override
                 public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-                    if(paletteCache.get(feed.getId()) == null)
+                    Palette palette = paletteCache.get(feed.getId());
+                    if(palette == null)
                         new Palette.Builder(bitmap).generate(new Palette.PaletteAsyncListener() {
                             @Override
                             public void onGenerated(Palette palette) {
@@ -64,7 +65,7 @@ public class FaviconUtils {
                             }
                         });
                     else {
-                        paletteAsyncListener.onGenerated(paletteCache.get(feed.getId()), bitmap);
+                        paletteAsyncListener.onGenerated(palette, bitmap);
                     }
                 }
 
