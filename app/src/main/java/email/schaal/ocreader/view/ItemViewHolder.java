@@ -22,6 +22,7 @@ package email.schaal.ocreader.view;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
@@ -42,7 +43,11 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     private static final String TAG = ItemViewHolder.class.getSimpleName();
 
     private final OnClickListener clickListener;
+    private final FaviconUtils.PaletteBitmapAsyncListener paletteAsyncListener;
+
     private final Drawable defaultFeedDrawable;
+    @ColorInt private final int defaultFeedTextColor;
+
     private final TextView textViewTitle;
     private final TextView textViewFeedTitle;
     private final TextView textViewTime;
@@ -50,7 +55,6 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     private final ImageView starImageView;
 
     private final View[] alphaViews;
-    private final FaviconUtils.PaletteBitmapAsyncListener paletteAsyncListener;
 
     public ItemViewHolder(final View itemView, final OnClickListener clickListener, final Drawable defaultFeedDrawable) {
         super(itemView);
@@ -64,7 +68,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         faviconImageView = (ImageView) itemView.findViewById(R.id.imageview_favicon);
         starImageView = (ImageView) itemView.findViewById(R.id.imageview_star);
 
-        final int defaultFeedTextColor = ContextCompat.getColor(itemView.getContext(),R.color.secondary_text);
+        defaultFeedTextColor = ContextCompat.getColor(itemView.getContext(),R.color.secondary_text);
 
         paletteAsyncListener = new FaviconUtils.PaletteBitmapAsyncListener() {
             @Override
@@ -74,8 +78,6 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
 
                 if (palette != null)
                     textViewFeedTitle.setTextColor(palette.getDarkVibrantColor(defaultFeedTextColor));
-                else
-                    textViewFeedTitle.setTextColor(defaultFeedTextColor);
             }
         };
 
@@ -100,6 +102,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         textViewTime.setText(StringUtils.getTimeSpanString(itemView.getContext(), item.getPubDate()));
 
         faviconImageView.setImageDrawable(defaultFeedDrawable);
+        textViewFeedTitle.setTextColor(defaultFeedTextColor);
         FaviconUtils.getInstance().loadFavicon(itemView.getContext(), feed, paletteAsyncListener);
 
         itemView.setOnClickListener(new View.OnClickListener() {
