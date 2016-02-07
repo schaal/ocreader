@@ -40,6 +40,7 @@ import email.schaal.ocreader.model.Item;
 import email.schaal.ocreader.model.StarredFolder;
 import email.schaal.ocreader.model.TemporaryFeed;
 import email.schaal.ocreader.model.TreeItem;
+import email.schaal.ocreader.model.User;
 import email.schaal.ocreader.util.AlarmUtils;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -106,10 +107,20 @@ public class Queries {
     public void resetDatabase() {
         Log.w(TAG, "Database will be reset");
 
-        Realm.deleteRealm(realmConfiguration);
         Realm realm = null;
         try {
             realm = Realm.getDefaultInstance();
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    realm.clear(Feed.class);
+                    realm.clear(Folder.class);
+                    realm.clear(Item.class);
+                    realm.clear(TemporaryFeed.class);
+                    realm.clear(ChangedItems.class);
+                    realm.clear(User.class);
+                }
+            });
             initializeSingletons(realm);
         } finally {
             if(realm != null)

@@ -383,7 +383,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 profileDrawerItem.withName(Preferences.USERNAME.getString(preferences));
                 profileDrawerItem.withEmail(Preferences.URL.getString(preferences));
 
-                SyncService.startSync(this);
+                Queries.getInstance().resetDatabase();
+                SyncService.startSync(this, true);
             }
         }
     }

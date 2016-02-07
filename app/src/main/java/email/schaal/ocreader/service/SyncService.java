@@ -67,6 +67,7 @@ public class SyncService extends Service {
     public static final String EXTRA_IS_FEED = "email.schaal.ocreader.action.extra.IS_FEED";
     public static final String EXTRA_OFFSET = "email.schaal.ocreader.action.extra.OFFSET";
     public static final String EXTRA_TYPE = "email.schaal.ocreader.action.extra.TYPE";
+    public static final String EXTRA_INITIAL_SYNC = "email.schaal.ocreader.action.extra.INITIAL_SYNC";
 
     private SharedPreferences sharedPreferences;
 
@@ -139,7 +140,10 @@ public class SyncService extends Service {
                             stopSelf(startIds.remove(0));
                             break;
                         case FULL_SYNC:
-                            long lastSync = getLastSyncTimestamp(realm);
+                            long lastSync = 0L;
+
+                            if(!intent.getBooleanExtra(EXTRA_INITIAL_SYNC, false))
+                                lastSync = getLastSyncTimestamp(realm);
 
                             APIService.APICallback apiCallback = getApiCallback(startId, lastSync == 0L ? 5 : 4);
 
@@ -260,7 +264,11 @@ public class SyncService extends Service {
     }
 
     public static void startSync(Activity activity) {
+        startSync(activity, false);
+    }
+    public static void startSync(Activity activity, boolean initialSync) {
         Intent syncIntent = new Intent(ACTION_FULL_SYNC, null, activity, SyncService.class);
+        syncIntent.putExtra(EXTRA_INITIAL_SYNC, initialSync);
         activity.startService(syncIntent);
     }
 

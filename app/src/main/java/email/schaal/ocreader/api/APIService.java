@@ -25,7 +25,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.widget.Toast;
 
 import com.github.zafarkhaja.semver.Version;
 import com.google.gson.ExclusionStrategy;
@@ -41,7 +40,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import email.schaal.ocreader.R;
 import email.schaal.ocreader.api.json.Feeds;
 import email.schaal.ocreader.api.json.Folders;
 import email.schaal.ocreader.api.json.ItemIds;
@@ -85,7 +83,6 @@ public class APIService {
     private static final int BATCH_SIZE = 100;
     private static final int MAX_ITEMS = 10000;
 
-    private final Context context;
     private final Gson gson;
 
     private final Executor executor = Executors.newSingleThreadExecutor();
@@ -236,7 +233,7 @@ public class APIService {
     private API api;
 
     public static void init(Context context) {
-        instance = new APIService(context);
+        instance = new APIService();
     }
 
     public static APIService getInstance() {
@@ -245,9 +242,7 @@ public class APIService {
         return instance;
     }
 
-    private APIService(Context context) {
-        this.context = context;
-
+    private APIService() {
         gson = new GsonBuilder()
                 .registerTypeAdapter(Folder.class, new FolderTypeAdapter())
                 .registerTypeAdapter(Feed.class, new FeedTypeAdapter())
@@ -312,8 +307,9 @@ public class APIService {
         Call<Void> markItemsOfFeedRead(@Path("feedId") int feedId, @Body int newestItemId);
 
         /** ITEMS **/
-        @GET("items?batchSize="+BATCH_SIZE)
+        @GET("items")
         Call<Items> items(
+                @Query("batchSize") long batchSize,
                 @Query("offset") long offset,
                 @Query("type") int type,
                 @Query("id") long id,
@@ -366,24 +362,14 @@ public class APIService {
     public void items(final Realm realm, long lastSync, final APICallback callback) {
         // get all unread items on first sync, updatedItems on further syncs
         if(lastSync == 0L) {
-            api.items(0L, QueryType.ALL.getType(), 0L, false, false).enqueue(new BaseRetrofitCallback<Items>(callback) {
-                private int totalCount = 0;
-
+            api.items(-1, 0L, QueryType.ALL.getType(), 0L, false, false).enqueue(new BaseRetrofitCallback<Items>(callback) {
                 @Override
                 public boolean onResponseReal(Response<Items> response) {
                     final List<Item> items = response.body().getItems();
-                    totalCount += items.size();
 
                     Queries.getInstance().insert(realm, items);
 
-                    if (items.size() == BATCH_SIZE) {
-                        Toast.makeText(context, context.getResources().getQuantityString(R.plurals.downloaded_x_items, totalCount, totalCount), Toast.LENGTH_SHORT).show();
-                        long newOffset = realm.where(Item.class).min(Item.ID).longValue();
-                        api.items(newOffset, QueryType.ALL.getType(), 0L, false, false).enqueue(this);
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    return true;
                 }
             });
         } else {
@@ -400,30 +386,19 @@ public class APIService {
     }
 
     public void starredItems(final Realm realm, final APICallback callback) {
-        api.items(0L, QueryType.STARRED.getType(), 0L, true, false).enqueue(new BaseRetrofitCallback<Items>(callback) {
-            private int totalCount = 0;
-
+        api.items(-1, 0L, QueryType.STARRED.getType(), 0L, true, false).enqueue(new BaseRetrofitCallback<Items>(callback) {
             @Override
             protected boolean onResponseReal(Response<Items> response) {
                 final List<Item> items = response.body().getItems();
-                totalCount += items.size();
 
                 Queries.getInstance().insert(realm, items);
-
-                if (items.size() == BATCH_SIZE) {
-                    Toast.makeText(context, context.getResources().getQuantityString(R.plurals.downloaded_x_items, totalCount, totalCount), Toast.LENGTH_SHORT).show();
-                    long newOffset = realm.where(Item.class).equalTo(Item.STARRED, true).min(Item.ID).longValue();
-                    api.items(newOffset, QueryType.STARRED.getType(), 0L, true, false).enqueue(this);
-                    return false;
-                } else {
-                    return true;
-                }
+                return true;
             }
         });
     }
 
     public void moreItems(final Realm realm, final QueryType type, final long offset, final long id, final APICallback callback) {
-        api.items(offset, type.getType(), id, true, false).enqueue(new BaseRetrofitCallback<Items>(callback) {
+        api.items(BATCH_SIZE, offset, type.getType(), id, true, false).enqueue(new BaseRetrofitCallback<Items>(callback) {
             @Override
             public boolean onResponseReal(Response<Items> response) {
                 final List<Item> items = response.body().getItems();
