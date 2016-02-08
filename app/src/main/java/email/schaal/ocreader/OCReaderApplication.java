@@ -53,7 +53,7 @@ public class OCReaderApplication extends Application {
                 .apply();
         HttpManager.init(this);
         Queries.init(this);
-        APIService.init(this);
+        APIService.init();
         AlarmUtils.init(this);
         Picasso picasso = new Picasso.Builder(this)
                 .downloader(new OkHttpDownloader(this))

@@ -59,8 +59,6 @@ public class Queries {
 
     private static Queries instance;
 
-    private final RealmConfiguration realmConfiguration;
-
     private Queries(Context context) {
         this(new RealmConfiguration.Builder(context)
                 .schemaVersion(1)
@@ -68,8 +66,6 @@ public class Queries {
     }
 
     private Queries(RealmConfiguration realmConfiguration) {
-        this.realmConfiguration = realmConfiguration;
-
         Realm.setDefaultConfiguration(realmConfiguration);
 
         Realm realm = null;

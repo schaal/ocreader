@@ -20,7 +20,6 @@
 
 package email.schaal.ocreader.api;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -35,6 +34,7 @@ import com.squareup.okhttp.HttpUrl;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
@@ -232,7 +232,7 @@ public class APIService {
 
     private API api;
 
-    public static void init(Context context) {
+    public static void init() {
         instance = new APIService();
     }
 
@@ -452,7 +452,7 @@ public class APIService {
                 if (onResponseReal(response))
                     callback.onSuccess();
             } else {
-                callback.onFailure(String.format("%d: %s", response.code(), response.message()));
+                callback.onFailure(String.format(Locale.US, "%d: %s", response.code(), response.message()));
             }
         }
 
