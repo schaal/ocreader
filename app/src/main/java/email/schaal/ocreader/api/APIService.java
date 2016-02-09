@@ -30,7 +30,6 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.squareup.okhttp.HttpUrl;
 
 import java.util.HashSet;
 import java.util.List;
@@ -61,16 +60,17 @@ import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.GsonConverterFactory;
-import retrofit.Response;
-import retrofit.Retrofit;
-import retrofit.http.Body;
-import retrofit.http.GET;
-import retrofit.http.PUT;
-import retrofit.http.Path;
-import retrofit.http.Query;
+import okhttp3.HttpUrl;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * This class encapsulates the ownCloud News API and communicates with the remote ownCloud instance.
@@ -182,14 +182,14 @@ public class APIService {
 
         final Callback<Void> markCallback = new Callback<Void>() {
             @Override
-            public void onResponse(Response<Void> response, Retrofit retrofit) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
                 countDownLatch.countDown();
                 if(response.isSuccess())
                     itemsToClear.add(items);
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<Void> call, Throwable t) {
                 t.printStackTrace();
                 countDownLatch.countDown();
             }
@@ -447,7 +447,7 @@ public class APIService {
         }
 
         @Override
-        public final void onResponse(Response<T> response, Retrofit retrofit) {
+        public final void onResponse(Call<T> call, Response<T> response) {
             if (response.isSuccess()) {
                 if (onResponseReal(response))
                     callback.onSuccess();
@@ -465,7 +465,7 @@ public class APIService {
         protected abstract boolean onResponseReal(Response<T> response);
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onFailure(Call<T> call, Throwable t) {
             callback.onFailure(t.getLocalizedMessage());
         }
     }

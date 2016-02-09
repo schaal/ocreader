@@ -37,16 +37,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.zafarkhaja.semver.Version;
-import com.squareup.okhttp.HttpUrl;
 
 import java.net.UnknownHostException;
 
 import email.schaal.ocreader.api.APIService;
 import email.schaal.ocreader.http.HttpManager;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import okhttp3.HttpUrl;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A login screen that offers login via email/password.
@@ -183,7 +182,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onResponse(Response<Version> response, Retrofit retrofit) {
+        public void onResponse(Call<Version> call, Response<Version> response) {
             onCompletion();
 
             if(response.isSuccess()) {
@@ -207,7 +206,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onFailure(Call<Version> call, Throwable t) {
             onCompletion();
 
             t.printStackTrace();

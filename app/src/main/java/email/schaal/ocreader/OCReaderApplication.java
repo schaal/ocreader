@@ -30,7 +30,7 @@ import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
-import com.squareup.picasso.OkHttpDownloader;
+import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
 import email.schaal.ocreader.api.APIService;
@@ -56,7 +56,7 @@ public class OCReaderApplication extends Application {
         APIService.init();
         AlarmUtils.init(this);
         Picasso picasso = new Picasso.Builder(this)
-                .downloader(new OkHttpDownloader(this))
+                .downloader(new OkHttp3Downloader(this))
                 .defaultBitmapConfig(Bitmap.Config.ARGB_8888)
                 .build();
 

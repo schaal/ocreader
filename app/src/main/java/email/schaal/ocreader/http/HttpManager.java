@@ -24,17 +24,16 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.squareup.okhttp.Credentials;
-import com.squareup.okhttp.HttpUrl;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import email.schaal.ocreader.Preferences;
+import okhttp3.Credentials;
+import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Utility class to setup the OkHttpClient and manage the credentials used to communicate with
@@ -61,12 +60,11 @@ public class HttpManager {
 
     private HttpManager(Context context) {
 
-        client = new OkHttpClient();
-
-        client.setConnectTimeout(10, TimeUnit.SECONDS);
-        client.setReadTimeout(60, TimeUnit.SECONDS);
-
-        client.interceptors().add(new AuthorizationInterceptor());
+        client = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .addInterceptor(new AuthorizationInterceptor())
+                .build();
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String username = Preferences.USERNAME.getString(preferences);
@@ -144,7 +142,7 @@ public class HttpManager {
             Request request = chain.request();
 
             // only add Authorization header for urls on the configured owncloud host
-            if(credentials.getRootUrl().host().equals(request.httpUrl().host()))
+            if(credentials.getRootUrl().host().equals(request.url().host()))
                 request = request.newBuilder()
                         .addHeader("Authorization",credentials.getCredentials())
                         .build();
