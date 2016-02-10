@@ -3,13 +3,20 @@
 
 -dontobfuscate
 
+# OkHttp
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
+
 #picasso
 -dontwarn com.squareup.okhttp.**
 -dontwarn okio.**
 
 #retrofit
--dontwarn retrofit.**
--keep class retrofit.** { *; }
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
 -keepattributes Signature
 -keepattributes Exceptions
 
