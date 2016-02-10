@@ -30,8 +30,8 @@ android {
         applicationId "email.schaal.ocreader"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 1
-        versionName "0.1a"
+        versionCode 2
+        versionName "0.1b"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
