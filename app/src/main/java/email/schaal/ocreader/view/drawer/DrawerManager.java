@@ -302,6 +302,11 @@ public class DrawerManager {
                     endDrawerItem = Queries.getInstance().getFeed(realm, endDrawerItemId);
                 }
             }
+
+            if(startDrawerItem == null) {
+                startDrawerItem = new AllUnreadFolder(context);
+                startDrawerItemId = AllUnreadFolder.ID;
+            }
         }
 
         public TreeItem getStartDrawerItem() {

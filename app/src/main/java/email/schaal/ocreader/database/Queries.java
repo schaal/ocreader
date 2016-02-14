@@ -75,6 +75,10 @@ public class Queries {
             if(realm.isEmpty()) {
                 initializeSingletons(realm);
             }
+        } catch (IllegalArgumentException ex) {
+            ex.printStackTrace();
+            Realm.deleteRealm(realmConfiguration);
+            resetDatabase();
         } catch (Exception ex) {
             ex.printStackTrace();
             resetDatabase();
