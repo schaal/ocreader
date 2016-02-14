@@ -31,6 +31,7 @@ import android.util.LruCache;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import email.schaal.ocreader.R;
 import email.schaal.ocreader.model.Feed;
 
 /**
@@ -81,6 +82,27 @@ public class FaviconUtils {
             });
         } else {
             paletteAsyncListener.onGenerated(null, null);
+        }
+    }
+
+    public void loadBitmap(final Context context, @Nullable final Feed feed, final Target target) {
+        Picasso.with(context).load(feed != null ? feed.getFaviconLink() : null).placeholder(R.drawable.ic_feed_icon).into(target);
+    }
+
+    public void loadPalette(final Bitmap bitmap, @Nullable final Long feedId, final Palette.PaletteAsyncListener paletteAsyncListener) {
+        if(feedId != null) {
+            Palette palette = paletteCache.get(feedId);
+            if (palette == null) {
+                new Palette.Builder(bitmap).generate(new Palette.PaletteAsyncListener() {
+                    @Override
+                    public void onGenerated(Palette palette) {
+                        paletteCache.put(feedId, palette);
+                        paletteAsyncListener.onGenerated(palette);
+                    }
+                });
+            } else {
+                paletteAsyncListener.onGenerated(palette);
+            }
         }
     }
 

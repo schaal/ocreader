@@ -23,12 +23,17 @@ package email.schaal.ocreader.view;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.model.Feed;
@@ -39,13 +44,11 @@ import email.schaal.ocreader.util.StringUtils;
 /**
  * RecyclerView.ViewHolder to display a feed Item.
  */
-public class ItemViewHolder extends RecyclerView.ViewHolder {
+public class ItemViewHolder extends RecyclerView.ViewHolder implements Target {
     private static final String TAG = ItemViewHolder.class.getSimpleName();
 
     private final OnClickListener clickListener;
-    private final FaviconUtils.PaletteBitmapAsyncListener paletteAsyncListener;
 
-    private final Drawable defaultFeedDrawable;
     @ColorInt private final int defaultFeedTextColor;
 
     private final TextView textViewTitle;
@@ -56,10 +59,14 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
 
     private final View[] alphaViews;
 
-    public ItemViewHolder(final View itemView, final OnClickListener clickListener, final Drawable defaultFeedDrawable) {
+    private final Palette.PaletteAsyncListener paletteAsyncListener;
+
+    @Nullable
+    private Long feedId;
+
+    public ItemViewHolder(final View itemView, final OnClickListener clickListener) {
         super(itemView);
         this.clickListener = clickListener;
-        this.defaultFeedDrawable = defaultFeedDrawable;
 
         textViewTitle = (TextView) itemView.findViewById(R.id.textViewTitle);
         textViewFeedTitle = (TextView) itemView.findViewById(R.id.textViewFeedTitle);
@@ -70,23 +77,19 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
 
         defaultFeedTextColor = ContextCompat.getColor(itemView.getContext(),R.color.secondary_text);
 
-        paletteAsyncListener = new FaviconUtils.PaletteBitmapAsyncListener() {
-            @Override
-            public void onGenerated(Palette palette, Bitmap bitmap) {
-                if (bitmap != null)
-                    faviconImageView.setImageBitmap(bitmap);
-
-                if (palette != null)
-                    textViewFeedTitle.setTextColor(palette.getDarkVibrantColor(defaultFeedTextColor));
-            }
-        };
-
         alphaViews = new View[] {
                 textViewTitle,
                 textViewFeedTitle,
                 textViewTime,
                 faviconImageView,
                 starImageView
+        };
+
+        paletteAsyncListener = new Palette.PaletteAsyncListener() {
+            @Override
+            public void onGenerated(Palette palette) {
+                textViewFeedTitle.setTextColor(palette.getDarkVibrantColor(defaultFeedTextColor));
+            }
         };
     }
 
@@ -95,15 +98,18 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
 
         final Feed feed = Item.feed(item);
 
-        if(feed != null)
+        if(feed != null) {
             textViewFeedTitle.setText(feed.getTitle());
-        else
+            feedId = feed.getId();
+        } else {
+            Log.w(TAG, "Feed == null");
             textViewFeedTitle.setText("");
+            feedId = null;
+        }
+
         textViewTime.setText(StringUtils.getTimeSpanString(itemView.getContext(), item.getPubDate()));
 
-        faviconImageView.setImageDrawable(defaultFeedDrawable);
-        textViewFeedTitle.setTextColor(defaultFeedTextColor);
-        FaviconUtils.getInstance().loadFavicon(itemView.getContext(), feed, paletteAsyncListener);
+        FaviconUtils.getInstance().loadBitmap(itemView.getContext(), feed, this);
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,6 +131,23 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
 
     private void setStarredState(boolean starred) {
         starImageView.setVisibility(starred ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+        faviconImageView.setImageBitmap(bitmap);
+        FaviconUtils.getInstance().loadPalette(bitmap, feedId, paletteAsyncListener);
+    }
+
+    @Override
+    public void onBitmapFailed(Drawable errorDrawable) {
+
+    }
+
+    @Override
+    public void onPrepareLoad(Drawable placeHolderDrawable) {
+        faviconImageView.setImageDrawable(placeHolderDrawable);
+        textViewFeedTitle.setTextColor(defaultFeedTextColor);
     }
 
     public interface OnClickListener {

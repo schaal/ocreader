@@ -128,7 +128,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         switch (viewType) {
             case VIEW_TYPE_ITEM:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
-                holder = new ItemViewHolder(view, clickListener, defaultFeedDrawable);
+                holder = new ItemViewHolder(view, clickListener);
                 break;
             case VIEW_TYPE_EMPTY:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_empty, parent, false);
