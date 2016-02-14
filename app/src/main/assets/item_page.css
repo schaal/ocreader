@@ -33,3 +33,18 @@ blockquote > p {
 .byline {
     font-size: 0.8em;
 }
+
+span.play {
+    font-size: 2em;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-shadow: black 0.1em 0.1em 0.2em
+}
+
+img.videothumb {
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
+}

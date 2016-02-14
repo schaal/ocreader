@@ -50,6 +50,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Item;
@@ -64,13 +66,17 @@ public class ItemPageFragment extends WebViewFragment {
 
     public static final String ARG_POSITION = "ARG_POSITION";
 
-    private final static Cleaner cleaner = new Cleaner(Whitelist.relaxed().addTags("video"));
+    // iframes are replaced in prepareDocument()
+    private final static Cleaner cleaner = new Cleaner(Whitelist.relaxed().addTags("video","iframe").addAttributes("iframe", "src"));
 
     private static String css = null;
 
     private Item item;
 
     private static final String feedColorCss = "a:link, a:active,a:hover { color: %s }";
+
+    private final static String videoThumbLink = "<div style=\"position:relative\"><a href=\"%s\"><img src=\"%s\" class=\"videothumb\"></img><span class=\"play\">▶</span></a></div>";
+    private final static String videoLink = "<a href=\"%s\">%s</a>";
 
     private final FaviconUtils.PaletteBitmapAsyncListener paletteAsyncListener = new FaviconUtils.PaletteBitmapAsyncListener() {
         @Override
@@ -150,8 +156,8 @@ public class ItemPageFragment extends WebViewFragment {
         int titleColor = ContextCompat.getColor(context, R.color.primary_text);
 
         Document document = Jsoup.parse(item.getBody());
-        prepareDocument(document);
         document = cleaner.clean(document);
+        prepareDocument(document);
 
         StringBuilder pageBuilder = new StringBuilder(
                 String.format(
@@ -178,14 +184,53 @@ public class ItemPageFragment extends WebViewFragment {
         return pageBuilder.toString();
     }
 
+    /**
+     * Enum to convert some common iframe urls to simpler formats
+     */
+    private enum IframePattern {
+        YOUTUBE(Pattern.compile("(https?://)(?:www\\.)?youtube\\.com/embed/([a-zA-Z0-9-_]+)"), "youtu.be/", "%simg.youtube.com/vi/%s/sddefault.jpg"),
+        VIMEO(Pattern.compile("(https?://)(?:www\\.)?player\\.vimeo\\.com/video/([a-zA-Z0-9]+)"), "vimeo.com/", null);
+
+        final Pattern pattern;
+        final String baseUrl;
+        final String thumbUrl;
+
+        IframePattern(Pattern pattern, String baseUrl, String thumbUrl) {
+            this.pattern = pattern;
+            this.baseUrl = baseUrl;
+            this.thumbUrl = thumbUrl;
+        }
+    }
+
     private void prepareDocument(Document document) {
         Elements iframes = document.getElementsByTag("iframe");
         for(Element iframe: iframes) {
-            final String src = iframe.attr("src");
-            iframe.tagName("a");
-            iframe.removeAttr("src");
-            iframe.attr("href", src);
-            iframe.html(src);
+            if(iframe.hasAttr("src")) {
+                String href = iframe.attr("src");
+                String html = href;
+
+                // Check if url matches any known patterns
+                for (IframePattern iframePattern : IframePattern.values()) {
+                    Matcher matcher = iframePattern.pattern.matcher(href);
+                    if (matcher.matches()) {
+                        final String videoId = matcher.group(2);
+                        String urlPrefix = matcher.group(1);
+                        href = urlPrefix + iframePattern.baseUrl + videoId;
+                        // use thumbnail if available
+                        if (iframePattern.thumbUrl != null) {
+                            String thumbUrl = String.format(iframePattern.thumbUrl, urlPrefix, videoId);
+                            html = String.format(Locale.US, videoThumbLink, href, thumbUrl);
+                        } else {
+                            html = String.format(Locale.US, videoLink, href, href);
+                        }
+                        break;
+                    }
+                }
+
+                iframe.replaceWith(Jsoup.parse(html).body().child(0));
+            } else {
+                iframe.remove();
+            }
         }
     }
 
