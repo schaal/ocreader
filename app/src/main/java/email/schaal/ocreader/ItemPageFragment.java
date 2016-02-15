@@ -161,7 +161,7 @@ public class ItemPageFragment extends WebViewFragment {
 
         StringBuilder pageBuilder = new StringBuilder(
                 String.format(
-                        "<html><head><style type=\"text/css\">%s</style></head><body>",
+                        "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style type=\"text/css\">%s</style></head><body>",
                         String.format(feedColorCss, getCssColor(titleColor)) + css
                 )
         );
