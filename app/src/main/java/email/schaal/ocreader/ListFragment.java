@@ -21,9 +21,7 @@
 package email.schaal.ocreader;
 
 import android.app.Fragment;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -61,8 +59,7 @@ public class ListFragment extends Fragment {
 
         itemsRecyclerView = (RecyclerView) rootView.findViewById(R.id.items_recyclerview);
 
-        Drawable defaultFeedDrawable = ContextCompat.getDrawable(rootView.getContext(), R.drawable.ic_feed_icon);
-        adapter = new ItemsAdapter((ItemViewHolder.OnClickListener)getActivity(), (ItemsAdapter.OnLoadMoreListener)getActivity(), defaultFeedDrawable);
+        adapter = new ItemsAdapter((ItemViewHolder.OnClickListener)getActivity(), (ItemsAdapter.OnLoadMoreListener)getActivity());
 
         itemsRecyclerView.setAdapter(adapter);
 

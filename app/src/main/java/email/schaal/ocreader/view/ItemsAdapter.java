@@ -20,7 +20,6 @@
 
 package email.schaal.ocreader.view;
 
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -51,7 +50,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private boolean onlyUnread;
     private final ItemViewHolder.OnClickListener clickListener;
     private final OnLoadMoreListener loadMoreListener;
-    private final Drawable defaultFeedDrawable;
 
     private final static int VIEW_TYPE_ITEM = 0;
     private final static int VIEW_TYPE_EMPTY = 1;
@@ -59,10 +57,9 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private TreeItem loadingMoreTreeItem;
 
-    public ItemsAdapter(ItemViewHolder.OnClickListener clickListener, OnLoadMoreListener loadMoreListener, Drawable defaultFeedDrawable) {
+    public ItemsAdapter(ItemViewHolder.OnClickListener clickListener, OnLoadMoreListener loadMoreListener) {
         this.clickListener = clickListener;
         this.loadMoreListener = loadMoreListener;
-        this.defaultFeedDrawable = defaultFeedDrawable;
 
         setHasStableIds(true);
     }
