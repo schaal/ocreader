@@ -188,7 +188,7 @@ public class ItemPageFragment extends WebViewFragment {
      * Enum to convert some common iframe urls to simpler formats
      */
     private enum IframePattern {
-        YOUTUBE(Pattern.compile("(https?://)(?:www\\.)?youtube\\.com/embed/([a-zA-Z0-9-_]+)"), "youtu.be/", "%simg.youtube.com/vi/%s/sddefault.jpg"),
+        YOUTUBE(Pattern.compile("(https?://)(?:www\\.)?youtube\\.com/embed/([a-zA-Z0-9-_]+)\\?.*"), "youtu.be/", "%simg.youtube.com/vi/%s/sddefault.jpg"),
         VIMEO(Pattern.compile("(https?://)(?:www\\.)?player\\.vimeo\\.com/video/([a-zA-Z0-9]+)"), "vimeo.com/", null);
 
         final Pattern pattern;
