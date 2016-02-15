@@ -207,7 +207,7 @@ public class ItemPageFragment extends WebViewFragment {
         for(Element iframe: iframes) {
             if(iframe.hasAttr("src")) {
                 String href = iframe.attr("src");
-                String html = href;
+                String html = String.format(Locale.US, videoLink, href, href);
 
                 // Check if url matches any known patterns
                 for (IframePattern iframePattern : IframePattern.values()) {
@@ -220,8 +220,6 @@ public class ItemPageFragment extends WebViewFragment {
                         if (iframePattern.thumbUrl != null) {
                             String thumbUrl = String.format(iframePattern.thumbUrl, urlPrefix, videoId);
                             html = String.format(Locale.US, videoThumbLink, href, thumbUrl);
-                        } else {
-                            html = String.format(Locale.US, videoLink, href, href);
                         }
                         break;
                     }
