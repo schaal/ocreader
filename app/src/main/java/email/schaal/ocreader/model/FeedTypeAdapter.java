@@ -35,7 +35,7 @@ import email.schaal.ocreader.util.StringUtils;
 /**
  * TypeAdapter to deserialize the JSON response for Feeds.
  */
-public class FeedTypeAdapter extends TypeAdapter<Feed> {
+public class FeedTypeAdapter extends NewsTypeAdapter<Feed> {
     private final static String TAG = FeedTypeAdapter.class.getSimpleName();
 
     @Override
@@ -57,13 +57,13 @@ public class FeedTypeAdapter extends TypeAdapter<Feed> {
                     feed.setId(in.nextLong());
                     break;
                 case "url":
-                    feed.setUrl(in.nextString());
+                    feed.setUrl(nullSafeString(in));
                     break;
                 case "link":
-                    feed.setLink(in.nextString());
+                    feed.setLink(nullSafeString(in));
                     break;
                 case "faviconLink":
-                    String faviconLink = in.nextString();
+                    String faviconLink = nullSafeString(in);
                     if (faviconLink != null && TextUtils.getTrimmedLength(faviconLink) == 0)
                         faviconLink = null;
                     feed.setFaviconLink(faviconLink);

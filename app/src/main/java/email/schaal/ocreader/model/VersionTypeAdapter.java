@@ -33,7 +33,7 @@ import java.io.IOException;
 /**
  * TypeAdapter to deserialize the JSON response for Versions.
  */
-public class VersionTypeAdapter extends TypeAdapter<Version> {
+public class VersionTypeAdapter extends NewsTypeAdapter<Version> {
     private final static String TAG = VersionTypeAdapter.class.getSimpleName();
 
     @Override

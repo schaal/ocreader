@@ -32,7 +32,7 @@ import java.io.IOException;
 /**
  * TypeAdapter to deserialize the JSON response for Folders.
  */
-public class FolderTypeAdapter extends TypeAdapter<Folder> {
+public class FolderTypeAdapter extends NewsTypeAdapter<Folder> {
     private final static String TAG = FolderTypeAdapter.class.getSimpleName();
 
     @Override
