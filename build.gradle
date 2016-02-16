@@ -23,7 +23,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.0.0-beta2'
+        classpath 'com.android.tools.build:gradle:2.0.0-beta4'
         classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
         classpath 'io.realm:realm-gradle-plugin:0.87.4'
     }
