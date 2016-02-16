@@ -224,7 +224,7 @@ public class Queries {
                 RealmList<Item> starredChanged = changedItems.getStarredChangedItems();
 
                 // Check if we have unread or starred changes for the items being inserted
-                if(unreadChanged.size() > 0 && starredChanged.size() > 0) {
+                if(unreadChanged.size() > 0 || starredChanged.size() > 0) {
                     for (Item item : items) {
                         for (int i = 0, unreadChangedSize = unreadChanged.size(); i < unreadChangedSize; i++) {
                             Item unreadItem = unreadChanged.get(i);
