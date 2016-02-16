@@ -29,7 +29,7 @@ import com.mikepenz.materialdrawer.model.interfaces.Badgeable;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import java.util.ArrayList;
-import java.util.ListIterator;
+import java.util.Iterator;
 
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.model.TreeItem;
@@ -46,17 +46,15 @@ abstract class BaseDrawerManager {
     }
 
     public final void reload(Realm realm, boolean showOnlyUnread) {
-        drawer.removeAllItems();
         drawer.setItems(reloadDrawerItems(realm, showOnlyUnread));
     }
 
     protected abstract ArrayList<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread);
 
     public void updateUnreadCount(Realm realm, boolean showOnlyUnread) {
-        ListIterator<IDrawerItem> itemIterator = drawer.getDrawerItems().listIterator();
+        Iterator<IDrawerItem> itemIterator = drawer.getDrawerItems().iterator();
 
         while (itemIterator.hasNext()) {
-            int position = itemIterator.nextIndex() + drawer.getHeaderAdapter().getItemCount();
             IDrawerItem drawerItem = itemIterator.next();
             if (drawerItem instanceof Badgeable) {
                 Badgeable badgeable = (Badgeable) drawerItem;
@@ -66,12 +64,11 @@ abstract class BaseDrawerManager {
                     // Don't remove "special" folders (AllUnread, Starred), which have an identifier < 0
                     if (showOnlyUnread && drawerItem.getIdentifier() > 0) {
                         itemIterator.remove();
-                        // TODO: 16.02.16 notifyItemChanged
                     } else {
-                        updateBadge(badgeable, null, position);
+                        updateBadge(badgeable, null);
                     }
                 } else {
-                    updateBadge(badgeable, String.valueOf(count), position);
+                    updateBadge(badgeable, String.valueOf(count));
                 }
             }
         }
@@ -84,12 +81,11 @@ abstract class BaseDrawerManager {
         return l == null ? r == null : l.equals(r);
     }
 
-    private void updateBadge(@NonNull Badgeable badgeable, @Nullable String badgeString, int position) {
+    private void updateBadge(@NonNull Badgeable badgeable, @Nullable String badgeString) {
         StringHolder oldBadge = badgeable.getBadge();
         StringHolder newBadge = new StringHolder(badgeString);
         if (!compareBadges(oldBadge, newBadge)) {
             badgeable.withBadge(newBadge);
-            // TODO: 16.02.16 notifyItemChanged
         }
     }
 }
