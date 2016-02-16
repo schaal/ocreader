@@ -65,10 +65,10 @@ public class DrawerManager {
     private final SubscriptionDrawerManager startAdapter;
     private final FolderDrawerManager endAdapter;
 
-    public DrawerManager(Context context, Drawer startDrawer, Drawer endDrawer, OnCheckedChangeListener onlyUnreadChangeListener) {
+    public DrawerManager(Context context, Drawer startDrawer, Drawer endDrawer, boolean onlyUnread, OnCheckedChangeListener onlyUnreadChangeListener) {
         this.context = context;
         state = new State();
-        startAdapter = new SubscriptionDrawerManager(startDrawer, onlyUnreadChangeListener);
+        startAdapter = new SubscriptionDrawerManager(startDrawer, onlyUnread, onlyUnreadChangeListener);
         endAdapter = new FolderDrawerManager(endDrawer);
     }
 
@@ -112,7 +112,7 @@ public class DrawerManager {
 
         private final List<IDrawerItem> topDrawerItems = new ArrayList<>(3);
 
-        public SubscriptionDrawerManager(Drawer drawer, OnCheckedChangeListener onlyUnreadChangeListener) {
+        public SubscriptionDrawerManager(Drawer drawer, boolean onlyUnread, OnCheckedChangeListener onlyUnreadChangeListener) {
             super(drawer);
             AllUnreadFolder unreadFolder = new AllUnreadFolder(context);
             StarredFolder starredFolder = new StarredFolder(context);
@@ -135,6 +135,7 @@ public class DrawerManager {
                     .withName(R.string.only_unread)
                     .withSelectable(false)
                     .withOnCheckedChangeListener(onlyUnreadChangeListener)
+                    .withChecked(onlyUnread)
             );
         }
 

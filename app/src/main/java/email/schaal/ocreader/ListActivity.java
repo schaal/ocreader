@@ -306,7 +306,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         startDrawer = startDrawerBuilder.build();
         endDrawer = endDrawerBuilder.append(startDrawer);
 
-        drawerManager = new DrawerManager(this, startDrawer, endDrawer, this);
+        drawerManager = new DrawerManager(this, startDrawer, endDrawer, isShowOnlyUnread(), this);
         drawerManager.getState().restoreInstanceState(getRealm());
         getAdapter().setTreeItem(drawerManager.getState().getTreeItem(), drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder, false);
 
