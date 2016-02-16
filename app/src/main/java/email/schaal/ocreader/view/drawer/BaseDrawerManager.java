@@ -23,7 +23,7 @@ package email.schaal.ocreader.view.drawer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.mikepenz.materialdrawer.adapter.DrawerAdapter;
+import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.holder.StringHolder;
 import com.mikepenz.materialdrawer.model.interfaces.Badgeable;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
@@ -38,19 +38,25 @@ import io.realm.Realm;
 /**
  * Base class for the DrawerAdapter used by the Drawers in {@link email.schaal.ocreader.ListActivity}
  */
-abstract class BaseDrawerAdapter extends DrawerAdapter {
+abstract class BaseDrawerManager {
+    private final Drawer drawer;
+
+    public BaseDrawerManager(Drawer drawer) {
+        this.drawer = drawer;
+    }
+
     public final void reload(Realm realm, boolean showOnlyUnread) {
-        clearDrawerItems();
-        setDrawerItems(reloadDrawerItems(realm, showOnlyUnread));
+        drawer.removeAllItems();
+        drawer.setItems(reloadDrawerItems(realm, showOnlyUnread));
     }
 
     protected abstract ArrayList<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread);
 
     public void updateUnreadCount(Realm realm, boolean showOnlyUnread) {
-        ListIterator<IDrawerItem> itemIterator = getDrawerItems().listIterator();
+        ListIterator<IDrawerItem> itemIterator = drawer.getDrawerItems().listIterator();
 
         while (itemIterator.hasNext()) {
-            int position = itemIterator.nextIndex() + getHeaderItemCount();
+            int position = itemIterator.nextIndex() + drawer.getHeaderAdapter().getItemCount();
             IDrawerItem drawerItem = itemIterator.next();
             if (drawerItem instanceof Badgeable) {
                 Badgeable badgeable = (Badgeable) drawerItem;
@@ -60,7 +66,7 @@ abstract class BaseDrawerAdapter extends DrawerAdapter {
                     // Don't remove "special" folders (AllUnread, Starred), which have an identifier < 0
                     if (showOnlyUnread && drawerItem.getIdentifier() > 0) {
                         itemIterator.remove();
-                        notifyItemRemoved(position);
+                        // TODO: 16.02.16 notifyItemChanged
                     } else {
                         updateBadge(badgeable, null, position);
                     }
@@ -83,7 +89,7 @@ abstract class BaseDrawerAdapter extends DrawerAdapter {
         StringHolder newBadge = new StringHolder(badgeString);
         if (!compareBadges(oldBadge, newBadge)) {
             badgeable.withBadge(newBadge);
-            notifyItemChanged(position);
+            // TODO: 16.02.16 notifyItemChanged
         }
     }
 }

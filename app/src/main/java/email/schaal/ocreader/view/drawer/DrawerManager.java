@@ -25,6 +25,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
+import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondarySwitchDrawerItem;
@@ -61,21 +62,21 @@ public class DrawerManager {
 
     private final State state;
 
-    private final SubscriptionDrawerAdapter startAdapter;
-    private final FolderDrawerAdapter endAdapter;
+    private final SubscriptionDrawerManager startAdapter;
+    private final FolderDrawerManager endAdapter;
 
-    public DrawerManager(Context context, OnCheckedChangeListener onlyUnreadChangeListener) {
+    public DrawerManager(Context context, Drawer startDrawer, Drawer endDrawer, OnCheckedChangeListener onlyUnreadChangeListener) {
         this.context = context;
         state = new State();
-        startAdapter = new SubscriptionDrawerAdapter(onlyUnreadChangeListener);
-        endAdapter = new FolderDrawerAdapter();
+        startAdapter = new SubscriptionDrawerManager(startDrawer, onlyUnreadChangeListener);
+        endAdapter = new FolderDrawerManager(endDrawer);
     }
 
-    public SubscriptionDrawerAdapter getStartAdapter() {
+    public SubscriptionDrawerManager getStartAdapter() {
         return startAdapter;
     }
 
-    public FolderDrawerAdapter getEndAdapter() {
+    public FolderDrawerManager getEndAdapter() {
         return endAdapter;
     }
 
@@ -106,12 +107,13 @@ public class DrawerManager {
     /**
      * Created by daniel on 06.10.15.
      */
-    public class SubscriptionDrawerAdapter extends BaseDrawerAdapter {
+    public class SubscriptionDrawerManager extends BaseDrawerManager {
         private final String TAG = getClass().getCanonicalName();
 
         private final List<IDrawerItem> topDrawerItems = new ArrayList<>(3);
 
-        public SubscriptionDrawerAdapter(OnCheckedChangeListener onlyUnreadChangeListener) {
+        public SubscriptionDrawerManager(Drawer drawer, OnCheckedChangeListener onlyUnreadChangeListener) {
+            super(drawer);
             AllUnreadFolder unreadFolder = new AllUnreadFolder(context);
             StarredFolder starredFolder = new StarredFolder(context);
 
@@ -205,10 +207,11 @@ public class DrawerManager {
         }
     }
 
-    public class FolderDrawerAdapter extends BaseDrawerAdapter {
+    public class FolderDrawerManager extends BaseDrawerManager {
         private final String TAG = getClass().getCanonicalName();
 
-        public FolderDrawerAdapter() {
+        public FolderDrawerManager(Drawer drawer) {
+            super(drawer);
         }
 
         @Override

@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.mikepenz.materialdrawer.holder.ImageHolder;
+import com.mikepenz.materialdrawer.model.BaseViewHolder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 
 /**

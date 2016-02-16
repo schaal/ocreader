@@ -167,10 +167,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         swipeRefreshLayout.setColorSchemeResources(R.color.primary);
         swipeRefreshLayout.setOnRefreshListener(this);
 
-        drawerManager = new DrawerManager(this, this);
-        drawerManager.getState().restoreInstanceState(getRealm());
-        getAdapter().setTreeItem(drawerManager.getState().getTreeItem(), drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder, false);
-
         fab_mark_all_read = (FloatingActionButton) findViewById(R.id.fab_mark_all_read);
         fab_mark_all_read.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -271,15 +267,13 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                         return true;
                     }
                 })
-                .withSavedInstance(savedInstanceState)
-                .withAdapter(drawerManager.getStartAdapter());
+                .withSavedInstance(savedInstanceState);
 
         DrawerBuilder endDrawerBuilder = new DrawerBuilder()
                 .withActivity(this)
                 .withDrawerGravity(Gravity.END)
                 .withSavedInstance(savedInstanceState)
                 .withShowDrawerOnFirstLaunch(true)
-                .withAdapter(drawerManager.getEndAdapter())
                 .withOnDrawerListener(new Drawer.OnDrawerListener() {
                     @Override
                     public void onDrawerOpened(View drawerView) {
@@ -311,6 +305,10 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         startDrawerBuilder.withToolbar(toolbar);
         startDrawer = startDrawerBuilder.build();
         endDrawer = endDrawerBuilder.append(startDrawer);
+
+        drawerManager = new DrawerManager(this, startDrawer, endDrawer, this);
+        drawerManager.getState().restoreInstanceState(getRealm());
+        getAdapter().setTreeItem(drawerManager.getState().getTreeItem(), drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder, false);
 
         try {
             // increase the size of the drag margin for opening the drawers.
