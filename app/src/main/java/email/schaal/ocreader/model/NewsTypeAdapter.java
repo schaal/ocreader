@@ -9,7 +9,7 @@ import com.google.gson.stream.JsonToken;
 import java.io.IOException;
 
 /**
- * Created by daniel on 15.02.16.
+ * Base class for TypeAdapters
  */
 public abstract class NewsTypeAdapter<T> extends TypeAdapter<T> {
     private static final String TAG = NewsTypeAdapter.class.getSimpleName();

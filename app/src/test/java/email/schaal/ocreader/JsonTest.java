@@ -9,9 +9,6 @@ import static org.junit.Assert.*;
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.FeedTypeAdapter;
 
-/**
- * Created by daniel on 15.02.16.
- */
 public class JsonTest {
     @Test
     public void TestJsonWithUnexpectedNull() {

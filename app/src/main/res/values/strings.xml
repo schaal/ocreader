@@ -65,8 +65,4 @@
     <string name="only_unread">Only unread</string>
     <string name="share_article">Share Article</string>
 
-    <plurals name="downloaded_x_items">
-        <item quantity="one">Downloaded %d item</item>
-        <item quantity="other">Downloaded %d items</item>
-    </plurals>
 </resources>

@@ -76,6 +76,7 @@ public class ItemPagerActivity extends RealmActivity {
         TypedArray typedArray = obtainStyledAttributes(new int[] { R.attr.colorPrimary, R.attr.colorAccent });
         try {
             defaultToolbarColor = typedArray.getColor(0, 0);
+            //noinspection ResourceType
             defaultAccent = typedArray.getColor(1 , 0);
         } finally {
             typedArray.recycle();

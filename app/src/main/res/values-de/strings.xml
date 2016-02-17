@@ -28,10 +28,6 @@
     <string name="hours">%dh</string>
     <string name="minutes">%dm</string>
     <string name="title_activity_item_pager">Artikel</string>
-    <plurals name="downloaded_x_items">
-        <item quantity="one">%d Artikel heruntergeladen</item>
-        <item quantity="other">%d Artikel heruntergeladen</item>
-    </plurals>
     <string name="about">Über</string>
     <string name="about_app"><![CDATA[<h3>Copyright</h3>%1$s<h3>Lizenz</h3>Diese Anwendung steht unter der GPLv3+<h3>Quelltext</h3>%2$s]]></string>
     <string name="share_article">Artikel teilen</string>
