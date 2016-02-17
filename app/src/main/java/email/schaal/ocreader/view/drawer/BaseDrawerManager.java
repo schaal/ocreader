@@ -30,6 +30,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.model.TreeItem;
@@ -49,7 +50,7 @@ abstract class BaseDrawerManager {
         drawer.setItems(reloadDrawerItems(realm, showOnlyUnread));
     }
 
-    protected abstract ArrayList<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread);
+    protected abstract List<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread);
 
     public void updateUnreadCount(Realm realm, boolean showOnlyUnread) {
         Iterator<IDrawerItem> itemIterator = drawer.getDrawerItems().iterator();

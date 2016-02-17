@@ -140,8 +140,8 @@ public class DrawerManager {
         }
 
         @Override
-        protected ArrayList<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread) {
-            ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
+        protected List<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread) {
+            List<IDrawerItem> drawerItems = new ArrayList<>();
 
             drawerItems.addAll(topDrawerItems);
 
@@ -159,10 +159,11 @@ public class DrawerManager {
             }
 
             final RealmResults<Folder> folders = Queries.getInstance().getFolders(realm, showOnlyUnread);
-            if(folders != null)
+            if(folders != null) {
                 for (Folder folder : folders) {
                     drawerItems.add(getDrawerItem(realm, folder));
                 }
+            }
 
             for (Feed feed : Queries.getInstance().getFeedsWithoutFolder(realm, showOnlyUnread)) {
                 drawerItems.add(getDrawerItem(realm, feed));
@@ -216,27 +217,19 @@ public class DrawerManager {
         }
 
         @Override
-        protected ArrayList<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread) {
-            ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
+        protected List<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread) {
+            List<Feed> feeds = Queries.getInstance().getFeedsForTreeItem(realm, state.getStartDrawerItem());
+            List<IDrawerItem> drawerItems = new ArrayList<>((feeds != null ? feeds.size() : 0) + 1);
 
             if (state.isFeedSelected())
                 return drawerItems;
 
-            SectionDrawerItem sectionHeader = new SectionDrawerItem().withDivider(false);
-            drawerItems.add(sectionHeader);
-            Iterable<Feed> feeds = Queries.getInstance().getFeedsForTreeItem(realm, state.getStartDrawerItem());
+            drawerItems.add(new SectionDrawerItem()
+                    .withDivider(false)
+                    .withName(state.getStartDrawerItem().getTitle()));
 
-            drawerItems.addAll(getDrawerItems(feeds));
-
-            sectionHeader.withName(state.getStartDrawerItem().getTitle());
-
-            return drawerItems;
-        }
-
-        private List<IDrawerItem> getDrawerItems(@Nullable Iterable<Feed> feedItemList) {
-            List<IDrawerItem> children = new ArrayList<>();
-            if (feedItemList != null) {
-                for (Feed feed : feedItemList) {
+            if (feeds != null) {
+                for (Feed feed : feeds) {
                     UrlPrimaryDrawerItem drawerItem = new UrlPrimaryDrawerItem();
                     drawerItem.withTag(feed)
                             .withName(feed.getTitle())
@@ -249,11 +242,13 @@ public class DrawerManager {
                     else
                         drawerItem.withIcon(R.drawable.ic_feed_icon);
                     drawerItem.withSetSelected(state.getEndDrawerItem() != null && state.getEndDrawerItem().getId() == feed.getId());
-                    children.add(drawerItem);
+                    drawerItems.add(drawerItem);
                 }
             }
-            return children;
+
+            return drawerItems;
         }
+
     }
 
     public class State {
