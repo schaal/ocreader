@@ -86,6 +86,7 @@ abstract class BaseDrawerManager {
         StringHolder newBadge = new StringHolder(badgeString);
         if (!compareBadges(oldBadge, newBadge)) {
             badgeable.withBadge(newBadge);
+            drawer.updateItem((IDrawerItem)badgeable);
         }
     }
 }
