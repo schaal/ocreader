@@ -314,13 +314,10 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             // increase the size of the drag margin for opening the drawers.
             DrawerLayout drawerLayout = startDrawer.getDrawerLayout();
 
-            Field mLeftDragger = drawerLayout.getClass()
-                    .getDeclaredField("mLeftDragger");
-            Field mRightDragger = drawerLayout.getClass()
-                    .getDeclaredField("mRightDragger");
-
-            setDraggerEdgeSize(mLeftDragger, drawerLayout);
-            setDraggerEdgeSize(mRightDragger, drawerLayout);
+            setDraggerEdgeSize(drawerLayout.getClass()
+                    .getDeclaredField("mLeftDragger"), drawerLayout);
+            setDraggerEdgeSize(drawerLayout.getClass()
+                    .getDeclaredField("mRightDragger"), drawerLayout);
         } catch (Exception e) {
             e.printStackTrace();
         }
