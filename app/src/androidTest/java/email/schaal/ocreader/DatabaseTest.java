@@ -69,7 +69,7 @@ public class DatabaseTest extends ApplicationTestCase<OCReaderApplication> {
             assertEquals(dbFolder.getTitle(), "TestFolderTitle");
 
         } finally {
-            assert realm != null;
+            assertNotNull(realm);
             realm.close();
         }
     }
@@ -90,7 +90,7 @@ public class DatabaseTest extends ApplicationTestCase<OCReaderApplication> {
             assertEquals(feed.getTitle(), "TestFeedTitle");
 
         } finally {
-            assert realm != null;
+            assertNotNull(realm);
             realm.close();
         }
     }
