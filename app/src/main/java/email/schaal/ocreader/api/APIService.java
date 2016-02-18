@@ -76,7 +76,7 @@ import retrofit2.http.Query;
  * This class encapsulates the ownCloud News API and communicates with the remote ownCloud instance.
  */
 public class APIService {
-    private static final String TAG = APIService.class.getSimpleName();
+    private static final String TAG = APIService.class.getName();
 
     private static final String ROOT_PATH_APIv1_2 = "./index.php/apps/news/api/v1-2/";
 

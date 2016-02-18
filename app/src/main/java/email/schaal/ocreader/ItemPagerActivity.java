@@ -50,7 +50,7 @@ import email.schaal.ocreader.util.FaviconUtils;
 import email.schaal.ocreader.view.ProgressFloatingActionButton;
 
 public class ItemPagerActivity extends RealmActivity {
-    private static final String TAG = ItemPagerActivity.class.getSimpleName();
+    private static final String TAG = ItemPagerActivity.class.getName();
 
     public static final String POSITION = "position";
 

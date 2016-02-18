@@ -33,7 +33,7 @@ import java.util.Date;
  * TypeAdapter to deserialize the JSON response for Users.
  */
 public class UserTypeAdapter extends NewsTypeAdapter<User> {
-    private final static String TAG = UserTypeAdapter.class.getSimpleName();
+    private final static String TAG = UserTypeAdapter.class.getName();
 
     @Override
     public void write(JsonWriter out, User value) throws IOException {

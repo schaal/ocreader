@@ -35,7 +35,7 @@ import email.schaal.ocreader.util.StringUtils;
  * TypeAdapter to deserialize the JSON response for Feeds.
  */
 public class FeedTypeAdapter extends NewsTypeAdapter<Feed> {
-    private final static String TAG = FeedTypeAdapter.class.getSimpleName();
+    private final static String TAG = FeedTypeAdapter.class.getName();
 
     @Override
     public void write(JsonWriter out, Feed value) throws IOException {

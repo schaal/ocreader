@@ -52,7 +52,7 @@ import io.realm.RealmResults;
  * Manages the drawers displaying feeds and folders.
  */
 public class DrawerManager {
-    private static final String TAG = DrawerManager.class.getSimpleName();
+    private static final String TAG = DrawerManager.class.getName();
 
     private final Context context;
 
@@ -108,8 +108,6 @@ public class DrawerManager {
      * Created by daniel on 06.10.15.
      */
     public class SubscriptionDrawerManager extends BaseDrawerManager {
-        private final String TAG = getClass().getCanonicalName();
-
         private final List<IDrawerItem> topDrawerItems = new ArrayList<>(3);
 
         public SubscriptionDrawerManager(Drawer drawer, boolean onlyUnread, OnCheckedChangeListener onlyUnreadChangeListener) {
@@ -210,8 +208,6 @@ public class DrawerManager {
     }
 
     public class FolderDrawerManager extends BaseDrawerManager {
-        private final String TAG = getClass().getCanonicalName();
-
         public FolderDrawerManager(Drawer drawer) {
             super(drawer);
         }

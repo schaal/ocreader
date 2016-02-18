@@ -34,7 +34,7 @@ import email.schaal.ocreader.view.ItemViewHolder;
 import email.schaal.ocreader.view.ItemsAdapter;
 
 public class ListFragment extends Fragment {
-    private final static String TAG = ListFragment.class.getSimpleName();
+    private final static String TAG = ListFragment.class.getName();
 
     public static final String LAYOUT_MANAGER_STATE = "LAYOUT_MANAGER_STATE";
 

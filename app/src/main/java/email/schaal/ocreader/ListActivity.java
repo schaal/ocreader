@@ -78,7 +78,7 @@ import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
 
 public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ItemsAdapter.OnLoadMoreListener, OnCheckedChangeListener {
-    private static final String TAG = ListActivity.class.getSimpleName();
+    private static final String TAG = ListActivity.class.getName();
 
     private static final int REFRESH_DRAWER_ITEM_ID = 999;
 

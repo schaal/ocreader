@@ -42,7 +42,7 @@ import email.schaal.ocreader.util.AlarmUtils;
  * Application class to setup the singletons
  */
 public class OCReaderApplication extends Application {
-    private static final String TAG = OCReaderApplication.class.getSimpleName();
+    private static final String TAG = OCReaderApplication.class.getName();
 
     @Override
     public void onCreate() {

@@ -45,7 +45,7 @@ import email.schaal.ocreader.util.StringUtils;
  * RecyclerView.ViewHolder to display a feed Item.
  */
 public class ItemViewHolder extends RecyclerView.ViewHolder implements Target {
-    private static final String TAG = ItemViewHolder.class.getSimpleName();
+    private static final String TAG = ItemViewHolder.class.getName();
 
     private final OnClickListener clickListener;
 

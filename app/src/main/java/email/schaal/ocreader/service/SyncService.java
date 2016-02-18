@@ -54,7 +54,7 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 
 public class SyncService extends Service {
-    private static final String TAG = SyncService.class.getSimpleName();
+    private static final String TAG = SyncService.class.getName();
 
     public static final String SYNC_FINISHED = "email.schaal.ocreader.action.SYNC_FINISHED";
     public static final String SYNC_STARTED = "email.schaal.ocreader.action.SYNC_STARTED";

@@ -55,7 +55,7 @@ import io.realm.exceptions.RealmException;
  * Utility class containing some commonly used Queries for the Realm database.
  */
 public class Queries {
-    private final static String TAG = Queries.class.getSimpleName();
+    private final static String TAG = Queries.class.getName();
 
     private static Queries instance;
 
