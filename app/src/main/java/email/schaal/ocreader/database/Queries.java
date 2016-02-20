@@ -342,7 +342,7 @@ public class Queries {
         });
     }
 
-    public void markTemporaryFeedAsRead(Realm realm, Realm.Transaction.Callback callback) {
+    public void markTemporaryFeedAsRead(Realm realm, @Nullable final Long lastItemId, Realm.Transaction.Callback callback) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -353,7 +353,17 @@ public class Queries {
 
                     TemporaryFeed temporaryFeed = realm.where(TemporaryFeed.class).findFirst();
 
-                    RealmResults<Item> unreadItems = temporaryFeed.getItems().where().equalTo(Item.UNREAD, true).findAll();
+                    RealmQuery<Item> itemRealmQuery = temporaryFeed.getItems()
+                            .where()
+                            .equalTo(Item.UNREAD, true);
+
+                    // Only mark items newer than lastItem as read
+                    if(lastItemId != null && lastItemId >= 0) {
+                        Item lastItem = realm.where(Item.class).equalTo(Item.ID, lastItemId).findFirst();
+                        itemRealmQuery.greaterThanOrEqualTo(Item.LAST_MODIFIED, lastItem.getLastModified());
+                    }
+
+                    RealmResults<Item> unreadItems = itemRealmQuery.findAll();
 
                     Set<Feed> feeds = new HashSet<>();
 

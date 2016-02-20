@@ -41,6 +41,7 @@ public class ListFragment extends Fragment {
     private RecyclerView itemsRecyclerView;
 
     private ItemsAdapter adapter;
+    private LinearLayoutManager layoutManager;
 
     public ListFragment() {
     }
@@ -63,9 +64,12 @@ public class ListFragment extends Fragment {
 
         itemsRecyclerView.setAdapter(adapter);
 
-        itemsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        layoutManager = new LinearLayoutManager(getActivity());
+
+        itemsRecyclerView.setLayoutManager(layoutManager);
+
         if(savedInstanceState != null)
-            itemsRecyclerView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE));
+            layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE));
 
         itemsRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity()));
         itemsRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -76,11 +80,15 @@ public class ListFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(LAYOUT_MANAGER_STATE, itemsRecyclerView.getLayoutManager().onSaveInstanceState());
+        outState.putParcelable(LAYOUT_MANAGER_STATE, layoutManager.onSaveInstanceState());
     }
 
     public ItemsAdapter getAdapter() {
         return adapter;
+    }
+
+    public long getLastItemId() {
+        return adapter.getItemId(layoutManager.findLastVisibleItemPosition());
     }
 
     public int getCount() {

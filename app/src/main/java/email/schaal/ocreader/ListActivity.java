@@ -172,7 +172,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             @Override
             public void onClick(final View v) {
                 v.setEnabled(false);
-                Queries.getInstance().markTemporaryFeedAsRead(getRealm(), new Realm.Transaction.Callback() {
+                Queries.getInstance().markTemporaryFeedAsRead(getRealm(), getListFragment().getLastItemId(), new Realm.Transaction.Callback() {
                     @Override
                     public void onError(Exception e) {
                         e.printStackTrace();
@@ -367,7 +367,11 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     }
 
     private ItemsAdapter getAdapter() {
-        return ((ListFragment) getFragmentManager().findFragmentById(R.id.fragment_itemlist)).getAdapter();
+        return getListFragment().getAdapter();
+    }
+
+    private ListFragment getListFragment() {
+        return (ListFragment) getFragmentManager().findFragmentById(R.id.fragment_itemlist);
     }
 
     @Override
