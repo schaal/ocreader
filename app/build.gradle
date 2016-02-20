@@ -49,7 +49,7 @@ android {
         unitTests.returnDefaultValues = true
     }
     lintOptions {
-        warning 'InvalidPackage'
+        abortOnError false
     }
 }
 
