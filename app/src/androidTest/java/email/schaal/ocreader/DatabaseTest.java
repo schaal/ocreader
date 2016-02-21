@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Daniel Schaal <daniel@schaal.email>
+ * Copyright (C) 2015-2016 Daniel Schaal <daniel@schaal.email>
  *
  * This file is part of OCReader.
  *
