@@ -2,7 +2,7 @@
 
 # [OCReader][1] - Android client for [ownCloud news][0]
 
-OCReader is a client for an [ownCloud news][0] instance.
+OCReader is a client for an [ownCloud news][0] instance (needs at least version 6.0.5).
 
 [![Available on F-Droid](https://raw.githubusercontent.com/schaal/screenshots/master/F-Droid-button_bigger.png)](https://f-droid.org/repository/browse/?fdid=email.schaal.ocreader)
 
