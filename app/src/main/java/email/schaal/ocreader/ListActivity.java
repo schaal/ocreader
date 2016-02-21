@@ -195,7 +195,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         updateUserProfile();
 
         IProfile profileSettingsItem = new ProfileSettingDrawerItem()
-                .withName(getString(R.string.action_sign_in))
+                .withName(getString(R.string.account_settings))
                 .withIconTinted(true)
                 .withIcon(R.drawable.ic_settings);
 

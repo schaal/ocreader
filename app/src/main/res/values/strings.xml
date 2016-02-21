@@ -64,5 +64,6 @@
     <string name="starred">Starred</string>
     <string name="only_unread">Only unread</string>
     <string name="share_article">Share Article</string>
+    <string name="account_settings">Account Settings</string>
 
 </resources>
