@@ -41,6 +41,7 @@ import com.github.zafarkhaja.semver.Version;
 import java.net.UnknownHostException;
 
 import email.schaal.ocreader.api.APIService;
+import email.schaal.ocreader.api.json.Status;
 import email.schaal.ocreader.http.HttpManager;
 import okhttp3.HttpUrl;
 import retrofit2.Call;
@@ -52,11 +53,16 @@ import retrofit2.Response;
  */
 public class LoginActivity extends AppCompatActivity {
     public static final int RESULT_OK = 1;
+    public static final int RESULT_OK_BUT_CRON_FAIL = 2;
     public static final int REQUEST_CODE = 1;
+
+    // First version with user api support
+    public static final Version MIN_SUPPORTED_VERSION = Version.forIntegers(6,0,5);
+
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private Call<Version> mAuthTask = null;
+    private Call<Status> mAuthTask = null;
 
     // UI references.
     private TextView mUsernameView;
@@ -161,12 +167,12 @@ public class LoginActivity extends AppCompatActivity {
             url = url.newBuilder().addPathSegment("").build();
             HttpManager.getInstance().setCredentials(username, password, url);
             APIService.getInstance().setupApi();
-            mAuthTask = APIService.getInstance().getApi().version();
+            mAuthTask = APIService.getInstance().getApi().status();
             mAuthTask.enqueue(new LoginCallback());
         }
     }
 
-    private class LoginCallback implements Callback<Version> {
+    private class LoginCallback implements Callback<Status> {
         private void onCompletion() {
             mAuthTask = null;
             showProgress(false);
@@ -182,15 +188,20 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onResponse(Call<Version> call, Response<Version> response) {
+        public void onResponse(Call<Status> call, Response<Status> response) {
             onCompletion();
 
             if(response.isSuccess()) {
-                // TODO: 03.01.16 Check if version is new enough
-                HttpManager.getInstance().persistCredentials(LoginActivity.this);
+                Status status = response.body();
 
-                setResult(RESULT_OK);
-                finish();
+                if(status.getVersion().lessThan(MIN_SUPPORTED_VERSION)) {
+                    showError(getString(R.string.update_warning, MIN_SUPPORTED_VERSION.toString()));
+                } else {
+                    HttpManager.getInstance().persistCredentials(LoginActivity.this);
+
+                    setResult(status.isImproperlyConfiguredCron() ? RESULT_OK_BUT_CRON_FAIL : RESULT_OK);
+                    finish();
+                }
             } else {
                 switch (response.code()) {
                     case 401:
@@ -206,7 +217,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onFailure(Call<Version> call, Throwable t) {
+        public void onFailure(Call<Status> call, Throwable t) {
             onCompletion();
 
             t.printStackTrace();

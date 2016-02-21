@@ -25,7 +25,6 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.github.zafarkhaja.semver.Version;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
@@ -44,6 +43,7 @@ import email.schaal.ocreader.api.json.Folders;
 import email.schaal.ocreader.api.json.ItemIds;
 import email.schaal.ocreader.api.json.ItemMap;
 import email.schaal.ocreader.api.json.Items;
+import email.schaal.ocreader.api.json.Status;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.http.HttpManager;
 import email.schaal.ocreader.model.ChangedItems;
@@ -53,9 +53,9 @@ import email.schaal.ocreader.model.Folder;
 import email.schaal.ocreader.model.FolderTypeAdapter;
 import email.schaal.ocreader.model.Item;
 import email.schaal.ocreader.model.ItemTypeAdapter;
+import email.schaal.ocreader.model.StatusTypeAdapter;
 import email.schaal.ocreader.model.User;
 import email.schaal.ocreader.model.UserTypeAdapter;
-import email.schaal.ocreader.model.VersionTypeAdapter;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -248,7 +248,7 @@ public class APIService {
                 .registerTypeAdapter(Feed.class, new FeedTypeAdapter())
                 .registerTypeAdapter(Item.class, new ItemTypeAdapter())
                 .registerTypeAdapter(User.class, new UserTypeAdapter())
-                .registerTypeAdapter(Version.class, new VersionTypeAdapter())
+                .registerTypeAdapter(Status.class, new StatusTypeAdapter())
                 .setExclusionStrategies(new ExclusionStrategy() {
                     @Override
                     public boolean shouldSkipField(FieldAttributes f) {
@@ -285,12 +285,13 @@ public class APIService {
     @SuppressWarnings("SameParameterValue,unused")
     public interface API {
         /** SERVER **/
-        @GET("version")
-        Call<Version> version();
 
         /** Since 6.0.5 **/
         @GET("user")
         Call<User> user();
+
+        @GET("status")
+        Call<Status> status();
 
         /** FOLDERS **/
         @GET("folders")

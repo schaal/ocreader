@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Daniel Schaal <daniel@schaal.email>
+ * Copyright (C) 2016 Daniel Schaal <daniel@schaal.email>
  *
  * This file is part of OCReader.
  *
@@ -22,44 +22,67 @@ package email.schaal.ocreader.model;
 
 import android.util.Log;
 
-import com.github.zafarkhaja.semver.Version;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
 
+import email.schaal.ocreader.api.json.Status;
+
 /**
- * TypeAdapter to deserialize the JSON response for Versions.
+ * TypeAdapter to deserialize the JSON response for the status api call.
  */
-public class VersionTypeAdapter extends NewsTypeAdapter<Version> {
-    private final static String TAG = VersionTypeAdapter.class.getSimpleName();
+public class StatusTypeAdapter extends NewsTypeAdapter<Status> {
+    private final static String TAG = StatusTypeAdapter.class.getName();
 
     @Override
-    public void write(JsonWriter out, Version value) throws IOException {
+    public void write(JsonWriter out, Status value) throws IOException {
     }
 
     @Override
-    public Version read(JsonReader in) throws IOException {
+    public Status read(JsonReader in) throws IOException {
         if (in.peek() == JsonToken.NULL) {
             in.nextNull();
             return null;
         }
-        Version version = null;
+
+        Status status = new Status();
+
         in.beginObject();
         while (in.hasNext()) {
             String name = in.nextName();
             switch (name) {
                 case "version":
-                    version = Version.valueOf(in.nextString());
+                    status.setVersion(nullSafeString(in));
+                    break;
+                case "warnings":
+                    readWarnings(in, status);
                     break;
                 default:
-                    Log.w(TAG, "Unknown value in version json: " + name);
+                    Log.w(TAG, "Unknown value in folder json: " + name);
                     in.skipValue();
                     break;
             }
         }
         in.endObject();
-        return version;
+
+        return status;
+    }
+
+    private void readWarnings(JsonReader in, Status status) throws IOException {
+        in.beginObject();
+        while(in.hasNext()) {
+            String name = in.nextName();
+            switch (name) {
+                case "improperlyConfiguredCron":
+                    status.setImproperlyConfiguredCron(in.nextBoolean());
+                    break;
+                default:
+                    Log.w(TAG, "Unknown value in folder json: " + name);
+                    in.skipValue();
+            }
+        }
+        in.endObject();
     }
 }

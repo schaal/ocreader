@@ -373,15 +373,25 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == LoginActivity.REQUEST_CODE) {
-            if(resultCode == LoginActivity.RESULT_OK) {
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-                profileDrawerItem.withName(Preferences.USERNAME.getString(preferences));
-                profileDrawerItem.withEmail(Preferences.URL.getString(preferences));
-
-                Queries.getInstance().resetDatabase();
-                SyncService.startSync(this, true);
+            switch(resultCode) {
+                case LoginActivity.RESULT_OK_BUT_CRON_FAIL:
+                    // TODO: 21.02.16 show warning about improperly configured cron
+                    initialSync();
+                    break;
+                case LoginActivity.RESULT_OK:
+                    initialSync();
+                    break;
             }
         }
+    }
+
+    private void initialSync() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        profileDrawerItem.withName(Preferences.USERNAME.getString(preferences));
+        profileDrawerItem.withEmail(Preferences.URL.getString(preferences));
+
+        Queries.getInstance().resetDatabase();
+        SyncService.startSync(this, true);
     }
 
     @Override

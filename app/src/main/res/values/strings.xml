@@ -65,5 +65,6 @@
     <string name="only_unread">Only unread</string>
     <string name="share_article">Share Article</string>
     <string name="account_settings">Account Settings</string>
+    <string name="update_warning">Please update ownCloud News to continue (minimum supported version: %s)</string>
 
 </resources>
