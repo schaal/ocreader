@@ -62,6 +62,7 @@ public class Queries {
     private Queries(Context context) {
         this(new RealmConfiguration.Builder(context)
                 .schemaVersion(1)
+                .deleteRealmIfMigrationNeeded()
                 .build());
     }
 
