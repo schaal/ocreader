@@ -359,7 +359,7 @@ public class Queries {
 
                     // Only mark items newer than lastItem as read
                     if(lastItemId != null && lastItemId >= 0) {
-                        Item lastItem = realm.where(Item.class).equalTo(Item.ID, lastItemId).findFirst();
+                        Item lastItem = temporaryFeed.getItems().where().equalTo(Item.ID, lastItemId).findFirst();
                         itemRealmQuery.greaterThanOrEqualTo(Item.LAST_MODIFIED, lastItem.getLastModified());
                     }
 
