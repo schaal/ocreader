@@ -24,6 +24,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -201,8 +202,9 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     HttpManager.getInstance().persistCredentials(LoginActivity.this);
 
-                    Intent data = new Intent();
+                    Intent data = new Intent(Intent.ACTION_VIEW);
                     data.putExtra(EXTRA_IMPROPERLY_CONFIGURED_CRON, status.isImproperlyConfiguredCron());
+                    data.setData(Uri.parse(HttpManager.getInstance().getRootUrl().resolve("/index.php/apps/news").toString()));
                     setResult(RESULT_OK, data);
                     finish();
                 }

@@ -27,11 +27,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
@@ -395,12 +397,21 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         if(requestCode == LoginActivity.REQUEST_CODE) {
             switch(resultCode) {
                 case LoginActivity.RESULT_OK:
                     if(data.getBooleanExtra(LoginActivity.EXTRA_IMPROPERLY_CONFIGURED_CRON, false)) {
-                        // TODO: 21.02.16 show warning about improperly configured cron
+                        Snackbar snackbar = Snackbar.make(findViewById(R.id.coordinator_layout), R.string.updater_improperly_configured, Snackbar.LENGTH_INDEFINITE);
+                        snackbar.setAction(R.string.more_info, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startActivity(data);
+                            }
+                        }).setActionTextColor(Color.RED);
+                        TextView tv = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+                        tv.setTextColor(Color.WHITE);
+                        snackbar.show();
                     }
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
                     profileDrawerItem.withName(Preferences.USERNAME.getString(preferences));
