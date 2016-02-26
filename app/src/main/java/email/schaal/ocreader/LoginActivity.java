@@ -22,6 +22,7 @@ package email.schaal.ocreader;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -53,11 +54,12 @@ import retrofit2.Response;
  */
 public class LoginActivity extends AppCompatActivity {
     public static final int RESULT_OK = 1;
-    public static final int RESULT_OK_BUT_CRON_FAIL = 2;
     public static final int REQUEST_CODE = 1;
 
     // First version with user api support
     public static final Version MIN_SUPPORTED_VERSION = Version.forIntegers(6,0,5);
+
+    public static final String EXTRA_IMPROPERLY_CONFIGURED_CRON = "email.schaal.ocreader.extra.improperlyConfiguredCron";
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -199,7 +201,9 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     HttpManager.getInstance().persistCredentials(LoginActivity.this);
 
-                    setResult(status.isImproperlyConfiguredCron() ? RESULT_OK_BUT_CRON_FAIL : RESULT_OK);
+                    Intent data = new Intent();
+                    data.putExtra(EXTRA_IMPROPERLY_CONFIGURED_CRON, status.isImproperlyConfiguredCron());
+                    setResult(RESULT_OK, data);
                     finish();
                 }
             } else {
