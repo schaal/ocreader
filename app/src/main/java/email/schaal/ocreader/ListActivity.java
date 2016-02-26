@@ -37,6 +37,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.ViewDragHelper;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Base64;
@@ -72,6 +75,7 @@ import email.schaal.ocreader.model.TemporaryFeed;
 import email.schaal.ocreader.model.TreeItem;
 import email.schaal.ocreader.model.User;
 import email.schaal.ocreader.service.SyncService;
+import email.schaal.ocreader.view.DividerItemDecoration;
 import email.schaal.ocreader.view.ItemViewHolder;
 import email.schaal.ocreader.view.ItemsAdapter;
 import email.schaal.ocreader.view.drawer.DrawerManager;
@@ -81,6 +85,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private static final String TAG = ListActivity.class.getName();
 
     private static final int REFRESH_DRAWER_ITEM_ID = 999;
+    public static final String LAYOUT_MANAGER_STATE = "LAYOUT_MANAGER_STATE";
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -89,8 +94,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 switch (intent.getStringExtra(SyncService.EXTRA_TYPE)) {
                     case SyncService.ACTION_LOAD_MORE:
                         if (intent.getAction().equals(SyncService.SYNC_FINISHED)) {
-                            getAdapter().updateItems(true);
-                            getAdapter().resetLoadMore();
+                            adapter.updateItems(true);
+                            adapter.resetLoadMore();
                         }
                         break;
                     case SyncService.ACTION_FULL_SYNC:
@@ -110,7 +115,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         if(needsUpdate) {
             drawerManager.reloadAdapters(getRealm(), isShowOnlyUnread());
 
-            getAdapter().updateItems(true);
+            adapter.updateItems(true);
 
             updateUserProfile();
 
@@ -128,7 +133,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         }
 
         if(!syncRunning)
-            getAdapter().resetLoadMore();
+            adapter.resetLoadMore();
     }
 
     private Drawer startDrawer;
@@ -141,6 +146,11 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private SwipeRefreshLayout swipeRefreshLayout;
     private FloatingActionButton fab_mark_all_read;
 
+    private RecyclerView itemsRecyclerView;
+
+    private ItemsAdapter adapter;
+    private LinearLayoutManager layoutManager;
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -151,6 +161,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     protected void onResume() {
         super.onResume();
         updateSyncStatus();
+        adapter.updateItems(false);
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, SyncService.syncFilter);
     }
 
@@ -163,6 +174,22 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        itemsRecyclerView = (RecyclerView) findViewById(R.id.items_recyclerview);
+
+        adapter = new ItemsAdapter((ItemViewHolder.OnClickListener)this, (ItemsAdapter.OnLoadMoreListener)this);
+
+        itemsRecyclerView.setAdapter(adapter);
+
+        layoutManager = new LinearLayoutManager(this);
+
+        itemsRecyclerView.setLayoutManager(layoutManager);
+
+        if(savedInstanceState != null)
+            layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE));
+
+        itemsRecyclerView.addItemDecoration(new DividerItemDecoration(this));
+        itemsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setColorSchemeResources(R.color.primary);
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -172,7 +199,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             @Override
             public void onClick(final View v) {
                 v.setEnabled(false);
-                Queries.getInstance().markTemporaryFeedAsRead(getRealm(), getListFragment().getLastItemId(), new Realm.Transaction.Callback() {
+                Queries.getInstance().markTemporaryFeedAsRead(getRealm(), adapter.getItemId(layoutManager.findLastVisibleItemPosition()), new Realm.Transaction.Callback() {
                     @Override
                     public void onError(Exception e) {
                         e.printStackTrace();
@@ -181,7 +208,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
                     @Override
                     public void onSuccess() {
-                        getAdapter().updateItems(false);
+                        adapter.updateItems(false);
                         v.setEnabled(true);
                     }
                 });
@@ -308,7 +335,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         drawerManager = new DrawerManager(this, startDrawer, endDrawer, isShowOnlyUnread(), this);
         drawerManager.getState().restoreInstanceState(getRealm());
-        getAdapter().setTreeItem(drawerManager.getState().getTreeItem(), drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder, false);
+        adapter.setTreeItem(drawerManager.getState().getTreeItem(), drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder, false);
 
         try {
             // increase the size of the drag margin for opening the drawers.
@@ -346,6 +373,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putParcelable(LAYOUT_MANAGER_STATE, layoutManager.onSaveInstanceState());
         drawerManager.getState().saveInstanceState();
     }
 
@@ -362,16 +390,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private void reloadListFragment(TreeItem item) {
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(item.getTitle());
-        getAdapter().setTreeItem(item, drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder);
+        adapter.setTreeItem(item, drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder);
         fab_mark_all_read.show();
-    }
-
-    private ItemsAdapter getAdapter() {
-        return getListFragment().getAdapter();
-    }
-
-    private ListFragment getListFragment() {
-        return (ListFragment) getFragmentManager().findFragmentById(R.id.fragment_itemlist);
     }
 
     @Override
