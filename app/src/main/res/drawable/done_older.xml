@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/ic_arrow_upward" android:gravity="top|start" android:width="12dp" android:height="12dp" />
-    <item android:drawable="@drawable/ic_done_all" />
-</layer-list>
