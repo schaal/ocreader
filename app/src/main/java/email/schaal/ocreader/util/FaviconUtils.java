@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015-2016 Daniel Schaal <daniel@schaal.email>
+ * Parts Copyright 2015 The Android Open Source Project
  *
  * This file is part of OCReader.
  *
@@ -23,8 +24,10 @@ package email.schaal.ocreader.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v7.graphics.Palette;
 import android.util.LruCache;
 
@@ -58,7 +61,7 @@ public class FaviconUtils {
                 public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
                     Palette palette = paletteCache.get(feed.getId());
                     if(palette == null)
-                        new Palette.Builder(bitmap).generate(new Palette.PaletteAsyncListener() {
+                        generatePalette(bitmap, new Palette.PaletteAsyncListener() {
                             @Override
                             public void onGenerated(Palette palette) {
                                 paletteCache.put(feed.getId(), palette);
@@ -85,6 +88,10 @@ public class FaviconUtils {
         }
     }
 
+    private void generatePalette(Bitmap bitmap, Palette.PaletteAsyncListener paletteAsyncListener) {
+        new Palette.Builder(bitmap).generate(paletteAsyncListener);
+    }
+
     public void loadBitmap(final Context context, @Nullable final Feed feed, final Target target) {
         Picasso.with(context).load(feed != null ? feed.getFaviconLink() : null).placeholder(R.drawable.ic_feed_icon).into(target);
     }
@@ -93,7 +100,7 @@ public class FaviconUtils {
         if(feedId != null) {
             Palette palette = paletteCache.get(feedId);
             if (palette == null) {
-                new Palette.Builder(bitmap).generate(new Palette.PaletteAsyncListener() {
+                generatePalette(bitmap, new Palette.PaletteAsyncListener() {
                     @Override
                     public void onGenerated(Palette palette) {
                         paletteCache.put(feedId, palette);
@@ -104,6 +111,29 @@ public class FaviconUtils {
                 paletteAsyncListener.onGenerated(palette);
             }
         }
+    }
+
+    private static final float TARGET_DARK_LUMA = 0.26f;
+
+    /**
+     * Copied from support libs' 23.1.1 DefaultGenerator.java
+     */
+    @ColorInt
+    public static int getTextColor(Palette palette, @ColorInt int defaultFeedTextColor) {
+        int color = defaultFeedTextColor;
+        Palette.Swatch swatch = palette.getDarkVibrantSwatch();
+        if(swatch == null) {
+            swatch = palette.getVibrantSwatch();
+            if(swatch != null) {
+                final float[] newHsl = new float[3];
+                System.arraycopy(swatch.getHsl(), 0, newHsl, 0, 2);
+                newHsl[2] = TARGET_DARK_LUMA;
+                color = ColorUtils.HSLToColor(newHsl);
+            }
+        } else {
+            color = swatch.getRgb();
+        }
+        return color;
     }
 
     public interface PaletteBitmapAsyncListener {

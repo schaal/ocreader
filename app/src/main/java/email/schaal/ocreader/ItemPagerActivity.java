@@ -212,7 +212,7 @@ public class ItemPagerActivity extends RealmActivity {
         int toolbarColor;
         int fabColor;
         if (palette != null) {
-            toolbarColor = palette.getDarkVibrantColor(defaultToolbarColor);
+            toolbarColor = FaviconUtils.getTextColor(palette, defaultToolbarColor);
             fabColor = palette.getLightMutedColor(defaultAccent);
         } else {
             toolbarColor = defaultToolbarColor;

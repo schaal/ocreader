@@ -82,7 +82,7 @@ public class ItemPageFragment extends WebViewFragment {
         @Override
         public void onGenerated(Palette palette, Bitmap bitmap) {
             if (palette != null) {
-                int titleColor = palette.getDarkVibrantColor(ContextCompat.getColor(getActivity(), R.color.primary_text));
+                int titleColor = FaviconUtils.getTextColor(palette, ContextCompat.getColor(getActivity(), R.color.primary_text));
                 String cssColor = getCssColor(titleColor);
                 String javascript = String.format("javascript:(function(){document.styleSheets[0].cssRules[0].style.color=\"%s\";})()", cssColor);
                 getWebView().loadUrl(javascript);

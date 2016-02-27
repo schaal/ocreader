@@ -25,6 +25,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -88,7 +89,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements Target {
         paletteAsyncListener = new Palette.PaletteAsyncListener() {
             @Override
             public void onGenerated(Palette palette) {
-                textViewFeedTitle.setTextColor(palette.getDarkVibrantColor(defaultFeedTextColor));
+                textViewFeedTitle.setTextColor(FaviconUtils.getTextColor(palette, defaultFeedTextColor));
             }
         };
     }
