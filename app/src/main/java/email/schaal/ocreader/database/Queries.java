@@ -357,10 +357,9 @@ public class Queries {
                             .where()
                             .equalTo(Item.UNREAD, true);
 
-                    // Only mark items newer than lastItem as read
+                    // Make sure lastItem is in the query results
                     if(lastItemId != null && lastItemId >= 0) {
-                        Item lastItem = temporaryFeed.getItems().where().equalTo(Item.ID, lastItemId).findFirst();
-                        itemRealmQuery.greaterThanOrEqualTo(Item.LAST_MODIFIED, lastItem.getLastModified());
+                        itemRealmQuery.or().equalTo(Item.ID, lastItemId);
                     }
 
                     RealmResults<Item> unreadItems = itemRealmQuery.findAll();
@@ -372,6 +371,9 @@ public class Queries {
                         item.setUnread(false);
                         addToChangedList(unreadChangedItems, item);
                         feeds.add(Item.feed(item));
+                        if(lastItemId != null && item.getId() == lastItemId) {
+                            break;
+                        }
                     }
 
                     for (Feed feed : feeds) {
