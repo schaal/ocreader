@@ -76,7 +76,7 @@ dependencies {
     compile 'org.jsoup:jsoup:1.8.3'
 
     // Explictly set okhttp3 version
-    compile 'com.squareup.okhttp3:okhttp:3.1.2'
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
 
     compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
     compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
