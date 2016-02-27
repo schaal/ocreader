@@ -69,7 +69,7 @@ dependencies {
 
     compile "com.android.support:support-v13:${supportLibVersion}"
 
-    compile('com.mikepenz:materialdrawer:5.0.5@aar') {
+    compile('com.mikepenz:materialdrawer:5.0.6@aar') {
         transitive = true
     }
 
