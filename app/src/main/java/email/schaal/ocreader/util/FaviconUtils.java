@@ -37,6 +37,10 @@ import com.squareup.picasso.Target;
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.model.Feed;
 
+import static android.support.v7.graphics.Target.DARK_VIBRANT;
+import static android.support.v7.graphics.Target.LIGHT_MUTED;
+import static android.support.v7.graphics.Target.VIBRANT;
+
 /**
  * Utility class to manage Feed favicons.
  */
@@ -89,7 +93,12 @@ public class FaviconUtils {
     }
 
     private void generatePalette(Bitmap bitmap, Palette.PaletteAsyncListener paletteAsyncListener) {
-        new Palette.Builder(bitmap).generate(paletteAsyncListener);
+        new Palette.Builder(bitmap)
+                .clearTargets()
+                .addTarget(DARK_VIBRANT)
+                .addTarget(VIBRANT)
+                .addTarget(LIGHT_MUTED)
+                .generate(paletteAsyncListener);
     }
 
     public void loadBitmap(final Context context, @Nullable final Feed feed, final Target target) {
