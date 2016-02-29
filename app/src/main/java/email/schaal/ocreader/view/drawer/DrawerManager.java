@@ -115,19 +115,8 @@ public class DrawerManager {
             AllUnreadFolder unreadFolder = new AllUnreadFolder(context);
             StarredFolder starredFolder = new StarredFolder(context);
 
-            topDrawerItems.add(new PrimaryDrawerItem()
-                            .withName(unreadFolder.getTitle())
-                            .withIcon(unreadFolder.getIcon())
-                            .withIconTintingEnabled(true)
-                            .withTag(unreadFolder)
-            );
-
-            topDrawerItems.add(new PrimaryDrawerItem()
-                    .withName(starredFolder.getTitle())
-                    .withIcon(starredFolder.getIcon())
-                    .withIconTintingEnabled(true)
-                    .withTag(starredFolder)
-            );
+            topDrawerItems.add(new TreeItemDrawerItem(unreadFolder));
+            topDrawerItems.add(new TreeItemDrawerItem(starredFolder));
 
             topDrawerItems.add(new SecondarySwitchDrawerItem()
                     .withName(R.string.only_unread)
@@ -173,28 +162,14 @@ public class DrawerManager {
         private IDrawerItem getDrawerItem(Realm realm, TreeItem item) {
             boolean shouldSelect;
 
-            UrlPrimaryDrawerItem drawerItem = (UrlPrimaryDrawerItem) new UrlPrimaryDrawerItem()
-                    .withName(item.getTitle())
-                    .withIconTintingEnabled(true)
-                    .withTag(item);
+            PrimaryDrawerItem drawerItem = new TreeItemDrawerItem(item);
 
             int count = Queries.getInstance().getCount(realm, item);
 
             if (item instanceof Feed) {
                 shouldSelect = state.isFeedSelected();
-                String favIcon = ((Feed) item).getFaviconLink();
-
-                if (favIcon != null)
-                    drawerItem.withIcon(favIcon);
-                else
-                    drawerItem.withIcon(R.drawable.ic_feed_icon);
             } else {
                 shouldSelect = !state.isFeedSelected();
-
-                if (item instanceof TreeIconable)
-                    drawerItem.withIcon(((TreeIconable) item).getIcon());
-                else
-                    drawerItem.withIcon(R.drawable.ic_folder);
             }
 
             shouldSelect = shouldSelect && state.getStartDrawerItem().getId() == item.getId();
@@ -226,17 +201,11 @@ public class DrawerManager {
 
             if (feeds != null) {
                 for (Feed feed : feeds) {
-                    UrlPrimaryDrawerItem drawerItem = new UrlPrimaryDrawerItem();
-                    drawerItem.withTag(feed)
-                            .withName(feed.getTitle())
-                            .withIconTintingEnabled(true)
-                            .withIdentifier((int) feed.getId());
+                    PrimaryDrawerItem drawerItem = new TreeItemDrawerItem(feed);
+                    drawerItem.withIdentifier(feed.getId());
                     if(feed.getUnreadCount() > 0)
                         drawerItem.withBadge(String.valueOf(feed.getUnreadCount()));
-                    if (feed.getFaviconLink() != null)
-                        drawerItem.withIcon(feed.getFaviconLink());
-                    else
-                        drawerItem.withIcon(R.drawable.ic_feed_icon);
+
                     drawerItem.withSetSelected(state.getEndDrawerItem() != null && state.getEndDrawerItem().getId() == feed.getId());
                     drawerItems.add(drawerItem);
                 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Daniel Schaal <daniel@schaal.email>
+ * Copyright (C) 2016 Daniel Schaal <daniel@schaal.email>
  *
  * This file is part of OCReader.
  *
@@ -27,10 +27,32 @@ import com.mikepenz.materialdrawer.holder.ImageHolder;
 import com.mikepenz.materialdrawer.model.BaseViewHolder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 
+import email.schaal.ocreader.R;
+import email.schaal.ocreader.model.Feed;
+import email.schaal.ocreader.model.Folder;
+import email.schaal.ocreader.model.TreeIconable;
+import email.schaal.ocreader.model.TreeItem;
+
 /**
- * PrimaryDrawerItem with ability to specify an image url as an Icon.
+ * Created by daniel on 29.02.16.
  */
-class UrlPrimaryDrawerItem extends PrimaryDrawerItem {
+public class TreeItemDrawerItem extends PrimaryDrawerItem {
+    public TreeItemDrawerItem(TreeItem item) {
+        if(item instanceof TreeIconable) {
+            withIcon(((TreeIconable) item).getIcon());
+        } else if(item instanceof Feed) {
+            if(((Feed) item).getFaviconLink() != null)
+                withIcon(((Feed) item).getFaviconLink());
+            else
+                withIcon(R.drawable.ic_feed_icon);
+        } else if(item instanceof Folder) {
+            withIcon(R.drawable.ic_folder);
+        }
+        withName(item.getTitle());
+        withTag(item);
+        withIconTintingEnabled(true);
+    }
+
     @Override
     protected void bindViewHelper(BaseViewHolder viewHolder) {
         super.bindViewHelper(viewHolder);
@@ -42,7 +64,7 @@ class UrlPrimaryDrawerItem extends PrimaryDrawerItem {
         }
     }
 
-    public UrlPrimaryDrawerItem withIcon(String url) {
+    public TreeItemDrawerItem withIcon(String url) {
         icon = new ImageHolder(url);
         return this;
     }
