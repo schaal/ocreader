@@ -1,3 +1,8 @@
+## 0.1 (2016-03-07)
+
+* Show warning when ownCloud news is improperly configured
+* Improve drawer reloading when only unread is changed
+
 ## 0.1b2 (2016-02-16)
 
 * Make favicon loading more reliable
