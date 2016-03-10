@@ -24,7 +24,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.0.0-beta6'
-        classpath 'io.realm:realm-gradle-plugin:0.87.5'
+        classpath 'io.realm:realm-gradle-plugin:0.88.0'
     }
 }
 
