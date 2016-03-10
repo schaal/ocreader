@@ -337,8 +337,8 @@ public class Queries {
         });
     }
 
-    public void markTemporaryFeedAsRead(Realm realm, @Nullable final Long lastItemId, Realm.Transaction.Callback callback) {
-        realm.executeTransaction(new Realm.Transaction() {
+    public void markTemporaryFeedAsRead(Realm realm, @Nullable final Long lastItemId, Realm.Transaction.OnSuccess onSuccess, Realm.Transaction.OnError onError) {
+        realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 ChangedItems changedItems = null;
@@ -381,7 +381,7 @@ public class Queries {
                     checkAlarm(changedItems);
                 }
             }
-        }, callback);
+        }, onSuccess, onError);
     }
 
     public void setItemsUnread(Realm realm, final boolean newUnread, final Item... items) {

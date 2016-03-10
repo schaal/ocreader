@@ -198,22 +198,27 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         fab_mark_all_read = (FloatingActionButton) findViewById(R.id.fab_mark_all_read);
         fab_mark_all_read.setOnClickListener(new View.OnClickListener() {
+            private void cleanup(View v) {
+                adapter.updateItems(false);
+                v.setEnabled(true);
+            }
             @Override
             public void onClick(final View v) {
                 v.setEnabled(false);
-                Queries.getInstance().markTemporaryFeedAsRead(getRealm(), adapter.getItemId(layoutManager.findLastVisibleItemPosition()), new Realm.Transaction.Callback() {
-                    @Override
-                    public void onError(Exception e) {
-                        e.printStackTrace();
-                        onSuccess();
-                    }
 
-                    @Override
-                    public void onSuccess() {
-                        adapter.updateItems(false);
-                        v.setEnabled(true);
-                    }
-                });
+                Queries.getInstance().markTemporaryFeedAsRead(getRealm(), adapter.getItemId(layoutManager.findLastVisibleItemPosition()),
+                        new Realm.Transaction.OnSuccess() {
+                            @Override
+                            public void onSuccess() {
+                                cleanup(v);
+                            }
+                        }, new Realm.Transaction.OnError() {
+                            @Override
+                            public void onError(Throwable error) {
+                                error.printStackTrace();
+                                cleanup(v);
+                            }
+                        });
             }
         });
 
