@@ -43,7 +43,6 @@ import email.schaal.ocreader.model.AllUnreadFolder;
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Folder;
 import email.schaal.ocreader.model.StarredFolder;
-import email.schaal.ocreader.model.TreeIconable;
 import email.schaal.ocreader.model.TreeItem;
 import io.realm.Realm;
 import io.realm.RealmResults;

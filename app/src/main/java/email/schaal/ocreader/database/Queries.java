@@ -40,7 +40,6 @@ import email.schaal.ocreader.model.Item;
 import email.schaal.ocreader.model.StarredFolder;
 import email.schaal.ocreader.model.TemporaryFeed;
 import email.schaal.ocreader.model.TreeItem;
-import email.schaal.ocreader.model.User;
 import email.schaal.ocreader.util.AlarmUtils;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
