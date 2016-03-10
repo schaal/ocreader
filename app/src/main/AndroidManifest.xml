@@ -30,7 +30,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+        android:allowBackup="false">
         <activity
             android:name="email.schaal.ocreader.ListActivity"
             android:label="@string/app_name"
