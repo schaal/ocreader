@@ -114,12 +114,7 @@ public class Queries {
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    realm.clear(Feed.class);
-                    realm.clear(Folder.class);
-                    realm.clear(Item.class);
-                    realm.clear(TemporaryFeed.class);
-                    realm.clear(ChangedItems.class);
-                    realm.clear(User.class);
+                    realm.deleteAll();
                 }
             });
             initializeSingletons(realm);
