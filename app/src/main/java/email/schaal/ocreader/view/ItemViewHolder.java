@@ -97,7 +97,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements Target {
     public void bindItem(final Item item, final int position) {
         textViewTitle.setText(item.getTitle());
 
-        final Feed feed = Item.feed(item);
+        final Feed feed = item.feed();
 
         if(feed != null) {
             textViewFeedTitle.setText(feed.getTitle());

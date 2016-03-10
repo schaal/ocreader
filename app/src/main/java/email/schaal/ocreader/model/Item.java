@@ -160,10 +160,10 @@ public class Item extends RealmObject {
         this.enclosureLink = enclosureLink;
     }
 
-    public static Feed feed(@NonNull Item item) {
-        if(item.feed == null)
-            item.feed = ((Realm)item.realm).where(Feed.class).equalTo(ID, item.getFeedId()).findFirst();
-        return item.feed;
+    public Feed feed() {
+        if(feed == null)
+            feed = ((Realm)realm).where(Feed.class).equalTo(ID, getFeedId()).findFirst();
+        return feed;
     }
 
     public long getFeedId() {

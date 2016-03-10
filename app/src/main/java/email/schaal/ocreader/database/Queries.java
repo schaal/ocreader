@@ -370,7 +370,7 @@ public class Queries {
                         Item item = unreadItems.first();
                         item.setUnread(false);
                         addToChangedList(unreadChangedItems, item);
-                        feeds.add(Item.feed(item));
+                        feeds.add(item.feed());
                         if(lastItemId != null && item.getId() == lastItemId) {
                             break;
                         }
@@ -403,7 +403,7 @@ public class Queries {
 
                             addToChangedList(unreadChangedItems, item);
 
-                            Feed feed = Item.feed(item);
+                            Feed feed = item.feed();
                             feed.setUnreadCount(feed.getUnreadCount() + (newUnread ? 1 : -1));
                         }
                     }
@@ -430,7 +430,7 @@ public class Queries {
 
                         addToChangedList(starredChangedItems, item);
 
-                        Feed feed = Item.feed(item);
+                        Feed feed = item.feed();
                         feed.setStarredCount(feed.getStarredCount() + (newStarred ? 1 : -1));
                     }
                 } catch (RealmException e) {

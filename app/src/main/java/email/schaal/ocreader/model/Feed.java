@@ -128,10 +128,10 @@ public class Feed extends RealmObject implements TreeItem {
     }
 
     /* Realm doesn't like non-realm getters, use static method */
-    public static Folder folder(Feed feed) {
-        if(feed.folder == null)
-            feed.folder = ((Realm)feed.realm).where(Folder.class).equalTo(ID, feed.getFolderId()).findFirst();
-        return feed.folder;
+    public Folder folder() {
+        if(folder == null)
+            folder = ((Realm)realm).where(Folder.class).equalTo(ID, getFolderId()).findFirst();
+        return folder;
     }
 
     public Long getFolderId() {

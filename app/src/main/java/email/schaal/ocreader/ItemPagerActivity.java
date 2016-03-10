@@ -116,7 +116,7 @@ public class ItemPagerActivity extends RealmActivity {
                 item = getItemForPosition(position);
                 setItemUnread(false);
 
-                setActionBarColors(Item.feed(item));
+                setActionBarColors(item.feed());
 
                 fab.setProgress((float)(position+1) / (float)mSectionsPagerAdapter.getCount());
                 fab.show();

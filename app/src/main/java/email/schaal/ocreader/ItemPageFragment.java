@@ -116,7 +116,7 @@ public class ItemPageFragment extends WebViewFragment {
 
         final ItemPagerActivity activity = (ItemPagerActivity) getActivity();
         item = activity.getItemForPosition(getArguments().getInt(ARG_POSITION));
-        final Feed feed = Item.feed(item);
+        final Feed feed = item.feed();
 
         getWebView().setWebViewClient(new WebViewClient() {
             @Override
@@ -166,7 +166,7 @@ public class ItemPageFragment extends WebViewFragment {
                 )
         );
 
-        Feed feed = Item.feed(item);
+        Feed feed = item.feed();
 
         pageBuilder.append(String.format(
                         "<a href=\"%s\" class=\"title\">%s</a><p class=\"byline\">%s</p>",
