@@ -127,7 +127,6 @@ public class Feed extends RealmObject implements TreeItem {
         this.added = added;
     }
 
-    /* Realm doesn't like non-realm getters, use static method */
     public Folder folder() {
         if(folder == null)
             folder = ((Realm)realm).where(Folder.class).equalTo(ID, getFolderId()).findFirst();

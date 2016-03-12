@@ -116,7 +116,7 @@ public class ItemPagerActivity extends RealmActivity {
                 item = getItemForPosition(position);
                 setItemUnread(false);
 
-                setActionBarColors(item.feed());
+                setColorFromFeed(item.feed());
 
                 fab.setProgress((float)(position+1) / (float)mSectionsPagerAdapter.getCount());
                 fab.show();
@@ -194,12 +194,32 @@ public class ItemPagerActivity extends RealmActivity {
         }
     }
 
-    public void setActionBarColors(final Feed feed) {
+    private void setColorFromFeed(final Feed feed) {
         toolbar.setBackgroundColor(ContextCompat.getColor(ItemPagerActivity.this, R.color.primary));
         FaviconUtils.getInstance().loadFavicon(this, feed, new FaviconUtils.PaletteBitmapAsyncListener() {
             @Override
             public void onGenerated(@Nullable Palette palette, @Nullable Bitmap bitmap) {
-                setColorsFromPalette(palette);
+                int toolbarColor;
+                int fabColor;
+                if (palette != null) {
+                    toolbarColor = FaviconUtils.getTextColor(palette, defaultToolbarColor);
+                    fabColor = palette.getLightMutedColor(defaultAccent);
+                } else {
+                    toolbarColor = defaultToolbarColor;
+                    fabColor = defaultAccent;
+                }
+
+                toolbar.setBackgroundColor(toolbarColor);
+                fab.setBackgroundColor(fabColor);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    int statusbarColor = Color.rgb(
+                            (int) (Color.red(toolbarColor) * 0.7),
+                            (int) (Color.green(toolbarColor) * 0.7),
+                            (int) (Color.blue(toolbarColor) * 0.7)
+                    );
+                    getWindow().setStatusBarColor(statusbarColor);
+                }
                 if(bitmap != null)
                     fab.setImageBitmap(bitmap);
                 else
@@ -208,31 +228,7 @@ public class ItemPagerActivity extends RealmActivity {
         });
     }
 
-    private void setColorsFromPalette(@Nullable Palette palette) {
-        int toolbarColor;
-        int fabColor;
-        if (palette != null) {
-            toolbarColor = FaviconUtils.getTextColor(palette, defaultToolbarColor);
-            fabColor = palette.getLightMutedColor(defaultAccent);
-        } else {
-            toolbarColor = defaultToolbarColor;
-            fabColor = defaultAccent;
-        }
-        toolbar.setBackgroundColor(toolbarColor);
-        //fab.setBackgroundTintList(ColorStateList.valueOf(fabColor));
-        fab.setBackgroundColor(fabColor);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            int statusbarColor = Color.rgb(
-                    (int) (Color.red(toolbarColor) * 0.7),
-                    (int) (Color.green(toolbarColor) * 0.7),
-                    (int) (Color.blue(toolbarColor) * 0.7)
-            );
-            getWindow().setStatusBarColor(statusbarColor);
-        }
-    }
-
-    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
+    private class SectionsPagerAdapter extends FragmentStatePagerAdapter {
         private final WeakHashMap<Integer, ItemPageFragment> fragments;
 
         public SectionsPagerAdapter(FragmentManager fm) {

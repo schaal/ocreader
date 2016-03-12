@@ -79,14 +79,6 @@ public class DrawerManager {
         return endAdapter;
     }
 
-    public void reloadStartAdapter(Realm realm, boolean showOnlyUnread) {
-        startAdapter.reload(realm, showOnlyUnread);
-    }
-
-    public void reloadEndAdapter(Realm realm, boolean showOnlyUnread) {
-        endAdapter.reload(realm, showOnlyUnread);
-    }
-
     public void setSelectedTreeItem(Realm realm, TreeItem selectedItem, boolean showOnlyUnread) {
         state.setStartDrawerItem(selectedItem);
         state.setEndDrawerItem(null);
@@ -99,8 +91,8 @@ public class DrawerManager {
     }
 
     public void reloadAdapters(Realm realm, boolean showOnlyUnread) {
-        reloadStartAdapter(realm, showOnlyUnread);
-        reloadEndAdapter(realm, showOnlyUnread);
+        startAdapter.reload(realm, showOnlyUnread);
+        endAdapter.reload(realm, showOnlyUnread);
     }
 
     /**
