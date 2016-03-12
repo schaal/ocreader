@@ -177,6 +177,9 @@ public class Item extends RealmObject {
     }
 
     public void setUnread(boolean unread) {
+        if(this.unread != unread) {
+            feed().setUnreadCount(feed().getUnreadCount() + (unread ? 1 : -1));
+        }
         this.unread = unread;
     }
 
@@ -185,6 +188,9 @@ public class Item extends RealmObject {
     }
 
     public void setStarred(boolean starred) {
+        if(this.starred != starred) {
+            feed().setStarredCount(feed().getStarredCount() + (starred ? 1 : -1));
+        }
         this.starred = starred;
     }
 

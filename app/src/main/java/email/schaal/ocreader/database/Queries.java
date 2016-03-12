@@ -396,9 +396,6 @@ public class Queries {
                             item.setUnread(newUnread);
 
                             addToChangedList(unreadChangedItems, item);
-
-                            Feed feed = item.feed();
-                            feed.setUnreadCount(feed.getUnreadCount() + (newUnread ? 1 : -1));
                         }
                     }
                 } catch (RealmException e) {
@@ -423,9 +420,6 @@ public class Queries {
                         item.setStarred(newStarred);
 
                         addToChangedList(starredChangedItems, item);
-
-                        Feed feed = item.feed();
-                        feed.setStarredCount(feed.getStarredCount() + (newStarred ? 1 : -1));
                     }
                 } catch (RealmException e) {
                     e.printStackTrace();
