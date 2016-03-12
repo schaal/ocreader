@@ -38,11 +38,14 @@ import email.schaal.ocreader.model.StarredFolder;
 import email.schaal.ocreader.model.TemporaryFeed;
 import email.schaal.ocreader.model.TreeItem;
 import email.schaal.ocreader.util.AlarmUtils;
+import io.realm.DynamicRealm;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmMigration;
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
+import io.realm.RealmSchema;
 import io.realm.Sort;
 import io.realm.exceptions.RealmException;
 
@@ -54,10 +57,23 @@ public class Queries {
 
     private static Queries instance;
 
+    private static final RealmMigration migration = new RealmMigration() {
+        @Override
+        public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
+            RealmSchema schema = realm.getSchema();
+            if(oldVersion == 1) {
+                schema.remove("ChangedItems");
+                schema.get("Item")
+                        .addField(Item.UNREAD_CHANGED, boolean.class)
+                        .addField(Item.STARRED_CHANGED, boolean.class);
+            }
+        }
+    };
+
     private Queries(Context context) {
         this(new RealmConfiguration.Builder(context)
-                .schemaVersion(1)
-                .deleteRealmIfMigrationNeeded()
+                .schemaVersion(2)
+                .migration(migration)
                 .build());
     }
 
@@ -69,7 +85,12 @@ public class Queries {
             Realm.compactRealm(realmConfiguration);
             realm = Realm.getDefaultInstance();
             if(realm.isEmpty()) {
-                initializeSingletons(realm);
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        realm.createObject(TemporaryFeed.class);
+                    }
+                });
             }
         } catch (IllegalArgumentException ex) {
             ex.printStackTrace();
@@ -110,22 +131,13 @@ public class Queries {
                 @Override
                 public void execute(Realm realm) {
                     realm.deleteAll();
+                    realm.createObject(TemporaryFeed.class);
                 }
             });
-            initializeSingletons(realm);
         } finally {
             if(realm != null)
                 realm.close();
         }
-    }
-
-    private void initializeSingletons(Realm realm) {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                realm.createObject(TemporaryFeed.class);
-            }
-        });
     }
 
     @Nullable
