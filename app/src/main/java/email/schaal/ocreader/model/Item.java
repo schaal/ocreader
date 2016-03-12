@@ -65,8 +65,14 @@ public class Item extends RealmObject {
     private boolean unread;
     public final static String UNREAD = "unread";
 
+    private boolean unreadChanged = false;
+    public final static String UNREAD_CHANGED = "unreadChanged";
+
     private boolean starred;
     public static final String STARRED = "starred";
+
+    private boolean starredChanged = false;
+    public final static String STARRED_CHANGED = "starredChanged";
 
     private Date lastModified;
     public static final String LAST_MODIFIED = "lastModified";
@@ -159,7 +165,7 @@ public class Item extends RealmObject {
     }
 
     public Feed feed() {
-        if(feed == null)
+        if(isValid() && feed == null)
             feed = ((Realm)realm).where(Feed.class).equalTo(ID, getFeedId()).findFirst();
         return feed;
     }
@@ -177,7 +183,8 @@ public class Item extends RealmObject {
     }
 
     public void setUnread(boolean unread) {
-        if(this.unread != unread) {
+        if(isValid() && this.unread != unread) {
+            unreadChanged = !unreadChanged;
             feed().setUnreadCount(feed().getUnreadCount() + (unread ? 1 : -1));
         }
         this.unread = unread;
@@ -188,10 +195,27 @@ public class Item extends RealmObject {
     }
 
     public void setStarred(boolean starred) {
-        if(this.starred != starred) {
+        if(isValid() && this.starred != starred) {
+            starredChanged = !starredChanged;
             feed().setStarredCount(feed().getStarredCount() + (starred ? 1 : -1));
         }
         this.starred = starred;
+    }
+
+    public boolean isUnreadChanged() {
+        return unreadChanged;
+    }
+
+    public void setUnreadChanged(boolean unreadChanged) {
+        this.unreadChanged = unreadChanged;
+    }
+
+    public boolean isStarredChanged() {
+        return starredChanged;
+    }
+
+    public void setStarredChanged(boolean starredChanged) {
+        this.starredChanged = starredChanged;
     }
 
     public Date getLastModified() {

@@ -173,7 +173,7 @@ public class ItemPagerActivity extends RealmActivity {
     }
 
     private void setItemStarred(boolean starred) {
-        Queries.getInstance().setItemStarred(getRealm(), starred, this.item);
+        Queries.getInstance().setItemsStarred(getRealm(), starred, this.item);
         invalidateOptionsMenu();
     }
 

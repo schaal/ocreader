@@ -27,13 +27,10 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import email.schaal.ocreader.model.AllUnreadFolder;
-import email.schaal.ocreader.model.ChangedItems;
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Folder;
 import email.schaal.ocreader.model.Item;
@@ -43,7 +40,6 @@ import email.schaal.ocreader.model.TreeItem;
 import email.schaal.ocreader.util.AlarmUtils;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
@@ -128,7 +124,6 @@ public class Queries {
             @Override
             public void execute(Realm realm) {
                 realm.createObject(TemporaryFeed.class);
-                realm.createObject(ChangedItems.class);
             }
         });
     }
@@ -214,27 +209,7 @@ public class Queries {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
-                RealmList<Item> unreadChanged = changedItems.getUnreadChangedItems();
-                RealmList<Item> starredChanged = changedItems.getStarredChangedItems();
-
-                // Check if we have unread or starred changes for the items being inserted
-                if(unreadChanged.size() > 0 || starredChanged.size() > 0) {
-                    for (Item item : items) {
-                        for (int i = 0, unreadChangedSize = unreadChanged.size(); i < unreadChangedSize; i++) {
-                            Item unreadItem = unreadChanged.get(i);
-                            if (item.getId() == unreadItem.getId()) {
-                                item.setUnread(unreadItem.isUnread());
-                            }
-                        }
-                        for (int i = 0, starredChangedSize = starredChanged.size(); i < starredChangedSize; i++) {
-                            Item starredItem = starredChanged.get(i);
-                            if (item.getId() == starredItem.getId()) {
-                                item.setStarred(starredItem.isStarred());
-                            }
-                        }
-                    }
-                }
+                // TODO: 12.03.16 Check for unread/starred changes
                 realm.copyToRealmOrUpdate(items);
             }
         });
@@ -340,11 +315,7 @@ public class Queries {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                ChangedItems changedItems = null;
                 try {
-                    changedItems = realm.where(ChangedItems.class).findFirst();
-                    RealmList<Item> unreadChangedItems = changedItems.getUnreadChangedItems();
-
                     TemporaryFeed temporaryFeed = realm.where(TemporaryFeed.class).findFirst();
 
                     RealmQuery<Item> itemRealmQuery = temporaryFeed.getItems()
@@ -358,26 +329,15 @@ public class Queries {
 
                     RealmResults<Item> unreadItems = itemRealmQuery.findAll();
 
-                    Set<Feed> feeds = new HashSet<>();
-
                     while(!unreadItems.isEmpty()) {
                         Item item = unreadItems.first();
                         item.setUnread(false);
-                        addToChangedList(unreadChangedItems, item);
-                        feeds.add(item.feed());
                         if(lastItemId != null && item.getId() == lastItemId) {
                             break;
                         }
                     }
-
-                    for (Feed feed : feeds) {
-                        feed.setUnreadCount((int) realm.where(Item.class)
-                                        .equalTo(Item.FEED_ID, feed.getId())
-                                        .equalTo(Item.UNREAD, true).count()
-                        );
-                    }
                 } finally {
-                    checkAlarm(changedItems);
+                    checkAlarm(realm);
                 }
             }
         }, onSuccess, onError);
@@ -387,63 +347,41 @@ public class Queries {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
-                RealmList<Item> unreadChangedItems = changedItems.getUnreadChangedItems();
-
                 try {
                     for (Item item : items) {
-                        if (item.isUnread() != newUnread) {
-                            item.setUnread(newUnread);
-
-                            addToChangedList(unreadChangedItems, item);
-                        }
+                        item.setUnread(newUnread);
                     }
                 } catch (RealmException e) {
                     e.printStackTrace();
                 } finally {
-                    checkAlarm(changedItems);
+                    checkAlarm(realm);
                 }
             }
         });
     }
 
-    public void setItemStarred(Realm realm, final boolean newStarred, final Item item) {
+    public void setItemsStarred(Realm realm, final boolean newStarred, final Item... items) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                ChangedItems changedItems = null;
                 try {
-                    if(item.isStarred() != newStarred) {
-                        changedItems = realm.where(ChangedItems.class).findFirst();
-                        RealmList<Item> starredChangedItems = changedItems.getStarredChangedItems();
-
+                    for (Item item : items) {
                         item.setStarred(newStarred);
-
-                        addToChangedList(starredChangedItems, item);
                     }
                 } catch (RealmException e) {
                     e.printStackTrace();
                 } finally {
-                    checkAlarm(changedItems);
+                    checkAlarm(realm);
                 }
             }
         });
     }
 
-    private synchronized void checkAlarm(@Nullable ChangedItems changedItems) {
-        if(changedItems != null) {
-            boolean alarmNeeded = !changedItems.getStarredChangedItems().isEmpty() || !changedItems.getUnreadChangedItems().isEmpty();
-            if (alarmNeeded)
-                AlarmUtils.getInstance().setAlarm();
-            else
-                AlarmUtils.getInstance().cancelAlarm();
-        }
-    }
-
-    private void addToChangedList(RealmList<Item> changedItems, Item item) {
-        if (changedItems.contains(item))
-            changedItems.remove(item);
+    private synchronized void checkAlarm(Realm realm) {
+        boolean alarmNeeded = realm.where(Item.class).equalTo(Item.UNREAD_CHANGED, true).or().equalTo(Item.STARRED_CHANGED, true).count() > 0;
+        if (alarmNeeded)
+            AlarmUtils.getInstance().setAlarm();
         else
-            changedItems.add(item);
+            AlarmUtils.getInstance().cancelAlarm();
     }
 }

@@ -30,10 +30,8 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -46,7 +44,6 @@ import email.schaal.ocreader.api.json.Items;
 import email.schaal.ocreader.api.json.Status;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.http.HttpManager;
-import email.schaal.ocreader.model.ChangedItems;
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.FeedTypeAdapter;
 import email.schaal.ocreader.model.Folder;
@@ -57,7 +54,6 @@ import email.schaal.ocreader.model.StatusTypeAdapter;
 import email.schaal.ocreader.model.User;
 import email.schaal.ocreader.model.UserTypeAdapter;
 import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 import okhttp3.HttpUrl;
@@ -89,24 +85,30 @@ public class APIService {
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     private enum MarkAction {
-        MARK_READ(Item.UNREAD, false),
-        MARK_UNREAD(Item.UNREAD, true),
-        MARK_STARRED(Item.STARRED, true),
-        MARK_UNSTARRED(Item.STARRED, false);
+        MARK_READ(Item.UNREAD, Item.UNREAD_CHANGED, false),
+        MARK_UNREAD(Item.UNREAD, Item.UNREAD_CHANGED, true),
+        MARK_STARRED(Item.STARRED, Item.STARRED_CHANGED, true),
+        MARK_UNSTARRED(Item.STARRED, Item.STARRED_CHANGED, false);
 
         private final String key;
+        private final String changedKey;
         private final boolean value;
 
         public String getKey() {
             return key;
         }
 
+        public String getChangedKey() {
+            return changedKey;
+        }
+
         public boolean getValue() {
             return value;
         }
 
-        MarkAction(String key, boolean value) {
+        MarkAction(String key, String changedKey, boolean value) {
             this.key = key;
+            this.changedKey = changedKey;
             this.value = value;
         }
     }
@@ -115,15 +117,11 @@ public class APIService {
         void onCompleted();
     }
 
-    private final Set<List<Item>> itemsToClear = new HashSet<>(MarkAction.values().length);
-
     public void syncChanges(@NonNull final Realm realm, @Nullable final OnCompletionListener completionListener) {
-        final ChangedItems changedItems = realm.where(ChangedItems.class).findFirst();
         final CountDownLatch countDownLatch = new CountDownLatch(MarkAction.values().length);
 
-        itemsToClear.clear();
         for (MarkAction action : MarkAction.values()) {
-            markItems(action, changedItems, countDownLatch, itemsToClear);
+            markItems(action, realm, countDownLatch);
         }
 
         executor.execute(new Runnable() {
@@ -137,13 +135,6 @@ public class APIService {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        realm.executeTransaction(new Realm.Transaction() {
-                            @Override
-                            public void execute(Realm realm) {
-                                for(List<Item> itemList: itemsToClear)
-                                        itemList.clear();
-                            }
-                        });
                         if(completionListener != null)
                             completionListener.onCompleted();
                     }
@@ -153,16 +144,10 @@ public class APIService {
 
     }
 
-    private void markItems(final MarkAction action, ChangedItems changedItems, final CountDownLatch countDownLatch, final Set<List<Item>> itemsToClear) {
-        RealmResults<Item> results;
-        final RealmList<Item> items;
-
-        if(action.getKey().equals(Item.UNREAD))
-            items = changedItems.getUnreadChangedItems();
-        else
-            items = changedItems.getStarredChangedItems();
-
-        results = items.where().equalTo(action.getKey(), action.getValue()).findAll();
+    private void markItems(final MarkAction action, final Realm realm, final CountDownLatch countDownLatch) {
+        final RealmResults<Item> results = realm.where(Item.class)
+                .equalTo(action.getChangedKey(), true)
+                .equalTo(action.getKey(), action.getValue()).findAll();
 
         if(results.size() == 0) {
             // Nothing to do, countdown and return
@@ -182,10 +167,22 @@ public class APIService {
 
         final Callback<Void> markCallback = new Callback<Void>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(Call<Void> call, final Response<Void> response) {
                 countDownLatch.countDown();
-                if(response.isSuccess())
-                    itemsToClear.add(items);
+                if(response.isSuccess()) {
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            while(!results.isEmpty()) {
+                                if (action == MarkAction.MARK_READ || action == MarkAction.MARK_UNREAD) {
+                                    results.first().setUnreadChanged(false);
+                                } else {
+                                    results.first().setStarredChanged(false);
+                                }
+                            }
+                        }
+                    });
+                }
             }
 
             @Override
