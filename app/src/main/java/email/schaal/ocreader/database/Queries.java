@@ -55,6 +55,8 @@ import io.realm.exceptions.RealmException;
 public class Queries {
     private final static String TAG = Queries.class.getName();
 
+    public final static int SCHEMA_VERSION = 2;
+
     private static Queries instance;
 
     private static final RealmMigration migration = new RealmMigration() {
@@ -72,7 +74,7 @@ public class Queries {
 
     private Queries(Context context) {
         this(new RealmConfiguration.Builder(context)
-                .schemaVersion(2)
+                .schemaVersion(SCHEMA_VERSION)
                 .migration(migration)
                 .build());
     }
