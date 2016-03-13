@@ -39,10 +39,13 @@ import email.schaal.ocreader.model.TemporaryFeed;
 import email.schaal.ocreader.model.TreeItem;
 import email.schaal.ocreader.util.AlarmUtils;
 import io.realm.DynamicRealm;
+import io.realm.DynamicRealmObject;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmList;
 import io.realm.RealmMigration;
 import io.realm.RealmObject;
+import io.realm.RealmObjectSchema;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.RealmSchema;
@@ -63,11 +66,30 @@ public class Queries {
         @Override
         public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
             RealmSchema schema = realm.getSchema();
+
+            /**
+             * v1 -> v2
+             * - Add unreadChanged and starredChanged boolean fields to Item
+             * - Migrate data from changedItems to new fields
+             * - Remove ChangedItems
+             */
             if(oldVersion == 1) {
-                schema.remove("ChangedItems");
+                DynamicRealmObject changedItems = realm.where("ChangedItems").findFirst();
+                final RealmList<DynamicRealmObject> unreadChangedItems = changedItems.getList("unreadChangedItems");
+                final RealmList<DynamicRealmObject> starredChangedItems = changedItems.getList("starredChangedItems");
+
                 schema.get("Item")
                         .addField(Item.UNREAD_CHANGED, boolean.class)
                         .addField(Item.STARRED_CHANGED, boolean.class);
+
+                for(DynamicRealmObject item: unreadChangedItems) {
+                    item.set(Item.UNREAD_CHANGED, true);
+                }
+                for(DynamicRealmObject item: starredChangedItems) {
+                    item.set(Item.STARRED_CHANGED, true);
+                }
+
+                schema.remove("ChangedItems");
             }
         }
     };
