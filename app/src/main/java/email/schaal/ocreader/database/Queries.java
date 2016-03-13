@@ -45,7 +45,6 @@ import io.realm.RealmConfiguration;
 import io.realm.RealmList;
 import io.realm.RealmMigration;
 import io.realm.RealmObject;
-import io.realm.RealmObjectSchema;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.RealmSchema;

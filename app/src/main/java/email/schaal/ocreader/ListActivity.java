@@ -139,7 +139,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     }
 
     private Drawer startDrawer;
-    private Drawer endDrawer;
     private DrawerManager drawerManager;
     private ProfileDrawerItem profileDrawerItem;
     private PrimaryDrawerItem refreshDrawerItem;
@@ -147,8 +146,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private FloatingActionButton fab_mark_all_read;
-
-    private RecyclerView itemsRecyclerView;
 
     private ItemsAdapter adapter;
     private LinearLayoutManager layoutManager;
@@ -176,7 +173,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        itemsRecyclerView = (RecyclerView) findViewById(R.id.items_recyclerview);
+        RecyclerView itemsRecyclerView = (RecyclerView) findViewById(R.id.items_recyclerview);
 
         adapter = new ItemsAdapter(this, this);
 
@@ -338,9 +335,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         startDrawerBuilder.withToolbar(toolbar);
         startDrawer = startDrawerBuilder.build();
-        endDrawer = endDrawerBuilder.append(startDrawer);
 
-        drawerManager = new DrawerManager(this, startDrawer, endDrawer, isShowOnlyUnread(), this);
+        drawerManager = new DrawerManager(this, startDrawer, endDrawerBuilder.append(startDrawer), isShowOnlyUnread(), this);
         drawerManager.getState().restoreInstanceState(getRealm());
         adapter.setTreeItem(drawerManager.getState().getTreeItem(), drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder, false);
 

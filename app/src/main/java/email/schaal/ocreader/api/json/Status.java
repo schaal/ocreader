@@ -23,7 +23,7 @@ package email.schaal.ocreader.api.json;
 import com.github.zafarkhaja.semver.Version;
 
 /**
- * Created by daniel on 21.02.16.
+ * Encapsulates the JSON response for the status api call
  */
 public class Status {
     private Version version;

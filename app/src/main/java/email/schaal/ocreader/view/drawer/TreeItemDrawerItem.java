@@ -34,7 +34,7 @@ import email.schaal.ocreader.model.TreeIconable;
 import email.schaal.ocreader.model.TreeItem;
 
 /**
- * Created by daniel on 29.02.16.
+ * Represents a TreeItem for display in a Drawer
  */
 public class TreeItemDrawerItem extends PrimaryDrawerItem {
     public TreeItemDrawerItem(TreeItem item) {
