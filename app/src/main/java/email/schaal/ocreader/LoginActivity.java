@@ -194,7 +194,7 @@ public class LoginActivity extends AppCompatActivity {
         public void onResponse(Call<Status> call, Response<Status> response) {
             onCompletion();
 
-            if(response.isSuccess()) {
+            if(response.isSuccessful()) {
                 Status status = response.body();
 
                 if(status.getVersion().lessThan(MIN_SUPPORTED_VERSION)) {

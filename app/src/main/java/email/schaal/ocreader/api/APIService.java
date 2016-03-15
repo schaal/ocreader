@@ -169,7 +169,7 @@ public class APIService {
             @Override
             public void onResponse(Call<Void> call, final Response<Void> response) {
                 countDownLatch.countDown();
-                if(response.isSuccess()) {
+                if(response.isSuccessful()) {
                     realm.executeTransaction(new Realm.Transaction() {
                         @Override
                         public void execute(Realm realm) {
@@ -446,7 +446,7 @@ public class APIService {
 
         @Override
         public final void onResponse(Call<T> call, Response<T> response) {
-            if (response.isSuccess()) {
+            if (response.isSuccessful()) {
                 if (onResponseReal(response))
                     callback.onSuccess();
             } else {
