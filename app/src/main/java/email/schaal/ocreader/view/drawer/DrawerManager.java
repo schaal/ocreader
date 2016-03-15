@@ -165,9 +165,7 @@ public class DrawerManager {
 
             shouldSelect = shouldSelect && state.getStartDrawerItem().getId() == item.getId();
 
-            if (count > 0) {
-                drawerItem.withBadge(String.valueOf(count));
-            }
+            drawerItem.withBadge(count);
 
             return drawerItem.withSetSelected(shouldSelect);
         }
@@ -194,8 +192,7 @@ public class DrawerManager {
                 for (Feed feed : feeds) {
                     PrimaryDrawerItem drawerItem = new TreeItemDrawerItem(feed);
                     drawerItem.withIdentifier(feed.getId());
-                    if(feed.getUnreadCount() > 0)
-                        drawerItem.withBadge(String.valueOf(feed.getUnreadCount()));
+                    drawerItem.withBadge(feed.getUnreadCount());
 
                     drawerItem.withSetSelected(state.getEndDrawerItem() != null && state.getEndDrawerItem().getId() == feed.getId());
                     drawerItems.add(drawerItem);

@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.mikepenz.materialdrawer.holder.ImageHolder;
+import com.mikepenz.materialdrawer.holder.StringHolder;
 import com.mikepenz.materialdrawer.model.BaseViewHolder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 
@@ -67,5 +68,15 @@ public class TreeItemDrawerItem extends PrimaryDrawerItem {
     public TreeItemDrawerItem withIcon(String url) {
         icon = new ImageHolder(url);
         return this;
+    }
+
+    @Override
+    public TreeItemDrawerItem withBadge(int badge) {
+        StringHolder newBadge;
+        if(badge > 0)
+            newBadge = new StringHolder(String.valueOf(badge));
+        else
+            newBadge = new StringHolder("");
+        return (TreeItemDrawerItem) super.withBadge(newBadge);
     }
 }
