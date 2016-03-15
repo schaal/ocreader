@@ -61,8 +61,8 @@ abstract class BaseDrawerManager {
                 Integer count = Queries.getInstance().getCount(realm, (TreeItem) drawerItem.getTag());
 
                 if (count <= 0) {
-                    // Don't remove "special" folders (AllUnread, Starred), which have an identifier < 0
-                    if (showOnlyUnread && drawerItem.getIdentifier() > 0) {
+                    // Don't remove "special" folders (AllUnread, Starred), which have an id < 0
+                    if (showOnlyUnread && ((TreeItem) drawerItem.getTag()).getId() > 0) {
                         itemIterator.remove();
                     } else {
                         updateBadge(badgeable, null);
