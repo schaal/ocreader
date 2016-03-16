@@ -173,10 +173,12 @@ public class APIService {
                     realm.executeTransaction(new Realm.Transaction() {
                         @Override
                         public void execute(Realm realm) {
-                            while(!results.isEmpty()) {
-                                if (action == MarkAction.MARK_READ || action == MarkAction.MARK_UNREAD) {
+                            if (action == MarkAction.MARK_READ || action == MarkAction.MARK_UNREAD) {
+                                while(!results.isEmpty()) {
                                     results.first().setUnreadChanged(false);
-                                } else {
+                                }
+                            } else {
+                                while(!results.isEmpty()) {
                                     results.first().setStarredChanged(false);
                                 }
                             }
