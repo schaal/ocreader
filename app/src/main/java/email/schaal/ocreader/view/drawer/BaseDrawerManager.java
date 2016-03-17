@@ -52,23 +52,19 @@ abstract class BaseDrawerManager {
     protected abstract List<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread);
 
     public void updateUnreadCount(Realm realm, boolean showOnlyUnread) {
-        Iterator<IDrawerItem> itemIterator = drawer.getDrawerItems().iterator();
+        if(showOnlyUnread) {
+            reload(realm, true);
+        } else {
+            for (IDrawerItem drawerItem : drawer.getDrawerItems()) {
+                if (drawerItem instanceof Badgeable) {
+                    Badgeable badgeable = (Badgeable) drawerItem;
+                    Integer count = Queries.getInstance().getCount(realm, (TreeItem) drawerItem.getTag());
 
-        while (itemIterator.hasNext()) {
-            IDrawerItem drawerItem = itemIterator.next();
-            if (drawerItem instanceof Badgeable) {
-                Badgeable badgeable = (Badgeable) drawerItem;
-                Integer count = Queries.getInstance().getCount(realm, (TreeItem) drawerItem.getTag());
-
-                if (count <= 0) {
-                    // Don't remove "special" folders (AllUnread, Starred), which have an id < 0
-                    if (showOnlyUnread && ((TreeItem) drawerItem.getTag()).getId() > 0) {
-                        itemIterator.remove();
-                    } else {
+                    if (count <= 0) {
                         updateBadge(badgeable, null);
+                    } else {
+                        updateBadge(badgeable, String.valueOf(count));
                     }
-                } else {
-                    updateBadge(badgeable, String.valueOf(count));
                 }
             }
         }
