@@ -1,3 +1,8 @@
+## 0.2 (2016-03-17)
+
+* Improve handling of unread/starred changes
+* Fix bug leading to a crash when selecting an item in the drawer while "only Unread" is selected
+
 ## 0.1 (2016-03-07)
 
 * Show warning when ownCloud news is improperly configured
