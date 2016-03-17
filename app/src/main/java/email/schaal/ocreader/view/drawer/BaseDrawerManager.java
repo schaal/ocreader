@@ -28,7 +28,6 @@ import com.mikepenz.materialdrawer.holder.StringHolder;
 import com.mikepenz.materialdrawer.model.interfaces.Badgeable;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
-import java.util.Iterator;
 import java.util.List;
 
 import email.schaal.ocreader.database.Queries;

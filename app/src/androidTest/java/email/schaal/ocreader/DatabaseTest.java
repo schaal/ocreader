@@ -30,8 +30,6 @@ import email.schaal.ocreader.model.Folder;
 import email.schaal.ocreader.model.Item;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.RealmResults;
-import io.realm.Sort;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
