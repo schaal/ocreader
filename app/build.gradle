@@ -32,6 +32,8 @@ android {
         versionCode 5
         versionName "0.2"
 
+        archivesBaseName="${getApplicationId()}_${getVersionCode()}"
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
