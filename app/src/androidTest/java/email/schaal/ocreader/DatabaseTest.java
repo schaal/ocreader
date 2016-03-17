@@ -22,11 +22,16 @@ package email.schaal.ocreader;
 
 import android.test.ApplicationTestCase;
 
+import java.util.Date;
+
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Folder;
+import email.schaal.ocreader.model.Item;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
+import io.realm.Sort;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
@@ -89,6 +94,33 @@ public class DatabaseTest extends ApplicationTestCase<OCReaderApplication> {
             assertNotNull(feed);
             assertEquals(feed.getTitle(), "TestFeedTitle");
 
+        } finally {
+            assertNotNull(realm);
+            realm.close();
+        }
+    }
+
+    public void testItemInsert() {
+        Realm realm = null;
+        try {
+            Item item = new Item();
+            item.setId(1);
+            item.setTitle("TestItemTitle");
+            item.setBody("TestBody");
+            item.setAuthor("TestAuthor");
+            item.setFeedId(1);
+            item.setLastModified(new Date());
+
+            realm = Realm.getDefaultInstance();
+            Queries.getInstance().insert(realm, item);
+
+            item = realm.where(Item.class).findFirst();
+
+            assertEquals(item.getId(), 1);
+            assertEquals(item.getTitle(), "TestItemTitle");
+            assertEquals(item.getBody(), "TestBody");
+            assertEquals(item.getAuthor(), "TestAuthor");
+            assertNull(item.getEnclosureLink());
         } finally {
             assertNotNull(realm);
             realm.close();
