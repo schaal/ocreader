@@ -22,10 +22,8 @@ package email.schaal.ocreader;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -35,8 +33,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebViewFragment;
 
 import org.jsoup.Jsoup;
@@ -110,28 +107,25 @@ public class ItemPageFragment extends WebViewFragment {
                 Color.alpha(color) / 255.0);
     }
 
+    private class JsCallback {
+        @JavascriptInterface
+        public void startLoading() {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    FaviconUtils.getInstance().loadFavicon(getActivity(), item.feed(), paletteAsyncListener);
+                }
+            });
+        }
+    }
+
     @Override
     public void onStart() {
         super.onStart();
 
         final ItemPagerActivity activity = (ItemPagerActivity) getActivity();
         item = activity.getItemForPosition(getArguments().getInt(ARG_POSITION));
-        final Feed feed = item.feed();
 
-        getWebView().setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                FaviconUtils.getInstance().loadFavicon(activity, feed, paletteAsyncListener);
-            }
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW);
-                browserIntent.setData(Uri.parse(url));
-                getActivity().startActivity(browserIntent);
-                return true;
-            }
-        });
         loadWebViewData(activity);
     }
 
@@ -179,6 +173,7 @@ public class ItemPageFragment extends WebViewFragment {
         document.outputSettings().prettyPrint(false);
         pageBuilder.append(document.body().html());
 
+        pageBuilder.append("<script>(function() { JsCallback.startLoading(); })();</script>");
         pageBuilder.append("</body></html>");
 
         return pageBuilder.toString();
@@ -233,7 +228,7 @@ public class ItemPageFragment extends WebViewFragment {
     }
 
     // All js from external sites gets stripped using jsoup
-    @SuppressLint("SetJavaScriptEnabled")
+    @SuppressLint({"AddJavascriptInterface","SetJavaScriptEnabled"})
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View childView = super.onCreateView(inflater, container, savedInstanceState);
@@ -243,6 +238,7 @@ public class ItemPageFragment extends WebViewFragment {
         nestedScrollView.addView(childView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
         getWebView().getSettings().setJavaScriptEnabled(true);
+        getWebView().addJavascriptInterface(new JsCallback(), "JsCallback");
 
         // Using software rendering to prevent frozen or blank webviews
         // See https://code.google.com/p/chromium/issues/detail?id=501901
