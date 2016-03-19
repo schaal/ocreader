@@ -70,8 +70,6 @@ public class ItemPageFragment extends WebViewFragment {
 
     private Item item;
 
-    private static final String feedColorCss = "a:link, a:active,a:hover { color: %s }";
-
     private final static String videoThumbLink = "<div style=\"position:relative\"><a href=\"%s\"><img src=\"%s\" class=\"videothumb\"></img><span class=\"play\">▶</span></a></div>";
     private final static String videoLink = "<a href=\"%s\">%s</a>";
 
@@ -155,8 +153,8 @@ public class ItemPageFragment extends WebViewFragment {
 
         StringBuilder pageBuilder = new StringBuilder(
                 String.format(
-                        "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style type=\"text/css\">%s</style></head><body>",
-                        String.format(feedColorCss, getCssColor(titleColor)) + css
+                        "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style type=\"text/css\">a:link, a:active,a:hover { color: %s } %s</style></head><body>",
+                        getCssColor(titleColor), css
                 )
         );
 
