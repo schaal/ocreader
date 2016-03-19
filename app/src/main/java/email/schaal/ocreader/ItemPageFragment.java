@@ -152,11 +152,13 @@ public class ItemPageFragment extends WebViewFragment {
         prepareDocument(document);
 
         StringBuilder pageBuilder = new StringBuilder(
-                String.format(
-                        "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style type=\"text/css\">a:link, a:active,a:hover { color: %s } %s</style></head><body>",
-                        getCssColor(titleColor), css
-                )
-        );
+                "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">");
+
+        pageBuilder.append(String.format(
+                "<style type=\"text/css\">a:link, a:active,a:hover { color: %s } %s</style>",
+                getCssColor(titleColor), css));
+
+        pageBuilder.append("</head><body>");
 
         Feed feed = item.feed();
 
@@ -172,6 +174,7 @@ public class ItemPageFragment extends WebViewFragment {
         pageBuilder.append(document.body().html());
 
         pageBuilder.append("<script>(function() { JsCallback.startLoading(); })();</script>");
+
         pageBuilder.append("</body></html>");
 
         return pageBuilder.toString();
