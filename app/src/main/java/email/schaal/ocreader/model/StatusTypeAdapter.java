@@ -60,7 +60,7 @@ public class StatusTypeAdapter extends NewsTypeAdapter<Status> {
                     readWarnings(in, status);
                     break;
                 default:
-                    Log.w(TAG, "Unknown value in folder json: " + name);
+                    Log.w(TAG, "Unknown value in status json: " + name);
                     in.skipValue();
                     break;
             }
@@ -79,7 +79,7 @@ public class StatusTypeAdapter extends NewsTypeAdapter<Status> {
                     status.setImproperlyConfiguredCron(in.nextBoolean());
                     break;
                 default:
-                    Log.w(TAG, "Unknown value in folder json: " + name);
+                    Log.w(TAG, "Unknown value in status warnings json: " + name);
                     in.skipValue();
             }
         }

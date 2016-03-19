@@ -16,7 +16,7 @@ public abstract class NewsTypeAdapter<T> extends TypeAdapter<T> {
 
     protected String nullSafeString(JsonReader in) throws IOException {
         if(in.peek() == JsonToken.NULL) {
-            Log.w(TAG, "unexpected NULL in feed json");
+            Log.w(TAG, "unexpected NULL in json");
             in.nextNull();
             return null;
         } else
