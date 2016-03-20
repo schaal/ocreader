@@ -466,6 +466,7 @@ public class APIService {
 
         @Override
         public void onFailure(Call<T> call, Throwable t) {
+            t.printStackTrace();
             callback.onFailure(t.getLocalizedMessage());
         }
     }
