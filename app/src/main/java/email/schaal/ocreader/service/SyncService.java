@@ -46,6 +46,7 @@ import java.util.concurrent.Executors;
 
 import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.api.APIService;
+import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Item;
 import email.schaal.ocreader.model.StarredFolder;
@@ -68,6 +69,8 @@ public class SyncService extends Service {
     public static final String EXTRA_OFFSET = "email.schaal.ocreader.action.extra.OFFSET";
     public static final String EXTRA_TYPE = "email.schaal.ocreader.action.extra.TYPE";
     public static final String EXTRA_INITIAL_SYNC = "email.schaal.ocreader.action.extra.INITIAL_SYNC";
+
+    private static final int MAX_ITEMS = 10000;
 
     private SharedPreferences sharedPreferences;
 
@@ -151,10 +154,13 @@ public class SyncService extends Service {
                             APIService.getInstance().folders(realm, apiCallback);
                             APIService.getInstance().feeds(realm, apiCallback);
 
-                            APIService.getInstance().items(realm, lastSync, apiCallback);
-
-                            if(lastSync == 0L)
+                            if(lastSync == 0L) {
                                 APIService.getInstance().starredItems(realm, apiCallback);
+                                APIService.getInstance().items(realm, apiCallback);
+                            } else {
+                                Queries.getInstance().removeExcessItems(realm, MAX_ITEMS);
+                                APIService.getInstance().updatedItems(realm, lastSync, apiCallback);
+                            }
 
                             waitForCountdownLatch(startId, action);
                             break;

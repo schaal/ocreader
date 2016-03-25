@@ -77,7 +77,6 @@ public class APIService {
     private static final String ROOT_PATH_APIv1_2 = "./index.php/apps/news/api/v1-2/";
 
     private static final int BATCH_SIZE = 100;
-    private static final int MAX_ITEMS = 10000;
 
     private final Gson gson;
 
@@ -359,30 +358,28 @@ public class APIService {
         });
     }
 
-    public void items(final Realm realm, long lastSync, final APICallback callback) {
-        // get all unread items on first sync, updatedItems on further syncs
-        if(lastSync == 0L) {
-            api.items(-1, 0L, QueryType.ALL.getType(), 0L, false, false).enqueue(new BaseRetrofitCallback<Items>(callback) {
-                @Override
-                public boolean onResponseReal(Response<Items> response) {
-                    final List<Item> items = response.body().getItems();
+    public void items(final Realm realm, final APICallback callback) {
+        api.items(-1, 0L, QueryType.ALL.getType(), 0L, false, false).enqueue(new BaseRetrofitCallback<Items>(callback) {
+            @Override
+            public boolean onResponseReal(Response<Items> response) {
+                final List<Item> items = response.body().getItems();
 
-                    Queries.getInstance().insert(realm, items);
+                Queries.getInstance().insert(realm, items);
 
-                    return true;
-                }
-            });
-        } else {
-            api.updatedItems(lastSync, QueryType.ALL.getType(), 0L).enqueue(new BaseRetrofitCallback<Items>(callback) {
-                @Override
-                protected boolean onResponseReal(Response<Items> response) {
-                    Queries.getInstance().removeExcessItems(realm, MAX_ITEMS);
-                    List<Item> items = response.body().getItems();
-                    Queries.getInstance().insert(realm, items);
-                    return true;
-                }
-            });
-        }
+                return true;
+            }
+        });
+    }
+
+    public void updatedItems(final Realm realm, long lastSync, final APICallback callback) {
+        api.updatedItems(lastSync, QueryType.ALL.getType(), 0L).enqueue(new BaseRetrofitCallback<Items>(callback) {
+            @Override
+            protected boolean onResponseReal(Response<Items> response) {
+                List<Item> items = response.body().getItems();
+                Queries.getInstance().insert(realm, items);
+                return true;
+            }
+        });
     }
 
     public void starredItems(final Realm realm, final APICallback callback) {
