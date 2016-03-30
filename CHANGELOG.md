@@ -1,3 +1,7 @@
+## 0.3 (2016-03-30)
+
+* Improve loading of feed colors in article view
+
 ## 0.2 (2016-03-17)
 
 * Improve handling of unread/starred changes
