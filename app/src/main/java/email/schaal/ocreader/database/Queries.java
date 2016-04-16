@@ -57,13 +57,15 @@ import io.realm.exceptions.RealmException;
 public class Queries {
     private final static String TAG = Queries.class.getName();
 
-    public final static int SCHEMA_VERSION = 2;
+    public final static int SCHEMA_VERSION = 3;
 
     private static Queries instance;
 
     private static final RealmMigration migration = new RealmMigration() {
         @Override
         public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
+            Log.d(TAG, "Starting migration from " + oldVersion + "to " + newVersion);
+
             RealmSchema schema = realm.getSchema();
 
             /**
@@ -89,6 +91,18 @@ public class Queries {
                 }
 
                 schema.remove("ChangedItems");
+                oldVersion++;
+            }
+
+            /**
+             * v2 -> v3
+             * - Add indexed fingerprint field to Item
+             */
+            if(oldVersion == 2) {
+                schema.get("Item")
+                        .addField(Item.FINGERPRINT, String.class)
+                        .addIndex(Item.FINGERPRINT);
+                oldVersion++;
             }
         }
     };

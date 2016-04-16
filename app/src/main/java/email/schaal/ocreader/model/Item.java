@@ -25,6 +25,7 @@ import java.util.Date;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.Ignore;
+import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 
 /**
@@ -76,6 +77,11 @@ public class Item extends RealmObject {
 
     private Date lastModified;
     public static final String LAST_MODIFIED = "lastModified";
+
+    /** @since 8.4.0 **/
+    @Index
+    private String fingerprint;
+    public static final String FINGERPRINT = "fingerprint";
 
     public Item() {
     }
@@ -224,5 +230,13 @@ public class Item extends RealmObject {
 
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
+    }
+
+    public String getFingerprint() {
+        return fingerprint;
+    }
+
+    public void setFingerprint(String fingerprint) {
+        this.fingerprint = fingerprint;
     }
 }

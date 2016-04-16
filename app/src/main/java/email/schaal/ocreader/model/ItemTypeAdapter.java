@@ -103,6 +103,9 @@ public class ItemTypeAdapter extends NewsTypeAdapter<Item> {
                 case "rtl":
                     in.skipValue();
                     break;
+                case "fingerprint":
+                    item.setFingerprint(in.nextString());
+                    break;
                 default:
                     Log.w(TAG, "Unknown value in item json: " + name);
                     in.skipValue();
