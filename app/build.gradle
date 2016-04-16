@@ -23,7 +23,7 @@ apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "email.schaal.ocreader"
@@ -71,7 +71,7 @@ dependencies {
 
     compile "com.android.support:support-v13:${supportLibVersion}"
 
-    compile('com.mikepenz:materialdrawer:5.1.9@aar') {
+    compile('com.mikepenz:materialdrawer:5.2.0@aar') {
         transitive = true
     }
 
