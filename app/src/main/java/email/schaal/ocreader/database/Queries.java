@@ -199,9 +199,13 @@ public class Queries {
     @Nullable
     public RealmResults<Item> getItems(Realm realm, TreeItem treeItem, boolean onlyUnread, String sortFieldname, Sort order) {
         RealmQuery<Item> query = null;
+        // Whether to return only items with a distinct fingerprint
+        boolean distinct = false;
+
         if(treeItem instanceof Feed)
             query = realm.where(Item.class).equalTo(Item.FEED_ID, treeItem.getId());
         else if(treeItem instanceof Folder) {
+            distinct = true;
             // Get all feeds belonging to Folder treeItem
             RealmResults<Feed> feeds = getFeedsForTreeItem(realm, treeItem);
             if(feeds != null && feeds.size() > 0) {
@@ -214,6 +218,7 @@ public class Queries {
                 }
             }
         } else if(treeItem instanceof AllUnreadFolder) {
+            distinct = true;
             query = realm.where(Item.class).equalTo(Item.UNREAD, true);
             // prevent onlyUnread from adding the same condition again
             onlyUnread = false;
@@ -224,7 +229,14 @@ public class Queries {
         if (query != null) {
             if(onlyUnread)
                 query.equalTo(Item.UNREAD, true);
-            return query.findAllSorted(sortFieldname, order);
+
+            if(distinct) {
+                RealmResults<Item> distinctItems = query.distinct(Item.FINGERPRINT);
+                distinctItems.sort(sortFieldname, order);
+                return distinctItems;
+            } else {
+                return query.findAllSorted(sortFieldname, order);
+            }
         } else
             return null;
     }
