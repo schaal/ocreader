@@ -398,7 +398,19 @@ public class Queries {
             public void execute(Realm realm) {
                 try {
                     for (Item item : items) {
-                        item.setUnread(newUnread);
+                        /** If the item has a fingerprint, mark all items with the same fingerprint
+                         * as read
+                         */
+                        if(item.getFingerprint() == null) {
+                            item.setUnread(newUnread);
+                        } else {
+                            RealmResults<Item> sameItems = realm.where(Item.class)
+                                    .equalTo(Item.FINGERPRINT, item.getFingerprint())
+                                    .equalTo(Item.UNREAD, !newUnread)
+                                    .findAll();
+                            while(!sameItems.isEmpty())
+                                sameItems.first().setUnread(newUnread);
+                        }
                     }
                 } catch (RealmException e) {
                     e.printStackTrace();
