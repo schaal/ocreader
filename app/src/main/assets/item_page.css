@@ -6,6 +6,10 @@ body, blockquote, img, iframe, video, div, table, tbody, tr, td, pre, code, bloc
     word-wrap: break-word !important;
 }
 
+pre {
+    white-space: pre-wrap !important;
+}
+
 body {
     font-size: 1em;
     font-weight: normal;
