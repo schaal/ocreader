@@ -55,21 +55,21 @@ android {
 }
 
 ext {
-    supportLibVersion = "23.3.0"
+    versions = [supportLib: "23.3.0"]
 }
 
 dependencies {
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile "com.android.support:support-v4:${supportLibVersion}"
+    compile "com.android.support:support-v4:${versions.supportLib}"
 
-    compile "com.android.support:appcompat-v7:${supportLibVersion}"
-    compile "com.android.support:recyclerview-v7:${supportLibVersion}"
-    compile "com.android.support:design:${supportLibVersion}"
-    compile "com.android.support:palette-v7:${supportLibVersion}"
+    compile "com.android.support:appcompat-v7:${versions.supportLib}"
+    compile "com.android.support:recyclerview-v7:${versions.supportLib}"
+    compile "com.android.support:design:${versions.supportLib}"
+    compile "com.android.support:palette-v7:${versions.supportLib}"
 
-    compile "com.android.support:support-v13:${supportLibVersion}"
+    compile "com.android.support:support-v13:${versions.supportLib}"
 
     compile('com.mikepenz:materialdrawer:5.2.0@aar') {
         transitive = true
@@ -87,7 +87,7 @@ dependencies {
     compile 'com.github.zafarkhaja:java-semver:0.9.0'
 
     // Explicitly set version for support-annotations to prevent version conflicts
-    androidTestCompile "com.android.support:support-annotations:${supportLibVersion}"
+    androidTestCompile "com.android.support:support-annotations:${versions.supportLib}"
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
     androidTestCompile 'com.android.support.test:runner:0.4.1'
 
