@@ -149,12 +149,20 @@ public class Feed extends RealmObject implements TreeItem {
         this.unreadCount = unreadCount;
     }
 
+    public void incrementUnreadCount(int increment) {
+        unreadCount += increment;
+    }
+
     public int getStarredCount() {
         return starredCount;
     }
 
     public void setStarredCount(int starredCount) {
         this.starredCount = starredCount;
+    }
+
+    public void incrementStarredCount(int increment) {
+        starredCount += increment;
     }
 
     public int getOrdering() {
