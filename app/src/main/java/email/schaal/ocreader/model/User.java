@@ -24,13 +24,16 @@ import java.util.Date;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
 /**
  * RealmObject representing User information.
  */
 public class User extends RealmObject {
     @PrimaryKey
+    @Required
     private String userId;
+
     private String displayName;
     private Date lastLogin;
     private String avatar;
