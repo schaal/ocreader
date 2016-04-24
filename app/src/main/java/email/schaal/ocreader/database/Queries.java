@@ -280,30 +280,24 @@ public class Queries {
         return realm.where(Feed.class).findAllSorted(Feed.PINNED, Sort.ASCENDING, Feed.TITLE, Sort.ASCENDING);
     }
 
-    public void insert(Realm realm, final Iterable<Item> items) {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                // TODO: 12.03.16 Check for unread/starred changes
-                for(Item item: items) {
-                    item.setFeed(getOrCreateFeed(realm, item.getFeedId()));
-                }
-                realm.copyToRealmOrUpdate(items);
-            }
-        });
-    }
-
-    public <T extends RealmObject> void insert(Realm realm, final Class<T> clazz, final T element) {
+    public <T extends RealmObject> void insert(Realm realm, final Class<T> clazz, final Iterable<T> elements) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 if(clazz == Item.class) {
-                    Item item = (Item) element;
-                    item.setFeed(getOrCreateFeed(realm, item.getFeedId()));
+                    for (T element : elements) {
+                        Item item = (Item) element;
+                        item.setFeed(getOrCreateFeed(realm, item.getFeedId()));
+                    }
                 }
-                realm.copyToRealmOrUpdate(element);
+                realm.copyToRealmOrUpdate(elements);
             }
         });
+
+    }
+
+    public <T extends RealmObject> void insert(Realm realm, final Class<T> clazz, final T element) {
+        insert(realm, clazz, Collections.singleton(element));
     }
 
     public <T extends RealmObject & TreeItem> void deleteAndInsert(Realm realm, final Class<T> clazz, final List<T> elements) {

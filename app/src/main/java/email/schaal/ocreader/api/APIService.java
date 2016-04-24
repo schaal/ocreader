@@ -364,7 +364,7 @@ public class APIService {
             public boolean onResponseReal(Response<Items> response) {
                 final List<Item> items = response.body().getItems();
 
-                Queries.getInstance().insert(realm, items);
+                Queries.getInstance().insert(realm, Item.class, items);
 
                 return true;
             }
@@ -376,7 +376,7 @@ public class APIService {
             @Override
             protected boolean onResponseReal(Response<Items> response) {
                 List<Item> items = response.body().getItems();
-                Queries.getInstance().insert(realm, items);
+                Queries.getInstance().insert(realm, Item.class, items);
                 return true;
             }
         });
@@ -388,7 +388,7 @@ public class APIService {
             protected boolean onResponseReal(Response<Items> response) {
                 final List<Item> items = response.body().getItems();
 
-                Queries.getInstance().insert(realm, items);
+                Queries.getInstance().insert(realm, Item.class, items);
                 return true;
             }
         });
@@ -399,7 +399,7 @@ public class APIService {
             @Override
             public boolean onResponseReal(Response<Items> response) {
                 final List<Item> items = response.body().getItems();
-                Queries.getInstance().insert(realm, items);
+                Queries.getInstance().insert(realm, Item.class, items);
                 return true;
             }
         });
