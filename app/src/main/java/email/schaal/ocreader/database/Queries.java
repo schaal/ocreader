@@ -57,7 +57,7 @@ import io.realm.exceptions.RealmException;
 public class Queries {
     private final static String TAG = Queries.class.getName();
 
-    public final static int SCHEMA_VERSION = 3;
+    public final static int SCHEMA_VERSION = 4;
 
     private static Queries instance;
 
@@ -102,6 +102,20 @@ public class Queries {
                 schema.get("Item")
                         .addField(Item.FINGERPRINT, String.class)
                         .addIndex(Item.FINGERPRINT);
+                oldVersion++;
+            }
+
+            /**
+             * v3 -> v4
+             * - Add feed field to Item
+             */
+            if(oldVersion == 3) {
+                schema.get("Item")
+                        .addRealmObjectField(Item.FEED, schema.get("Feed"));
+                RealmResults<DynamicRealmObject> items = realm.where("Item").findAll();
+                for(DynamicRealmObject item: items) {
+                    item.setObject(Item.FEED, realm.where("Feed").equalTo(Feed.ID, item.getLong(Item.FEED_ID)).findFirst());
+                }
                 oldVersion++;
             }
         }
@@ -271,15 +285,22 @@ public class Queries {
             @Override
             public void execute(Realm realm) {
                 // TODO: 12.03.16 Check for unread/starred changes
+                for(Item item: items) {
+                    item.setFeed(getOrCreateFeed(realm, item.getFeedId()));
+                }
                 realm.copyToRealmOrUpdate(items);
             }
         });
     }
 
-    public <T extends RealmObject> void insert(Realm realm, final T element) {
+    public <T extends RealmObject> void insert(Realm realm, final Class<T> clazz, final T element) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
+                if(clazz == Item.class) {
+                    Item item = (Item) element;
+                    item.setFeed(getOrCreateFeed(realm, item.getFeedId()));
+                }
                 realm.copyToRealmOrUpdate(element);
             }
         });
@@ -420,8 +441,10 @@ public class Queries {
                                     .equalTo(Item.FINGERPRINT, item.getFingerprint())
                                     .equalTo(Item.UNREAD, !newUnread)
                                     .findAll();
-                            while(!sameItems.isEmpty())
-                                sameItems.first().setUnread(newUnread);
+                            while(!sameItems.isEmpty()) {
+                                Item first = sameItems.first();
+                                first.setUnread(newUnread);
+                            }
                         }
                     }
                 } catch (RealmException e) {
@@ -456,5 +479,22 @@ public class Queries {
             AlarmUtils.getInstance().setAlarm();
         else
             AlarmUtils.getInstance().cancelAlarm();
+    }
+
+    /**
+     * Return the feed with id feedId, or insert a new one into the database.
+     * @param realm Database to operate on
+     * @param feedId id of the feed
+     * @return Feed with id feedId (either from the database or a newly created one)
+     */
+    public Feed getOrCreateFeed(Realm realm, long feedId) {
+        Feed feed = getFeed(realm, feedId);
+        if(feed == null) {
+            realm.beginTransaction();
+            feed = realm.createObject(Feed.class);
+            feed.setId(feedId);
+            realm.commitTransaction();
+        }
+        return feed;
     }
 }

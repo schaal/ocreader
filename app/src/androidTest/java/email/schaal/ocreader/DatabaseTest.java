@@ -64,7 +64,7 @@ public class DatabaseTest extends ApplicationTestCase<OCReaderApplication> {
             folder.setTitle("TestFolderTitle");
 
             realm = Realm.getDefaultInstance();
-            Queries.getInstance().insert(realm, folder);
+            Queries.getInstance().insert(realm, Folder.class, folder);
 
             Folder dbFolder = Queries.getInstance().getFolder(realm, 1);
 
@@ -85,7 +85,7 @@ public class DatabaseTest extends ApplicationTestCase<OCReaderApplication> {
             feed.setTitle("TestFeedTitle");
 
             realm = Realm.getDefaultInstance();
-            Queries.getInstance().insert(realm, feed);
+            Queries.getInstance().insert(realm, Feed.class, feed);
 
             feed = Queries.getInstance().getFeed(realm, 1);
 
@@ -110,7 +110,7 @@ public class DatabaseTest extends ApplicationTestCase<OCReaderApplication> {
             item.setLastModified(new Date());
 
             realm = Realm.getDefaultInstance();
-            Queries.getInstance().insert(realm, item);
+            Queries.getInstance().insert(realm, Item.class, item);
 
             item = realm.where(Item.class).findFirst();
 

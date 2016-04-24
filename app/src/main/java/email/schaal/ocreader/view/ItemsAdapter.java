@@ -48,6 +48,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private RealmList<Item> items;
     @Nullable private TreeItem treeItem;
     private boolean onlyUnread;
+    private Realm realm;
     private final ItemViewHolder.OnClickListener clickListener;
     private final OnLoadMoreListener loadMoreListener;
 
@@ -57,7 +58,8 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private TreeItem loadingMoreTreeItem;
 
-    public ItemsAdapter(ItemViewHolder.OnClickListener clickListener, OnLoadMoreListener loadMoreListener) {
+    public ItemsAdapter(Realm realm, ItemViewHolder.OnClickListener clickListener, OnLoadMoreListener loadMoreListener) {
+        this.realm = realm;
         this.clickListener = clickListener;
         this.loadMoreListener = loadMoreListener;
 
@@ -68,35 +70,27 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if(treeItem == null)
             return;
 
-        Realm realm = null;
-        try {
-            realm = Realm.getDefaultInstance();
+        final TemporaryFeed temporaryFeed = realm.where(TemporaryFeed.class).findFirst();
 
-            final TemporaryFeed temporaryFeed = realm.where(TemporaryFeed.class).findFirst();
-
-            if (updateTemporaryFeed || temporaryFeed.getId() != treeItem.getId()) {
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        RealmResults<Item> tempItems = Queries.getInstance().getItems(realm, treeItem, onlyUnread, Item.PUB_DATE, Sort.DESCENDING);
-                        temporaryFeed.setId(treeItem.getId());
-                        temporaryFeed.setTitle(treeItem.getTitle());
-                        temporaryFeed.getItems().clear();
-                        if (tempItems != null) {
-                            temporaryFeed.getItems().addAll(tempItems);
-                        }
+        if (updateTemporaryFeed || temporaryFeed.getId() != treeItem.getId()) {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    RealmResults<Item> tempItems = Queries.getInstance().getItems(realm, treeItem, onlyUnread, Item.PUB_DATE, Sort.DESCENDING);
+                    temporaryFeed.setId(treeItem.getId());
+                    temporaryFeed.setTitle(treeItem.getTitle());
+                    temporaryFeed.getItems().clear();
+                    if (tempItems != null) {
+                        temporaryFeed.getItems().addAll(tempItems);
                     }
-                });
-            }
-
-            if (temporaryFeed != null)
-                items = temporaryFeed.getItems();
-
-            notifyDataSetChanged();
-        } finally {
-            if (realm != null)
-                realm.close();
+                }
+            });
         }
+
+        if (temporaryFeed != null)
+            items = temporaryFeed.getItems();
+
+        notifyDataSetChanged();
     }
 
     @Override
@@ -141,8 +135,10 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if(holder instanceof ItemViewHolder)
-            ((ItemViewHolder) holder).bindItem(items.get(position), position);
+        if(holder instanceof ItemViewHolder) {
+            Item item = items.get(position);
+            ((ItemViewHolder) holder).bindItem(item, position);
+        }
         else if(holder instanceof LoadMoreViewHolder) {
             ((LoadMoreViewHolder) holder).showProgress(
                     loadingMoreTreeItem != null && loadingMoreTreeItem.equals(treeItem));

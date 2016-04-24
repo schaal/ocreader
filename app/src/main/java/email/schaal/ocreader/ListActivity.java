@@ -175,7 +175,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         RecyclerView itemsRecyclerView = (RecyclerView) findViewById(R.id.items_recyclerview);
 
-        adapter = new ItemsAdapter(this, this);
+        adapter = new ItemsAdapter(getRealm(), this, this);
 
         itemsRecyclerView.setAdapter(adapter);
 

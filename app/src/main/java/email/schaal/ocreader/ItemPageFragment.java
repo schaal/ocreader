@@ -111,7 +111,7 @@ public class ItemPageFragment extends WebViewFragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    FaviconUtils.getInstance().loadFavicon(getActivity(), item.feed(), paletteAsyncListener);
+                    FaviconUtils.getInstance().loadFavicon(getActivity(), item.getFeed(), paletteAsyncListener);
                 }
             });
         }
@@ -128,10 +128,10 @@ public class ItemPageFragment extends WebViewFragment {
     }
 
     private void loadWebViewData(Context context) {
-        getWebView().loadDataWithBaseURL(null, getHtml(context, item), "text/html", "UTF-8", null);
+        getWebView().loadDataWithBaseURL(null, getHtml(context), "text/html", "UTF-8", null);
     }
 
-    private String getHtml(Context context, Item item) {
+    private String getHtml(Context context) {
         if (css == null)
             try {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open("item_page.css")));
@@ -144,6 +144,8 @@ public class ItemPageFragment extends WebViewFragment {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+        Feed feed = item.getFeed();
 
         int titleColor = ContextCompat.getColor(context, R.color.primary_text);
 
@@ -159,8 +161,6 @@ public class ItemPageFragment extends WebViewFragment {
                 getCssColor(titleColor), css));
 
         pageBuilder.append("</head><body>");
-
-        Feed feed = item.feed();
 
         pageBuilder.append(String.format(
                         "<a href=\"%s\" class=\"title\">%s</a><p class=\"byline\">%s</p>",

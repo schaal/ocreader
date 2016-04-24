@@ -352,7 +352,7 @@ public class APIService {
         api.user().enqueue(new BaseRetrofitCallback<User>(callback) {
             @Override
             protected boolean onResponseReal(Response<User> response) {
-                Queries.getInstance().insert(realm, response.body());
+                Queries.getInstance().insert(realm, User.class, response.body());
                 return true;
             }
         });

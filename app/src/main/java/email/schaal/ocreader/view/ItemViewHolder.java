@@ -96,11 +96,10 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements Target {
     public void bindItem(final Item item, final int position) {
         textViewTitle.setText(item.getTitle());
 
-        final Feed feed = item.feed();
-
+        Feed feed = item.getFeed();
         if(feed != null) {
             textViewFeedTitle.setText(feed.getTitle());
-            feedId = feed.getId();
+            feedId = item.getFeedId();
         } else {
             Log.w(TAG, "Feed == null");
             textViewFeedTitle.setText("");

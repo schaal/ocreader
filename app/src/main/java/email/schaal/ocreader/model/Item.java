@@ -22,9 +22,7 @@ package email.schaal.ocreader.model;
 
 import java.util.Date;
 
-import io.realm.Realm;
 import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 
@@ -57,11 +55,11 @@ public class Item extends RealmObject {
     private String enclosureMime;
     private String enclosureLink;
 
+    private Feed feed;
+    public final static String FEED = "feed";
+
     private long feedId;
     public final static String FEED_ID = "feedId";
-
-    @Ignore
-    private Feed feed;
 
     private boolean unread;
     public final static String UNREAD = "unread";
@@ -170,18 +168,20 @@ public class Item extends RealmObject {
         this.enclosureLink = enclosureLink;
     }
 
-    public Feed feed() {
-        if(isValid() && feed == null)
-            feed = ((Realm)realm).where(Feed.class).equalTo(ID, getFeedId()).findFirst();
-        return feed;
-    }
-
     public long getFeedId() {
         return feedId;
     }
 
     public void setFeedId(long feedId) {
         this.feedId = feedId;
+    }
+
+    public Feed getFeed() {
+        return feed;
+    }
+
+    public void setFeed(Feed feed) {
+        this.feed = feed;
     }
 
     public boolean isUnread() {
@@ -191,7 +191,7 @@ public class Item extends RealmObject {
     public void setUnread(boolean unread) {
         if(isValid() && this.unread != unread) {
             unreadChanged = !unreadChanged;
-            feed().incrementUnreadCount(unread ? 1 : -1);
+            feed.incrementUnreadCount(unread ? 1 : -1);
         }
         this.unread = unread;
     }
@@ -203,7 +203,7 @@ public class Item extends RealmObject {
     public void setStarred(boolean starred) {
         if(isValid() && this.starred != starred) {
             starredChanged = !starredChanged;
-            feed().incrementStarredCount(starred ? 1 : -1);
+            feed.incrementStarredCount(starred ? 1 : -1);
         }
         this.starred = starred;
     }
