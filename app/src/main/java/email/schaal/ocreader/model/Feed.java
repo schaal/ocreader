@@ -45,8 +45,6 @@ public class Feed extends RealmObject implements TreeItem {
     private Date added;
     private Long folderId;
     public static final String FOLDER_ID = "folderId";
-    @Ignore
-    private Folder folder;
 
     private int unreadCount;
     public static final String UNREAD_COUNT = "unreadCount";
@@ -125,12 +123,6 @@ public class Feed extends RealmObject implements TreeItem {
 
     public void setAdded(Date added) {
         this.added = added;
-    }
-
-    public Folder folder() {
-        if(folder == null)
-            folder = ((Realm)realm).where(Folder.class).equalTo(ID, getFolderId()).findFirst();
-        return folder;
     }
 
     public Long getFolderId() {

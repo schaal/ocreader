@@ -323,9 +323,9 @@ public class Queries {
                 for(T toRemove: itemsToRemove) {
                     if(clazz == Feed.class) {
                         // Also remove items belonging to feed being removed from database
-                        realm.where(Item.class).equalTo(Item.FEED_ID, toRemove.getId()).findAll().clear();
+                        realm.where(Item.class).equalTo(Item.FEED_ID, toRemove.getId()).findAll().deleteAllFromRealm();
                     }
-                    toRemove.removeFromRealm();
+                    toRemove.deleteFromRealm();
                 }
             }
         });
@@ -381,7 +381,7 @@ public class Queries {
             public void execute(Realm realm) {
                 int itemsToDelete = expendableItems.size() - maxItems;
                 for (int i = 0; i < itemsToDelete; i++) {
-                    expendableItems.remove(0);
+                    expendableItems.deleteFirstFromRealm();
                 }
             }
         });
