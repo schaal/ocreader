@@ -246,8 +246,7 @@ public class Queries {
 
             if(distinct) {
                 RealmResults<Item> distinctItems = query.distinct(Item.FINGERPRINT);
-                distinctItems.sort(sortFieldname, order);
-                return distinctItems;
+                return distinctItems.sort(sortFieldname, order);
             } else {
                 return query.findAllSorted(sortFieldname, order);
             }
@@ -405,8 +404,7 @@ public class Queries {
 
                     RealmResults<Item> unreadItems = itemRealmQuery.findAll();
 
-                    while(!unreadItems.isEmpty()) {
-                        Item item = unreadItems.first();
+                    for(Item item: unreadItems) {
                         item.setUnread(false);
                         if(lastItemId != null && item.getId() == lastItemId) {
                             break;
@@ -435,9 +433,8 @@ public class Queries {
                                     .equalTo(Item.FINGERPRINT, item.getFingerprint())
                                     .equalTo(Item.UNREAD, !newUnread)
                                     .findAll();
-                            while(!sameItems.isEmpty()) {
-                                Item first = sameItems.first();
-                                first.setUnread(newUnread);
+                            for(Item sameItem: sameItems) {
+                                sameItem.setUnread(newUnread);
                             }
                         }
                     }
