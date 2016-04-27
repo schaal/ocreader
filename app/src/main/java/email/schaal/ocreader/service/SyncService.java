@@ -80,13 +80,7 @@ public class SyncService extends Service {
         LOAD_MORE
     }
 
-    private static final Map<String, SyncType> syncTypeMap;
-    static {
-        syncTypeMap = new ArrayMap<>(SyncType.values().length);
-        syncTypeMap.put(ACTION_FULL_SYNC, SyncType.FULL_SYNC);
-        syncTypeMap.put(ACTION_SYNC_CHANGES_ONLY, SyncType.SYNC_CHANGES_ONLY);
-        syncTypeMap.put(ACTION_LOAD_MORE, SyncType.LOAD_MORE);
-    }
+    private final Map<String, SyncType> syncTypeMap;
 
     public static final IntentFilter syncFilter;
     static {
@@ -102,6 +96,10 @@ public class SyncService extends Service {
     private final List<Integer> startIds = new ArrayList<>();
 
     public SyncService() {
+        syncTypeMap = new ArrayMap<>(SyncType.values().length);
+        syncTypeMap.put(ACTION_FULL_SYNC, SyncType.FULL_SYNC);
+        syncTypeMap.put(ACTION_SYNC_CHANGES_ONLY, SyncType.SYNC_CHANGES_ONLY);
+        syncTypeMap.put(ACTION_LOAD_MORE, SyncType.LOAD_MORE);
     }
 
     @Nullable
