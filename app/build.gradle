@@ -29,8 +29,8 @@ android {
         applicationId "email.schaal.ocreader"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 6
-        versionName "0.3"
+        versionCode 7
+        versionName "0.4"
 
         archivesBaseName="${getApplicationId()}_${getVersionCode()}"
 
