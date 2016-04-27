@@ -163,8 +163,7 @@ public class Queries {
     }
 
     public static void init(Context context) {
-        if(instance == null)
-            instance = new Queries(context);
+        instance = new Queries(context);
     }
 
     // For instrumentation tests

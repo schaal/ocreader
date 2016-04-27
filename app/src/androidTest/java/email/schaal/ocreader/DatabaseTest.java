@@ -35,19 +35,38 @@ import io.realm.RealmConfiguration;
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
 public class DatabaseTest extends ApplicationTestCase<OCReaderApplication> {
-    private static boolean firstRun = true;
-
     public DatabaseTest() {
         super(OCReaderApplication.class);
+    }
+
+    private Folder getTestFolder() {
+        Folder folder = new Folder(1);
+        folder.setTitle("TestFolderTitle");
+        return folder;
+    }
+
+    private Feed getTestFeed() {
+        Feed feed = new Feed();
+        feed.setId(1);
+        feed.setTitle("TestFeedTitle");
+        return feed;
+    }
+
+    private Item getTestItem() {
+        Item item = new Item();
+        item.setId(1);
+        item.setTitle("TestItemTitle");
+        item.setBody("TestBody");
+        item.setAuthor("TestAuthor");
+        item.setFeedId(1);
+        item.setLastModified(new Date());
+        return item;
     }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        if(firstRun) {
-            firstRun = false;
-            Queries.init(new RealmConfiguration.Builder(getContext()).inMemory().build());
-        }
+        Queries.init(new RealmConfiguration.Builder(getContext()).inMemory().build());
     }
 
     public void testDatabaseSetup() {
@@ -59,9 +78,7 @@ public class DatabaseTest extends ApplicationTestCase<OCReaderApplication> {
     public void testFolderInsert() {
         Realm realm = null;
         try {
-            Folder folder = new Folder();
-            folder.setId(1);
-            folder.setTitle("TestFolderTitle");
+            Folder folder = getTestFolder();
 
             realm = Realm.getDefaultInstance();
             Queries.getInstance().insert(realm, Folder.class, folder);
@@ -80,9 +97,7 @@ public class DatabaseTest extends ApplicationTestCase<OCReaderApplication> {
     public void testFeedInsert() {
         Realm realm = null;
         try {
-            Feed feed = new Feed();
-            feed.setId(1);
-            feed.setTitle("TestFeedTitle");
+            Feed feed = getTestFeed();
 
             realm = Realm.getDefaultInstance();
             Queries.getInstance().insert(realm, Feed.class, feed);
@@ -101,15 +116,11 @@ public class DatabaseTest extends ApplicationTestCase<OCReaderApplication> {
     public void testItemInsert() {
         Realm realm = null;
         try {
-            Item item = new Item();
-            item.setId(1);
-            item.setTitle("TestItemTitle");
-            item.setBody("TestBody");
-            item.setAuthor("TestAuthor");
-            item.setFeedId(1);
-            item.setLastModified(new Date());
+            Feed feed = getTestFeed();
+            Item item = getTestItem();
 
             realm = Realm.getDefaultInstance();
+            Queries.getInstance().insert(realm, Feed.class, feed);
             Queries.getInstance().insert(realm, Item.class, item);
 
             item = realm.where(Item.class).findFirst();
