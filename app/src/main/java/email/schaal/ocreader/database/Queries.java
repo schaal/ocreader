@@ -480,10 +480,8 @@ public class Queries {
     public Feed getOrCreateFeed(Realm realm, long feedId) {
         Feed feed = getFeed(realm, feedId);
         if(feed == null) {
-            realm.beginTransaction();
             feed = realm.createObject(Feed.class);
             feed.setId(feedId);
-            realm.commitTransaction();
         }
         return feed;
     }
