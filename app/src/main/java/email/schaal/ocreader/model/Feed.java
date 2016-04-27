@@ -24,9 +24,7 @@ import android.support.annotation.ColorInt;
 
 import java.util.Date;
 
-import io.realm.Realm;
 import io.realm.RealmObject;
-import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 /**
