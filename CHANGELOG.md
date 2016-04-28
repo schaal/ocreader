@@ -1,7 +1,7 @@
 ## 0.4 (2016-04-27)
 
 * Slight UI improvement for login activity
-* Treat items with the same fingerprint as one item (needs ownCloud news >= )
+* Treat items with the same fingerprint as one item (needs ownCloud news >= 8.1.0)
 
 ## 0.3 (2016-03-30)
 
