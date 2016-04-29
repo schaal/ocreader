@@ -1,3 +1,7 @@
+## 0.5 (2016-04-29)
+
+* Update proguard rules to fix colors not being applied in article webview
+
 ## 0.4 (2016-04-27)
 
 * Slight UI improvement for login activity
