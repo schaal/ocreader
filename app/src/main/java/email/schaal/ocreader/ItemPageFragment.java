@@ -26,6 +26,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.graphics.Palette;
@@ -105,6 +106,7 @@ public class ItemPageFragment extends WebViewFragment {
                 Color.alpha(color) / 255.0);
     }
 
+    @Keep
     private class JsCallback {
         @JavascriptInterface
         public void startLoading() {
