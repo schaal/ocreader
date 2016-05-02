@@ -1,0 +1,3 @@
+[submodule "MemorizingTrustManager"]
+	path = MemorizingTrustManager
+	url = https://github.com/schaal/MemorizingTrustManager
