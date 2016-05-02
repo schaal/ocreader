@@ -61,7 +61,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="email.schaal.ocreader.ListActivity"/>
         </activity>
-
+        <activity android:name="de.duenndns.ssl.MemorizingActivity"
+            android:theme="@style/Theme.AppCompat.Light.Translucent.NoTitleBar" />
     </application>
 
 </manifest>

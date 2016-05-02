@@ -20,6 +20,7 @@
 
 package email.schaal.ocreader.http;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -27,6 +28,11 @@ import android.preference.PreferenceManager;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.X509TrustManager;
+
+import de.duenndns.ssl.MemorizingTrustManager;
 import email.schaal.ocreader.Preferences;
 import okhttp3.Credentials;
 import okhttp3.HttpUrl;
@@ -44,6 +50,7 @@ public class HttpManager {
 
     private final OkHttpClient client;
     private HostCredentials credentials = null;
+    private MemorizingTrustManager mtm;
 
     private static HttpManager instance;
 
@@ -59,12 +66,27 @@ public class HttpManager {
     }
 
     private HttpManager(Context context) {
+        SSLContext sc = null;
+        try {
+            sc = SSLContext.getInstance("TLS");
+            mtm = new MemorizingTrustManager(context);
+            sc.init(null, new X509TrustManager[]{mtm}, new java.security.SecureRandom());
+        } catch (Exception e) {
+        }
 
-        client = new OkHttpClient.Builder()
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
-                .addInterceptor(new AuthorizationInterceptor())
-                .build();
+                .addInterceptor(new AuthorizationInterceptor());
+
+        if(sc != null && mtm != null) {
+            clientBuilder
+                    .sslSocketFactory(sc.getSocketFactory())
+                    .hostnameVerifier(mtm.wrapHostnameVerifier(HttpsURLConnection.getDefaultHostnameVerifier()))
+                    .build();
+        }
+
+        client = clientBuilder.build();
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String username = Preferences.USERNAME.getString(preferences);
@@ -74,6 +96,14 @@ public class HttpManager {
             String password = Preferences.PASSWORD.getString(preferences);
             credentials = new HostCredentials(username, password, url);
         }
+    }
+
+    public void bindActivity(Activity activity) {
+        mtm.bindDisplayActivity(activity);
+    }
+
+    public void unbindActivity(Activity activity) {
+        mtm.unbindDisplayActivity(activity);
     }
 
     public HttpUrl getRootUrl() {
