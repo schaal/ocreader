@@ -1,3 +1,7 @@
+## 0.6 (2016-05-03)
+
+* Add possibility to accept self-signed certs (Uses [MemorizingTrustManager](https://github.com/ge0rg/MemorizingTrustManager))
+
 ## 0.5 (2016-04-29)
 
 * Update proguard rules to fix colors not being applied in article webview
