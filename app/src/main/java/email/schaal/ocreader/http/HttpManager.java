@@ -26,10 +26,13 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLException;
 import javax.net.ssl.X509TrustManager;
 
 import de.duenndns.ssl.MemorizingTrustManager;
@@ -71,7 +74,8 @@ public class HttpManager {
             sc = SSLContext.getInstance("TLS");
             mtm = new MemorizingTrustManager(context);
             sc.init(null, new X509TrustManager[]{mtm}, new java.security.SecureRandom());
-        } catch (Exception e) {
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            e.printStackTrace();
         }
 
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
