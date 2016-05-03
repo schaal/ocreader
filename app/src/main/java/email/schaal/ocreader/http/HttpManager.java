@@ -20,7 +20,6 @@
 
 package email.schaal.ocreader.http;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -32,7 +31,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLException;
 import javax.net.ssl.X509TrustManager;
 
 import de.duenndns.ssl.MemorizingTrustManager;
@@ -100,14 +98,6 @@ public class HttpManager {
             String password = Preferences.PASSWORD.getString(preferences);
             credentials = new HostCredentials(username, password, url);
         }
-    }
-
-    public void bindActivity(Activity activity) {
-        mtm.bindDisplayActivity(activity);
-    }
-
-    public void unbindActivity(Activity activity) {
-        mtm.unbindDisplayActivity(activity);
     }
 
     public HttpUrl getRootUrl() {
