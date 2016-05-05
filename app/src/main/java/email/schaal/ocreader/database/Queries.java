@@ -464,8 +464,11 @@ public class Queries {
     }
 
     private synchronized void checkAlarm(Realm realm) {
-        boolean alarmNeeded = realm.where(Item.class).equalTo(Item.UNREAD_CHANGED, true).or().equalTo(Item.STARRED_CHANGED, true).count() > 0;
-        if (alarmNeeded)
+        long changedItemsCount = realm.where(Item.class)
+                .equalTo(Item.UNREAD_CHANGED, true)
+                .or()
+                .equalTo(Item.STARRED_CHANGED, true).count();
+        if (changedItemsCount > 0)
             AlarmUtils.getInstance().setAlarm();
         else
             AlarmUtils.getInstance().cancelAlarm();

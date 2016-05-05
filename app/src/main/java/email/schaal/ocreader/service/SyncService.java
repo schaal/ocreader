@@ -50,7 +50,6 @@ import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Item;
 import email.schaal.ocreader.model.StarredFolder;
-import email.schaal.ocreader.util.AlarmUtils;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -131,7 +130,6 @@ public class SyncService extends Service {
             notifySyncStatus(SYNC_STARTED, action);
             startIds.add(startId);
 
-            AlarmUtils.getInstance().cancelAlarm();
             APIService.getInstance().syncChanges(realm, new APIService.OnCompletionListener() {
                 @Override
                 public void onCompleted() {

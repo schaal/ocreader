@@ -53,6 +53,7 @@ import email.schaal.ocreader.model.ItemTypeAdapter;
 import email.schaal.ocreader.model.StatusTypeAdapter;
 import email.schaal.ocreader.model.User;
 import email.schaal.ocreader.model.UserTypeAdapter;
+import email.schaal.ocreader.util.AlarmUtils;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
@@ -117,6 +118,8 @@ public class APIService {
     }
 
     public void syncChanges(@NonNull final Realm realm, @Nullable final OnCompletionListener completionListener) {
+        AlarmUtils.getInstance().cancelAlarm();
+
         final CountDownLatch countDownLatch = new CountDownLatch(MarkAction.values().length);
 
         for (MarkAction action : MarkAction.values()) {
