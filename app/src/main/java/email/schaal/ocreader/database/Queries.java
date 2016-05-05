@@ -307,7 +307,7 @@ public class Queries {
             public void execute(Realm realm) {
                 realm.copyToRealmOrUpdate(elements);
 
-                RealmResults<T> results = realm.allObjects(clazz);
+                RealmResults<T> results = realm.where(clazz).findAll();
 
                 List<T> itemsToRemove = new ArrayList<>();
 
