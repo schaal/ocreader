@@ -51,8 +51,6 @@ public class HttpManager {
 
     private final OkHttpClient client;
     private HostCredentials credentials = null;
-    private MemorizingTrustManager mtm;
-
     private static HttpManager instance;
 
     public static void init(Context context) {
@@ -67,25 +65,24 @@ public class HttpManager {
     }
 
     private HttpManager(Context context) {
-        SSLContext sc = null;
-        try {
-            sc = SSLContext.getInstance("TLS");
-            mtm = new MemorizingTrustManager(context);
-            sc.init(null, new X509TrustManager[]{mtm}, new java.security.SecureRandom());
-        } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            e.printStackTrace();
-        }
 
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
                 .addInterceptor(new AuthorizationInterceptor());
 
-        if(sc != null && mtm != null) {
+        try {
+            SSLContext sc = SSLContext.getInstance("TLS");
+            MemorizingTrustManager mtm = new MemorizingTrustManager(context);
+
+            sc.init(null, new X509TrustManager[]{mtm}, new java.security.SecureRandom());
+
             clientBuilder
                     .sslSocketFactory(sc.getSocketFactory())
                     .hostnameVerifier(mtm.wrapHostnameVerifier(HttpsURLConnection.getDefaultHostnameVerifier()))
                     .build();
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            e.printStackTrace();
         }
 
         client = clientBuilder.build();
