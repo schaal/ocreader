@@ -41,6 +41,9 @@ import android.widget.Toast;
 import com.github.zafarkhaja.semver.Version;
 
 import java.net.UnknownHostException;
+import java.security.cert.CertificateException;
+
+import javax.net.ssl.SSLHandshakeException;
 
 import email.schaal.ocreader.api.APIService;
 import email.schaal.ocreader.api.json.Status;
@@ -230,6 +233,12 @@ public class LoginActivity extends AppCompatActivity {
 
             if(t instanceof UnknownHostException) {
                 showError(mUrlView, t.getLocalizedMessage());
+            } else if(t instanceof SSLHandshakeException) {
+                if(t.getCause() instanceof CertificateException) {
+                    showError(getString(R.string.untrusted_certificate));
+                } else {
+                    showError(mUrlView, t.getLocalizedMessage());
+                }
             } else {
                 showError(t.getLocalizedMessage());
             }
