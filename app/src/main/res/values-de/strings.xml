@@ -9,7 +9,7 @@
     <string name="error_field_required">Pflichtfeld</string>
     <string name="error_incorrect_url">Diese URL ist ungültig</string>
     <string name="error_incorrect_username_or_password">Benutzername oder Password sind falsch</string>
-    <string name="error_url_not_found">URL nicht gefunden</string>
+    <string name="error_ocnews_not_found">URL nicht gefunden</string>
     <string name="feed_icon_description">Feed icon</string>
     <string name="load_more">Weitere laden</string>
     <string name="mark_all_as_read">Alles als gelesen markieren</string>
