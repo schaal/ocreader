@@ -25,15 +25,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeUnit;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.X509TrustManager;
-
-import de.duenndns.ssl.MemorizingTrustManager;
 import email.schaal.ocreader.Preferences;
 import okhttp3.Credentials;
 import okhttp3.HttpUrl;
@@ -51,6 +44,7 @@ public class HttpManager {
 
     private final OkHttpClient client;
     private HostCredentials credentials = null;
+
     private static HttpManager instance;
 
     public static void init(Context context) {
@@ -66,26 +60,11 @@ public class HttpManager {
 
     private HttpManager(Context context) {
 
-        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
+        client = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
-                .addInterceptor(new AuthorizationInterceptor());
-
-        try {
-            SSLContext sc = SSLContext.getInstance("TLS");
-            MemorizingTrustManager mtm = new MemorizingTrustManager(context);
-
-            sc.init(null, new X509TrustManager[]{mtm}, new java.security.SecureRandom());
-
-            clientBuilder
-                    .sslSocketFactory(sc.getSocketFactory())
-                    .hostnameVerifier(mtm.wrapHostnameVerifier(HttpsURLConnection.getDefaultHostnameVerifier()))
-                    .build();
-        } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            e.printStackTrace();
-        }
-
-        client = clientBuilder.build();
+                .addInterceptor(new AuthorizationInterceptor())
+                .build();
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String username = Preferences.USERNAME.getString(preferences);
