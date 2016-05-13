@@ -45,22 +45,18 @@ public class HttpManager {
     private final OkHttpClient client;
     private HostCredentials credentials = null;
 
-    public HttpManager(Context context) {
+    public HttpManager(String username, String password, HttpUrl url) {
+        this();
 
+        credentials = new HostCredentials(username, password, url);
+    }
+
+    public HttpManager() {
         client = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
                 .addInterceptor(new AuthorizationInterceptor())
                 .build();
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String username = Preferences.USERNAME.getString(preferences);
-
-        if(username != null) {
-            HttpUrl url = HttpUrl.parse(Preferences.URL.getString(preferences));
-            String password = Preferences.PASSWORD.getString(preferences);
-            credentials = new HostCredentials(username, password, url);
-        }
     }
 
     public HostCredentials getCredentials() {

@@ -21,8 +21,10 @@
 package email.schaal.ocreader.api;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -37,6 +39,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.api.json.Feeds;
 import email.schaal.ocreader.api.json.Folders;
 import email.schaal.ocreader.api.json.ItemIds;
@@ -82,10 +85,15 @@ public class APIService {
     private static final int BATCH_SIZE = 100;
 
     private final Gson gson;
-    private final HttpManager httpManager;
+    private HttpManager httpManager;
 
     private final Executor executor = Executors.newSingleThreadExecutor();
     private final Handler handler = new Handler(Looper.getMainLooper());
+
+    public void setHttpManager(HttpManager httpManager) {
+        this.httpManager = httpManager;
+        api = setupApi(httpManager);
+    }
 
     private enum MarkAction {
         MARK_READ(Item.UNREAD, Item.UNREAD_CHANGED, false),
@@ -266,9 +274,18 @@ public class APIService {
                 })
                 .create();
 
-        httpManager = new HttpManager(context);
-        if(httpManager.hasCredentials())
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String username = Preferences.USERNAME.getString(sharedPreferences);
+        if(username != null) {
+            String password = Preferences.PASSWORD.getString(sharedPreferences);
+            String url = Preferences.URL.getString(sharedPreferences);
+            httpManager = new HttpManager(username, password, HttpUrl.parse(url));
             api = setupApi(httpManager.getCredentials().getRootUrl(), httpManager.getClient());
+        }
+    }
+
+    public API setupApi(HttpManager httpManager) {
+        return setupApi(httpManager.getCredentials().getRootUrl(), httpManager.getClient());
     }
 
     public API setupApi(HttpUrl rootUrl, OkHttpClient client) {

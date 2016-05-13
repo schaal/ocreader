@@ -173,8 +173,7 @@ public class LoginActivity extends AppCompatActivity {
             // perform the user login attempt.
             showProgress(true);
             url = url.newBuilder().addPathSegment("").build();
-            httpManager = new HttpManager(this);
-            httpManager.setCredentials(username, password, url);
+            httpManager = new HttpManager(username, password, url);
             APIService.API api = APIService.getInstance().setupApi(url, httpManager.getClient());
             mAuthTask = api.status();
             mAuthTask.enqueue(new LoginCallback());
@@ -213,6 +212,7 @@ public class LoginActivity extends AppCompatActivity {
                             .putString(Preferences.URL.getKey(), httpManager.getCredentials().getRootUrl().toString())
                             .apply();
 
+                    APIService.getInstance().setHttpManager(httpManager);
                     Intent data = new Intent(Intent.ACTION_VIEW);
                     data.putExtra(EXTRA_IMPROPERLY_CONFIGURED_CRON, status.isImproperlyConfiguredCron());
                     data.setData(Uri.parse(httpManager.getCredentials().getRootUrl().resolve("/index.php/apps/news").toString()));
