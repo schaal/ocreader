@@ -225,6 +225,7 @@ public class LoginActivity extends AppCompatActivity {
                         showError(mUsernameView, getString(R.string.error_incorrect_username_or_password));
                         break;
                     case 404:
+                    case 405:
                         showError(mUrlView, getString(R.string.error_ocnews_not_found));
                         break;
                     default:
