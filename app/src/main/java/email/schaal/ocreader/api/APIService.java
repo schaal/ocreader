@@ -264,11 +264,11 @@ public class APIService {
                 .create();
 
         if(HttpManager.getInstance().hasCredentials())
-            setupApi();
+            api = setupApi(HttpManager.getInstance().getRootUrl());
     }
 
-    public void setupApi() {
-        HttpUrl baseUrl = HttpManager.getInstance().getRootUrl().resolve(ROOT_PATH_APIv1_2);
+    public API setupApi(HttpUrl rootUrl) {
+        HttpUrl baseUrl = rootUrl.resolve(ROOT_PATH_APIv1_2);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
@@ -276,7 +276,7 @@ public class APIService {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
-        api = retrofit.create(API.class);
+        return retrofit.create(API.class);
     }
 
     public API getApi() {

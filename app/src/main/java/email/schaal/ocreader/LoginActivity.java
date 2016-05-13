@@ -172,8 +172,8 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(true);
             url = url.newBuilder().addPathSegment("").build();
             HttpManager.getInstance().setCredentials(username, password, url);
-            APIService.getInstance().setupApi();
-            mAuthTask = APIService.getInstance().getApi().status();
+            APIService.API api = APIService.getInstance().setupApi(url);
+            mAuthTask = api.status();
             mAuthTask.enqueue(new LoginCallback());
         }
     }
