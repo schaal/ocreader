@@ -20,6 +20,7 @@
 
 package email.schaal.ocreader.api;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -58,6 +59,7 @@ import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -80,6 +82,7 @@ public class APIService {
     private static final int BATCH_SIZE = 100;
 
     private final Gson gson;
+    private final HttpManager httpManager;
 
     private final Executor executor = Executors.newSingleThreadExecutor();
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -233,8 +236,8 @@ public class APIService {
 
     private API api;
 
-    public static void init() {
-        instance = new APIService();
+    public static void init(Context context) {
+        instance = new APIService(context);
     }
 
     public static APIService getInstance() {
@@ -243,7 +246,7 @@ public class APIService {
         return instance;
     }
 
-    private APIService() {
+    private APIService(Context context) {
         gson = new GsonBuilder()
                 .registerTypeAdapter(Folder.class, new FolderTypeAdapter())
                 .registerTypeAdapter(Feed.class, new FeedTypeAdapter())
@@ -263,16 +266,17 @@ public class APIService {
                 })
                 .create();
 
-        if(HttpManager.getInstance().hasCredentials())
-            api = setupApi(HttpManager.getInstance().getRootUrl());
+        httpManager = new HttpManager(context);
+        if(httpManager.hasCredentials())
+            api = setupApi(httpManager.getCredentials().getRootUrl(), httpManager.getClient());
     }
 
-    public API setupApi(HttpUrl rootUrl) {
+    public API setupApi(HttpUrl rootUrl, OkHttpClient client) {
         HttpUrl baseUrl = rootUrl.resolve(ROOT_PATH_APIv1_2);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
-                .client(HttpManager.getInstance().getClient())
+                .client(client)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 

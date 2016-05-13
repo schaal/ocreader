@@ -70,6 +70,8 @@ public class LoginActivity extends AppCompatActivity {
      */
     private Call<Status> mAuthTask = null;
 
+    private HttpManager httpManager;
+
     // UI references.
     private TextView mUsernameView;
     private EditText mPasswordView;
@@ -171,8 +173,9 @@ public class LoginActivity extends AppCompatActivity {
             // perform the user login attempt.
             showProgress(true);
             url = url.newBuilder().addPathSegment("").build();
-            HttpManager.getInstance().setCredentials(username, password, url);
-            APIService.API api = APIService.getInstance().setupApi(url);
+            httpManager = new HttpManager(this);
+            httpManager.setCredentials(username, password, url);
+            APIService.API api = APIService.getInstance().setupApi(url, httpManager.getClient());
             mAuthTask = api.status();
             mAuthTask.enqueue(new LoginCallback());
         }
@@ -203,11 +206,16 @@ public class LoginActivity extends AppCompatActivity {
                 if(status.getVersion().lessThan(MIN_SUPPORTED_VERSION)) {
                     showError(getString(R.string.update_warning, MIN_SUPPORTED_VERSION.toString()));
                 } else {
-                    HttpManager.getInstance().persistCredentials(LoginActivity.this);
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+                    preferences.edit()
+                            .putString(Preferences.USERNAME.getKey(), httpManager.getCredentials().getUsername())
+                            .putString(Preferences.PASSWORD.getKey(), httpManager.getCredentials().getPassword())
+                            .putString(Preferences.URL.getKey(), httpManager.getCredentials().getRootUrl().toString())
+                            .apply();
 
                     Intent data = new Intent(Intent.ACTION_VIEW);
                     data.putExtra(EXTRA_IMPROPERLY_CONFIGURED_CRON, status.isImproperlyConfiguredCron());
-                    data.setData(Uri.parse(HttpManager.getInstance().getRootUrl().resolve("/index.php/apps/news").toString()));
+                    data.setData(Uri.parse(httpManager.getCredentials().getRootUrl().resolve("/index.php/apps/news").toString()));
                     setResult(RESULT_OK, data);
                     finish();
                 }

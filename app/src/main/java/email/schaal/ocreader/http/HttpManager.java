@@ -45,20 +45,7 @@ public class HttpManager {
     private final OkHttpClient client;
     private HostCredentials credentials = null;
 
-    private static HttpManager instance;
-
-    public static void init(Context context) {
-        instance = new HttpManager(context);
-    }
-
-    public static HttpManager getInstance() {
-
-        if(instance == null)
-            throw new IllegalArgumentException("HttpManager must be initialized first");
-        return instance;
-    }
-
-    private HttpManager(Context context) {
+    public HttpManager(Context context) {
 
         client = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
@@ -76,8 +63,8 @@ public class HttpManager {
         }
     }
 
-    public HttpUrl getRootUrl() {
-        return credentials.getRootUrl();
+    public HostCredentials getCredentials() {
+        return credentials;
     }
 
     public OkHttpClient getClient() {
@@ -88,22 +75,11 @@ public class HttpManager {
         this.credentials = new HostCredentials(username, password, url);
     }
 
-    public void persistCredentials(Context context) {
-        if(hasCredentials()) {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            preferences.edit()
-                    .putString(Preferences.USERNAME.getKey(), credentials.getUsername())
-                    .putString(Preferences.PASSWORD.getKey(), credentials.getPassword())
-                    .putString(Preferences.URL.getKey(), credentials.getRootUrl().toString())
-                    .apply();
-        }
-    }
-
     public boolean hasCredentials() {
         return credentials != null;
     }
 
-    private class HostCredentials {
+    public class HostCredentials {
         private final String credentials;
         private final String username;
         private final String password;

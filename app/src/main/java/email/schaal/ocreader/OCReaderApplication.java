@@ -51,9 +51,8 @@ public class OCReaderApplication extends Application {
                 .edit()
                 .putBoolean(Preferences.SYS_SYNC_RUNNING.getKey(), false)
                 .apply();
-        HttpManager.init(this);
         Queries.init(this);
-        APIService.init();
+        APIService.init(this);
         AlarmUtils.init(this);
         Picasso picasso = new Picasso.Builder(this)
                 .downloader(new OkHttp3Downloader(this))
