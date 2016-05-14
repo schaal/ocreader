@@ -67,4 +67,8 @@ public enum Preferences {
             return null;
         return preferences.getLong(key, (Long) defaultValue);
     }
+
+    public static boolean hasCredentials(SharedPreferences preferences) {
+        return USERNAME.getString(preferences) != null;
+    }
 }

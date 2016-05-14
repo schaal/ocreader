@@ -42,7 +42,7 @@ public abstract class RealmActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if(Preferences.USERNAME.getString(PreferenceManager.getDefaultSharedPreferences(this)) == null) {
+        if(!Preferences.hasCredentials(PreferenceManager.getDefaultSharedPreferences(this))) {
             startActivityForResult(new Intent(this, LoginActivity.class), LoginActivity.REQUEST_CODE);
         }
     }
