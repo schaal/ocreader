@@ -62,7 +62,6 @@ import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -280,20 +279,16 @@ public class APIService {
             String password = Preferences.PASSWORD.getString(sharedPreferences);
             String url = Preferences.URL.getString(sharedPreferences);
             httpManager = new HttpManager(username, password, HttpUrl.parse(url));
-            api = setupApi(httpManager.getCredentials().getRootUrl(), httpManager.getClient());
+            api = setupApi(httpManager);
         }
     }
 
     public API setupApi(HttpManager httpManager) {
-        return setupApi(httpManager.getCredentials().getRootUrl(), httpManager.getClient());
-    }
-
-    public API setupApi(HttpUrl rootUrl, OkHttpClient client) {
-        HttpUrl baseUrl = rootUrl.resolve(ROOT_PATH_APIv1_2);
+        HttpUrl baseUrl = httpManager.getCredentials().getRootUrl().resolve(ROOT_PATH_APIv1_2);
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
-                .client(client)
+                .client(httpManager.getClient())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
