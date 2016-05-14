@@ -84,13 +84,11 @@ public class APIService {
     private static final int BATCH_SIZE = 100;
 
     private final Gson gson;
-    private HttpManager httpManager;
 
     private final Executor executor = Executors.newSingleThreadExecutor();
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     public void setHttpManager(HttpManager httpManager) {
-        this.httpManager = httpManager;
         api = setupApi(httpManager);
     }
 
@@ -278,8 +276,7 @@ public class APIService {
         if(username != null) {
             String password = Preferences.PASSWORD.getString(sharedPreferences);
             String url = Preferences.URL.getString(sharedPreferences);
-            httpManager = new HttpManager(username, password, HttpUrl.parse(url));
-            api = setupApi(httpManager);
+            api = setupApi(new HttpManager(username, password, HttpUrl.parse(url)));
         }
     }
 
