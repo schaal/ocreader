@@ -36,9 +36,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v4.widget.ViewDragHelper;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -66,7 +64,6 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import java.io.ByteArrayInputStream;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import email.schaal.ocreader.database.Queries;
@@ -340,33 +337,10 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         drawerManager.getState().restoreInstanceState(getRealm(), PreferenceManager.getDefaultSharedPreferences(this));
         adapter.setTreeItem(drawerManager.getState().getTreeItem(), drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder, false);
 
-        try {
-            // increase the size of the drag margin for opening the drawers.
-            DrawerLayout drawerLayout = startDrawer.getDrawerLayout();
-
-            setDraggerEdgeSize(drawerLayout.getClass()
-                    .getDeclaredField("mLeftDragger"), drawerLayout);
-            setDraggerEdgeSize(drawerLayout.getClass()
-                    .getDeclaredField("mRightDragger"), drawerLayout);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         drawerManager.reloadAdapters(getRealm(), isShowOnlyUnread());
 
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(drawerManager.getState().getTreeItem().getTitle());
-    }
-
-    private static void setDraggerEdgeSize(Field mDragger, DrawerLayout drawerLayout) throws IllegalAccessException, NoSuchFieldException {
-        mDragger.setAccessible(true);
-        ViewDragHelper draggerObj = (ViewDragHelper) mDragger.get(drawerLayout);
-
-        Field mEdgeSize = draggerObj.getClass().getDeclaredField("mEdgeSize");
-        mEdgeSize.setAccessible(true);
-        int edge = mEdgeSize.getInt(draggerObj);
-
-        mEdgeSize.setInt(draggerObj, edge * 2);
     }
 
     private boolean isShowOnlyUnread() {
