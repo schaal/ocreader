@@ -57,7 +57,7 @@ import io.realm.exceptions.RealmException;
 public class Queries {
     private final static String TAG = Queries.class.getName();
 
-    public final static int SCHEMA_VERSION = 4;
+    public final static int SCHEMA_VERSION = 5;
 
     private static Queries instance;
 
@@ -116,6 +116,15 @@ public class Queries {
                 for(DynamicRealmObject item: items) {
                     item.setObject(Item.FEED, realm.where("Feed").equalTo(Feed.ID, item.getLong(Item.FEED_ID)).findFirst());
                 }
+                oldVersion++;
+            }
+
+            /**
+             * v4 -> v5
+             * - remove color field from Feed
+             */
+            if(oldVersion == 4) {
+                schema.get("Feed").removeField("color");
                 oldVersion++;
             }
         }

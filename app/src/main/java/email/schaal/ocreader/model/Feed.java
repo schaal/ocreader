@@ -63,9 +63,6 @@ public class Feed extends RealmObject implements TreeItem {
     private boolean pinned;
     public static final String PINNED = "pinned";
 
-    @ColorInt private Integer color;
-    public static final String COLOR = "color";
-
     public Feed() {
     }
 
@@ -169,13 +166,5 @@ public class Feed extends RealmObject implements TreeItem {
 
     public void setPinned(boolean pinned) {
         this.pinned = pinned;
-    }
-
-    @ColorInt public Integer getColor() {
-        return color;
-    }
-
-    public void setColor(@ColorInt Integer color) {
-        this.color = color;
     }
 }
