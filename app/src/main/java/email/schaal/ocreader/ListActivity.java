@@ -163,6 +163,14 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if(!Preferences.hasCredentials(PreferenceManager.getDefaultSharedPreferences(this))) {
+            startActivityForResult(new Intent(this, LoginActivity.class), LoginActivity.REQUEST_CODE);
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);

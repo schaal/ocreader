@@ -20,9 +20,7 @@
 
 package email.schaal.ocreader;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 
 import io.realm.Realm;
@@ -37,14 +35,6 @@ public abstract class RealmActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         realm = Realm.getDefaultInstance();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if(!Preferences.hasCredentials(PreferenceManager.getDefaultSharedPreferences(this))) {
-            startActivityForResult(new Intent(this, LoginActivity.class), LoginActivity.REQUEST_CODE);
-        }
     }
 
     @Override
