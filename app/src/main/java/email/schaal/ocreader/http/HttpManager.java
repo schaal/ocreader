@@ -62,14 +62,6 @@ public class HttpManager {
         return client;
     }
 
-    public void setCredentials(String username, String password, HttpUrl url) {
-        this.credentials = new HostCredentials(username, password, url);
-    }
-
-    public boolean hasCredentials() {
-        return credentials != null;
-    }
-
     public class HostCredentials {
         private final String credentials;
         private final String username;
