@@ -62,6 +62,7 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.mikepenz.materialdrawer.model.interfaces.Tagable;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -225,7 +226,14 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         IProfile profileSettingsItem = new ProfileSettingDrawerItem()
                 .withName(getString(R.string.account_settings))
                 .withIconTinted(true)
-                .withIcon(R.drawable.ic_settings);
+                .withIcon(R.drawable.ic_settings)
+                .withTag(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent loginIntent = new Intent(ListActivity.this, LoginActivity.class);
+                        startActivityForResult(loginIntent, LoginActivity.REQUEST_CODE);
+                    }
+                });
 
         accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
@@ -237,11 +245,14 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
                     public boolean onProfileChanged(View view, IProfile profile, boolean current) {
-                        if (profile instanceof ProfileSettingDrawerItem) {
-                            Intent loginIntent = new Intent(ListActivity.this, LoginActivity.class);
-                            startActivityForResult(loginIntent, LoginActivity.REQUEST_CODE);
+                        if (profile instanceof Tagable) {
+                            Tagable tagable = (Tagable) profile;
+                            if (tagable.getTag() instanceof Runnable) {
+                                ((Runnable) tagable.getTag()).run();
+                                return false;
+                            }
                         }
-                        return false;
+                        return true;
                     }
                 })
                 .build();
