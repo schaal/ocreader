@@ -20,14 +20,9 @@
 
 package email.schaal.ocreader.http;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import email.schaal.ocreader.Preferences;
 import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;

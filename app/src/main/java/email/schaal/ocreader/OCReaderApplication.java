@@ -35,7 +35,6 @@ import com.squareup.picasso.Picasso;
 
 import email.schaal.ocreader.api.APIService;
 import email.schaal.ocreader.database.Queries;
-import email.schaal.ocreader.http.HttpManager;
 import email.schaal.ocreader.util.AlarmUtils;
 
 /**
