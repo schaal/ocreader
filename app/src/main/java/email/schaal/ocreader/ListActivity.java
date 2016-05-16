@@ -337,7 +337,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         startDrawer = startDrawerBuilder.build();
 
         drawerManager = new DrawerManager(this, startDrawer, endDrawerBuilder.append(startDrawer), isShowOnlyUnread(), this);
-        drawerManager.getState().restoreInstanceState(getRealm());
+        drawerManager.getState().restoreInstanceState(getRealm(), PreferenceManager.getDefaultSharedPreferences(this));
         adapter.setTreeItem(drawerManager.getState().getTreeItem(), drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder, false);
 
         try {
@@ -377,7 +377,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(LAYOUT_MANAGER_STATE, layoutManager.onSaveInstanceState());
-        drawerManager.getState().saveInstanceState();
+        drawerManager.getState().saveInstanceState(PreferenceManager.getDefaultSharedPreferences(this));
     }
 
     private void onStartDrawerItemClicked(TreeItem item) {

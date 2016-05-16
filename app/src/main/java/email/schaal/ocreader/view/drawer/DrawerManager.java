@@ -22,7 +22,6 @@ package email.schaal.ocreader.view.drawer;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
 import com.mikepenz.materialdrawer.Drawer;
@@ -53,20 +52,20 @@ import io.realm.RealmResults;
 public class DrawerManager {
     private static final String TAG = DrawerManager.class.getName();
 
-    private final Context context;
-
-    public State getState() {
-        return state;
-    }
-
     private final State state;
 
     private final SubscriptionDrawerManager startAdapter;
     private final FolderDrawerManager endAdapter;
 
+    private final AllUnreadFolder allUnreadFolder;
+    private final StarredFolder starredFolder;
+
     public DrawerManager(Context context, Drawer startDrawer, Drawer endDrawer, boolean onlyUnread, OnCheckedChangeListener onlyUnreadChangeListener) {
-        this.context = context;
+        allUnreadFolder = new AllUnreadFolder(context);
+        starredFolder = new StarredFolder(context);
+
         state = new State();
+
         startAdapter = new SubscriptionDrawerManager(startDrawer, onlyUnread, onlyUnreadChangeListener);
         endAdapter = new FolderDrawerManager(endDrawer);
     }
@@ -77,6 +76,10 @@ public class DrawerManager {
 
     public FolderDrawerManager getEndAdapter() {
         return endAdapter;
+    }
+
+    public State getState() {
+        return state;
     }
 
     public void setSelectedTreeItem(Realm realm, TreeItem selectedItem, boolean showOnlyUnread) {
@@ -103,10 +106,8 @@ public class DrawerManager {
 
         public SubscriptionDrawerManager(Drawer drawer, boolean onlyUnread, OnCheckedChangeListener onlyUnreadChangeListener) {
             super(drawer);
-            AllUnreadFolder unreadFolder = new AllUnreadFolder(context);
-            StarredFolder starredFolder = new StarredFolder(context);
 
-            topDrawerItems.add(new TreeItemDrawerItem(unreadFolder));
+            topDrawerItems.add(new TreeItemDrawerItem(allUnreadFolder));
             topDrawerItems.add(new TreeItemDrawerItem(starredFolder));
 
             topDrawerItems.add(new SecondarySwitchDrawerItem()
@@ -212,14 +213,14 @@ public class DrawerManager {
         @Nullable private Long endDrawerItemId;
 
         public State() {
-            startDrawerItem = new AllUnreadFolder(context);
+            startDrawerItem = allUnreadFolder;
             startDrawerItemId = AllUnreadFolder.ID;
             endDrawerItemId = null;
             endDrawerItem = null;
         }
 
-        public void saveInstanceState() {
-            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        public void saveInstanceState(SharedPreferences preferences) {
+            SharedPreferences.Editor editor = preferences.edit();
 
             editor.putLong(Preferences.SYS_STARTDRAWERITEMID.getKey(), startDrawerItemId);
             editor.putLong(Preferences.SYS_ENDRAWERITEM_ID.getKey(), endDrawerItemId != null ? endDrawerItemId : -1);
@@ -228,9 +229,7 @@ public class DrawerManager {
             editor.apply();
         }
 
-        public void restoreInstanceState(Realm realm) {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-
+        public void restoreInstanceState(Realm realm, SharedPreferences preferences) {
             //noinspection ConstantConditions
             startDrawerItemId = Preferences.SYS_STARTDRAWERITEMID.getLong(preferences);
             endDrawerItemId = Preferences.SYS_ENDRAWERITEM_ID.getLong(preferences);
@@ -241,9 +240,9 @@ public class DrawerManager {
             boolean isFeed = Preferences.SYS_ISFEED.getBoolean(preferences);
 
             if(startDrawerItemId == AllUnreadFolder.ID) {
-                startDrawerItem = new AllUnreadFolder(context);
+                startDrawerItem = allUnreadFolder;
             } else if(startDrawerItemId == StarredFolder.ID) {
-                startDrawerItem = new StarredFolder(context);
+                startDrawerItem = starredFolder;
             } else {
                 if (isFeed) {
                     startDrawerItem = Queries.getInstance().getFeed(realm, startDrawerItemId);
@@ -256,7 +255,7 @@ public class DrawerManager {
             }
 
             if(startDrawerItem == null) {
-                startDrawerItem = new AllUnreadFolder(context);
+                startDrawerItem = allUnreadFolder;
                 startDrawerItemId = AllUnreadFolder.ID;
             }
         }
