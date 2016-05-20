@@ -132,52 +132,54 @@ public class SyncService extends Service {
 
             APIService.getInstance().syncChanges(realm, new APIService.OnCompletionListener() {
                 @Override
-                public void onCompleted() {
-                    switch (syncType) {
-                        case SYNC_CHANGES_ONLY:
-                            notifySyncStatus(SYNC_FINISHED, action);
-                            stopSelf(startIds.remove(0));
-                            break;
-                        case FULL_SYNC:
-                            long lastSync = 0L;
+                public void onCompleted(boolean result) {
+                    if(result) {
+                        switch (syncType) {
+                            case SYNC_CHANGES_ONLY:
+                                notifySyncStatus(SYNC_FINISHED, action);
+                                stopSelf(startIds.remove(0));
+                                break;
+                            case FULL_SYNC:
+                                long lastSync = 0L;
 
-                            if(!intent.getBooleanExtra(EXTRA_INITIAL_SYNC, false))
-                                lastSync = getLastSyncTimestamp(realm);
+                                if (!intent.getBooleanExtra(EXTRA_INITIAL_SYNC, false))
+                                    lastSync = getLastSyncTimestamp(realm);
 
-                            APIService.APICallback apiCallback = getApiCallback(startId, lastSync == 0L ? 5 : 4);
+                                APIService.APICallback apiCallback = getApiCallback(startId, lastSync == 0L ? 5 : 4);
 
-                            APIService.getInstance().user(realm, apiCallback);
-                            APIService.getInstance().folders(realm, apiCallback);
-                            APIService.getInstance().feeds(realm, apiCallback);
+                                APIService.getInstance().user(realm, apiCallback);
+                                APIService.getInstance().folders(realm, apiCallback);
+                                APIService.getInstance().feeds(realm, apiCallback);
 
-                            if(lastSync == 0L) {
-                                APIService.getInstance().starredItems(realm, apiCallback);
-                                APIService.getInstance().items(realm, apiCallback);
-                            } else {
-                                Queries.getInstance().removeExcessItems(realm, MAX_ITEMS);
-                                APIService.getInstance().updatedItems(realm, lastSync, apiCallback);
-                            }
+                                if (lastSync == 0L) {
+                                    APIService.getInstance().starredItems(realm, apiCallback);
+                                    APIService.getInstance().items(realm, apiCallback);
+                                } else {
+                                    Queries.getInstance().removeExcessItems(realm, MAX_ITEMS);
+                                    APIService.getInstance().updatedItems(realm, lastSync, apiCallback);
+                                }
 
-                            waitForCountdownLatch(startId, action);
-                            break;
-                        case LOAD_MORE:
-                            long id = intent.getLongExtra(EXTRA_ID, -1);
-                            long offset = intent.getLongExtra(EXTRA_OFFSET, 0);
-                            boolean isFeed = intent.getBooleanExtra(EXTRA_IS_FEED, false);
+                                waitForCountdownLatch(startId, action);
+                                break;
+                            case LOAD_MORE:
+                                long id = intent.getLongExtra(EXTRA_ID, -1);
+                                long offset = intent.getLongExtra(EXTRA_OFFSET, 0);
+                                boolean isFeed = intent.getBooleanExtra(EXTRA_IS_FEED, false);
 
-                            APIService.QueryType queryType;
+                                APIService.QueryType queryType;
 
-                            if(id == StarredFolder.ID) {
-                                queryType = APIService.QueryType.STARRED;
-                                id = 0;
-                            } else {
-                                queryType = isFeed ? APIService.QueryType.FEED : APIService.QueryType.FOLDER;
-                            }
+                                if (id == StarredFolder.ID) {
+                                    queryType = APIService.QueryType.STARRED;
+                                    id = 0;
+                                } else {
+                                    queryType = isFeed ? APIService.QueryType.FEED : APIService.QueryType.FOLDER;
+                                }
 
-                            APIService.getInstance().moreItems(realm, queryType, offset, id, getApiCallback(startId, 1));
+                                APIService.getInstance().moreItems(realm, queryType, offset, id, getApiCallback(startId, 1));
 
-                            waitForCountdownLatch(startId, action);
-                            break;
+                                waitForCountdownLatch(startId, action);
+                                break;
+                        }
                     }
                 }
             });

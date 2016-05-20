@@ -123,13 +123,36 @@ public class APIService {
     }
 
     public interface OnCompletionListener {
-        void onCompleted();
+        void onCompleted(boolean result);
     }
 
+    private class ResultLatch extends CountDownLatch {
+        public boolean isResult() {
+            return result;
+        }
+
+        public void setResult(boolean result) {
+            this.result = result;
+        }
+
+        private boolean result = true;
+        /**
+         * Constructs a {@code CountDownLatch} initialized with the given count.
+         *
+         * @param count the number of times {@link #countDown} must be invoked
+         *              before threads can pass through {@link #await}
+         * @throws IllegalArgumentException if {@code count} is negative
+         */
+        public ResultLatch(int count) {
+            super(count);
+        }
+
+
+    }
     public void syncChanges(@NonNull final Realm realm, @Nullable final OnCompletionListener completionListener) {
         AlarmUtils.getInstance().cancelAlarm();
 
-        final CountDownLatch countDownLatch = new CountDownLatch(MarkAction.values().length);
+        final ResultLatch countDownLatch = new ResultLatch(MarkAction.values().length);
 
         for (MarkAction action : MarkAction.values()) {
             markItems(action, realm, countDownLatch);
@@ -147,7 +170,7 @@ public class APIService {
                     @Override
                     public void run() {
                         if(completionListener != null)
-                            completionListener.onCompleted();
+                            completionListener.onCompleted(countDownLatch.isResult());
                     }
                 });
             }
@@ -155,7 +178,7 @@ public class APIService {
 
     }
 
-    private void markItems(final MarkAction action, final Realm realm, final CountDownLatch countDownLatch) {
+    private void markItems(final MarkAction action, final Realm realm, final ResultLatch countDownLatch) {
         final RealmResults<Item> results = realm.where(Item.class)
                 .equalTo(action.getChangedKey(), true)
                 .equalTo(action.getKey(), action.getValue()).findAll();
@@ -196,6 +219,7 @@ public class APIService {
                         }
                     });
                 } else {
+                    countDownLatch.setResult(false);
                     Log.w(TAG, response.message());
                 }
             }
@@ -204,6 +228,7 @@ public class APIService {
             public void onFailure(Call<Void> call, Throwable t) {
                 t.printStackTrace();
                 countDownLatch.countDown();
+                countDownLatch.setResult(false);
             }
         };
 
