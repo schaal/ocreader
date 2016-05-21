@@ -92,7 +92,6 @@ public class SyncService extends Service {
     private Realm realm;
 
     private final Map<Integer, CountDownLatch> countDownLatches = new ArrayMap<>(4);
-    private final List<Integer> startIds = new ArrayList<>();
 
     public SyncService() {
         syncTypeMap = new ArrayMap<>(SyncType.values().length);
@@ -128,7 +127,6 @@ public class SyncService extends Service {
 
         if(syncType != null) {
             notifySyncStatus(SYNC_STARTED, action);
-            startIds.add(startId);
 
             APIService.getInstance().syncChanges(realm, new APIService.OnCompletionListener() {
                 @Override
@@ -137,7 +135,7 @@ public class SyncService extends Service {
                         switch (syncType) {
                             case SYNC_CHANGES_ONLY:
                                 notifySyncStatus(SYNC_FINISHED, action);
-                                stopSelf(startIds.remove(0));
+                                stopSelf(startId);
                                 break;
                             case FULL_SYNC:
                                 long lastSync = 0L;
@@ -180,6 +178,9 @@ public class SyncService extends Service {
                                 waitForCountdownLatch(startId, action);
                                 break;
                         }
+                    } else {
+                        notifySyncStatus(SYNC_FINISHED, action);
+                        stopSelf(startId);
                     }
                 }
             });
@@ -228,7 +229,7 @@ public class SyncService extends Service {
                             realm.executeTransaction(postProcessFeedTransaction);
                             countDownLatches.remove(startId);
                             notifySyncStatus(SYNC_FINISHED, action);
-                            stopSelf(startIds.remove(0));
+                            stopSelf(startId);
                         }
                     });
                 }
