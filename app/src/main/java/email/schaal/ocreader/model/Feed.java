@@ -20,8 +20,6 @@
 
 package email.schaal.ocreader.model;
 
-import android.support.annotation.ColorInt;
-
 import java.util.Date;
 
 import io.realm.RealmObject;
