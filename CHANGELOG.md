@@ -1,3 +1,9 @@
+## 0.7 (2016-05-22)
+
+* Remove accepting of selfs-signed certs again, this undermines TLS security (see e.g. https://github.com/owncloud/news/blob/master/docs/developer/External-Api.md#security-guidelines)
+* Don't start a full sync if article changes weren't synced successfully (hopefully fixes #6)
+* Fixes for LoginActivity
+
 ## 0.6 (2016-05-03)
 
 * Add possibility to accept self-signed certs (Uses [MemorizingTrustManager](https://github.com/ge0rg/MemorizingTrustManager))
