@@ -36,9 +36,7 @@ import android.support.v4.util.ArrayMap;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
