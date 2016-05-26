@@ -30,7 +30,9 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -45,7 +47,6 @@ import email.schaal.ocreader.api.APIService;
 import email.schaal.ocreader.api.json.Status;
 import email.schaal.ocreader.http.HttpManager;
 import email.schaal.ocreader.util.LoginError;
-import email.schaal.ocreader.view.UrlCheckerTextInputEditText;
 import okhttp3.HttpUrl;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -64,7 +65,6 @@ public class LoginActivity extends AppCompatActivity {
     public static final String EXTRA_IMPROPERLY_CONFIGURED_CRON = "email.schaal.ocreader.extra.improperlyConfiguredCron";
     private static final int WARNING_RECEIVED = 666;
 
-    private static final String HTTPS = "https";
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
     // UI references.
     private EditText mUsernameView;
     private EditText mPasswordView;
-    private UrlCheckerTextInputEditText mUrlView;
+    private EditText mUrlView;
     private View mProgressView;
     private View mLoginFormView;
 
@@ -93,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
         // Set up the login form.
         mUsernameView = (EditText) findViewById(R.id.username);
         mPasswordView = (EditText) findViewById(R.id.password);
-        mUrlView = (UrlCheckerTextInputEditText) findViewById(R.id.url);
+        mUrlView = (EditText) findViewById(R.id.url);
         mProgressView = findViewById(R.id.login_progress);
         mLoginFormView = findViewById(R.id.login_form);
 
@@ -127,12 +127,20 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        mUrlView.setUrlCheckCallback(new UrlCheckerTextInputEditText.UrlCheckCallback() {
+        mUrlView.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onCheckUrl(CharSequence text) {
-                if(text.toString().startsWith(HTTPS)) {
-                    updateSecureState(true);
-                }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                updateSecureState(true);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
     }
