@@ -165,6 +165,10 @@ public class LoginActivity extends AppCompatActivity {
             error = new LoginError(LoginError.Section.USER, getString(R.string.error_field_required));
         }
 
+        if (TextUtils.isEmpty(password)) {
+            error = new LoginError(LoginError.Section.PASSWORD, getString(R.string.error_field_required));
+        }
+
         if (TextUtils.isEmpty(urlString)) {
             error = new LoginError(LoginError.Section.URL, getString(R.string.error_field_required));
         } else if (url == null) {
