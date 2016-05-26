@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -85,7 +86,10 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        setupActionBar();
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         // Set up the login form.
         mUsernameView = (EditText) findViewById(R.id.username);
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -108,6 +112,9 @@ public class LoginActivity extends AppCompatActivity {
 
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        getSupportActionBar().setHomeButtonEnabled(Preferences.USERNAME.getString(sharedPreferences) != null);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         mUsernameView.setText(Preferences.USERNAME.getString(sharedPreferences));
         mPasswordView.setText(Preferences.PASSWORD.getString(sharedPreferences));
         mUrlView.setText(Preferences.URL.getString(sharedPreferences));
@@ -129,12 +136,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
-     */
-    private void setupActionBar() {
     }
 
     /**
