@@ -40,10 +40,6 @@ public class LoginError {
         return message;
     }
 
-    public boolean isEmpty() {
-        return message == null || message.isEmpty();
-    }
-
     public static LoginError getError(Context context, int code, String defaultMessage) {
         switch (code) {
             case 401:
