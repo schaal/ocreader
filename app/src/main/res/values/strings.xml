@@ -73,5 +73,6 @@
     <string name="error_unknown_host">Unknown Host</string>
     <string name="error_insecure_connection">Insecure connection, press sign in again to continue anyway</string>
     <string name="action_sign_in_insecurely">Sign in insecurely</string>
+    <string name="http_error">HTTP error %1$s</string>
 
 </resources>

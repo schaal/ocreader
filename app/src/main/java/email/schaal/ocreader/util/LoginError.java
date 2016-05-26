@@ -54,7 +54,7 @@ public class LoginError {
             case 405:
                 return new LoginError(Section.URL, context.getString(R.string.ocnews_too_old));
             default:
-                return new LoginError(defaultMessage);
+                return new LoginError(context.getString(R.string.http_error, code) + ": " + defaultMessage);
         }
     }
 
