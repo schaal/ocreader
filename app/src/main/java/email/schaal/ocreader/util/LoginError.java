@@ -48,6 +48,7 @@ public class LoginError {
         switch (code) {
             case 401:
                 return new LoginError(Section.USER, context.getString(R.string.error_incorrect_username_or_password));
+            case 403:
             case 404:
                 return new LoginError(Section.URL, context.getString(R.string.error_oc_not_found));
             case 405:
