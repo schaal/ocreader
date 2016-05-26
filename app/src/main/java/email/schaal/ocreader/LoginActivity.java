@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
     private HttpManager httpManager;
 
     // UI references.
-    private TextView mUsernameView;
+    private EditText mUsernameView;
     private EditText mPasswordView;
     private EditText mUrlView;
     private View mProgressView;
@@ -85,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         setupActionBar();
         // Set up the login form.
-        mUsernameView = (TextView) findViewById(R.id.username);
+        mUsernameView = (EditText) findViewById(R.id.username);
         mPasswordView = (EditText) findViewById(R.id.password);
         mUrlView = (EditText) findViewById(R.id.url);
         mProgressView = findViewById(R.id.login_progress);
