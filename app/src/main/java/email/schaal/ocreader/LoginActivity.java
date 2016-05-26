@@ -242,9 +242,12 @@ public class LoginActivity extends AppCompatActivity {
 
             if(response.isSuccessful()) {
                 Status status = response.body();
+                Version version = status.getVersion();
 
-                if(status.getVersion().lessThan(MIN_SUPPORTED_VERSION)) {
-                    error = new LoginError(getString(R.string.update_warning, MIN_SUPPORTED_VERSION.toString()));
+                if(version == null) {
+                    error = new LoginError("Couldn't detect ownCloud news version, check your ownCloud setup");
+                } else if(version.lessThan(MIN_SUPPORTED_VERSION)) {
+                    error = new LoginError(getString(R.string.update_warning, MIN_SUPPORTED_VERSION.toString(), version.toString()));
                 } else {
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
                     preferences.edit()

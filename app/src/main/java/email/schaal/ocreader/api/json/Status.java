@@ -20,21 +20,32 @@
 
 package email.schaal.ocreader.api.json;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import com.github.zafarkhaja.semver.UnexpectedCharacterException;
 import com.github.zafarkhaja.semver.Version;
 
 /**
  * Encapsulates the JSON response for the status api call
  */
 public class Status {
+    @Nullable
     private Version version;
     private boolean improperlyConfiguredCron;
 
+    @Nullable
     public Version getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
-        this.version = Version.valueOf(version);
+    public void setVersion(@NonNull String version) {
+        try {
+            this.version = Version.valueOf(version);
+        } catch (UnexpectedCharacterException e) {
+            this.version = null;
+            e.printStackTrace();
+        }
     }
 
     public boolean isImproperlyConfiguredCron() {
