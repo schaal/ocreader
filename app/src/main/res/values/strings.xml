@@ -70,5 +70,8 @@
     <string name="more_info">More info</string>
     <string name="untrusted_certificate">Couldn\'t verify certificate, please check your SSL setup</string>
     <string name="ocnews_too_old">OwnCloud news not installed or too old</string>
+    <string name="error_unknown_host">Unknown Host</string>
+    <string name="error_insecure_connection">Insecure connection, press sign in again to continue anyway</string>
+    <string name="action_sign_in_insecurely">Sign in insecurely</string>
 
 </resources>

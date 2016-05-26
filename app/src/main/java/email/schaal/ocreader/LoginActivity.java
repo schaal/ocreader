@@ -27,6 +27,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -36,18 +37,14 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.zafarkhaja.semver.Version;
-
-import java.net.UnknownHostException;
-import java.security.cert.CertificateException;
-
-import javax.net.ssl.SSLHandshakeException;
 
 import email.schaal.ocreader.api.APIService;
 import email.schaal.ocreader.api.json.Status;
 import email.schaal.ocreader.http.HttpManager;
+import email.schaal.ocreader.util.LoginError;
+import email.schaal.ocreader.view.UrlCheckerTextInputEditText;
 import okhttp3.HttpUrl;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -64,7 +61,9 @@ public class LoginActivity extends AppCompatActivity {
     public static final Version MIN_SUPPORTED_VERSION = Version.forIntegers(6,0,5);
 
     public static final String EXTRA_IMPROPERLY_CONFIGURED_CRON = "email.schaal.ocreader.extra.improperlyConfiguredCron";
+    private static final int WARNING_RECEIVED = 666;
 
+    private static final String HTTPS = "https";
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -75,9 +74,12 @@ public class LoginActivity extends AppCompatActivity {
     // UI references.
     private EditText mUsernameView;
     private EditText mPasswordView;
-    private EditText mUrlView;
+    private UrlCheckerTextInputEditText mUrlView;
     private View mProgressView;
     private View mLoginFormView;
+
+    private TextView mStatusView;
+    private Button mSignInButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,9 +89,11 @@ public class LoginActivity extends AppCompatActivity {
         // Set up the login form.
         mUsernameView = (EditText) findViewById(R.id.username);
         mPasswordView = (EditText) findViewById(R.id.password);
-        mUrlView = (EditText) findViewById(R.id.url);
+        mUrlView = (UrlCheckerTextInputEditText) findViewById(R.id.url);
         mProgressView = findViewById(R.id.login_progress);
         mLoginFormView = findViewById(R.id.login_form);
+
+        mStatusView = (TextView) findViewById(R.id.status);
 
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -108,11 +112,21 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordView.setText(Preferences.PASSWORD.getString(sharedPreferences));
         mUrlView.setText(Preferences.URL.getString(sharedPreferences));
 
-        Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
+        mSignInButton = (Button) findViewById(R.id.sign_in_button);
         mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
+            }
+        });
+
+        mUrlView.setUrlCheckCallback(new UrlCheckerTextInputEditText.UrlCheckCallback() {
+            @Override
+            public void onCheckUrl(CharSequence text) {
+                if(text.toString().startsWith(HTTPS)) {
+                    mSignInButton.setTag(null);
+                    mSignInButton.setText(R.string.action_sign_in);
+                }
             }
         });
     }
@@ -162,6 +176,12 @@ public class LoginActivity extends AppCompatActivity {
             mUrlView.setError(getString(R.string.error_incorrect_url));
             focusView = mUrlView;
             cancel = true;
+        } else if(mSignInButton.getTag() == null && !url.isHttps()) {
+            mUrlView.setError(getString(R.string.error_insecure_connection));
+            focusView = mUrlView;
+            cancel = true;
+            mSignInButton.setTag(WARNING_RECEIVED);
+            mSignInButton.setText(R.string.action_sign_in_insecurely);
         }
 
         if (cancel) {
@@ -180,30 +200,55 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    private void showError(@Nullable LoginError error) {
+        if(error != null) {
+            TextView errorView = null;
+
+            switch (error.getSection()) {
+                case URL:
+                    errorView = mUrlView;
+                    break;
+                case USER:
+                    errorView = mUsernameView;
+                    break;
+                case PASSWORD:
+                    errorView = mPasswordView;
+                    break;
+                case NONE:
+                    errorView = null;
+                    break;
+            }
+
+            if(errorView != null) {
+                errorView.setError(error.getMessage());
+                errorView.requestFocus();
+                mStatusView.setVisibility(View.GONE);
+            } else {
+                mStatusView.setVisibility(View.VISIBLE);
+                mStatusView.setText(error.getMessage());
+            }
+        } else {
+            mStatusView.setVisibility(View.GONE);
+        }
+    }
+
     private class LoginCallback implements Callback<Status> {
         private void onCompletion() {
             mAuthTask = null;
             showProgress(false);
         }
 
-        private void showError(String message) {
-            Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
-        }
-
-        private void showError(TextView errorView, String message) {
-            errorView.setError(message);
-            errorView.requestFocus();
-        }
-
         @Override
         public void onResponse(Call<Status> call, Response<Status> response) {
             onCompletion();
+
+            LoginError error = null;
 
             if(response.isSuccessful()) {
                 Status status = response.body();
 
                 if(status.getVersion().lessThan(MIN_SUPPORTED_VERSION)) {
-                    showError(getString(R.string.update_warning, MIN_SUPPORTED_VERSION.toString()));
+                    error = new LoginError(getString(R.string.update_warning, MIN_SUPPORTED_VERSION.toString()));
                 } else {
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
                     preferences.edit()
@@ -220,20 +265,10 @@ public class LoginActivity extends AppCompatActivity {
                     finish();
                 }
             } else {
-                switch (response.code()) {
-                    case 401:
-                        showError(mUsernameView, getString(R.string.error_incorrect_username_or_password));
-                        break;
-                    case 404:
-                        showError(mUrlView, getString(R.string.error_oc_not_found));
-                        break;
-                    case 405:
-                        showError(mUrlView, getString(R.string.ocnews_too_old));
-                        break;
-                    default:
-                        showError(response.message());
-                }
+                error = LoginError.getError(LoginActivity.this, response.code(), response.message());
             }
+
+            showError(error);
         }
 
         @Override
@@ -242,17 +277,7 @@ public class LoginActivity extends AppCompatActivity {
 
             t.printStackTrace();
 
-            if(t instanceof UnknownHostException) {
-                showError(mUrlView, t.getLocalizedMessage());
-            } else if(t instanceof SSLHandshakeException) {
-                if(t.getCause() instanceof CertificateException) {
-                    showError(getString(R.string.untrusted_certificate));
-                } else {
-                    showError(mUrlView, t.getLocalizedMessage());
-                }
-            } else {
-                showError(t.getLocalizedMessage());
-            }
+            showError(LoginError.getError(LoginActivity.this, t));
         }
     }
 
