@@ -131,8 +131,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onCheckUrl(CharSequence text) {
                 if(text.toString().startsWith(HTTPS)) {
-                    mSignInButton.setTag(null);
-                    mSignInButton.setText(R.string.action_sign_in);
+                    updateSecureState(true);
                 }
             }
         });
@@ -176,8 +175,7 @@ public class LoginActivity extends AppCompatActivity {
             error = new LoginError(LoginError.Section.URL, getString(R.string.error_incorrect_url));
         } else if(mSignInButton.getTag() == null && !url.isHttps()) {
             error = new LoginError(LoginError.Section.URL, getString(R.string.error_insecure_connection));
-            mSignInButton.setTag(WARNING_RECEIVED);
-            mSignInButton.setText(R.string.action_sign_in_insecurely);
+            updateSecureState(false);
         }
 
         if (error != null) {
@@ -193,6 +191,16 @@ public class LoginActivity extends AppCompatActivity {
             APIService.API api = APIService.getInstance().setupApi(httpManager);
             mAuthTask = api.status();
             mAuthTask.enqueue(new LoginCallback());
+        }
+    }
+
+    private void updateSecureState(boolean isSecure) {
+        if(isSecure) {
+            mSignInButton.setTag(null);
+            mSignInButton.setText(R.string.action_sign_in);
+        } else {
+            mSignInButton.setTag(WARNING_RECEIVED);
+            mSignInButton.setText(R.string.action_sign_in_insecurely);
         }
     }
 
