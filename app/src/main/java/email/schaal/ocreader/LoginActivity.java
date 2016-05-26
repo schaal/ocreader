@@ -152,42 +152,33 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordView.setError(null);
         mUrlView.setError(null);
 
+        LoginError error = null;
+
         // Store values at the time of the login attempt.
         String username = mUsernameView.getText().toString();
         String password = mPasswordView.getText().toString();
         String urlString = mUrlView.getText().toString();
         HttpUrl url = HttpUrl.parse(urlString);
 
-        boolean cancel = false;
-        View focusView = null;
-
         // Check for a valid username
         if (TextUtils.isEmpty(username)) {
-            mUsernameView.setError(getString(R.string.error_field_required));
-            focusView = mUsernameView;
-            cancel = true;
+            error = new LoginError(LoginError.Section.USER, getString(R.string.error_field_required));
         }
 
         if (TextUtils.isEmpty(urlString)) {
-            mUrlView.setError(getString(R.string.error_field_required));
-            focusView = mUrlView;
-            cancel = true;
+            error = new LoginError(LoginError.Section.URL, getString(R.string.error_field_required));
         } else if (url == null) {
-            mUrlView.setError(getString(R.string.error_incorrect_url));
-            focusView = mUrlView;
-            cancel = true;
+            error = new LoginError(LoginError.Section.URL, getString(R.string.error_incorrect_url));
         } else if(mSignInButton.getTag() == null && !url.isHttps()) {
-            mUrlView.setError(getString(R.string.error_insecure_connection));
-            focusView = mUrlView;
-            cancel = true;
+            error = new LoginError(LoginError.Section.URL, getString(R.string.error_insecure_connection));
             mSignInButton.setTag(WARNING_RECEIVED);
             mSignInButton.setText(R.string.action_sign_in_insecurely);
         }
 
-        if (cancel) {
+        if (error != null) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
-            focusView.requestFocus();
+            showError(error);
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
