@@ -32,10 +32,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -44,6 +46,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Base64;
 import android.util.Base64InputStream;
+import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -78,15 +81,18 @@ import email.schaal.ocreader.service.SyncService;
 import email.schaal.ocreader.view.DividerItemDecoration;
 import email.schaal.ocreader.view.ItemViewHolder;
 import email.schaal.ocreader.view.ItemsAdapter;
+import email.schaal.ocreader.view.ScrollAwareFABBehavior;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
 
-public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ItemsAdapter.OnLoadMoreListener, OnCheckedChangeListener {
+public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ItemsAdapter.OnLoadMoreListener, OnCheckedChangeListener, ActionMode.Callback {
     private static final String TAG = ListActivity.class.getName();
 
     private static final int REFRESH_DRAWER_ITEM_ID = 999;
     public static final String LAYOUT_MANAGER_STATE = "LAYOUT_MANAGER_STATE";
     private static final int REQUEST_CODE = 2;
+
+    private ActionMode actionMode;
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -454,9 +460,29 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
     @Override
     public void onItemClick(Item item, int position) {
-        Intent itemActivityIntent = new Intent(this, ItemPagerActivity.class);
-        itemActivityIntent.putExtra(ItemPagerActivity.POSITION, position);
-        startActivityForResult(itemActivityIntent, ListActivity.REQUEST_CODE);
+        if(actionMode == null) {
+            Intent itemActivityIntent = new Intent(this, ItemPagerActivity.class);
+            itemActivityIntent.putExtra(ItemPagerActivity.POSITION, position);
+            startActivityForResult(itemActivityIntent, ListActivity.REQUEST_CODE);
+        } else {
+            adapter.toggleSelection(position);
+            if(adapter.getSelectedItemsCount() == 0)
+                actionMode.finish();
+            else {
+                actionMode.setTitle(String.valueOf(adapter.getSelectedItemsCount()));
+            }
+        }
+    }
+
+    @Override
+    public void onItemLongClick(Item item, int position) {
+        if(actionMode != null)
+            return;
+
+        actionMode = startActionMode(this);
+        adapter.toggleSelection(position);
+        actionMode.setTitle(String.valueOf(adapter.getSelectedItemsCount()));
+        actionMode.invalidate();
     }
 
     @Override
@@ -503,5 +529,65 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
         PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(Preferences.SHOW_ONLY_UNREAD.getKey(), isChecked).apply();
         drawerManager.reloadAdapters(getRealm(), isChecked);
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        mode.getMenuInflater().inflate(R.menu.menu_item_list_action, menu);
+        startDrawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        swipeRefreshLayout.setEnabled(false);
+        fab_mark_all_read.setVisibility(View.GONE);
+        ((CoordinatorLayout.LayoutParams)fab_mark_all_read.getLayoutParams()).setBehavior(null);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        Boolean firstSelectedUnread = adapter.firstSelectedUnread();
+        if(firstSelectedUnread != null) {
+            menu.findItem(R.id.action_mark_read).setVisible(firstSelectedUnread);
+            menu.findItem(R.id.action_mark_unread).setVisible(!firstSelectedUnread);
+        }
+
+        Boolean firstSelectedStarred = adapter.firstSelectedStarred();
+        if(firstSelectedStarred != null) {
+            menu.findItem(R.id.action_mark_starred).setVisible(!firstSelectedStarred);
+            menu.findItem(R.id.action_mark_unstarred).setVisible(firstSelectedStarred);
+        }
+
+        return firstSelectedUnread != null;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_mark_read:
+                Queries.getInstance().setItemsUnread(getRealm(), false, adapter.getSelectedItems());
+                mode.finish();
+                return true;
+            case R.id.action_mark_unread:
+                Queries.getInstance().setItemsUnread(getRealm(), true, adapter.getSelectedItems());
+                mode.finish();
+                return true;
+            case R.id.action_mark_starred:
+                Queries.getInstance().setItemsStarred(getRealm(), true, adapter.getSelectedItems());
+                mode.finish();
+                return true;
+            case R.id.action_mark_unstarred:
+                Queries.getInstance().setItemsStarred(getRealm(), false, adapter.getSelectedItems());
+                mode.finish();
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        actionMode = null;
+        startDrawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        swipeRefreshLayout.setEnabled(true);
+        fab_mark_all_read.setVisibility(View.VISIBLE);
+        ((CoordinatorLayout.LayoutParams)fab_mark_all_read.getLayoutParams()).setBehavior(new ScrollAwareFABBehavior());
+        adapter.clearSelection();
     }
 }

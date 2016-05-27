@@ -20,6 +20,7 @@
 
 package email.schaal.ocreader.view;
 
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
@@ -93,7 +94,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements Target {
         };
     }
 
-    public void bindItem(final Item item, final int position) {
+    public void bindItem(final Item item, final int position, boolean selected) {
         textViewTitle.setText(item.getTitle());
 
         Feed feed = item.getFeed();
@@ -117,8 +118,24 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements Target {
             }
         });
 
+        itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                clickListener.onItemLongClick(item, position);
+                return true;
+            }
+        });
         setUnreadState(item.isUnread());
         setStarredState(item.isStarred());
+        if (selected) {
+            itemView.setBackgroundResource(R.drawable.item_background);
+        } else {
+            int[] attrs = new int[]{R.attr.selectableItemBackground};
+            TypedArray typedArray = itemView.getContext().obtainStyledAttributes(attrs);
+            int backgroundResource = typedArray.getResourceId(0, 0);
+            itemView.setBackgroundResource(backgroundResource);
+            typedArray.recycle();
+        }
     }
 
     private void setUnreadState(boolean unread) {
@@ -151,5 +168,6 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements Target {
 
     public interface OnClickListener {
         void onItemClick(Item item, int position);
+        void onItemLongClick(Item item, int position);
     }
 }

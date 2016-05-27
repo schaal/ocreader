@@ -23,6 +23,7 @@ package email.schaal.ocreader.view;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,7 @@ import io.realm.Sort;
  */
 public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private RealmList<Item> items;
+    private SparseArray<Item> selectedItems = new SparseArray<>();
     @Nullable private TreeItem treeItem;
     private boolean onlyUnread;
     private Realm realm;
@@ -137,7 +139,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof ItemViewHolder) {
             Item item = items.get(position);
-            ((ItemViewHolder) holder).bindItem(item, position);
+            ((ItemViewHolder) holder).bindItem(item, position, selectedItems.get(position, null) != null);
         }
         else if(holder instanceof LoadMoreViewHolder) {
             ((LoadMoreViewHolder) holder).showProgress(
@@ -181,6 +183,41 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         loadingMoreTreeItem = null;
     }
 
+    public void clearSelection() {
+        selectedItems.clear();
+        notifyDataSetChanged();
+    }
+
+    @Nullable
+    public Boolean firstSelectedUnread() {
+        if(selectedItems.size() > 0) {
+            return selectedItems.valueAt(0).isUnread();
+        } else {
+            return null;
+        }
+    }
+
+    @Nullable
+    public Boolean firstSelectedStarred() {
+        if(selectedItems.size() > 0) {
+            return selectedItems.valueAt(0).isStarred();
+        } else {
+            return null;
+        }
+    }
+
+    public int getSelectedItemsCount() {
+        return selectedItems.size();
+    }
+
+    public Item[] getSelectedItems() {
+        Item[] itemsIterable = new Item[selectedItems.size()];
+        for (int index = 0; index < selectedItems.size(); index++) {
+            itemsIterable[index] = selectedItems.valueAt(index);
+        }
+        return itemsIterable;
+    }
+
     private class EmptyStateViewHolder extends RecyclerView.ViewHolder {
         public EmptyStateViewHolder(View itemView) {
             super(itemView);
@@ -215,6 +252,15 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             else
                 loadMoreViewSwitcher.setDisplayedChild(CHILD_BUTTON_INDEX);
         }
+    }
+
+    public void toggleSelection(int position) {
+        if(selectedItems.get(position,null) != null) {
+            selectedItems.remove(position);
+        } else {
+            selectedItems.put(position, items.get(position));
+        }
+        notifyItemChanged(position);
     }
 
     public interface OnLoadMoreListener {
