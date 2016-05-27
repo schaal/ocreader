@@ -86,6 +86,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
     private static final int REFRESH_DRAWER_ITEM_ID = 999;
     public static final String LAYOUT_MANAGER_STATE = "LAYOUT_MANAGER_STATE";
+    private static final int REQUEST_CODE = 2;
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -392,10 +393,10 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        if(requestCode == LoginActivity.REQUEST_CODE) {
-            switch(resultCode) {
-                case LoginActivity.RESULT_OK:
-                    if(data.getBooleanExtra(LoginActivity.EXTRA_IMPROPERLY_CONFIGURED_CRON, false)) {
+        switch (requestCode) {
+            case LoginActivity.REQUEST_CODE:
+                if (resultCode == LoginActivity.RESULT_OK) {
+                    if (data.getBooleanExtra(LoginActivity.EXTRA_IMPROPERLY_CONFIGURED_CRON, false)) {
                         Snackbar snackbar = Snackbar.make(findViewById(R.id.coordinator_layout), R.string.updater_improperly_configured, Snackbar.LENGTH_INDEFINITE);
                         snackbar.setAction(R.string.more_info, new View.OnClickListener() {
                             @Override
@@ -413,8 +414,13 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
                     Queries.getInstance().resetDatabase();
                     SyncService.startSync(this, true);
-                    break;
-            }
+
+                }
+                break;
+            case ListActivity.REQUEST_CODE:
+                int id = data.getIntExtra("email.schaal.ocreader.extra.CURRENT_ID", -1);
+                layoutManager.scrollToPosition(id);
+                break;
         }
     }
 
@@ -450,7 +456,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     public void onItemClick(Item item, int position) {
         Intent itemActivityIntent = new Intent(this, ItemPagerActivity.class);
         itemActivityIntent.putExtra(ItemPagerActivity.POSITION, position);
-        startActivity(itemActivityIntent);
+        startActivityForResult(itemActivityIntent, ListActivity.REQUEST_CODE);
     }
 
     @Override

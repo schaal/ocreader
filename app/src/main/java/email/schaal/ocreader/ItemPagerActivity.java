@@ -64,6 +64,7 @@ public class ItemPagerActivity extends RealmActivity {
 
     private MenuItem menuItemMarkRead;
     private MenuItem menuItemMarkStarred;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +103,7 @@ public class ItemPagerActivity extends RealmActivity {
             }
         });
 
-        ViewPager mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
@@ -177,9 +178,24 @@ public class ItemPagerActivity extends RealmActivity {
         invalidateOptionsMenu();
     }
 
+    public void updateResult() {
+        Intent result = new Intent();
+        result.putExtra("email.schaal.ocreader.extra.CURRENT_ID", mViewPager.getCurrentItem());
+        setResult(RESULT_OK, result);
+    }
+
+    @Override
+    public void onBackPressed() {
+        updateResult();
+        super.onBackPressed();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                updateResult();
+                return super.onOptionsItemSelected(item);
             case R.id.action_mark_read:
                 setItemUnread(!this.item.isUnread());
                 return true;
