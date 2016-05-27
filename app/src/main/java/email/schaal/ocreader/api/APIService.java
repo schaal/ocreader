@@ -320,10 +320,6 @@ public class APIService {
         return retrofit.create(API.class);
     }
 
-    public API getApi() {
-        return api;
-    }
-
     @SuppressWarnings("SameParameterValue,unused")
     public interface API {
         /** SERVER **/
