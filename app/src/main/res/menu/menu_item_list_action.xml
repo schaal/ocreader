@@ -34,7 +34,7 @@
         android:id="@+id/action_mark_unread"
         android:checkable="true"
         android:icon="@drawable/ic_check_box_outline_blank"
-        android:title="@string/action_mark_read"
+        android:title="@string/action_mark_unread"
         android:visible="false"
         app:showAsAction="ifRoom"/>
 
@@ -49,7 +49,7 @@
         android:id="@+id/action_mark_unstarred"
         android:checkable="true"
         android:icon="@drawable/ic_star_outline"
-        android:title="@string/action_mark_starred"
+        android:title="@string/action_mark_unstarred"
         android:visible="false"
         app:showAsAction="ifRoom"/>
 </menu>

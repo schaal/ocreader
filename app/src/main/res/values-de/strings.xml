@@ -41,4 +41,6 @@
     <string name="error_insecure_connection">Unsichere Verbindung, erneut Anmelden drücken um trotzdem fortzufahren</string>
     <string name="error_unknown_host">Unbekannter Host</string>
     <string name="http_error">HTTP-Fehler %1$s</string>
+    <string name="action_mark_unread">Als ungelesen markieren</string>
+    <string name="action_mark_unstarred">Nicht mehr favorisieren</string>
 </resources>

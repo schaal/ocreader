@@ -28,6 +28,8 @@
 
     <string name="action_mark_read">Mark as read</string>
     <string name="action_mark_starred">Mark as starred</string>
+    <string name="action_mark_unstarred">Mark as unstarred</string>
+    <string name="action_mark_unread">Mark as unread</string>
     <string name="mark_all_as_read">Mark all as read</string>
     <string name="action_sync">Synchronize</string>
 
