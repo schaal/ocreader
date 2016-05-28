@@ -476,7 +476,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
     @Override
     public void onItemLongClick(Item item, int position) {
-        if(actionMode != null)
+        if(actionMode != null || Preferences.SYS_SYNC_RUNNING.getBoolean(PreferenceManager.getDefaultSharedPreferences(this)))
             return;
 
         actionMode = startActionMode(this);
