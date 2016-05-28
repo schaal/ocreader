@@ -53,6 +53,8 @@ public class ItemPagerActivity extends RealmActivity {
     private static final String TAG = ItemPagerActivity.class.getName();
 
     public static final String POSITION = "position";
+    public static final int REQUEST_CODE = 2;
+    public static final String EXTRA_CURRENT_POSITION = "email.schaal.ocreader.extra.CURRENT_POSIION";
 
     private TemporaryFeed temporaryFeed;
     private Toolbar toolbar;
@@ -180,7 +182,7 @@ public class ItemPagerActivity extends RealmActivity {
 
     public void updateResult() {
         Intent result = new Intent();
-        result.putExtra("email.schaal.ocreader.extra.CURRENT_ID", mViewPager.getCurrentItem());
+        result.putExtra(EXTRA_CURRENT_POSITION, mViewPager.getCurrentItem());
         setResult(RESULT_OK, result);
     }
 
