@@ -477,10 +477,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         if(actionMode != null || Preferences.SYS_SYNC_RUNNING.getBoolean(PreferenceManager.getDefaultSharedPreferences(this)))
             return;
 
-        actionMode = startActionMode(this);
         adapter.toggleSelection(position);
-        actionMode.setTitle(String.valueOf(adapter.getSelectedItemsCount()));
-        actionMode.invalidate();
+        actionMode = startActionMode(this);
     }
 
     @Override
@@ -532,6 +530,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         mode.getMenuInflater().inflate(R.menu.menu_item_list_action, menu);
+        mode.setTitle(String.valueOf(adapter.getSelectedItemsCount()));
         startDrawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         swipeRefreshLayout.setEnabled(false);
         fab_mark_all_read.setVisibility(View.GONE);
