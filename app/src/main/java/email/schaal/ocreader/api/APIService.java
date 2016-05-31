@@ -27,16 +27,15 @@ import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -126,126 +125,101 @@ public class APIService {
         void onCompleted(boolean result);
     }
 
-    private class ResultLatch extends CountDownLatch {
-        public boolean isResult() {
-            return result;
-        }
+    private abstract class ResultRunnable implements Runnable {
+        protected final boolean result;
 
-        public void setResult(boolean result) {
+        public ResultRunnable(boolean result) {
             this.result = result;
         }
-
-        private boolean result = true;
-        /**
-         * Constructs a {@code CountDownLatch} initialized with the given count.
-         *
-         * @param count the number of times {@link #countDown} must be invoked
-         *              before threads can pass through {@link #await}
-         * @throws IllegalArgumentException if {@code count} is negative
-         */
-        public ResultLatch(int count) {
-            super(count);
-        }
-
-
     }
-    public void syncChanges(@NonNull final Realm realm, @Nullable final OnCompletionListener completionListener) {
+
+    public void syncChanges(@Nullable final OnCompletionListener completionListener) {
         AlarmUtils.getInstance().cancelAlarm();
-
-        final ResultLatch countDownLatch = new ResultLatch(MarkAction.values().length);
-
-        for (MarkAction action : MarkAction.values()) {
-            markItems(action, realm, countDownLatch);
-        }
 
         executor.execute(new Runnable() {
             @Override
             public void run() {
+                Realm realm = null;
+                boolean result = true;
                 try {
-                    countDownLatch.await();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(completionListener != null)
-                            completionListener.onCompleted(countDownLatch.isResult());
+                    realm = Realm.getDefaultInstance();
+                    for (final MarkAction action : MarkAction.values()) {
+                        result = result && markItems(action, realm);
                     }
-                });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (realm != null) {
+                        realm.close();
+                    }
+                    handler.post(new ResultRunnable(result) {
+                        @Override
+                        public void run() {
+                            if (completionListener != null)
+                                completionListener.onCompleted(this.result);
+                        }
+                    });
+                }
             }
         });
-
     }
 
-    private void markItems(final MarkAction action, final Realm realm, final ResultLatch countDownLatch) {
+    private boolean markItems(@NonNull final MarkAction action, final Realm realm) throws IOException {
         final RealmResults<Item> results = realm.where(Item.class)
                 .equalTo(action.getChangedKey(), true)
                 .equalTo(action.getKey(), action.getValue()).findAll();
 
-        if(results.size() == 0) {
+        if (results.size() == 0) {
             // Nothing to do, countdown and return
-            countDownLatch.countDown();
-            return;
+            return true;
         }
-
 
         ItemIds ids = null;
         ItemMap itemMap = null;
 
-        if(action == MarkAction.MARK_UNREAD || action == MarkAction.MARK_READ) {
+        if (action == MarkAction.MARK_UNREAD || action == MarkAction.MARK_READ) {
             ids = new ItemIds(results);
         } else {
             itemMap = new ItemMap(results);
         }
 
-        final Callback<Void> markCallback = new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, final Response<Void> response) {
-                countDownLatch.countDown();
-                if(response.isSuccessful()) {
-                    realm.executeTransaction(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-                            if (action == MarkAction.MARK_READ || action == MarkAction.MARK_UNREAD) {
-                                for(Item item: results) {
-                                    item.setUnreadChanged(false);
-                                }
-                            } else {
-                                for(Item item: results) {
-                                    item.setStarredChanged(false);
-                                }
-                            }
-                        }
-                    });
-                } else {
-                    countDownLatch.setResult(false);
-                    Log.w(TAG, response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                t.printStackTrace();
-                countDownLatch.countDown();
-                countDownLatch.setResult(false);
-            }
-        };
+        Response<Void> response;
 
         switch (action) {
             case MARK_READ:
-                api.markItemsRead(ids).enqueue(markCallback);
+                response = api.markItemsRead(ids).execute();
                 break;
             case MARK_UNREAD:
-                api.markItemsUnread(ids).enqueue(markCallback);
+                response = api.markItemsUnread(ids).execute();
                 break;
             case MARK_STARRED:
-                api.markItemsStarred(itemMap).enqueue(markCallback);
+                response = api.markItemsStarred(itemMap).execute();
                 break;
             case MARK_UNSTARRED:
-                api.markItemsUnstarred(itemMap).enqueue(markCallback);
+                response = api.markItemsUnstarred(itemMap).execute();
                 break;
+            default:
+                throw new IllegalArgumentException("Unkown mark action");
         }
+
+        if (response.isSuccessful()) {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    if (action == MarkAction.MARK_READ || action == MarkAction.MARK_UNREAD) {
+                        for (Item item : results) {
+                            item.setUnreadChanged(false);
+                        }
+                    } else {
+                        for (Item item : results) {
+                            item.setStarredChanged(false);
+                        }
+                    }
+                }
+            });
+        }
+
+        return response.isSuccessful();
     }
 
     public enum QueryType {

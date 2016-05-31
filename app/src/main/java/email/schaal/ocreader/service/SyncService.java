@@ -126,7 +126,7 @@ public class SyncService extends Service {
         if(syncType != null) {
             notifySyncStatus(SYNC_STARTED, action);
 
-            APIService.getInstance().syncChanges(realm, new APIService.OnCompletionListener() {
+            APIService.getInstance().syncChanges(new APIService.OnCompletionListener() {
                 @Override
                 public void onCompleted(boolean result) {
                     if(result) {
