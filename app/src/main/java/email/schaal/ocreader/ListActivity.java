@@ -33,8 +33,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -82,7 +80,6 @@ import email.schaal.ocreader.service.SyncService;
 import email.schaal.ocreader.view.DividerItemDecoration;
 import email.schaal.ocreader.view.ItemViewHolder;
 import email.schaal.ocreader.view.ItemsAdapter;
-import email.schaal.ocreader.view.ScrollAwareFABBehavior;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
 
@@ -150,7 +147,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private AccountHeader accountHeader;
 
     private SwipeRefreshLayout swipeRefreshLayout;
-    private FloatingActionButton fab_mark_all_read;
 
     private ItemsAdapter adapter;
     private LinearLayoutManager layoutManager;
@@ -205,32 +201,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setColorSchemeResources(R.color.primary);
         swipeRefreshLayout.setOnRefreshListener(this);
-
-        fab_mark_all_read = (FloatingActionButton) findViewById(R.id.fab_mark_all_read);
-        fab_mark_all_read.setOnClickListener(new View.OnClickListener() {
-            private void cleanup(View v) {
-                adapter.updateItems(false);
-                v.setEnabled(true);
-            }
-            @Override
-            public void onClick(final View v) {
-                v.setEnabled(false);
-
-                Queries.getInstance().markTemporaryFeedAsRead(getRealm(), adapter.getItemId(layoutManager.findLastVisibleItemPosition()),
-                        new Realm.Transaction.OnSuccess() {
-                            @Override
-                            public void onSuccess() {
-                                cleanup(v);
-                            }
-                        }, new Realm.Transaction.OnError() {
-                            @Override
-                            public void onError(Throwable error) {
-                                error.printStackTrace();
-                                cleanup(v);
-                            }
-                        });
-            }
-        });
 
         profileDrawerItem = new ProfileDrawerItem()
                 .withName(preferences.getString(Preferences.USERNAME.getKey(), getString(R.string.app_name)))
@@ -394,7 +364,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(item.getTitle());
         adapter.setTreeItem(item, drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder);
-        fab_mark_all_read.show();
     }
 
     @Override
@@ -468,6 +437,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 actionMode.finish();
             else {
                 actionMode.setTitle(String.valueOf(adapter.getSelectedItemsCount()));
+                actionMode.invalidate();
             }
         }
     }
@@ -526,8 +496,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         mode.setTitle(String.valueOf(adapter.getSelectedItemsCount()));
         startDrawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         swipeRefreshLayout.setEnabled(false);
-        fab_mark_all_read.setVisibility(View.GONE);
-        ((CoordinatorLayout.LayoutParams)fab_mark_all_read.getLayoutParams()).setBehavior(null);
         return true;
     }
 
@@ -545,7 +513,12 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             menu.findItem(R.id.action_mark_unstarred).setVisible(firstSelectedStarred);
         }
 
-        return firstSelectedUnread != null;
+        int selectedItemsCount = adapter.getSelectedItemsCount();
+
+        menu.findItem(R.id.action_mark_above_read).setVisible(selectedItemsCount == 1);
+
+        // the menu only changes on the first and second selection
+        return selectedItemsCount <= 2;
     }
 
     @Override
@@ -567,6 +540,21 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 Queries.getInstance().setItemsStarred(getRealm(), false, adapter.getSelectedItems());
                 mode.finish();
                 return true;
+            case R.id.action_mark_above_read:
+                Queries.getInstance().markTemporaryFeedAsRead(getRealm(), adapter.getSelectedItems()[0].getId(),
+                        new Realm.Transaction.OnSuccess() {
+                            @Override
+                            public void onSuccess() {
+                                adapter.updateItems(false);
+                            }
+                        }, new Realm.Transaction.OnError() {
+                            @Override
+                            public void onError(Throwable error) {
+                                error.printStackTrace();
+                            }
+                        });
+                mode.finish();
+                return true;
         }
         return false;
     }
@@ -576,8 +564,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         actionMode = null;
         startDrawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         swipeRefreshLayout.setEnabled(true);
-        fab_mark_all_read.setVisibility(View.VISIBLE);
-        ((CoordinatorLayout.LayoutParams)fab_mark_all_read.getLayoutParams()).setBehavior(new ScrollAwareFABBehavior());
         adapter.clearSelection();
     }
 }

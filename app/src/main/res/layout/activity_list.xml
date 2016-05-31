@@ -44,15 +44,4 @@
             android:scrollbars="vertical" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_mark_all_read"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_done_above"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:clickable="true"
-        app:layout_behavior="email.schaal.ocreader.view.ScrollAwareFABBehavior"
-        android:tint="@android:color/white"/>
 </android.support.design.widget.CoordinatorLayout>

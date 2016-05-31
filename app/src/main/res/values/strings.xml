@@ -30,7 +30,6 @@
     <string name="action_mark_starred">Mark as starred</string>
     <string name="action_mark_unstarred">Mark as unstarred</string>
     <string name="action_mark_unread">Mark as unread</string>
-    <string name="mark_all_as_read">Mark all as read</string>
     <string name="action_sync">Synchronize</string>
 
     <string name="title_activity_login">Sign in</string>
@@ -76,5 +75,6 @@
     <string name="error_insecure_connection">Insecure connection, press sign in again to continue anyway</string>
     <string name="action_sign_in_insecurely">Sign in insecurely</string>
     <string name="http_error">HTTP error %1$s</string>
+    <string name="mark_previous_articles_read">Mark previous articles read</string>
 
 </resources>

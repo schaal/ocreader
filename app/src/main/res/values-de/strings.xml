@@ -11,7 +11,6 @@
     <string name="error_incorrect_username_or_password">Benutzername oder Password sind falsch</string>
     <string name="feed_icon_description">Feed icon</string>
     <string name="load_more">Weitere laden</string>
-    <string name="mark_all_as_read">Alles als gelesen markieren</string>
     <string name="no_articles">Keine Artikel vorhanden</string>
     <string name="now">jetzt</string>
     <string name="only_unread">Nur ungelesene</string>
@@ -43,4 +42,5 @@
     <string name="http_error">HTTP-Fehler %1$s</string>
     <string name="action_mark_unread">Als ungelesen markieren</string>
     <string name="action_mark_unstarred">Nicht mehr favorisieren</string>
+    <string name="mark_previous_articles_read">Vorherige Artikel als gelesen markieren</string>
 </resources>
