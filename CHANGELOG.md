@@ -1,3 +1,10 @@
+## 0.8 (2016-06-01)
+
+* Add action mode to article list
+* Improve login activity error handling
+* Don't synchronize item states in parallel
+* Scroll to current item when returning from article view to the article list
+
 ## 0.7 (2016-05-22)
 
 * Remove accepting of self-signed certs again, this undermines TLS security (see e.g. https://github.com/owncloud/news/blob/master/docs/developer/External-Api.md#security-guidelines)
