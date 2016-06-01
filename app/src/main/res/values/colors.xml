@@ -28,6 +28,7 @@
     <color name="secondary_text">#727272</color>
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
+    <color name="selected_background">#CCCCCC</color>
     <color name="star">#FF9800</color>
     <color name="progress">#66FFFFFF</color>
 </resources>
