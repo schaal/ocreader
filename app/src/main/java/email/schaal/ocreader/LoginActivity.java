@@ -56,7 +56,6 @@ import retrofit2.Response;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity {
-    public static final int RESULT_OK = 1;
     public static final int REQUEST_CODE = 1;
 
     // First version with user api support
