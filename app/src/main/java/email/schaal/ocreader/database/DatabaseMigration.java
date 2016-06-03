@@ -12,7 +12,7 @@ import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
 
 /**
- * Created by daniel on 03.06.16.
+ * RealmMigration to migrate database between schema versions
  */
 class DatabaseMigration implements RealmMigration {
     private static final String TAG = DatabaseMigration.class.getName();
