@@ -32,12 +32,10 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.util.ArrayMap;
 import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Date;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -72,12 +70,24 @@ public class SyncService extends Service {
     private SharedPreferences sharedPreferences;
 
     private enum SyncType {
-        FULL_SYNC,
-        SYNC_CHANGES_ONLY,
-        LOAD_MORE
-    }
+        FULL_SYNC(ACTION_FULL_SYNC),
+        SYNC_CHANGES_ONLY(ACTION_SYNC_CHANGES_ONLY),
+        LOAD_MORE(ACTION_LOAD_MORE);
 
-    private final Map<String, SyncType> syncTypeMap;
+        private final String action;
+
+        SyncType(String action) {
+            this.action = action;
+        }
+
+        @Nullable
+        public static SyncType get(String action) {
+            for(SyncType syncType: values())
+                if(syncType.action.equals(action))
+                    return syncType;
+            return null;
+        }
+    }
 
     public static final IntentFilter syncFilter;
     static {
@@ -88,13 +98,6 @@ public class SyncService extends Service {
 
     private final Executor executor = Executors.newSingleThreadExecutor();
     private Realm realm;
-
-    public SyncService() {
-        syncTypeMap = new ArrayMap<>(SyncType.values().length);
-        syncTypeMap.put(ACTION_FULL_SYNC, SyncType.FULL_SYNC);
-        syncTypeMap.put(ACTION_SYNC_CHANGES_ONLY, SyncType.SYNC_CHANGES_ONLY);
-        syncTypeMap.put(ACTION_LOAD_MORE, SyncType.LOAD_MORE);
-    }
 
     @Nullable
     @Override
@@ -119,7 +122,7 @@ public class SyncService extends Service {
     public int onStartCommand(final Intent intent, int flags, final int startId) {
         final String action = intent.getAction();
 
-        final SyncType syncType = syncTypeMap.get(action);
+        final SyncType syncType = SyncType.get(action);
 
         if(syncType != null) {
             notifySyncStatus(SYNC_STARTED, action);
