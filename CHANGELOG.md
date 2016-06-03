@@ -22,7 +22,7 @@
 ## 0.4 (2016-04-27)
 
 * Slight UI improvement for login activity
-* Treat items with the same fingerprint as one item (needs ownCloud news >= 8.1.0)
+* Treat items with the same fingerprint as one item (needs NextCloud News >= 8.1.0)
 
 ## 0.3 (2016-03-30)
 
@@ -35,7 +35,7 @@
 
 ## 0.1 (2016-03-07)
 
-* Show warning when ownCloud news is improperly configured
+* Show warning when NextCloud News is improperly configured
 * Improve drawer reloading when only unread is changed
 
 ## 0.1b2 (2016-02-16)

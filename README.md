@@ -1,8 +1,8 @@
 [![Build Status](https://travis-ci.org/schaal/ocreader.svg?branch=master)](https://travis-ci.org/schaal/ocreader)
 
-# [OCReader][1] - Android client for [ownCloud news][0]
+# [OCReader][1] - Android client for [NextCloud News][0]
 
-OCReader is a client for an [ownCloud news][0] instance (needs at least version 6.0.5).
+OCReader is a client for an [NextCloud News][0] instance (needs at least version 6.0.5).
 
 [<img src="https://f-droid.org/badge/get-it-on.png"
       alt="Get it on F-Droid"

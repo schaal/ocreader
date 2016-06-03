@@ -260,7 +260,7 @@ public class LoginActivity extends AppCompatActivity {
                 Version version = status.getVersion();
 
                 if(version == null) {
-                    error = new LoginError("Couldn't detect ownCloud news version, check your ownCloud setup");
+                    error = new LoginError("Couldn't detect NextCloud News version, check your ownCloud setup");
                 } else if(version.lessThan(MIN_SUPPORTED_VERSION)) {
                     error = new LoginError(getString(R.string.update_warning, MIN_SUPPORTED_VERSION.toString(), version.toString()));
                 } else {

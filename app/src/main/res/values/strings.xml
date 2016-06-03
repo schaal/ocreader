@@ -66,11 +66,11 @@
     <string name="only_unread">Only unread</string>
     <string name="share_article">Share Article</string>
     <string name="account_settings">Account Settings</string>
-    <string name="update_warning">Please update ownCloud News to continue (minimum supported version: %1$s). Your version is %2$s</string>
+    <string name="update_warning">Please update NextCloud News to continue (minimum supported version: %1$s). Your version is %2$s</string>
     <string name="updater_improperly_configured">News App updater is improperly configured</string>
     <string name="more_info">More info</string>
     <string name="untrusted_certificate">Couldn\'t verify certificate, please check your SSL setup</string>
-    <string name="ocnews_too_old">OwnCloud news not installed or too old</string>
+    <string name="ocnews_too_old">NextCloud News not installed or too old</string>
     <string name="error_unknown_host">Unknown Host</string>
     <string name="error_insecure_connection">Insecure connection, press sign in again to continue anyway</string>
     <string name="action_sign_in_insecurely">Sign in insecurely</string>
