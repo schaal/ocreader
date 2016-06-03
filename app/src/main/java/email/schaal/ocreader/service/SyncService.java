@@ -89,8 +89,6 @@ public class SyncService extends Service {
     private final Executor executor = Executors.newSingleThreadExecutor();
     private Realm realm;
 
-    private final Map<Integer, CountDownLatch> countDownLatches = new ArrayMap<>(4);
-
     public SyncService() {
         syncTypeMap = new ArrayMap<>(SyncType.values().length);
         syncTypeMap.put(ACTION_FULL_SYNC, SyncType.FULL_SYNC);
@@ -130,6 +128,8 @@ public class SyncService extends Service {
                 @Override
                 public void onCompleted(boolean result) {
                     if(result) {
+                        CountdownAPICallback apiCallback;
+
                         switch (syncType) {
                             case SYNC_CHANGES_ONLY:
                                 notifySyncStatus(SYNC_FINISHED, action);
@@ -141,7 +141,7 @@ public class SyncService extends Service {
                                 if (!intent.getBooleanExtra(EXTRA_INITIAL_SYNC, false))
                                     lastSync = getLastSyncTimestamp(realm);
 
-                                APIService.APICallback apiCallback = getApiCallback(startId, lastSync == 0L ? 5 : 4);
+                                apiCallback = new CountdownAPICallback(new CountDownLatch(lastSync == 0L ? 5 : 4));
 
                                 APIService.getInstance().user(realm, apiCallback);
                                 APIService.getInstance().folders(realm, apiCallback);
@@ -155,7 +155,7 @@ public class SyncService extends Service {
                                     APIService.getInstance().updatedItems(realm, lastSync, apiCallback);
                                 }
 
-                                waitForCountdownLatch(startId, action);
+                                waitForCountdownLatch(startId, action, apiCallback.countDownLatch);
                                 break;
                             case LOAD_MORE:
                                 long id = intent.getLongExtra(EXTRA_ID, -1);
@@ -171,9 +171,10 @@ public class SyncService extends Service {
                                     queryType = isFeed ? APIService.QueryType.FEED : APIService.QueryType.FOLDER;
                                 }
 
-                                APIService.getInstance().moreItems(realm, queryType, offset, id, getApiCallback(startId, 1));
+                                apiCallback = new CountdownAPICallback(new CountDownLatch(1));
+                                APIService.getInstance().moreItems(realm, queryType, offset, id, apiCallback);
 
-                                waitForCountdownLatch(startId, action);
+                                waitForCountdownLatch(startId, action, apiCallback.countDownLatch);
                                 break;
                         }
                     } else {
@@ -187,15 +188,6 @@ public class SyncService extends Service {
         }
 
         return START_NOT_STICKY;
-    }
-
-    @NonNull
-    private APIService.APICallback getApiCallback(int startId, int taskCount) {
-        CountDownLatch countDownLatch = new CountDownLatch(taskCount);
-
-        countDownLatches.put(startId, countDownLatch);
-
-        return new CountdownAPICallback(countDownLatch);
     }
 
     private final Realm.Transaction postProcessFeedTransaction = new Realm.Transaction() {
@@ -212,12 +204,12 @@ public class SyncService extends Service {
         }
     };
 
-    private void waitForCountdownLatch(final int startId, final String action) {
+    private void waitForCountdownLatch(final int startId, final String action, final CountDownLatch countDownLatch) {
         executor.execute(new Runnable() {
             @Override
             public void run() {
                 try {
-                    countDownLatches.get(startId).await();
+                    countDownLatch.await();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
@@ -225,7 +217,6 @@ public class SyncService extends Service {
                         @Override
                         public void run() {
                             realm.executeTransaction(postProcessFeedTransaction);
-                            countDownLatches.remove(startId);
                             notifySyncStatus(SYNC_FINISHED, action);
                             stopSelf(startId);
                         }
