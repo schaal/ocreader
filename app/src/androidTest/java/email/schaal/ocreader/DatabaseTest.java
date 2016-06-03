@@ -59,7 +59,7 @@ public class DatabaseTest extends ApplicationTestCase<OCReaderApplication> {
         item.setBody("TestBody");
         item.setAuthor("TestAuthor");
         item.setFeedId(1);
-        item.setLastModified(new Date());
+        item.setLastModified(new Date().getTime() / 1000);
         return item;
     }
 
