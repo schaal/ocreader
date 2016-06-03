@@ -73,7 +73,7 @@ public class Item extends RealmObject {
     private boolean starredChanged = false;
     public final static String STARRED_CHANGED = "starredChanged";
 
-    private Date lastModified;
+    private long lastModified;
     public static final String LAST_MODIFIED = "lastModified";
 
     /** @since 8.4.0 **/
@@ -224,11 +224,11 @@ public class Item extends RealmObject {
         this.starredChanged = starredChanged;
     }
 
-    public Date getLastModified() {
+    public long getLastModified() {
         return lastModified;
     }
 
-    public void setLastModified(Date lastModified) {
+    public void setLastModified(long lastModified) {
         this.lastModified = lastModified;
     }
 

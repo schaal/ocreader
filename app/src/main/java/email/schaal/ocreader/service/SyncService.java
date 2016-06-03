@@ -35,7 +35,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -230,12 +229,9 @@ public class SyncService extends Service {
     }
 
     private long getLastSyncTimestamp(Realm realm) {
-        long lastSync = 0;
-        Date maximumDate = realm.where(Item.class).maximumDate(Item.LAST_MODIFIED);
-        if (maximumDate != null)
-            lastSync = maximumDate.getTime() / 1000;
+        Number lastSync = realm.where(Item.class).max(Item.LAST_MODIFIED);
 
-        return lastSync;
+        return lastSync != null ? lastSync.longValue() : 0;
     }
 
     private final Handler handler = new Handler(Looper.getMainLooper());

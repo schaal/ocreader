@@ -45,6 +45,7 @@ import io.realm.RealmConfiguration;
 import io.realm.RealmList;
 import io.realm.RealmMigration;
 import io.realm.RealmObject;
+import io.realm.RealmObjectSchema;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.RealmSchema;
@@ -57,7 +58,7 @@ import io.realm.exceptions.RealmException;
 public class Queries {
     private final static String TAG = Queries.class.getName();
 
-    public final static int SCHEMA_VERSION = 5;
+    public final static int SCHEMA_VERSION = 6;
 
     private static Queries instance;
 
@@ -112,8 +113,7 @@ public class Queries {
             if(oldVersion == 3) {
                 schema.get("Item")
                         .addRealmObjectField(Item.FEED, schema.get("Feed"));
-                RealmResults<DynamicRealmObject> items = realm.where("Item").findAll();
-                for(DynamicRealmObject item: items) {
+                for(DynamicRealmObject item: realm.where("Item").findAll()) {
                     item.setObject(Item.FEED, realm.where("Feed").equalTo(Feed.ID, item.getLong(Item.FEED_ID)).findFirst());
                 }
                 oldVersion++;
@@ -125,6 +125,25 @@ public class Queries {
              */
             if(oldVersion == 4) {
                 schema.get("Feed").removeField("color");
+                oldVersion++;
+            }
+
+            /**
+             * v5 -> v6
+             * - Migrate Item.LAST_MODIFIED from Date to long
+             */
+            if(oldVersion == 5) {
+                schema.get("Item")
+                        .renameField(Item.LAST_MODIFIED, "lastModifiedDate")
+                        .addField(Item.LAST_MODIFIED, long.class)
+                        .transform(new RealmObjectSchema.Function() {
+                            @Override
+                            public void apply(DynamicRealmObject obj) {
+                                obj.setLong(Item.LAST_MODIFIED, obj.getDate("lastModifiedDate").getTime() / 1000);
+                            }
+                        })
+                        .removeField("lastModifiedDate");
+
                 oldVersion++;
             }
         }
@@ -152,12 +171,9 @@ public class Queries {
                     }
                 });
             }
-        } catch (IllegalArgumentException ex) {
-            ex.printStackTrace();
-            Realm.deleteRealm(realmConfiguration);
-            resetDatabase();
         } catch (Exception ex) {
             ex.printStackTrace();
+            Realm.deleteRealm(realmConfiguration);
             resetDatabase();
         } finally {
             if(realm != null)

@@ -98,7 +98,7 @@ public class ItemTypeAdapter extends NewsTypeAdapter<Item> {
                     item.setStarred(in.nextBoolean());
                     break;
                 case "lastModified":
-                    item.setLastModified(new Date(in.nextLong() * 1000));
+                    item.setLastModified(in.nextLong());
                     break;
                 case "rtl":
                     in.skipValue();
