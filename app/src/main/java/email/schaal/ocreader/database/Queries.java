@@ -20,7 +20,6 @@
 
 package email.schaal.ocreader.database;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -64,14 +63,6 @@ public class Queries {
         }
     };
 
-    private Queries(Context context) {
-        this(new RealmConfiguration.Builder(context)
-                .schemaVersion(SCHEMA_VERSION)
-                .migration(new DatabaseMigration())
-                .initialData(initialData)
-                .build());
-    }
-
     private Queries(RealmConfiguration realmConfiguration) {
         Realm.setDefaultConfiguration(realmConfiguration);
 
@@ -102,13 +93,13 @@ public class Queries {
         return instance;
     }
 
-    public static void init(Context context) {
-        instance = new Queries(context);
-    }
-
-    // For instrumentation tests
-    public static void init(RealmConfiguration realmConfiguration) {
-        instance = new Queries(realmConfiguration);
+    public static void init(RealmConfiguration.Builder builder) {
+        instance = new Queries(builder
+                .schemaVersion(SCHEMA_VERSION)
+                .migration(new DatabaseMigration())
+                .initialData(initialData)
+                .build()
+        );
     }
 
     public void resetDatabase() {

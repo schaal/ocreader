@@ -66,7 +66,7 @@ public class DatabaseTest extends ApplicationTestCase<OCReaderApplication> {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        Queries.init(new RealmConfiguration.Builder(getContext()).inMemory().build());
+        Queries.init(new RealmConfiguration.Builder(getContext()).inMemory());
     }
 
     public void testDatabaseSetup() {

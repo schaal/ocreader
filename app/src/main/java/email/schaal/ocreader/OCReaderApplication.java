@@ -36,6 +36,7 @@ import com.squareup.picasso.Picasso;
 import email.schaal.ocreader.api.APIService;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.util.AlarmUtils;
+import io.realm.RealmConfiguration;
 
 /**
  * Application class to setup the singletons
@@ -50,7 +51,7 @@ public class OCReaderApplication extends Application {
                 .edit()
                 .putBoolean(Preferences.SYS_SYNC_RUNNING.getKey(), false)
                 .apply();
-        Queries.init(this);
+        Queries.init(new RealmConfiguration.Builder(this));
         APIService.init(this);
         AlarmUtils.init(this);
         Picasso picasso = new Picasso.Builder(this)
