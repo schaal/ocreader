@@ -19,12 +19,16 @@
   ~
   -->
 
-<android.support.v4.widget.NestedScrollView
-    android:id="@+id/nestedscrollview"
+<android.support.v4.widget.NestedScrollView android:id="@+id/nestedscrollview"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:scrollbars="vertical">
-
+    android:scrollbars="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<email.schaal.ocreader.view.ArticleWebView
+    android:id="@+id/webView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:titleColor="?android:attr/textColorPrimary"/>
 </android.support.v4.widget.NestedScrollView>

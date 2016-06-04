@@ -23,6 +23,7 @@ package email.schaal.ocreader.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
@@ -33,6 +34,8 @@ import android.util.LruCache;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+
+import java.util.Locale;
 
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.model.Feed;
@@ -56,6 +59,15 @@ public class FaviconUtils {
 
     private FaviconUtils() {
 
+    }
+
+    public static String getCssColor(int color) {
+        // Use US locale so we always get a . as decimal separator for a valid css value
+        return String.format(Locale.US,"rgba(%d,%d,%d,%.2f)",
+                Color.red(color),
+                Color.green(color),
+                Color.blue(color),
+                Color.alpha(color) / 255.0);
     }
 
     public void loadFavicon(final Context context, @Nullable final Feed feed, @NonNull final PaletteBitmapAsyncListener paletteAsyncListener) {

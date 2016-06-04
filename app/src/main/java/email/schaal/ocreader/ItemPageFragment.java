@@ -20,71 +20,25 @@
 
 package email.schaal.ocreader;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
+import android.app.Fragment;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Keep;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.graphics.Palette;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebViewFragment;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.safety.Cleaner;
-import org.jsoup.safety.Whitelist;
-import org.jsoup.select.Elements;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import email.schaal.ocreader.model.Feed;
-import email.schaal.ocreader.model.Item;
-import email.schaal.ocreader.util.FaviconUtils;
-import email.schaal.ocreader.util.StringUtils;
+import email.schaal.ocreader.view.ArticleWebView;
 
 /**
  * Fragment to display a single feed item using a WebView.
  */
-public class ItemPageFragment extends WebViewFragment {
+public class ItemPageFragment extends Fragment {
     private static final String TAG = ItemPageFragment.class.getName();
 
     public static final String ARG_POSITION = "ARG_POSITION";
 
-    // iframes are replaced in prepareDocument()
-    private final static Cleaner cleaner = new Cleaner(Whitelist.relaxed().addTags("video","iframe").addAttributes("iframe", "src"));
-
-    private static String css = null;
-
-    private Item item;
-
-    private final static String videoThumbLink = "<div style=\"position:relative\"><a href=\"%s\"><img src=\"%s\" class=\"videothumb\"></img><span class=\"play\">▶</span></a></div>";
-    private final static String videoLink = "<a href=\"%s\">%s</a>";
-
-    private final FaviconUtils.PaletteBitmapAsyncListener paletteAsyncListener = new FaviconUtils.PaletteBitmapAsyncListener() {
-        @Override
-        public void onGenerated(Palette palette, Bitmap bitmap) {
-            if (palette != null) {
-                int titleColor = FaviconUtils.getTextColor(palette, ContextCompat.getColor(getActivity(), android.R.color.primary_text_light));
-                String cssColor = getCssColor(titleColor);
-                String javascript = String.format("javascript:(function(){document.styleSheets[0].cssRules[0].style.color=\"%s\";})()", cssColor);
-                getWebView().loadUrl(javascript);
-            }
-        }
-    };
+    private ArticleWebView webView;
 
     public ItemPageFragment() {
     }
@@ -97,157 +51,39 @@ public class ItemPageFragment extends WebViewFragment {
         return fragment;
     }
 
-    public static String getCssColor(int color) {
-        // Use US locale so we always get a . as decimal separator for a valid css value
-        return String.format(Locale.US,"rgba(%d,%d,%d,%.2f)",
-                Color.red(color),
-                Color.green(color),
-                Color.blue(color),
-                Color.alpha(color) / 255.0);
-    }
-
-    @Keep
-    private class JsCallback {
-        @JavascriptInterface
-        public void startLoading() {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    FaviconUtils.getInstance().loadFavicon(getActivity(), item.getFeed(), paletteAsyncListener);
-                }
-            });
-        }
-    }
-
     @Override
     public void onStart() {
         super.onStart();
 
-        final ItemPagerActivity activity = (ItemPagerActivity) getActivity();
-        item = activity.getItemForPosition(getArguments().getInt(ARG_POSITION));
+        webView.setItem(((ItemPagerActivity) getActivity()).getItemForPosition(getArguments().getInt(ARG_POSITION)));
 
-        loadWebViewData(activity);
     }
 
-    private void loadWebViewData(Context context) {
-        getWebView().loadDataWithBaseURL(null, getHtml(context), "text/html", "UTF-8", null);
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(webView != null)
+            webView.onPause();
     }
 
-    private String getHtml(Context context) {
-        if (css == null)
-            try {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open("item_page.css")));
-                String line;
-                StringBuilder cssBuilder = new StringBuilder();
-                while ((line = bufferedReader.readLine()) != null) {
-                    cssBuilder.append(line);
-                }
-                css = cssBuilder.toString();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        Feed feed = item.getFeed();
-
-        int titleColor = ContextCompat.getColor(context, android.R.color.primary_text_light);
-
-        Document document = Jsoup.parse(item.getBody());
-        document = cleaner.clean(document);
-        prepareDocument(document);
-
-        StringBuilder pageBuilder = new StringBuilder(
-                "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">");
-
-        pageBuilder.append(String.format(
-                "<style type=\"text/css\">a:link, a:active,a:hover { color: %s } %s</style>",
-                getCssColor(titleColor), css));
-
-        pageBuilder.append("</head><body>");
-
-        pageBuilder.append(String.format(
-                        "<a href=\"%s\" class=\"title\">%s</a><p class=\"byline\">%s</p>",
-                        item.getUrl(),
-                        item.getTitle(),
-                        StringUtils.getByLine(context, item.getAuthor(), String.format("<a href=\"%s\">%s</a>", feed.getLink(), feed.getTitle()))
-                )
-        );
-
-        document.outputSettings().prettyPrint(false);
-        pageBuilder.append(document.body().html());
-
-        pageBuilder.append("<script>(function() { JsCallback.startLoading(); })();</script>");
-
-        pageBuilder.append("</body></html>");
-
-        return pageBuilder.toString();
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(webView != null)
+            webView.onResume();
     }
 
-    /**
-     * Enum to convert some common iframe urls to simpler formats
-     */
-    private enum IframePattern {
-        YOUTUBE(Pattern.compile("(https?://)(?:www\\.)?youtube\\.com/embed/([a-zA-Z0-9-_]+)(?:\\?.*)?"), "youtu.be/", "%simg.youtube.com/vi/%s/sddefault.jpg"),
-        VIMEO(Pattern.compile("(https?://)(?:www\\.)?player\\.vimeo\\.com/video/([a-zA-Z0-9]+)"), "vimeo.com/", null);
-
-        final Pattern pattern;
-        final String baseUrl;
-        final String thumbUrl;
-
-        IframePattern(Pattern pattern, String baseUrl, String thumbUrl) {
-            this.pattern = pattern;
-            this.baseUrl = baseUrl;
-            this.thumbUrl = thumbUrl;
-        }
-    }
-
-    private void prepareDocument(Document document) {
-        Elements iframes = document.getElementsByTag("iframe");
-        for(Element iframe: iframes) {
-            if(iframe.hasAttr("src")) {
-                String href = iframe.attr("src");
-                String html = String.format(Locale.US, videoLink, href, href);
-
-                // Check if url matches any known patterns
-                for (IframePattern iframePattern : IframePattern.values()) {
-                    Matcher matcher = iframePattern.pattern.matcher(href);
-                    if (matcher.matches()) {
-                        final String videoId = matcher.group(2);
-                        String urlPrefix = matcher.group(1);
-                        href = urlPrefix + iframePattern.baseUrl + videoId;
-                        // use thumbnail if available
-                        if (iframePattern.thumbUrl != null) {
-                            String thumbUrl = String.format(iframePattern.thumbUrl, urlPrefix, videoId);
-                            html = String.format(Locale.US, videoThumbLink, href, thumbUrl);
-                        }
-                        break;
-                    }
-                }
-
-                iframe.replaceWith(Jsoup.parse(html).body().child(0));
-            } else {
-                iframe.remove();
-            }
-        }
-    }
-
-    // All js from external sites gets stripped using jsoup
-    @SuppressLint({"AddJavascriptInterface","SetJavaScriptEnabled"})
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View childView = super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_item_pager, container, false);
 
-        NestedScrollView nestedScrollView = (NestedScrollView) rootView.findViewById(R.id.nestedscrollview);
-        nestedScrollView.addView(childView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-
-        getWebView().getSettings().setJavaScriptEnabled(true);
-        getWebView().addJavascriptInterface(new JsCallback(), "JsCallback");
+        webView = (ArticleWebView) rootView.findViewById(R.id.webView);
 
         // Using software rendering to prevent frozen or blank webviews
         // See https://code.google.com/p/chromium/issues/detail?id=501901
         if(Build.HARDWARE.equals("qcom") && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             Log.w(TAG, "Using software rendering");
-            rootView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
 
         return rootView;

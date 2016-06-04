@@ -3,4 +3,7 @@
     <declare-styleable name="ProgressFloatingActionButton">
         <attr name="progressColor" format="color" />
     </declare-styleable>
+    <declare-styleable name="ArticleWebView">
+        <attr name="titleColor" format="color" />
+    </declare-styleable>
 </resources>
