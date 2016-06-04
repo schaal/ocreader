@@ -15,7 +15,7 @@
     <string name="now">jetzt</string>
     <string name="only_unread">Nur ungelesene</string>
     <string name="prompt_password">Passwort</string>
-    <string name="prompt_url">OwnCloud URL</string>
+    <string name="prompt_url">Server Adresse</string>
     <string name="prompt_username">Benutzername</string>
     <string name="starred">Favorisiert</string>
     <string name="starred_items">Favorisierte Artikel</string>
