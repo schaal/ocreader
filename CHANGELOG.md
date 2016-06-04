@@ -7,7 +7,7 @@
 
 ## 0.7 (2016-05-22)
 
-* Remove accepting of self-signed certs again, this undermines TLS security (see e.g. https://github.com/owncloud/news/blob/master/docs/developer/External-Api.md#security-guidelines)
+* Remove accepting of self-signed certs again, this undermines TLS security
 * Don't start a full sync if article changes weren't synced successfully (hopefully fixes #6)
 * Fixes for LoginActivity
 

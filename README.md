@@ -20,5 +20,5 @@ OCReader is released under the [GNU General Public License version 3](https://ww
 ## Contact
 Maintainer: [Daniel Schaal](https://github.com/schaal) <<daniel@schaal.email>>
 
-[0]: https://github.com/owncloud/news
+[0]: https://github.com/nextcloud/news
 [1]: https://github.com/schaal/ocreader
