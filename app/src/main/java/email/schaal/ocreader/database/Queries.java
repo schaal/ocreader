@@ -56,10 +56,19 @@ public class Queries {
 
     private static Queries instance;
 
+    private final static Realm.Transaction initialData = new Realm.Transaction() {
+        @Override
+        public void execute(Realm realm) {
+            realm.deleteAll();
+            realm.createObject(TemporaryFeed.class);
+        }
+    };
+
     private Queries(Context context) {
         this(new RealmConfiguration.Builder(context)
                 .schemaVersion(SCHEMA_VERSION)
                 .migration(new DatabaseMigration())
+                .initialData(initialData)
                 .build());
     }
 
@@ -70,21 +79,20 @@ public class Queries {
         try {
             Realm.compactRealm(realmConfiguration);
             realm = Realm.getDefaultInstance();
-            if(realm.isEmpty()) {
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        realm.createObject(TemporaryFeed.class);
-                    }
-                });
-            }
+            if(realm.isEmpty())
+                realm.executeTransaction(initialData);
         } catch (Exception ex) {
             ex.printStackTrace();
+            closeRealm(realm);
             Realm.deleteRealm(realmConfiguration);
-            resetDatabase();
         } finally {
-            if(realm != null)
-                realm.close();
+            closeRealm(realm);
+        }
+    }
+
+    public static void closeRealm(@Nullable Realm realm) {
+        if(realm != null) {
+            realm.close();
         }
     }
 
@@ -109,16 +117,9 @@ public class Queries {
         Realm realm = null;
         try {
             realm = Realm.getDefaultInstance();
-            realm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    realm.deleteAll();
-                    realm.createObject(TemporaryFeed.class);
-                }
-            });
+            realm.executeTransaction(initialData);
         } finally {
-            if(realm != null)
-                realm.close();
+            closeRealm(realm);
         }
     }
 

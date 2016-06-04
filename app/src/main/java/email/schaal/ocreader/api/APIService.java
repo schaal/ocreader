@@ -149,9 +149,7 @@ public class APIService {
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
-                    if (realm != null) {
-                        realm.close();
-                    }
+                    Queries.closeRealm(realm);
                     handler.post(new ResultRunnable(result) {
                         @Override
                         public void run() {
