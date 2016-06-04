@@ -78,7 +78,7 @@ public class ItemPageFragment extends WebViewFragment {
         @Override
         public void onGenerated(Palette palette, Bitmap bitmap) {
             if (palette != null) {
-                int titleColor = FaviconUtils.getTextColor(palette, ContextCompat.getColor(getActivity(), R.color.primary_text));
+                int titleColor = FaviconUtils.getTextColor(palette, ContextCompat.getColor(getActivity(), android.R.color.primary_text_light));
                 String cssColor = getCssColor(titleColor);
                 String javascript = String.format("javascript:(function(){document.styleSheets[0].cssRules[0].style.color=\"%s\";})()", cssColor);
                 getWebView().loadUrl(javascript);
@@ -149,7 +149,7 @@ public class ItemPageFragment extends WebViewFragment {
 
         Feed feed = item.getFeed();
 
-        int titleColor = ContextCompat.getColor(context, R.color.primary_text);
+        int titleColor = ContextCompat.getColor(context, android.R.color.primary_text_light);
 
         Document document = Jsoup.parse(item.getBody());
         document = cleaner.clean(document);

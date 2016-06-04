@@ -76,7 +76,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements Target {
         faviconImageView = (ImageView) itemView.findViewById(R.id.imageview_favicon);
         starImageView = (ImageView) itemView.findViewById(R.id.imageview_star);
 
-        defaultFeedTextColor = ContextCompat.getColor(itemView.getContext(),R.color.secondary_text);
+        defaultFeedTextColor = ContextCompat.getColor(itemView.getContext(),android.R.color.secondary_text_light);
 
         alphaViews = new View[] {
                 textViewTitle,

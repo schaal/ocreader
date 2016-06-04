@@ -50,7 +50,7 @@
         android:layout_below="@+id/textViewTitle"
         android:layout_alignLeft="@+id/textViewTitle"
         android:layout_alignStart="@id/textViewTitle"
-        android:textColor="@color/secondary_text"
+        android:textColor="?android:attr/textColorSecondary"
         tools:text="Feed title"
         android:layout_toLeftOf="@+id/textViewTime"
         android:layout_toStartOf="@+id/textViewTime"/>
@@ -83,7 +83,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="italic"
-        android:textColor="@color/secondary_text"
+        android:textColor="?android:attr/textColorSecondary"
         tools:text="1h"
         android:id="@+id/textViewTime"
         android:layout_below="@id/textViewTitle"
