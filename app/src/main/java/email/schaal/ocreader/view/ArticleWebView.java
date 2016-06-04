@@ -3,7 +3,7 @@ package email.schaal.ocreader.view;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Keep;
 import android.support.v7.graphics.Palette;
@@ -42,7 +42,7 @@ public class ArticleWebView extends WebView {
 
     private final FaviconUtils.PaletteBitmapAsyncListener paletteAsyncListener = new FaviconUtils.PaletteBitmapAsyncListener() {
         @Override
-        public void onGenerated(Palette palette, Bitmap bitmap) {
+        public void onGenerated(Palette palette, Drawable favicon) {
             if (palette != null) {
                 int titleColor = FaviconUtils.getTextColor(palette, defaultTitleColor);
                 String cssColor = FaviconUtils.getCssColor(titleColor);

@@ -24,8 +24,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -215,7 +215,7 @@ public class ItemPagerActivity extends RealmActivity {
         toolbar.setBackgroundColor(defaultToolbarColor);
         FaviconUtils.getInstance().loadFavicon(this, feed, new FaviconUtils.PaletteBitmapAsyncListener() {
             @Override
-            public void onGenerated(@Nullable Palette palette, @Nullable Bitmap bitmap) {
+            public void onGenerated(@Nullable Palette palette, @Nullable Drawable favicon) {
                 int toolbarColor;
                 int fabColor;
                 if (palette != null) {
@@ -237,8 +237,8 @@ public class ItemPagerActivity extends RealmActivity {
                     );
                     getWindow().setStatusBarColor(statusbarColor);
                 }
-                if(bitmap != null)
-                    fab.setImageBitmap(bitmap);
+                if(favicon != null)
+                    fab.setImageDrawable(favicon);
                 else
                     fab.setImageResource(R.drawable.ic_open_in_browser);
             }

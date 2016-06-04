@@ -24,10 +24,12 @@ package email.schaal.ocreader.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v7.graphics.Palette;
 import android.util.LruCache;
@@ -49,6 +51,7 @@ import static android.support.v7.graphics.Target.VIBRANT;
  */
 public class FaviconUtils {
     private final LruCache<Long, Palette> paletteCache = new LruCache<>(32);
+    private final LruCache<Long, Drawable> faviconCache = new LruCache<>(32);
     private static FaviconUtils instance;
 
     public static FaviconUtils getInstance() {
@@ -76,16 +79,17 @@ public class FaviconUtils {
                 @Override
                 public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
                     Palette palette = paletteCache.get(feed.getId());
+                    final BitmapDrawable bitmapDrawable = new BitmapDrawable(context.getResources(), bitmap);
                     if(palette == null)
                         generatePalette(bitmap, new Palette.PaletteAsyncListener() {
                             @Override
                             public void onGenerated(Palette palette) {
                                 paletteCache.put(feed.getId(), palette);
-                                paletteAsyncListener.onGenerated(palette, bitmap);
+                                paletteAsyncListener.onGenerated(palette, bitmapDrawable);
                             }
                         });
                     else {
-                        paletteAsyncListener.onGenerated(palette, bitmap);
+                        paletteAsyncListener.onGenerated(palette, bitmapDrawable);
                     }
                 }
 
@@ -100,7 +104,7 @@ public class FaviconUtils {
                 }
             });
         } else {
-            paletteAsyncListener.onGenerated(null, null);
+            paletteAsyncListener.onGenerated(null, getDrawable(context, feed));
         }
     }
 
@@ -114,7 +118,24 @@ public class FaviconUtils {
     }
 
     public void loadBitmap(final Context context, @Nullable final Feed feed, final Target target) {
-        Picasso.with(context).load(feed != null ? feed.getFaviconLink() : null).placeholder(R.drawable.ic_feed_icon).into(target);
+        Drawable placeHolder = getDrawable(context, feed);
+        Picasso.with(context).load(feed != null ? feed.getFaviconLink() : null).placeholder(placeHolder).into(target);
+    }
+
+    public Drawable getDrawable(Context context, @Nullable Feed feed) {
+        Drawable placeHolder;
+
+        if(feed != null && feed.getFaviconLink() == null) {
+            placeHolder = faviconCache.get(feed.getId());
+
+            if(placeHolder == null) {
+                placeHolder = new TextDrawable.Builder().build(feed.getTitle().substring(0, 1).toUpperCase(), ColorGenerator.MATERIAL.getColor(feed.getId()));
+                faviconCache.put(feed.getId(), placeHolder);
+            }
+        } else {
+            placeHolder = ContextCompat.getDrawable(context, R.drawable.ic_feed_icon);
+        }
+        return placeHolder;
     }
 
     public void loadPalette(final Bitmap bitmap, @Nullable final Long feedId, final Palette.PaletteAsyncListener paletteAsyncListener) {
@@ -158,6 +179,6 @@ public class FaviconUtils {
     }
 
     public interface PaletteBitmapAsyncListener {
-        void onGenerated(@Nullable Palette palette, @Nullable Bitmap bitmap);
+        void onGenerated(@Nullable Palette palette, @Nullable Drawable favicon);
     }
 }

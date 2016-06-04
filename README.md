@@ -17,6 +17,8 @@ OCReader is a client for a [Nextcloud News][0] instance (needs at least version 
 ## License
 OCReader is released under the [GNU General Public License version 3](https://www.gnu.org/licenses/gpl-3.0) (or later versions).
 
+[TextDrawable](https://github.com/amulyakhare/TextDrawable) licensed under the MIT License, Copyright (c) 2014 Amulya Khare
+
 ## Contact
 Maintainer: [Daniel Schaal](https://github.com/schaal) <<daniel@schaal.email>>
 

@@ -20,6 +20,7 @@
 
 package email.schaal.ocreader.view.drawer;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -33,19 +34,23 @@ import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Folder;
 import email.schaal.ocreader.model.TreeIconable;
 import email.schaal.ocreader.model.TreeItem;
+import email.schaal.ocreader.util.FaviconUtils;
 
 /**
  * Represents a TreeItem for display in a Drawer
  */
 public class TreeItemDrawerItem extends PrimaryDrawerItem {
+    private Feed feed;
+
     public TreeItemDrawerItem(TreeItem item) {
         if(item instanceof TreeIconable) {
             withIcon(((TreeIconable) item).getIcon());
         } else if(item instanceof Feed) {
-            if(((Feed) item).getFaviconLink() != null)
-                withIcon(((Feed) item).getFaviconLink());
+            Feed feed = (Feed) item;
+            if(feed.getFaviconLink() != null)
+                withIcon(feed.getFaviconLink());
             else
-                withIcon(R.drawable.ic_feed_icon);
+                withIcon(feed);
         } else if(item instanceof Folder) {
             withIcon(R.drawable.ic_folder);
         }
@@ -59,14 +64,28 @@ public class TreeItemDrawerItem extends PrimaryDrawerItem {
         super.bindViewHelper(viewHolder);
 
         if (icon != null && icon.getUri() != null) {
-            ImageView imageView = (ImageView) viewHolder.itemView.findViewById(com.mikepenz.materialdrawer.R.id.material_drawer_icon);
-            imageView.setVisibility(View.VISIBLE);
+            ImageView imageView = getImageView(viewHolder);
             ImageHolder.applyTo(icon, imageView);
+        } else if(feed != null) {
+            ImageView imageView = getImageView(viewHolder);
+            imageView.setImageDrawable(FaviconUtils.getInstance().getDrawable(imageView.getContext(), feed));
         }
+    }
+
+    @NonNull
+    private ImageView getImageView(BaseViewHolder viewHolder) {
+        ImageView imageView = (ImageView) viewHolder.itemView.findViewById(com.mikepenz.materialdrawer.R.id.material_drawer_icon);
+        imageView.setVisibility(View.VISIBLE);
+        return imageView;
     }
 
     public TreeItemDrawerItem withIcon(String url) {
         icon = new ImageHolder(url);
+        return this;
+    }
+
+    public TreeItemDrawerItem withIcon(Feed feed) {
+        this.feed = feed;
         return this;
     }
 
