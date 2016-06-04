@@ -222,7 +222,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
-                .withHeaderBackground(new ColorDrawable(ContextCompat.getColor(this, R.color.primary)))
+                .withHeaderBackground(R.drawable.header_background)
                 .addProfiles(profileDrawerItem, profileSettingsItem)
                 .withCurrentProfileHiddenInList(true)
                 .withProfileImagesClickable(false)

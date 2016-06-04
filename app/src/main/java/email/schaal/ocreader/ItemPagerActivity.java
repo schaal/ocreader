@@ -213,7 +213,7 @@ public class ItemPagerActivity extends RealmActivity {
     }
 
     private void setColorFromFeed(final Feed feed) {
-        toolbar.setBackgroundColor(ContextCompat.getColor(ItemPagerActivity.this, R.color.primary));
+        toolbar.setBackgroundColor(defaultToolbarColor);
         FaviconUtils.getInstance().loadFavicon(this, feed, new FaviconUtils.PaletteBitmapAsyncListener() {
             @Override
             public void onGenerated(@Nullable Palette palette, @Nullable Bitmap bitmap) {
