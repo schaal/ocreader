@@ -29,12 +29,12 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -53,6 +53,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -80,6 +81,7 @@ import email.schaal.ocreader.service.SyncService;
 import email.schaal.ocreader.view.DividerItemDecoration;
 import email.schaal.ocreader.view.ItemViewHolder;
 import email.schaal.ocreader.view.ItemsAdapter;
+import email.schaal.ocreader.view.ScrollAwareFABBehavior;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
 
@@ -147,6 +149,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private AccountHeader accountHeader;
 
     private SwipeRefreshLayout swipeRefreshLayout;
+    private FloatingActionButton fab_mark_all_read;
 
     private ItemsAdapter adapter;
     private LinearLayoutManager layoutManager;
@@ -201,6 +204,39 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setColorSchemeResources(R.color.primary);
         swipeRefreshLayout.setOnRefreshListener(this);
+
+        fab_mark_all_read = (FloatingActionButton) findViewById(R.id.fab_mark_all_as_read);
+        fab_mark_all_read.setOnClickListener(new View.OnClickListener() {
+            private void onCompletion(View view) {
+                adapter.updateItems(false);
+                view.setEnabled(true);
+            }
+
+            @Override
+            public void onClick(final View v) {
+                Queries.getInstance().markTemporaryFeedAsRead(getRealm(), null,
+                        new Realm.Transaction.OnSuccess() {
+                            @Override
+                            public void onSuccess() {
+                                onCompletion(v);
+                            }
+                        }, new Realm.Transaction.OnError() {
+                            @Override
+                            public void onError(Throwable error) {
+                                error.printStackTrace();
+                                onCompletion(v);
+                            }
+                        });
+            }
+        });
+
+        fab_mark_all_read.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(ListActivity.this, R.string.mark_all_as_read, Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
 
         profileDrawerItem = new ProfileDrawerItem()
                 .withName(preferences.getString(Preferences.USERNAME.getKey(), getString(R.string.app_name)))
@@ -496,6 +532,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         mode.setTitle(String.valueOf(adapter.getSelectedItemsCount()));
         startDrawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         swipeRefreshLayout.setEnabled(false);
+        fab_mark_all_read.setVisibility(View.GONE);
+        ((CoordinatorLayout.LayoutParams)fab_mark_all_read.getLayoutParams()).setBehavior(null);
         return true;
     }
 
@@ -564,6 +602,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         actionMode = null;
         startDrawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         swipeRefreshLayout.setEnabled(true);
+        fab_mark_all_read.setVisibility(View.VISIBLE);
+        ((CoordinatorLayout.LayoutParams)fab_mark_all_read.getLayoutParams()).setBehavior(new ScrollAwareFABBehavior());
         adapter.clearSelection();
     }
 }
