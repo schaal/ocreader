@@ -6,7 +6,6 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Keep;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.util.AttributeSet;
 import android.webkit.JavascriptInterface;
