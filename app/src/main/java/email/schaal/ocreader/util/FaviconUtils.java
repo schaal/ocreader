@@ -120,6 +120,7 @@ public class FaviconUtils {
         public MyTarget(Feed feed, View view, PaletteBitmapAsyncListener paletteAsyncListener) {
             this.feed = feed;
             this.view = view;
+            view.setTag(this);
             this.paletteAsyncListener = paletteAsyncListener;
         }
 
@@ -149,17 +150,6 @@ public class FaviconUtils {
         @Override
         public void onPrepareLoad(Drawable placeHolderDrawable) {
 
-        }
-
-        @Override
-        public int hashCode() {
-            return view.hashCode();
-        }
-
-        @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-        @Override
-        public boolean equals(Object o) {
-            return view.equals(o);
         }
     }
 }
