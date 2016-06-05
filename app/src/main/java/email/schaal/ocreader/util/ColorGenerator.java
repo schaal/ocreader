@@ -31,7 +31,6 @@ import java.util.List;
 
 /**
  * @author amulya
- * @datetime 14 Oct 2014, 5:20 PM
  */
 public class ColorGenerator {
     public final static ColorGenerator MATERIAL = new ColorGenerator(Arrays.asList(
