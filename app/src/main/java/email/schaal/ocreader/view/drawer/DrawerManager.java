@@ -89,6 +89,11 @@ public class DrawerManager {
         endAdapter.reload(realm, showOnlyUnread);
     }
 
+    public void reset() {
+        state.setStartDrawerItem(allUnreadFolder);
+        state.setEndDrawerItem(null);
+    }
+
     public void setSelectedFeed(Feed selectedFeed) {
         state.setEndDrawerItem(selectedFeed);
     }

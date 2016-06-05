@@ -20,7 +20,6 @@
 
 package email.schaal.ocreader.view;
 
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
@@ -32,11 +31,13 @@ import android.widget.ViewSwitcher;
 
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.Queries;
+import email.schaal.ocreader.model.AllUnreadFolder;
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Folder;
 import email.schaal.ocreader.model.Item;
 import email.schaal.ocreader.model.TemporaryFeed;
 import email.schaal.ocreader.model.TreeItem;
+import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
@@ -48,8 +49,7 @@ import io.realm.Sort;
 public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private RealmList<Item> items;
     private SparseArray<Item> selectedItems = new SparseArray<>();
-    @Nullable private TreeItem treeItem;
-    private boolean onlyUnread;
+    private final DrawerManager.State state;
     private Realm realm;
     private final ItemViewHolder.OnClickListener clickListener;
     private final OnLoadMoreListener loadMoreListener;
@@ -60,8 +60,9 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private TreeItem loadingMoreTreeItem;
 
-    public ItemsAdapter(Realm realm, ItemViewHolder.OnClickListener clickListener, OnLoadMoreListener loadMoreListener) {
+    public ItemsAdapter(Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, OnLoadMoreListener loadMoreListener) {
         this.realm = realm;
+        this.state = state;
         this.clickListener = clickListener;
         this.loadMoreListener = loadMoreListener;
 
@@ -69,18 +70,18 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public void updateItems(boolean updateTemporaryFeed) {
-        if(treeItem == null)
+        if(state.getTreeItem() == null)
             return;
 
         final TemporaryFeed temporaryFeed = realm.where(TemporaryFeed.class).findFirst();
 
-        if (updateTemporaryFeed || temporaryFeed.getId() != treeItem.getId()) {
+        if (updateTemporaryFeed || temporaryFeed.getId() != state.getTreeItem().getId()) {
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    RealmResults<Item> tempItems = Queries.getInstance().getItems(realm, treeItem, onlyUnread, Item.PUB_DATE, Sort.DESCENDING);
-                    temporaryFeed.setId(treeItem.getId());
-                    temporaryFeed.setTitle(treeItem.getTitle());
+                    RealmResults<Item> tempItems = Queries.getInstance().getItems(realm, state.getTreeItem(), isOnlyUnread(), Item.PUB_DATE, Sort.DESCENDING);
+                    temporaryFeed.setId(state.getTreeItem().getId());
+                    temporaryFeed.setTitle(state.getTreeItem().getTitle());
                     temporaryFeed.getItems().clear();
                     if (tempItems != null) {
                         temporaryFeed.getItems().addAll(tempItems);
@@ -111,7 +112,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private boolean hasLoadMore() {
-        return !onlyUnread && (treeItem instanceof Feed || treeItem instanceof Folder);
+        return state.getTreeItem() instanceof Feed || state.getTreeItem() instanceof Folder;
     }
 
     @Override
@@ -143,7 +144,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
         else if(holder instanceof LoadMoreViewHolder) {
             ((LoadMoreViewHolder) holder).showProgress(
-                    loadingMoreTreeItem != null && loadingMoreTreeItem.equals(treeItem));
+                    loadingMoreTreeItem != null && loadingMoreTreeItem.equals(state.getTreeItem()));
         }
     }
 
@@ -169,14 +170,8 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             return -1;
     }
 
-    public void setTreeItem(@NonNull TreeItem item, boolean onlyUnread) {
-        setTreeItem(item, onlyUnread, true);
-    }
-
-    public void setTreeItem(@NonNull TreeItem item, boolean onlyUnread, boolean updateTempFeed) {
-        treeItem = item;
-        this.onlyUnread = onlyUnread;
-        updateItems(updateTempFeed);
+    private boolean isOnlyUnread() {
+        return state.getStartDrawerItem() instanceof AllUnreadFolder;
     }
 
     public void resetLoadMore() {
@@ -240,8 +235,8 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 @Override
                 public void onClick(View v) {
                     showProgress(true);
-                    loadingMoreTreeItem = treeItem;
-                    loadMoreListener.onLoadMore(treeItem);
+                    loadingMoreTreeItem = state.getTreeItem();
+                    loadMoreListener.onLoadMore(state.getTreeItem());
                 }
             });
         }

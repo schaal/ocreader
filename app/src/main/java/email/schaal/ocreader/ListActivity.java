@@ -71,7 +71,6 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 
 import email.schaal.ocreader.database.Queries;
-import email.schaal.ocreader.model.AllUnreadFolder;
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Item;
 import email.schaal.ocreader.model.TemporaryFeed;
@@ -185,58 +184,9 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        RecyclerView itemsRecyclerView = (RecyclerView) findViewById(R.id.items_recyclerview);
-
-        adapter = new ItemsAdapter(getRealm(), this, this);
-
-        itemsRecyclerView.setAdapter(adapter);
-
-        layoutManager = new LinearLayoutManager(this);
-
-        itemsRecyclerView.setLayoutManager(layoutManager);
-
-        if(savedInstanceState != null)
-            layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE));
-
-        itemsRecyclerView.addItemDecoration(new DividerItemDecoration(this));
-        itemsRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setColorSchemeResources(R.color.primary);
         swipeRefreshLayout.setOnRefreshListener(this);
-
-        fab_mark_all_read = (FloatingActionButton) findViewById(R.id.fab_mark_all_as_read);
-        fab_mark_all_read.setOnClickListener(new View.OnClickListener() {
-            private void onCompletion(View view) {
-                adapter.updateItems(false);
-                view.setEnabled(true);
-            }
-
-            @Override
-            public void onClick(final View v) {
-                Queries.getInstance().markTemporaryFeedAsRead(getRealm(), null,
-                        new Realm.Transaction.OnSuccess() {
-                            @Override
-                            public void onSuccess() {
-                                onCompletion(v);
-                            }
-                        }, new Realm.Transaction.OnError() {
-                            @Override
-                            public void onError(Throwable error) {
-                                error.printStackTrace();
-                                onCompletion(v);
-                            }
-                        });
-            }
-        });
-
-        fab_mark_all_read.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Toast.makeText(ListActivity.this, R.string.mark_all_as_read, Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        });
 
         profileDrawerItem = new ProfileDrawerItem()
                 .withName(preferences.getString(Preferences.USERNAME.getKey(), getString(R.string.app_name)))
@@ -366,8 +316,58 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         startDrawer = startDrawerBuilder.build();
 
         drawerManager = new DrawerManager(this, startDrawer, endDrawerBuilder.append(startDrawer), isShowOnlyUnread(), this);
+
+        RecyclerView itemsRecyclerView = (RecyclerView) findViewById(R.id.items_recyclerview);
+
+        layoutManager = new LinearLayoutManager(this);
+
+        adapter = new ItemsAdapter(getRealm(), drawerManager.getState(), this, this);
+
+        fab_mark_all_read = (FloatingActionButton) findViewById(R.id.fab_mark_all_as_read);
+        fab_mark_all_read.setOnClickListener(new View.OnClickListener() {
+            private void onCompletion(View view) {
+                adapter.updateItems(false);
+                view.setEnabled(true);
+            }
+
+            @Override
+            public void onClick(final View v) {
+                Queries.getInstance().markTemporaryFeedAsRead(getRealm(), null,
+                        new Realm.Transaction.OnSuccess() {
+                            @Override
+                            public void onSuccess() {
+                                onCompletion(v);
+                            }
+                        }, new Realm.Transaction.OnError() {
+                            @Override
+                            public void onError(Throwable error) {
+                                error.printStackTrace();
+                                onCompletion(v);
+                            }
+                        });
+            }
+        });
+
+        fab_mark_all_read.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(ListActivity.this, R.string.mark_all_as_read, Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+
+        itemsRecyclerView.setAdapter(adapter);
+        itemsRecyclerView.setLayoutManager(layoutManager);
+
+        if(savedInstanceState != null)
+            layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE));
+
+        itemsRecyclerView.addItemDecoration(new DividerItemDecoration(this));
+        itemsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
         drawerManager.getState().restoreInstanceState(getRealm(), PreferenceManager.getDefaultSharedPreferences(this));
-        adapter.setTreeItem(drawerManager.getState().getTreeItem(), drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder, false);
+        // TODO: 05.06.16 remove first argument
+        adapter.updateItems(false);
 
         drawerManager.reloadAdapters(getRealm(), isShowOnlyUnread());
 
@@ -388,18 +388,18 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
     private void onStartDrawerItemClicked(TreeItem item) {
         drawerManager.setSelectedTreeItem(getRealm(), item, isShowOnlyUnread());
-        reloadListFragment(item);
+        reloadListFragment();
     }
 
     private void onEndDrawerItemClicked(Feed feed) {
         drawerManager.setSelectedFeed(feed);
-        reloadListFragment(feed);
+        reloadListFragment();
     }
 
-    private void reloadListFragment(TreeItem item) {
+    private void reloadListFragment() {
         //noinspection ConstantConditions
-        getSupportActionBar().setTitle(item.getTitle());
-        adapter.setTreeItem(item, drawerManager.getState().getStartDrawerItem() instanceof AllUnreadFolder);
+        getSupportActionBar().setTitle(drawerManager.getState().getTreeItem().getTitle());
+        adapter.updateItems(true);
     }
 
     @Override
@@ -423,6 +423,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                     profileDrawerItem.withName(Preferences.USERNAME.getString(preferences));
                     profileDrawerItem.withEmail(Preferences.URL.getString(preferences));
 
+                    drawerManager.reset();
+                    reloadListFragment();
                     Queries.getInstance().resetDatabase();
                     SyncService.startSync(this, true);
                     break;
