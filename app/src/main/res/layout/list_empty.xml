@@ -30,5 +30,5 @@
         android:layout_gravity="center"
         android:layout_margin="10dp"
         android:text="@string/no_articles"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 </LinearLayout>
