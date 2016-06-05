@@ -1,3 +1,13 @@
+## 0.9 (2016-06-05)
+
+The "color ALL the feeds" release
+
+* Use Gmail-style images for feeds without favicon
+* Fix initial sync not starting when logging in
+* ownCloud news was renamed to Nextcloud news, rename all references
+* Change color scheme (green instead of orange accent color)
+* Add back the FloatingActionButton in the list view to mark all articles as read
+
 ## 0.8 (2016-06-01)
 
 * Add action mode to article list
