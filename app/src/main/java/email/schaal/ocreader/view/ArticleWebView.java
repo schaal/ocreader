@@ -6,7 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Keep;
-import android.support.v7.graphics.Palette;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
@@ -29,6 +29,7 @@ import email.schaal.ocreader.R;
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Item;
 import email.schaal.ocreader.util.FaviconUtils;
+import email.schaal.ocreader.util.FeedColors;
 import email.schaal.ocreader.util.StringUtils;
 
 /**
@@ -42,13 +43,11 @@ public class ArticleWebView extends WebView {
 
     private final FaviconUtils.PaletteBitmapAsyncListener paletteAsyncListener = new FaviconUtils.PaletteBitmapAsyncListener() {
         @Override
-        public void onGenerated(Palette palette, Drawable favicon) {
-            if (palette != null) {
-                int titleColor = FaviconUtils.getTextColor(palette, defaultTitleColor);
-                String cssColor = FaviconUtils.getCssColor(titleColor);
-                String javascript = String.format("javascript:(function(){document.styleSheets[0].cssRules[0].style.color=\"%s\";})()", cssColor);
-                loadUrl(javascript);
-            }
+        public void onGenerated(@Nullable FeedColors feedColors, @Nullable Drawable favicon) {
+            int titleColor = FeedColors.get(feedColors, FeedColors.Type.TEXT, defaultTitleColor);
+            String cssColor = FaviconUtils.getCssColor(titleColor);
+            String javascript = String.format("javascript:(function(){document.styleSheets[0].cssRules[0].style.color=\"%s\";})()", cssColor);
+            loadUrl(javascript);
         }
     };
 
@@ -104,7 +103,7 @@ public class ArticleWebView extends WebView {
             getHandler().post(new Runnable() {
                 @Override
                 public void run() {
-                    FaviconUtils.getInstance().loadFavicon(getContext(), item.getFeed(), paletteAsyncListener);
+                    FaviconUtils.getInstance().loadFavicon(ArticleWebView.this, item.getFeed(), paletteAsyncListener);
                 }
             });
         }

@@ -25,6 +25,7 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -33,7 +34,6 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,6 +46,7 @@ import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Item;
 import email.schaal.ocreader.model.TemporaryFeed;
 import email.schaal.ocreader.util.FaviconUtils;
+import email.schaal.ocreader.util.FeedColors;
 import email.schaal.ocreader.view.ProgressFloatingActionButton;
 
 public class ItemPagerActivity extends RealmActivity {
@@ -213,18 +214,11 @@ public class ItemPagerActivity extends RealmActivity {
 
     private void setColorFromFeed(final Feed feed) {
         toolbar.setBackgroundColor(defaultToolbarColor);
-        FaviconUtils.getInstance().loadFavicon(this, feed, new FaviconUtils.PaletteBitmapAsyncListener() {
+        FaviconUtils.getInstance().loadFavicon(fab, feed, new FaviconUtils.PaletteBitmapAsyncListener() {
             @Override
-            public void onGenerated(@Nullable Palette palette, @Nullable Drawable favicon) {
-                int toolbarColor;
-                int fabColor;
-                if (palette != null) {
-                    toolbarColor = FaviconUtils.getTextColor(palette, defaultToolbarColor);
-                    fabColor = palette.getLightMutedColor(defaultAccent);
-                } else {
-                    toolbarColor = defaultToolbarColor;
-                    fabColor = defaultAccent;
-                }
+            public void onGenerated(@Nullable FeedColors palette, @Nullable Drawable favicon) {
+                int toolbarColor = FeedColors.get(palette, FeedColors.Type.TEXT, defaultToolbarColor);
+                int fabColor = FeedColors.get(palette, FeedColors.Type.BACKGROUND, defaultAccent);
 
                 toolbar.setBackgroundColor(toolbarColor);
                 fab.setBackgroundColor(fabColor);
@@ -237,7 +231,7 @@ public class ItemPagerActivity extends RealmActivity {
                     );
                     getWindow().setStatusBarColor(statusbarColor);
                 }
-                if(favicon != null)
+                if(favicon instanceof BitmapDrawable)
                     fab.setImageDrawable(favicon);
                 else
                     fab.setImageResource(R.drawable.ic_open_in_browser);
