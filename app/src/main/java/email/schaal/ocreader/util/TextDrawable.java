@@ -66,7 +66,7 @@ public class TextDrawable extends ShapeDrawable {
         textPaint.setAntiAlias(true);
         textPaint.setFakeBoldText(builder.isBold);
         textPaint.setStyle(Paint.Style.FILL);
-        textPaint.setTypeface(Typeface.SANS_SERIF);
+        textPaint.setTypeface(Typeface.DEFAULT_BOLD);
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setStrokeWidth(builder.borderThickness);
 
