@@ -13,6 +13,8 @@ pre {
 body {
     font-size: 1em;
     font-weight: normal;
+    margin-left: 16px;
+    margin-right: 16px;
 }
 
 blockquote {
