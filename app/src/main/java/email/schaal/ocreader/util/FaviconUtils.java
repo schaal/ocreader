@@ -32,8 +32,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.util.LruCache;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 import com.squareup.picasso.Target;
 
 import java.util.Locale;
@@ -74,7 +77,13 @@ public class FaviconUtils {
 
     public void loadFavicon(final View view, @Nullable final Feed feed, @NonNull final PaletteBitmapAsyncListener paletteAsyncListener) {
         if(feed != null && feed.getFaviconLink() != null) {
-            Picasso.with(view.getContext()).load(feed.getFaviconLink()).into(new MyTarget(feed, view, paletteAsyncListener));
+            RequestCreator requestCreator = Picasso.with(view.getContext()).load(feed.getFaviconLink());
+            MyTarget myTarget = new MyTarget(feed, view, paletteAsyncListener);
+            if(view instanceof ImageView) {
+                requestCreator.placeholder(R.drawable.ic_feed_icon).into((ImageView) view, myTarget);
+            } else {
+                requestCreator.into(myTarget);
+            }
         } else {
             if(feed != null)
                 paletteAsyncListener.onGenerated(new FeedColors(ColorGenerator.MATERIAL.getColor(feed.getId())), getDrawable(view.getContext(), feed));
@@ -93,26 +102,26 @@ public class FaviconUtils {
     }
 
     public Drawable getDrawable(Context context, @Nullable Feed feed) {
-        Drawable placeHolder;
+        Drawable drawable;
 
         if(feed != null && feed.getFaviconLink() == null) {
-            placeHolder = faviconCache.get(feed.getId());
+            drawable = faviconCache.get(feed.getId());
 
-            if(placeHolder == null) {
-                placeHolder = new TextDrawable.Builder().build(feed.getTitle().substring(0, 1).toUpperCase(), ColorGenerator.MATERIAL.getColor(feed.getId()));
-                faviconCache.put(feed.getId(), placeHolder);
+            if(drawable == null) {
+                drawable = new TextDrawable.Builder().build(feed.getTitle().substring(0, 1).toUpperCase(), ColorGenerator.MATERIAL.getColor(feed.getId()));
+                faviconCache.put(feed.getId(), drawable);
             }
         } else {
-            placeHolder = ContextCompat.getDrawable(context, R.drawable.ic_feed_icon);
+            drawable = ContextCompat.getDrawable(context, R.drawable.ic_feed_icon);
         }
-        return placeHolder;
+        return drawable;
     }
 
     public interface PaletteBitmapAsyncListener {
         void onGenerated(@Nullable FeedColors palette, @Nullable Drawable favicon);
     }
 
-    private class MyTarget implements Target {
+    private class MyTarget implements Target, Callback {
         private final Feed feed;
         private final View view;
         private final PaletteBitmapAsyncListener paletteAsyncListener;
@@ -150,6 +159,16 @@ public class FaviconUtils {
         @Override
         public void onPrepareLoad(Drawable placeHolderDrawable) {
 
+        }
+
+        @Override
+        public void onSuccess() {
+            onBitmapLoaded(((BitmapDrawable)((ImageView)view).getDrawable()).getBitmap(), null);
+        }
+
+        @Override
+        public void onError() {
+            onBitmapFailed(null);
         }
     }
 }

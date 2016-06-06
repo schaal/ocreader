@@ -95,10 +95,9 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconUt
 
         textViewTime.setText(StringUtils.getTimeSpanString(itemView.getContext(), item.getPubDate()));
 
-        faviconImageView.setImageResource(R.drawable.ic_feed_icon);
         textViewFeedTitle.setTextColor(defaultFeedTextColor);
 
-        FaviconUtils.getInstance().loadFavicon(itemView, feed, this);
+        FaviconUtils.getInstance().loadFavicon(faviconImageView, feed, this);
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
