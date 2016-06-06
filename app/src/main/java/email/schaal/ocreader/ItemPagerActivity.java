@@ -42,7 +42,6 @@ import android.view.View;
 import java.util.WeakHashMap;
 
 import email.schaal.ocreader.database.Queries;
-import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Item;
 import email.schaal.ocreader.model.TemporaryFeed;
 import email.schaal.ocreader.util.FaviconUtils;
@@ -67,6 +66,7 @@ public class ItemPagerActivity extends RealmActivity {
     private MenuItem menuItemMarkRead;
     private MenuItem menuItemMarkStarred;
     private ViewPager mViewPager;
+    private FaviconUtils.PaletteBitmapAsyncListener paletteBitmapAsyncListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +108,30 @@ public class ItemPagerActivity extends RealmActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
+        paletteBitmapAsyncListener = new FaviconUtils.PaletteBitmapAsyncListener() {
+            @Override
+            public void onGenerated(@Nullable FeedColors palette, @Nullable Drawable favicon) {
+                int toolbarColor = FeedColors.get(palette, FeedColors.Type.TEXT, defaultToolbarColor);
+                int fabColor = FeedColors.get(palette, FeedColors.Type.BACKGROUND, defaultAccent);
+
+                toolbar.setBackgroundColor(toolbarColor);
+                fab.setBackgroundColor(fabColor);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    int statusbarColor = Color.rgb(
+                            (int) (Color.red(toolbarColor) * 0.7),
+                            (int) (Color.green(toolbarColor) * 0.7),
+                            (int) (Color.blue(toolbarColor) * 0.7)
+                    );
+                    getWindow().setStatusBarColor(statusbarColor);
+                }
+                if (favicon instanceof BitmapDrawable)
+                    fab.setImageDrawable(favicon);
+                else
+                    fab.setImageResource(R.drawable.ic_open_in_browser);
+            }
+        };
+
         ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -119,7 +143,8 @@ public class ItemPagerActivity extends RealmActivity {
                 item = getItemForPosition(position);
                 setItemUnread(false);
 
-                setColorFromFeed(item.getFeed());
+                toolbar.setBackgroundColor(defaultToolbarColor);
+                FaviconUtils.getInstance().loadFavicon(fab, item.getFeed(), paletteBitmapAsyncListener);
 
                 fab.setProgress((float)(position+1) / (float)mSectionsPagerAdapter.getCount());
                 fab.show();
@@ -210,33 +235,6 @@ public class ItemPagerActivity extends RealmActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void setColorFromFeed(final Feed feed) {
-        toolbar.setBackgroundColor(defaultToolbarColor);
-        FaviconUtils.getInstance().loadFavicon(fab, feed, new FaviconUtils.PaletteBitmapAsyncListener() {
-            @Override
-            public void onGenerated(@Nullable FeedColors palette, @Nullable Drawable favicon) {
-                int toolbarColor = FeedColors.get(palette, FeedColors.Type.TEXT, defaultToolbarColor);
-                int fabColor = FeedColors.get(palette, FeedColors.Type.BACKGROUND, defaultAccent);
-
-                toolbar.setBackgroundColor(toolbarColor);
-                fab.setBackgroundColor(fabColor);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    int statusbarColor = Color.rgb(
-                            (int) (Color.red(toolbarColor) * 0.7),
-                            (int) (Color.green(toolbarColor) * 0.7),
-                            (int) (Color.blue(toolbarColor) * 0.7)
-                    );
-                    getWindow().setStatusBarColor(statusbarColor);
-                }
-                if(favicon instanceof BitmapDrawable)
-                    fab.setImageDrawable(favicon);
-                else
-                    fab.setImageResource(R.drawable.ic_open_in_browser);
-            }
-        });
     }
 
     private class SectionsPagerAdapter extends FragmentStatePagerAdapter {
