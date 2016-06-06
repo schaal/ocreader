@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
+        android:layout_margin="@dimen/materialize_screen_edge"
         android:clickable="true"
         app:progressColor="@color/progress"
         app:backgroundTint="@android:color/transparent"

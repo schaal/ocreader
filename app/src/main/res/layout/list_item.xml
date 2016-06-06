@@ -27,7 +27,10 @@
     android:background="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    android:padding="5dp">
+    android:paddingLeft="@dimen/materialize_screen_edge"
+    android:paddingRight="@dimen/materialize_screen_edge"
+    android:paddingTop="@dimen/materialize_spacing"
+    android:paddingBottom="@dimen/materialize_spacing">
 
     <TextView
         android:id="@+id/textViewTitle"
@@ -53,30 +56,33 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         tools:text="Feed title"
         android:layout_toLeftOf="@+id/textViewTime"
-        android:layout_toStartOf="@+id/textViewTime"/>
+        android:layout_toStartOf="@+id/textViewTime" />
 
     <ImageView
         android:id="@+id/imageview_favicon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:layout_width="@dimen/materialize_icon"
+        android:layout_height="@dimen/materialize_icon"
         android:layout_gravity="center_vertical"
         tools:src="@drawable/ic_feed_icon"
         android:contentDescription="@string/feed_icon_description"
-        android:layout_margin="4dp"/>
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/materialize_spacing"
+        android:layout_marginRight="@dimen/materialize_spacing"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <ImageView
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="@dimen/materialize_icon"
+        android:layout_height="@dimen/materialize_icon"
         android:id="@+id/imageview_star"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="4dp"
         android:src="@drawable/ic_star"
         android:tint="@color/star"
         android:contentDescription="@string/starred"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
 
     <TextView
         android:layout_width="wrap_content"

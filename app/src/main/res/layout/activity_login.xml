@@ -37,10 +37,7 @@
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
+        android:padding="@dimen/materialize_screen_edge"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="email.schaal.ocreader.LoginActivity">
 
@@ -50,7 +47,7 @@
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="@dimen/materialize_baseline_grid"
             android:visibility="gone" />
 
         <ScrollView
