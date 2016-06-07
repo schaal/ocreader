@@ -34,7 +34,7 @@ import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Folder;
 import email.schaal.ocreader.model.TreeIconable;
 import email.schaal.ocreader.model.TreeItem;
-import email.schaal.ocreader.util.FaviconUtils;
+import email.schaal.ocreader.util.FaviconLoader;
 
 /**
  * Represents a TreeItem for display in a Drawer
@@ -68,7 +68,7 @@ public class TreeItemDrawerItem extends PrimaryDrawerItem {
             ImageHolder.applyTo(icon, imageView);
         } else if(feed != null) {
             ImageView imageView = getImageView(viewHolder);
-            imageView.setImageDrawable(FaviconUtils.getInstance().getDrawable(imageView.getContext(), feed));
+            imageView.setImageDrawable(FaviconLoader.getDrawable(imageView.getContext(), feed));
         }
     }
 

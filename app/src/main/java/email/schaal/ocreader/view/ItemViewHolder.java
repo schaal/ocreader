@@ -21,8 +21,6 @@
 package email.schaal.ocreader.view;
 
 import android.content.res.TypedArray;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -34,14 +32,14 @@ import android.widget.TextView;
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Item;
-import email.schaal.ocreader.util.FaviconUtils;
+import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.util.FeedColors;
 import email.schaal.ocreader.util.StringUtils;
 
 /**
  * RecyclerView.ViewHolder to display a feed Item.
  */
-public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconUtils.PaletteBitmapAsyncListener {
+public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLoader.FeedColorsListener {
     private static final String TAG = ItemViewHolder.class.getName();
 
     private final OnClickListener clickListener;
@@ -98,7 +96,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconUt
 
         textViewFeedTitle.setTextColor(defaultFeedTextColor);
 
-        FaviconUtils.getInstance().loadFavicon(faviconImageView, feed, this);
+        new FaviconLoader.Builder(faviconImageView, feed).build().load(this);
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,7 +137,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconUt
     }
 
     @Override
-    public void onGenerated(@Nullable FeedColors palette, @Nullable Drawable favicon) {
+    public void onGenerated(@Nullable FeedColors palette) {
         textViewFeedTitle.setTextColor(FeedColors.get(palette, FeedColors.Type.TEXT, defaultFeedTextColor));
     }
 

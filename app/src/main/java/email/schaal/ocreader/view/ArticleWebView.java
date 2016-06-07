@@ -3,7 +3,6 @@ package email.schaal.ocreader.view;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
@@ -28,7 +27,7 @@ import java.util.regex.Pattern;
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Item;
-import email.schaal.ocreader.util.FaviconUtils;
+import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.util.FeedColors;
 import email.schaal.ocreader.util.StringUtils;
 
@@ -41,11 +40,11 @@ public class ArticleWebView extends WebView {
 
     private Item item;
 
-    private final FaviconUtils.PaletteBitmapAsyncListener paletteAsyncListener = new FaviconUtils.PaletteBitmapAsyncListener() {
+    private final FaviconLoader.FeedColorsListener paletteAsyncListener = new FaviconLoader.FeedColorsListener() {
         @Override
-        public void onGenerated(@Nullable FeedColors feedColors, @Nullable Drawable favicon) {
+        public void onGenerated(@Nullable FeedColors feedColors) {
             int titleColor = FeedColors.get(feedColors, FeedColors.Type.TEXT, defaultTitleColor);
-            String cssColor = FaviconUtils.getCssColor(titleColor);
+            String cssColor = FaviconLoader.getCssColor(titleColor);
             String javascript = String.format("javascript:(function(){document.styleSheets[0].cssRules[0].style.color=\"%s\";})()", cssColor);
             loadUrl(javascript);
         }
@@ -103,7 +102,9 @@ public class ArticleWebView extends WebView {
             getHandler().post(new Runnable() {
                 @Override
                 public void run() {
-                    FaviconUtils.getInstance().loadFavicon(ArticleWebView.this, item.getFeed(), paletteAsyncListener);
+                    new FaviconLoader.Builder(getContext(), item.getFeed())
+                            .build()
+                            .load(paletteAsyncListener);
                 }
             });
         }
@@ -135,7 +136,7 @@ public class ArticleWebView extends WebView {
 
         pageBuilder.append(String.format(
                 "<style type=\"text/css\">a:link, a:active,a:hover { color: %s } %s</style>",
-                FaviconUtils.getCssColor(defaultTitleColor), css));
+                FaviconLoader.getCssColor(defaultTitleColor), css));
 
         pageBuilder.append("</head><body>");
 
