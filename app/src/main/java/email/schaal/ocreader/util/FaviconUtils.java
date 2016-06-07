@@ -85,9 +85,11 @@ public class FaviconUtils {
                 requestCreator.into(myTarget);
             }
         } else {
-            if(feed != null)
+            if(feed != null) {
+                if(view instanceof ImageView)
+                    ((ImageView) view).setImageDrawable(getDrawable(view.getContext(), feed));
                 paletteAsyncListener.onGenerated(new FeedColors(ColorGenerator.MATERIAL.getColor(feed.getId())), getDrawable(view.getContext(), feed));
-            else
+            } else
                 paletteAsyncListener.onGenerated(null, null);
         }
     }

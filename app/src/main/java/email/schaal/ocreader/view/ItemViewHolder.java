@@ -21,6 +21,7 @@
 package email.schaal.ocreader.view;
 
 import android.content.res.TypedArray;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
@@ -139,7 +140,6 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconUt
 
     @Override
     public void onGenerated(@Nullable FeedColors palette, @Nullable Drawable favicon) {
-        faviconImageView.setImageDrawable(favicon);
         textViewFeedTitle.setTextColor(FeedColors.get(palette, FeedColors.Type.TEXT, defaultFeedTextColor));
     }
 
