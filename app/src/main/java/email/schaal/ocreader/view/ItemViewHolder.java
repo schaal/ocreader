@@ -21,6 +21,7 @@
 package email.schaal.ocreader.view;
 
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -114,15 +115,26 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
         });
         setUnreadState(item.isUnread());
         setStarredState(item.isStarred());
-        if (selected) {
-            itemView.setBackgroundResource(R.drawable.item_background);
-        } else {
+        int backgroundResource = R.drawable.item_background;
+        if (!selected) {
             int[] attrs = new int[]{R.attr.selectableItemBackground};
             TypedArray typedArray = itemView.getContext().obtainStyledAttributes(attrs);
-            int backgroundResource = typedArray.getResourceId(0, 0);
-            itemView.setBackgroundResource(backgroundResource);
+            backgroundResource = typedArray.getResourceId(0, 0);
             typedArray.recycle();
         }
+
+        if(Build.VERSION.SDK_INT < 19)
+            setBackgroundResource(itemView, backgroundResource);
+        else
+            itemView.setBackgroundResource(backgroundResource);
+    }
+
+    // Workaround for bug pre sdk 19, where the padding is lost after updating the background resource
+    // see http://stackoverflow.com/a/15060962
+    private void setBackgroundResource(View view, int resource) {
+        int[] padding = new int[]{view.getPaddingLeft(), view.getPaddingTop(), view.getPaddingTop(), view.getPaddingBottom()};
+        view.setBackgroundResource(resource);
+        view.setPadding(padding[0], padding[1], padding[2], padding[3]);
     }
 
     private void setUnreadState(boolean unread) {
