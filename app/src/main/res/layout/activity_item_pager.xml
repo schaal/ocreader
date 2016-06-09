@@ -45,7 +45,6 @@
         android:layout_margin="@dimen/materialize_screen_edge"
         android:clickable="true"
         app:progressColor="@color/progress"
-        app:backgroundTint="@android:color/transparent"
         app:layout_behavior="email.schaal.ocreader.view.ScrollAwareFABBehavior"
         android:src="@drawable/ic_open_in_browser" />
 

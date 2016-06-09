@@ -1,9 +1,11 @@
 package email.schaal.ocreader.view;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
 
@@ -14,9 +16,10 @@ import email.schaal.ocreader.R;
  */
 public class ProgressFloatingActionButton extends FloatingActionButton {
     private final Paint circlePaint = new Paint();
-    private final Paint backgroundPaint = new Paint();
 
     private float progress;
+    private float diameter;
+
 
     public ProgressFloatingActionButton(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -39,16 +42,20 @@ public class ProgressFloatingActionButton extends FloatingActionButton {
 
     @Override
     public void setBackgroundColor(int color) {
-        backgroundPaint.setColor(color);
+        if(Build.VERSION.SDK_INT >= 21) {
+            setBackgroundTintList(ColorStateList.valueOf(color));
+        }
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        diameter = getHeight();
+        super.onSizeChanged(w, h, oldw, oldh);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        float diameter = canvas.getHeight();
-        float radius = diameter / 2;
-
-        // draw background circle
-        canvas.drawCircle(radius, radius, radius, backgroundPaint);
+        float radius = diameter / 2 ;
 
         canvas.save();
 
