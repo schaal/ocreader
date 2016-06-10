@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.util.LruCache;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Callback;
@@ -76,25 +75,33 @@ public class FaviconLoader {
 
     public void load(FeedColorsListener listener) {
         listener.onStart();
-        if(feed != null && feed.getFaviconLink() != null) {
+        if(feed == null) {
+            listener.onGenerated(null);
+            return;
+        }
+
+        if(feed.getFaviconLink() != null) {
+            // load favicon
             RequestCreator requestCreator = Picasso.with(context).load(feed.getFaviconLink());
-            MyTarget myTarget = new MyTarget(feed, imageView, listener);
+            MyTarget myTarget = new MyTarget(feed, listener);
+
             if(imageView != null) {
                 requestCreator.placeholder(placeholder).into(imageView, myTarget);
             } else {
                 requestCreator.into(myTarget);
             }
         } else {
-            if(feed != null) {
-                if (imageView != null)
-                    if (generateFallbackImage) {
-                        imageView.setImageDrawable(getDrawable(context, feed));
-                    } else {
-                        imageView.setImageResource(placeholder);
-                    }
-                listener.onGenerated(new FeedColors(ColorGenerator.MATERIAL.getColor(feed.getId())));
-            } else
-                listener.onGenerated(null);
+            // feed has no favicon
+            if (imageView != null) {
+                if (generateFallbackImage) {
+                    // generate image
+                    imageView.setImageDrawable(getDrawable(context, feed));
+                } else {
+                    // use placeholder
+                    imageView.setImageResource(placeholder);
+                }
+            }
+            listener.onGenerated(new FeedColors(ColorGenerator.MATERIAL.getColor(feed.getId())));
         }
     }
 
@@ -148,12 +155,10 @@ public class FaviconLoader {
 
     private class MyTarget implements Target, Callback {
         private final Feed feed;
-        @Nullable private final View view;
         private final FeedColorsListener paletteAsyncListener;
 
-        public MyTarget(Feed feed, @Nullable View view, FeedColorsListener paletteAsyncListener) {
+        public MyTarget(Feed feed, FeedColorsListener paletteAsyncListener) {
             this.feed = feed;
-            this.view = view;
             this.paletteAsyncListener = paletteAsyncListener;
         }
 
@@ -186,8 +191,8 @@ public class FaviconLoader {
 
         @Override
         public void onSuccess() {
-            if(view != null)
-                onBitmapLoaded(((BitmapDrawable)((ImageView)view).getDrawable()).getBitmap(), null);
+            if(imageView != null)
+                onBitmapLoaded(((BitmapDrawable)(imageView).getDrawable()).getBitmap(), null);
         }
 
         @Override
