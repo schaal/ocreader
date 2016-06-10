@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Build;
+import android.support.annotation.Keep;
 import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
 
@@ -32,12 +33,16 @@ public class ProgressFloatingActionButton extends FloatingActionButton {
         }
     }
 
+    @Keep
     public float getProgress() {
         return progress;
     }
 
+    // Used by animator in ItemPagerActivity
+    @Keep
     public void setProgress(float progress) {
         this.progress = progress;
+        invalidate();
     }
 
     @Override

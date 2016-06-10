@@ -48,6 +48,11 @@ public class ArticleWebView extends WebView {
             String javascript = String.format("javascript:(function(){document.styleSheets[0].cssRules[0].style.color=\"%s\";})()", cssColor);
             loadUrl(javascript);
         }
+
+        @Override
+        public void onStart() {
+
+        }
     };
 
     // iframes are replaced in prepareDocument()

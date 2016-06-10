@@ -20,16 +20,19 @@
 
 package email.schaal.ocreader;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -63,7 +66,6 @@ public class ItemPagerActivity extends RealmActivity {
     private MenuItem menuItemMarkRead;
     private MenuItem menuItemMarkStarred;
     private ViewPager mViewPager;
-    private FaviconLoader.FeedColorsListener paletteBitmapAsyncListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,53 +107,7 @@ public class ItemPagerActivity extends RealmActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        paletteBitmapAsyncListener = new FaviconLoader.FeedColorsListener() {
-            @Override
-            public void onGenerated(FeedColors palette) {
-                int toolbarColor = FeedColors.get(palette, FeedColors.Type.TEXT, defaultToolbarColor);
-                int fabColor = FeedColors.get(palette, FeedColors.Type.BACKGROUND, defaultAccent);
-
-                toolbar.setBackgroundColor(toolbarColor);
-                fab.setBackgroundColor(fabColor);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    int statusbarColor = Color.rgb(
-                            (int) (Color.red(toolbarColor) * 0.7),
-                            (int) (Color.green(toolbarColor) * 0.7),
-                            (int) (Color.blue(toolbarColor) * 0.7)
-                    );
-                    getWindow().setStatusBarColor(statusbarColor);
-                }
-            }
-        };
-
-        ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                item = getItemForPosition(position);
-                setItemUnread(false);
-
-                toolbar.setBackgroundColor(defaultToolbarColor);
-                new FaviconLoader.Builder(fab, item.getFeed())
-                        .withGenerateFallbackImage(false)
-                        .withPlaceholder(R.drawable.ic_open_in_browser)
-                        .build()
-                        .load(paletteBitmapAsyncListener);
-
-                fab.setProgress((float)(position+1) / (float)mSectionsPagerAdapter.getCount());
-                fab.show();
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        };
+        ViewPager.OnPageChangeListener pageChangeListener = new MyOnPageChangeListener(mSectionsPagerAdapter);
 
         pageChangeListener.onPageSelected(position);
 
@@ -257,6 +213,101 @@ public class ItemPagerActivity extends RealmActivity {
         @Override
         public int getCount() {
             return temporaryFeed.getItems().size();
+        }
+    }
+
+    private class MyOnPageChangeListener implements ViewPager.OnPageChangeListener {
+        public static final int DURATION = 250;
+        private final SectionsPagerAdapter mSectionsPagerAdapter;
+
+        private final ValueAnimator.AnimatorUpdateListener animatorUpdateListener = new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int backgroundColor = (int) animation.getAnimatedValue();
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    int statusbarColor = changeLightness(backgroundColor, 0.7f);
+                    getWindow().setStatusBarColor(statusbarColor);
+                }
+
+                toolbar.setBackgroundColor(backgroundColor);
+            }
+        };
+
+        private int changeLightness(int backgroundColor, float lightnessChange) {
+            float[] hsl = new float[3];
+            ColorUtils.colorToHSL(backgroundColor, hsl);
+            hsl[2] *= lightnessChange;
+            return ColorUtils.HSLToColor(hsl);
+        }
+
+        private int fabColorFrom;
+        private int fabColorTo;
+
+        private int colorFrom;
+        private int colorTo;
+
+        private float progressFrom;
+        private float progressTo;
+
+        private final ArgbEvaluator argbEvaluator = new ArgbEvaluator();
+
+        private final FaviconLoader.FeedColorsListener toListener = new FaviconLoader.FeedColorsListener() {
+            @Override
+            public void onGenerated(FeedColors feedColors) {
+                colorTo = FeedColors.get(feedColors, FeedColors.Type.TEXT, defaultToolbarColor);
+                fabColorTo = FeedColors.get(feedColors, FeedColors.Type.BACKGROUND, defaultAccent);
+
+                ValueAnimator animator = ValueAnimator.ofInt(colorFrom, colorTo).setDuration(DURATION);
+                animator.setEvaluator(argbEvaluator);
+                animator.addUpdateListener(animatorUpdateListener);
+                animator.start();
+
+                ObjectAnimator fabAnimator = ObjectAnimator.ofInt(fab, "backgroundColor", fabColorFrom, fabColorTo).setDuration(DURATION);
+                fabAnimator.setEvaluator(argbEvaluator);
+                fabAnimator.start();
+            }
+
+            @Override
+            public void onStart() {
+                colorFrom = colorTo;
+                fabColorFrom = fabColorTo;
+            }
+        };
+
+        public MyOnPageChangeListener(SectionsPagerAdapter mSectionsPagerAdapter) {
+            this.mSectionsPagerAdapter = mSectionsPagerAdapter;
+            colorTo = defaultToolbarColor;
+            fabColorTo = defaultAccent;
+        }
+
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            item = getItemForPosition(position);
+            setItemUnread(false);
+
+            new FaviconLoader.Builder(fab, item.getFeed())
+                    .withGenerateFallbackImage(false)
+                    .withPlaceholder(R.drawable.ic_open_in_browser)
+                    .build()
+                    .load(toListener);
+
+            progressFrom = progressTo;
+            progressTo = (float) (position + 1) / (float) mSectionsPagerAdapter.getCount();
+            fab.show();
+
+            ObjectAnimator progressAnimator = ObjectAnimator
+                    .ofFloat(fab, "progress", progressFrom, progressTo)
+                    .setDuration(DURATION);
+            progressAnimator.start();
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
         }
     }
 }

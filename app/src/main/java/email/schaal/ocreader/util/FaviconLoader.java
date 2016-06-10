@@ -75,6 +75,7 @@ public class FaviconLoader {
     }
 
     public void load(FeedColorsListener listener) {
+        listener.onStart();
         if(feed != null && feed.getFaviconLink() != null) {
             RequestCreator requestCreator = Picasso.with(context).load(feed.getFaviconLink());
             MyTarget myTarget = new MyTarget(feed, imageView, listener);
@@ -108,6 +109,7 @@ public class FaviconLoader {
 
     public interface FeedColorsListener {
         void onGenerated(FeedColors feedColors);
+        void onStart();
     }
 
     public static class Builder {

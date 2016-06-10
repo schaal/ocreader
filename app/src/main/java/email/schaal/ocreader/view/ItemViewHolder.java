@@ -153,6 +153,11 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
         textViewFeedTitle.setTextColor(FeedColors.get(palette, FeedColors.Type.TEXT, defaultFeedTextColor));
     }
 
+    @Override
+    public void onStart() {
+
+    }
+
     public interface OnClickListener {
         void onItemClick(Item item, int position);
         void onItemLongClick(Item item, int position);
