@@ -400,6 +400,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(drawerManager.getState().getTreeItem().getTitle());
         adapter.updateItems(true);
+        layoutManager.scrollToPosition(0);
     }
 
     @Override
