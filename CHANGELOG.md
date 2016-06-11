@@ -1,3 +1,13 @@
+## 0.10 (2016-06-11)
+
+The "Smooth Operator" release
+
+* Make the color transition smoother when swiping from article to article
+* Add fade effect or the favicon color in the list view
+* Fix favicon loading (again)
+* Small design changes to better follow the material design spec
+* Some fixes for sdk levels < 19
+
 ## 0.9 (2016-06-05)
 
 The "color ALL the feeds" release
