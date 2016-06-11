@@ -109,9 +109,11 @@ public class ItemPagerActivity extends RealmActivity {
 
         ViewPager.OnPageChangeListener pageChangeListener = new MyOnPageChangeListener(mSectionsPagerAdapter);
 
-        pageChangeListener.onPageSelected(position);
-
         mViewPager.addOnPageChangeListener(pageChangeListener);
+
+        // The initial position is 0, so the pageChangeListener won't be called when setting the position to 0
+        if(position == 0)
+            pageChangeListener.onPageSelected(position);
         mViewPager.setCurrentItem(position, false);
     }
 
@@ -252,20 +254,32 @@ public class ItemPagerActivity extends RealmActivity {
 
         private final ArgbEvaluator argbEvaluator = new ArgbEvaluator();
 
+        private boolean firstRun = true;
         private final FaviconLoader.FeedColorsListener toListener = new FaviconLoader.FeedColorsListener() {
             @Override
             public void onGenerated(FeedColors feedColors) {
                 colorTo = FeedColors.get(feedColors, FeedColors.Type.TEXT, defaultToolbarColor);
                 fabColorTo = FeedColors.get(feedColors, FeedColors.Type.BACKGROUND, defaultAccent);
 
-                ValueAnimator animator = ValueAnimator.ofInt(colorFrom, colorTo).setDuration(DURATION);
-                animator.setEvaluator(argbEvaluator);
-                animator.addUpdateListener(animatorUpdateListener);
-                animator.start();
+                if(firstRun) {
+                    firstRun = false;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        int statusbarColor = changeLightness(colorTo, 0.7f);
+                        getWindow().setStatusBarColor(statusbarColor);
+                    }
 
-                ObjectAnimator fabAnimator = ObjectAnimator.ofInt(fab, "backgroundColor", fabColorFrom, fabColorTo).setDuration(DURATION);
-                fabAnimator.setEvaluator(argbEvaluator);
-                fabAnimator.start();
+                    toolbar.setBackgroundColor(colorTo);
+                    fab.setBackgroundColor(fabColorTo);
+                } else {
+                    ValueAnimator animator = ValueAnimator.ofInt(colorFrom, colorTo).setDuration(DURATION);
+                    animator.setEvaluator(argbEvaluator);
+                    animator.addUpdateListener(animatorUpdateListener);
+                    animator.start();
+
+                    ObjectAnimator fabAnimator = ObjectAnimator.ofInt(fab, "backgroundColor", fabColorFrom, fabColorTo).setDuration(DURATION);
+                    fabAnimator.setEvaluator(argbEvaluator);
+                    fabAnimator.start();
+                }
             }
 
             @Override
