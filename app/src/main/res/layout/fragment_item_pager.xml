@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2015 Daniel Schaal <daniel@schaal.email>
+  ~ Copyright (C) 2015-2016 Daniel Schaal <daniel@schaal.email>
   ~
   ~ This file is part of OCReader.
   ~
@@ -19,16 +19,10 @@
   ~
   -->
 
-<android.support.v4.widget.NestedScrollView android:id="@+id/nestedscrollview"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:scrollbars="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
 <email.schaal.ocreader.view.ArticleWebView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/webView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:titleColor="?android:attr/textColorPrimary"/>
-</android.support.v4.widget.NestedScrollView>
+    app:titleColor="?android:attr/textColorPrimary" />

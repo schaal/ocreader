@@ -6,9 +6,9 @@ import android.content.res.TypedArray;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -34,7 +34,7 @@ import email.schaal.ocreader.util.StringUtils;
 /**
  * WebView to display a Item
  */
-public class ArticleWebView extends WebView {
+public class ArticleWebView extends NestedScrollWebView {
     @ColorInt
     private int defaultTitleColor;
 
@@ -84,6 +84,7 @@ public class ArticleWebView extends WebView {
     // All js from external sites gets stripped using jsoup
     @SuppressLint({"AddJavascriptInterface","SetJavaScriptEnabled"})
     private void init(Context context, AttributeSet attrs) {
+        ViewCompat.setNestedScrollingEnabled(this, true);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ArticleWebView);
         try {
             defaultTitleColor = typedArray.getColor(R.styleable.ArticleWebView_titleColor, 0);
