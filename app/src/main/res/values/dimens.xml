@@ -20,4 +20,5 @@
 
 <resources>
     <dimen name="dialog_margin">24dp</dimen>
+    <dimen name="fab_size_normal">56dp</dimen>
 </resources>

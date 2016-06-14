@@ -19,8 +19,8 @@ public class ProgressFloatingActionButton extends FloatingActionButton {
     private final Paint circlePaint = new Paint();
 
     private float progress;
-    private float diameter;
 
+    private final float diameter;
 
     public ProgressFloatingActionButton(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -31,6 +31,8 @@ public class ProgressFloatingActionButton extends FloatingActionButton {
         } finally {
             typedArray.recycle();
         }
+
+        diameter = getResources().getDimensionPixelSize(R.dimen.fab_size_normal);
     }
 
     @Keep
@@ -50,12 +52,6 @@ public class ProgressFloatingActionButton extends FloatingActionButton {
         if(Build.VERSION.SDK_INT >= 21) {
             setBackgroundTintList(ColorStateList.valueOf(color));
         }
-    }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        diameter = getHeight();
-        super.onSizeChanged(w, h, oldw, oldh);
     }
 
     @Override
