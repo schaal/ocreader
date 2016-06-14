@@ -155,11 +155,11 @@ public class FaviconLoader {
 
     private class MyTarget implements Target, Callback {
         private final Feed feed;
-        private final FeedColorsListener paletteAsyncListener;
+        private final FeedColorsListener listener;
 
-        public MyTarget(Feed feed, FeedColorsListener paletteAsyncListener) {
+        public MyTarget(Feed feed, FeedColorsListener listener) {
             this.feed = feed;
-            this.paletteAsyncListener = paletteAsyncListener;
+            this.listener = listener;
         }
 
         @Override
@@ -171,17 +171,17 @@ public class FaviconLoader {
                     public void onGenerated(Palette palette) {
                         FeedColors feedColors = new FeedColors(palette);
                         feedColorsCache.put(feed.getId(), feedColors);
-                        paletteAsyncListener.onGenerated(feedColors);
+                        listener.onGenerated(feedColors);
                     }
                 });
             } else {
-                paletteAsyncListener.onGenerated(cachedFeedColors);
+                listener.onGenerated(cachedFeedColors);
             }
         }
 
         @Override
         public void onBitmapFailed(Drawable errorDrawable) {
-            paletteAsyncListener.onGenerated(new FeedColors(ColorGenerator.MATERIAL.getColor(feed.getId())));
+            listener.onGenerated(new FeedColors(ColorGenerator.MATERIAL.getColor(feed.getId())));
         }
 
         @Override

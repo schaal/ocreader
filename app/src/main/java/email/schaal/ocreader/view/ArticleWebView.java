@@ -40,7 +40,7 @@ public class ArticleWebView extends WebView {
 
     private Item item;
 
-    private final FaviconLoader.FeedColorsListener paletteAsyncListener = new FaviconLoader.FeedColorsListener() {
+    private final FaviconLoader.FeedColorsListener feedColorsListener = new FaviconLoader.FeedColorsListener() {
         @Override
         public void onGenerated(@Nullable FeedColors feedColors) {
             int titleColor = FeedColors.get(feedColors, FeedColors.Type.TEXT, defaultTitleColor);
@@ -109,7 +109,7 @@ public class ArticleWebView extends WebView {
                 public void run() {
                     new FaviconLoader.Builder(getContext(), item.getFeed())
                             .build()
-                            .load(paletteAsyncListener);
+                            .load(feedColorsListener);
                 }
             });
         }
