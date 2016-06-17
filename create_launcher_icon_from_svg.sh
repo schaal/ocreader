@@ -2,28 +2,40 @@
 
 BASE_PATH=$(dirname "$0")
 MIPMAP_PATH="$BASE_PATH/app/src/SECTION/res/mipmap"
-LOGO_SVG="$BASE_PATH/ic_launcher_SECTION.svg"
+LOGO_SVG="$BASE_PATH/ic_launcher_main.svg"
 
 convert_size() {
     SECTION=$1
-    SIZE=$2
-    RES=$3
+    SVG="$2"
+    SIZE=$3
+    RES=$4
     DIR="${MIPMAP_PATH/SECTION/$SECTION}-$RES"
     if [[ ! -e "$DIR" ]]
     then
-        echo mkdir -p "$DIR"
+        mkdir -p "$DIR"
     fi
-    echo convert "${LOGO_SVG/SECTION/$SECTION}" -resize "${SIZE}x${SIZE}" "${DIR}/ic_launcher.png"
+    convert "$SVG" -resize "${SIZE}x${SIZE}" "${DIR}/ic_launcher.png"
 }
 
 convert_to_mipmap() {
     SECTION=$1
-    convert_size $SECTION 48  mdpi
-    convert_size $SECTION 72  hdpi
-    convert_size $SECTION 96  xhdpi
-    convert_size $SECTION 144 xxhdpi
-    convert_size $SECTION 192 xxxhdpi
+    SVG="$2"
+    convert_size $SECTION "$SVG" 48  mdpi
+    convert_size $SECTION "$SVG" 72  hdpi
+    convert_size $SECTION "$SVG" 96  xhdpi
+    convert_size $SECTION "$SVG" 144 xxhdpi
+    convert_size $SECTION "$SVG" 192 xxxhdpi
 }
 
-convert_to_mipmap main
-convert_to_mipmap debug
+convert_to_mipmap main "$LOGO_SVG"
+
+# create temporary directory and put the debug.svg with a different circle background there
+TMPPATH="$(mktemp --directory)"
+DEBUG_SVGPATH="$TMPPATH/debug.svg"
+
+sed -e 's/style="fill:#0288d1/style="fill:#f44336/' "$LOGO_SVG" > "$DEBUG_SVGPATH"
+
+convert_to_mipmap debug "$DEBUG_SVGPATH"
+
+rm -f "$DEBUG_SVGPATH"
+rmdir "$TMPPATH"
