@@ -20,7 +20,13 @@
 
 package email.schaal.ocreader;
 
-import android.test.ApplicationTestCase;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.Date;
 
@@ -29,15 +35,21 @@ import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Folder;
 import email.schaal.ocreader.model.Item;
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
-public class DatabaseTest extends ApplicationTestCase<OCReaderApplication> {
-    public DatabaseTest() {
-        super(OCReaderApplication.class);
-    }
+@RunWith(AndroidJUnit4.class)
+public class DatabaseTest {
+    private static final String TAG = DatabaseTest.class.getName();
+
+    @Rule
+    public ActivityTestRule<ListActivity> activityTestRule = new ActivityTestRule<>(ListActivity.class);
 
     private Folder getTestFolder() {
         Folder folder = new Folder(1);
@@ -63,18 +75,19 @@ public class DatabaseTest extends ApplicationTestCase<OCReaderApplication> {
         return item;
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        Queries.init(new RealmConfiguration.Builder(getContext()).inMemory());
+    @Before
+    public void setUp() {
+        Queries.resetDatabase();
     }
 
+    @Test
     public void testDatabaseSetup() {
         Realm realm = Realm.getDefaultInstance();
         realm.close();
         assertTrue(realm.isClosed());
     }
 
+    @Test
     public void testFolderInsert() {
         Realm realm = null;
         try {
@@ -94,6 +107,7 @@ public class DatabaseTest extends ApplicationTestCase<OCReaderApplication> {
         }
     }
 
+    @Test
     public void testFeedInsert() {
         Realm realm = null;
         try {
@@ -113,6 +127,7 @@ public class DatabaseTest extends ApplicationTestCase<OCReaderApplication> {
         }
     }
 
+    @Test
     public void testItemInsert() {
         Realm realm = null;
         try {
