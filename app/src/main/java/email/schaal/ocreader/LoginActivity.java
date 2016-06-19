@@ -111,6 +111,7 @@ public class LoginActivity extends AppCompatActivity {
 
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        //noinspection ConstantConditions
         getSupportActionBar().setHomeButtonEnabled(Preferences.USERNAME.getString(sharedPreferences) != null);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
