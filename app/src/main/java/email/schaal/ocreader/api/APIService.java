@@ -364,7 +364,7 @@ public class APIService {
         api.user().enqueue(new BaseRetrofitCallback<User>(callback) {
             @Override
             protected boolean onResponseReal(Response<User> response) {
-                Queries.getInstance().insert(realm, User.class, response.body());
+                Queries.insert(realm, User.class, response.body());
                 return true;
             }
         });
@@ -376,7 +376,7 @@ public class APIService {
             public boolean onResponseReal(Response<Items> response) {
                 final List<Item> items = response.body().getItems();
 
-                Queries.getInstance().insert(realm, Item.class, items);
+                Queries.insert(realm, Item.class, items);
 
                 return true;
             }
@@ -388,7 +388,7 @@ public class APIService {
             @Override
             protected boolean onResponseReal(Response<Items> response) {
                 List<Item> items = response.body().getItems();
-                Queries.getInstance().insert(realm, Item.class, items);
+                Queries.insert(realm, Item.class, items);
                 return true;
             }
         });
@@ -400,7 +400,7 @@ public class APIService {
             protected boolean onResponseReal(Response<Items> response) {
                 final List<Item> items = response.body().getItems();
 
-                Queries.getInstance().insert(realm, Item.class, items);
+                Queries.insert(realm, Item.class, items);
                 return true;
             }
         });
@@ -411,7 +411,7 @@ public class APIService {
             @Override
             public boolean onResponseReal(Response<Items> response) {
                 final List<Item> items = response.body().getItems();
-                Queries.getInstance().insert(realm, Item.class, items);
+                Queries.insert(realm, Item.class, items);
                 return true;
             }
         });
@@ -423,7 +423,7 @@ public class APIService {
             public boolean onResponseReal(Response<Folders> response) {
                 List<Folder> folders = response.body().getFolders();
 
-                Queries.getInstance().deleteAndInsert(realm, Folder.class, folders);
+                Queries.deleteAndInsert(realm, Folder.class, folders);
                 return true;
             }
         });
@@ -436,7 +436,7 @@ public class APIService {
                 Feeds feedsBody = response.body();
                 List<Feed> feeds = feedsBody.getFeeds();
 
-                Queries.getInstance().deleteAndInsert(realm, Feed.class, feeds);
+                Queries.deleteAndInsert(realm, Feed.class, feeds);
 
                 return true;
             }

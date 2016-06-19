@@ -57,7 +57,7 @@ abstract class BaseDrawerManager {
             for (IDrawerItem drawerItem : drawer.getDrawerItems()) {
                 if (drawerItem instanceof Badgeable) {
                     Badgeable badgeable = (Badgeable) drawerItem;
-                    Integer count = Queries.getInstance().getCount(realm, (TreeItem) drawerItem.getTag());
+                    Integer count = Queries.getCount(realm, (TreeItem) drawerItem.getTag());
 
                     if (count <= 0) {
                         updateBadge(badgeable, null);

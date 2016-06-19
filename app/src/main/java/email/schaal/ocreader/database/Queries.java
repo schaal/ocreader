@@ -54,8 +54,6 @@ public class Queries {
 
     public final static int SCHEMA_VERSION = 6;
 
-    private static Queries instance;
-
     private final static Realm.Transaction initialData = new Realm.Transaction() {
         @Override
         public void execute(Realm realm) {
@@ -66,7 +64,18 @@ public class Queries {
 
     private final static RealmMigration migration = new DatabaseMigration();
 
-    private Queries(RealmConfiguration realmConfiguration) {
+    public static void closeRealm(@Nullable Realm realm) {
+        if(realm != null) {
+            realm.close();
+        }
+    }
+
+    public static void init(RealmConfiguration.Builder builder) {
+        RealmConfiguration realmConfiguration = builder
+                .schemaVersion(SCHEMA_VERSION)
+                .migration(migration)
+                .initialData(initialData)
+                .build();
         Realm.setDefaultConfiguration(realmConfiguration);
 
         Realm realm = null;
@@ -84,28 +93,7 @@ public class Queries {
         }
     }
 
-    public static void closeRealm(@Nullable Realm realm) {
-        if(realm != null) {
-            realm.close();
-        }
-    }
-
-    public static Queries getInstance() {
-        if(instance == null)
-            throw new IllegalStateException("Initialize first");
-        return instance;
-    }
-
-    public static void init(RealmConfiguration.Builder builder) {
-        instance = new Queries(builder
-                .schemaVersion(SCHEMA_VERSION)
-                .migration(migration)
-                .initialData(initialData)
-                .build()
-        );
-    }
-
-    public void resetDatabase() {
+    public static void resetDatabase() {
         Log.w(TAG, "Database will be reset");
 
         Realm realm = null;
@@ -118,12 +106,12 @@ public class Queries {
     }
 
     @Nullable
-    public Folder getFolder(Realm realm, long id) {
+    public static Folder getFolder(Realm realm, long id) {
         return realm.where(Folder.class).equalTo(Folder.ID, id).findFirst();
     }
 
     @Nullable
-    public Feed getFeed(Realm realm, long id) {
+    public static Feed getFeed(Realm realm, long id) {
         return realm.where(Feed.class).equalTo(Feed.ID, id).findFirst();
     }
 
@@ -137,7 +125,7 @@ public class Queries {
      * @return items belonging to TreeItem, only unread if onlyUnread is true
      */
     @Nullable
-    public RealmResults<Item> getItems(Realm realm, TreeItem treeItem, boolean onlyUnread, String sortFieldname, Sort order) {
+    public static RealmResults<Item> getItems(Realm realm, TreeItem treeItem, boolean onlyUnread, String sortFieldname, Sort order) {
         RealmQuery<Item> query = null;
         // Whether to return only items with a distinct fingerprint
         boolean distinct = false;
@@ -181,7 +169,7 @@ public class Queries {
     }
 
     @Nullable
-    public RealmResults<Folder> getFolders(Realm realm, boolean onlyUnread) {
+    public static RealmResults<Folder> getFolders(Realm realm, boolean onlyUnread) {
         RealmQuery<Folder> query = null;
         if(onlyUnread) {
             RealmResults<Feed> unreadFeeds = realm.where(Feed.class).greaterThan(Feed.UNREAD_COUNT, 0).notEqualTo(Feed.FOLDER_ID, 0).findAll();
@@ -201,11 +189,11 @@ public class Queries {
     }
 
     @NonNull
-    public RealmResults<Feed> getFeeds(Realm realm) {
+    public static RealmResults<Feed> getFeeds(Realm realm) {
         return realm.where(Feed.class).findAllSorted(Feed.PINNED, Sort.ASCENDING, Feed.TITLE, Sort.ASCENDING);
     }
 
-    public <T extends RealmObject> void insert(Realm realm, final Class<T> clazz, final Iterable<T> elements) {
+    public static <T extends RealmObject> void insert(Realm realm, final Class<T> clazz, final Iterable<T> elements) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -221,11 +209,11 @@ public class Queries {
 
     }
 
-    public <T extends RealmObject> void insert(Realm realm, final Class<T> clazz, final T element) {
+    public static <T extends RealmObject> void insert(Realm realm, final Class<T> clazz, final T element) {
         insert(realm, clazz, Collections.singleton(element));
     }
 
-    public <T extends RealmObject & TreeItem> void deleteAndInsert(Realm realm, final Class<T> clazz, final List<T> elements) {
+    public static <T extends RealmObject & TreeItem> void deleteAndInsert(Realm realm, final Class<T> clazz, final List<T> elements) {
         // Sort elements for binary search
         Collections.sort(elements, TreeItem.COMPARATOR);
 
@@ -257,7 +245,7 @@ public class Queries {
     }
 
     @NonNull
-    public RealmResults<Feed> getFeedsWithoutFolder(Realm realm, boolean onlyUnread) {
+    public static RealmResults<Feed> getFeedsWithoutFolder(Realm realm, boolean onlyUnread) {
         RealmQuery<Feed> query = realm.where(Feed.class).equalTo(Feed.FOLDER_ID, 0);
         if(onlyUnread) {
             query.greaterThan(Feed.UNREAD_COUNT, 0);
@@ -265,7 +253,7 @@ public class Queries {
         return query.findAllSorted(Feed.TITLE, Sort.ASCENDING);
     }
 
-    public int getCount(Realm realm, TreeItem item) {
+    public static int getCount(Realm realm, TreeItem item) {
         int count = 0;
         if(item instanceof AllUnreadFolder) {
             count = realm.where(Feed.class).sum(Feed.UNREAD_COUNT).intValue();
@@ -280,7 +268,7 @@ public class Queries {
     }
 
     @Nullable
-    public RealmResults<Feed> getFeedsForTreeItem(Realm realm, TreeItem item) {
+    public static RealmResults<Feed> getFeedsForTreeItem(Realm realm, TreeItem item) {
         RealmQuery<Feed> feedQuery = realm.where(Feed.class);
 
         if(item instanceof AllUnreadFolder) {
@@ -296,7 +284,7 @@ public class Queries {
         return feedQuery != null ? feedQuery.findAllSorted(Feed.TITLE, Sort.ASCENDING) : null;
     }
 
-    public void removeExcessItems(Realm realm, final int maxItems) {
+    public static void removeExcessItems(Realm realm, final int maxItems) {
         final RealmResults<Item> expendableItems = realm.where(Item.class)
                 .equalTo(Item.UNREAD, false)
                 .equalTo(Item.STARRED, false)
@@ -312,7 +300,7 @@ public class Queries {
         });
     }
 
-    public void markTemporaryFeedAsRead(Realm realm, @Nullable final Long lastItemId, Realm.Transaction.OnSuccess onSuccess, Realm.Transaction.OnError onError) {
+    public static void markTemporaryFeedAsRead(Realm realm, @Nullable final Long lastItemId, Realm.Transaction.OnSuccess onSuccess, Realm.Transaction.OnError onError) {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -343,7 +331,7 @@ public class Queries {
         }, onSuccess, onError);
     }
 
-    public void setItemsUnread(Realm realm, final boolean newUnread, final Item... items) {
+    public static void setItemsUnread(Realm realm, final boolean newUnread, final Item... items) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -373,7 +361,7 @@ public class Queries {
         });
     }
 
-    public void setItemsStarred(Realm realm, final boolean newStarred, final Item... items) {
+    public static void setItemsStarred(Realm realm, final boolean newStarred, final Item... items) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -390,7 +378,7 @@ public class Queries {
         });
     }
 
-    private synchronized void checkAlarm(Realm realm) {
+    private static synchronized void checkAlarm(Realm realm) {
         long changedItemsCount = realm.where(Item.class)
                 .equalTo(Item.UNREAD_CHANGED, true)
                 .or()
@@ -407,7 +395,7 @@ public class Queries {
      * @param feedId id of the feed
      * @return Feed with id feedId (either from the database or a newly created one)
      */
-    public Feed getOrCreateFeed(Realm realm, long feedId) {
+    public static Feed getOrCreateFeed(Realm realm, long feedId) {
         Feed feed = getFeed(realm, feedId);
         if(feed == null) {
             feed = realm.createObject(Feed.class);

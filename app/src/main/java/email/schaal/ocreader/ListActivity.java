@@ -332,7 +332,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
             @Override
             public void onClick(final View v) {
-                Queries.getInstance().markTemporaryFeedAsRead(getRealm(), null,
+                Queries.markTemporaryFeedAsRead(getRealm(), null,
                         new Realm.Transaction.OnSuccess() {
                             @Override
                             public void onSuccess() {
@@ -426,7 +426,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
                     drawerManager.reset();
                     reloadListFragment();
-                    Queries.getInstance().resetDatabase();
+                    Queries.resetDatabase();
                     SyncService.startSync(this, true);
                     break;
                 case ItemPagerActivity.REQUEST_CODE:
@@ -456,6 +456,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         View aboutView = getLayoutInflater().inflate(R.layout.dialog_about, (ViewGroup) findViewById(R.id.coordinator_layout), false);
 
         TextView textView = (TextView) aboutView.findViewById(R.id.textViewCopyright);
+        //noinspection deprecation
         textView.setText(Html.fromHtml(getString(R.string.about_app, getString(R.string.app_year_author), getString(R.string.app_url))));
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setIcon(R.mipmap.ic_launcher);
@@ -566,23 +567,23 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_mark_read:
-                Queries.getInstance().setItemsUnread(getRealm(), false, adapter.getSelectedItems());
+                Queries.setItemsUnread(getRealm(), false, adapter.getSelectedItems());
                 mode.finish();
                 return true;
             case R.id.action_mark_unread:
-                Queries.getInstance().setItemsUnread(getRealm(), true, adapter.getSelectedItems());
+                Queries.setItemsUnread(getRealm(), true, adapter.getSelectedItems());
                 mode.finish();
                 return true;
             case R.id.action_mark_starred:
-                Queries.getInstance().setItemsStarred(getRealm(), true, adapter.getSelectedItems());
+                Queries.setItemsStarred(getRealm(), true, adapter.getSelectedItems());
                 mode.finish();
                 return true;
             case R.id.action_mark_unstarred:
-                Queries.getInstance().setItemsStarred(getRealm(), false, adapter.getSelectedItems());
+                Queries.setItemsStarred(getRealm(), false, adapter.getSelectedItems());
                 mode.finish();
                 return true;
             case R.id.action_mark_above_read:
-                Queries.getInstance().markTemporaryFeedAsRead(getRealm(), adapter.getSelectedItems()[0].getId(),
+                Queries.markTemporaryFeedAsRead(getRealm(), adapter.getSelectedItems()[0].getId(),
                         new Realm.Transaction.OnSuccess() {
                             @Override
                             public void onSuccess() {

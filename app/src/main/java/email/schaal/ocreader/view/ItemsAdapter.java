@@ -79,7 +79,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    RealmResults<Item> tempItems = Queries.getInstance().getItems(realm, state.getTreeItem(), isOnlyUnread(), Item.PUB_DATE, Sort.DESCENDING);
+                    RealmResults<Item> tempItems = Queries.getItems(realm, state.getTreeItem(), isOnlyUnread(), Item.PUB_DATE, Sort.DESCENDING);
                     temporaryFeed.setId(state.getTreeItem().getId());
                     temporaryFeed.setTitle(state.getTreeItem().getTitle());
                     temporaryFeed.getItems().clear();

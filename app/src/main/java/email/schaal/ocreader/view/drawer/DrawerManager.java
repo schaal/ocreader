@@ -132,7 +132,7 @@ public class DrawerManager {
             for(IDrawerItem drawerItem: topDrawerItems) {
                 if(drawerItem.getTag() instanceof TreeItem) {
                     TreeItem item = (TreeItem) drawerItem.getTag();
-                    int count = Queries.getInstance().getCount(realm, item);
+                    int count = Queries.getCount(realm, item);
                     if(count > 0 && drawerItem instanceof Badgeable)
                         ((Badgeable) drawerItem).withBadge(String.valueOf(count));
                     if (state.getStartDrawerItem().getId() == item.getId()) {
@@ -142,14 +142,14 @@ public class DrawerManager {
                 }
             }
 
-            final RealmResults<Folder> folders = Queries.getInstance().getFolders(realm, showOnlyUnread);
+            final RealmResults<Folder> folders = Queries.getFolders(realm, showOnlyUnread);
             if(folders != null) {
                 for (Folder folder : folders) {
                     drawerItems.add(getDrawerItem(realm, folder));
                 }
             }
 
-            for (Feed feed : Queries.getInstance().getFeedsWithoutFolder(realm, showOnlyUnread)) {
+            for (Feed feed : Queries.getFeedsWithoutFolder(realm, showOnlyUnread)) {
                 drawerItems.add(getDrawerItem(realm, feed));
             }
 
@@ -161,7 +161,7 @@ public class DrawerManager {
 
             PrimaryDrawerItem drawerItem = new TreeItemDrawerItem(item);
 
-            int count = Queries.getInstance().getCount(realm, item);
+            int count = Queries.getCount(realm, item);
 
             if (item instanceof Feed) {
                 shouldSelect = state.isFeedSelected();
@@ -184,7 +184,7 @@ public class DrawerManager {
 
         @Override
         protected List<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread) {
-            List<Feed> feeds = Queries.getInstance().getFeedsForTreeItem(realm, state.getStartDrawerItem());
+            List<Feed> feeds = Queries.getFeedsForTreeItem(realm, state.getStartDrawerItem());
             List<IDrawerItem> drawerItems = new ArrayList<>((feeds != null ? feeds.size() : 0) + 1);
 
             if (state.isFeedSelected())
@@ -250,12 +250,12 @@ public class DrawerManager {
                 startDrawerItem = starredFolder;
             } else {
                 if (isFeed) {
-                    startDrawerItem = Queries.getInstance().getFeed(realm, startDrawerItemId);
+                    startDrawerItem = Queries.getFeed(realm, startDrawerItemId);
                 } else {
-                    startDrawerItem = Queries.getInstance().getFolder(realm, startDrawerItemId);
+                    startDrawerItem = Queries.getFolder(realm, startDrawerItemId);
                 }
                 if(endDrawerItemId != null) {
-                    endDrawerItem = Queries.getInstance().getFeed(realm, endDrawerItemId);
+                    endDrawerItem = Queries.getFeed(realm, endDrawerItemId);
                 }
             }
 

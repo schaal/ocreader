@@ -153,7 +153,7 @@ public class SyncService extends Service {
                                     APIService.getInstance().starredItems(realm, apiCallback);
                                     APIService.getInstance().items(realm, apiCallback);
                                 } else {
-                                    Queries.getInstance().removeExcessItems(realm, MAX_ITEMS);
+                                    Queries.removeExcessItems(realm, MAX_ITEMS);
                                     APIService.getInstance().updatedItems(realm, lastSync, apiCallback);
                                 }
 
