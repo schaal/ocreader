@@ -39,6 +39,7 @@ import email.schaal.ocreader.model.TreeItem;
 import email.schaal.ocreader.util.AlarmUtils;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmMigration;
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
@@ -62,6 +63,8 @@ public class Queries {
             realm.createObject(TemporaryFeed.class);
         }
     };
+
+    private final static RealmMigration migration = new DatabaseMigration();
 
     private Queries(RealmConfiguration realmConfiguration) {
         Realm.setDefaultConfiguration(realmConfiguration);
@@ -96,7 +99,7 @@ public class Queries {
     public static void init(RealmConfiguration.Builder builder) {
         instance = new Queries(builder
                 .schemaVersion(SCHEMA_VERSION)
-                .migration(new DatabaseMigration())
+                .migration(migration)
                 .initialData(initialData)
                 .build()
         );
