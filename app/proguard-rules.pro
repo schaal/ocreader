@@ -10,10 +10,6 @@
 -keep interface okhttp3.** { *; }
 -dontwarn okhttp3.**
 
-#picasso
--dontwarn com.squareup.okhttp.**
--dontwarn okio.**
-
 #retrofit
 -dontwarn retrofit2.**
 -keep class retrofit2.** { *; }
@@ -30,3 +26,7 @@
 -dontnote com.google.**
 -dontnote com.android.**
 -dontnote com.squareup.**
+
+#project
+-keep class email.schaal.ocreader.model.Item
+-keep class email.schaal.ocreader.view.ArticleWebView$1
