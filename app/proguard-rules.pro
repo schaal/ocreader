@@ -16,7 +16,6 @@
 -keepattributes Signature
 -keepattributes Exceptions
 
--dontwarn android.support.**
 -dontnote android.support.**
 -dontnote retrofit2.**
 -dontnote okio.**
@@ -26,6 +25,8 @@
 -dontnote com.google.**
 -dontnote com.android.**
 -dontnote com.squareup.**
+-dontnote org.apache.http.**
+-dontnote android.net.http.**
 
 #project
 -keep class email.schaal.ocreader.model.Item
