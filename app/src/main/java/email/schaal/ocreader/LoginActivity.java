@@ -111,9 +111,12 @@ public class LoginActivity extends AppCompatActivity {
 
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        // Only show the home button in the action bar when already logged in
+        boolean hasCredentials = Preferences.USERNAME.getString(sharedPreferences) != null;
+
         //noinspection ConstantConditions
-        getSupportActionBar().setHomeButtonEnabled(Preferences.USERNAME.getString(sharedPreferences) != null);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(hasCredentials);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(hasCredentials);
 
         mUsernameView.setText(Preferences.USERNAME.getString(sharedPreferences));
         mPasswordView.setText(Preferences.PASSWORD.getString(sharedPreferences));
