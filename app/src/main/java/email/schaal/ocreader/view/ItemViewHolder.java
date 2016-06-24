@@ -20,7 +20,9 @@
 
 package email.schaal.ocreader.view;
 
+import android.content.Intent;
 import android.content.res.TypedArray;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
@@ -52,6 +54,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
     private final TextView textViewTime;
     private final ImageView faviconImageView;
     private final ImageView starImageView;
+    private final ImageView playButton;
 
     private final View[] alphaViews;
 
@@ -66,6 +69,8 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
         faviconImageView = (ImageView) itemView.findViewById(R.id.imageview_favicon);
         starImageView = (ImageView) itemView.findViewById(R.id.imageview_star);
 
+        playButton = (ImageView) itemView.findViewById(R.id.play);
+
         TypedArray typedArray = itemView.getContext().obtainStyledAttributes(new int[] { android.R.attr.textColorSecondary });
         try {
             defaultFeedTextColor = typedArray.getColor(0, 0);
@@ -78,7 +83,8 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
                 textViewFeedTitle,
                 textViewTime,
                 faviconImageView,
-                starImageView
+                starImageView,
+                playButton
         };
     }
 
@@ -113,8 +119,25 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
                 return true;
             }
         });
+
+        if(item.getEnclosureLink() != null) {
+            playButton.setVisibility(View.VISIBLE);
+            playButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent playIntent = new Intent(Intent.ACTION_VIEW);
+                    playIntent.setData(Uri.parse(item.getEnclosureLink()));
+                    itemView.getContext().startActivity(playIntent);
+                }
+            });
+        } else {
+            playButton.setVisibility(View.GONE);
+            playButton.setOnClickListener(null);
+        }
+
         setUnreadState(item.isUnread());
         setStarredState(item.isStarred());
+
         int backgroundResource = R.drawable.item_background;
         if (!selected) {
             int[] attrs = new int[]{R.attr.selectableItemBackground};
