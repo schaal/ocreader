@@ -6,4 +6,7 @@ android:
    - android-24
    - extra-android-m2repository
 
+jdk:
+   - oraclejdk8
+
 script: ./gradlew build -x lint
