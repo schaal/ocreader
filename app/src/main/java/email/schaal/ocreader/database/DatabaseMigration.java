@@ -100,5 +100,17 @@ class DatabaseMigration implements RealmMigration {
 
             oldVersion++;
         }
+
+        /**
+         * v6 -> v7
+         * - Add lastUpdateError and updateErrorCount to Feed
+         */
+        if (oldVersion == 6) {
+            schema.get("Feed")
+                    .addField(Feed.LAST_UPDATE_ERROR, String.class)
+                    .addField(Feed.UPDATE_ERROR_COUNT, int.class);
+
+            oldVersion++;
+        }
     }
 }

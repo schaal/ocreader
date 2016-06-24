@@ -61,6 +61,18 @@ public class Feed extends RealmObject implements TreeItem {
     private boolean pinned;
     public static final String PINNED = "pinned";
 
+    /**
+     * @since 8.6.0
+     */
+    private int updateErrorCount;
+    public static final String UPDATE_ERROR_COUNT = "updateErrorCount";
+
+    /**
+     * @since 8.6.0
+     */
+    private String lastUpdateError;
+    public static final String LAST_UPDATE_ERROR = "lastUpdateError";
+
     public Feed() {
     }
 
@@ -164,5 +176,21 @@ public class Feed extends RealmObject implements TreeItem {
 
     public void setPinned(boolean pinned) {
         this.pinned = pinned;
+    }
+
+    public int getUpdateErrorCount() {
+        return updateErrorCount;
+    }
+
+    public void setUpdateErrorCount(int updateErrorCount) {
+        this.updateErrorCount = updateErrorCount;
+    }
+
+    public String getLastUpdateError() {
+        return lastUpdateError;
+    }
+
+    public void setLastUpdateError(String lastUpdateError) {
+        this.lastUpdateError = lastUpdateError;
     }
 }
