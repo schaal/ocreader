@@ -28,10 +28,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.squareup.moshi.Moshi;
 
 import java.io.IOException;
 import java.util.List;
@@ -59,14 +56,13 @@ import email.schaal.ocreader.model.User;
 import email.schaal.ocreader.model.UserTypeAdapter;
 import email.schaal.ocreader.util.AlarmUtils;
 import io.realm.Realm;
-import io.realm.RealmObject;
 import io.realm.RealmResults;
 import okhttp3.HttpUrl;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.moshi.MoshiConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.PUT;
@@ -83,10 +79,9 @@ public class APIService {
 
     private static final int BATCH_SIZE = 100;
 
-    private final Gson gson;
-
     private final Executor executor = Executors.newSingleThreadExecutor();
     private final Handler handler = new Handler(Looper.getMainLooper());
+    private final MoshiConverterFactory converterFactory;
 
     public void setHttpManager(HttpManager httpManager) {
         api = setupApi(httpManager);
@@ -252,24 +247,13 @@ public class APIService {
     }
 
     private APIService(Context context) {
-        gson = new GsonBuilder()
-                .registerTypeAdapter(Folder.class, new FolderTypeAdapter())
-                .registerTypeAdapter(Feed.class, new FeedTypeAdapter())
-                .registerTypeAdapter(Item.class, new ItemTypeAdapter())
-                .registerTypeAdapter(User.class, new UserTypeAdapter())
-                .registerTypeAdapter(Status.class, new StatusTypeAdapter())
-                .setExclusionStrategies(new ExclusionStrategy() {
-                    @Override
-                    public boolean shouldSkipField(FieldAttributes f) {
-                        return f.getDeclaringClass().equals(RealmObject.class);
-                    }
-
-                    @Override
-                    public boolean shouldSkipClass(Class<?> clazz) {
-                        return false;
-                    }
-                })
-                .create();
+        converterFactory = MoshiConverterFactory.create(new Moshi.Builder()
+                .add(Folder.class, new FolderTypeAdapter())
+                .add(Feed.class, new FeedTypeAdapter())
+                .add(Item.class, new ItemTypeAdapter())
+                .add(User.class, new UserTypeAdapter())
+                .add(Status.class, new StatusTypeAdapter())
+                .build());
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         String username = Preferences.USERNAME.getString(sharedPreferences);
@@ -286,7 +270,7 @@ public class APIService {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(httpManager.getClient())
-                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addConverterFactory(converterFactory)
                 .build();
 
         return retrofit.create(API.class);

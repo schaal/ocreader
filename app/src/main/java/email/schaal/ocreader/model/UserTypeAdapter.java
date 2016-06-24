@@ -22,9 +22,8 @@ package email.schaal.ocreader.model;
 
 import android.util.Log;
 
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
+import com.squareup.moshi.JsonReader;
+import com.squareup.moshi.JsonWriter;
 
 import java.io.IOException;
 import java.util.Date;
@@ -36,12 +35,12 @@ public class UserTypeAdapter extends NewsTypeAdapter<User> {
     private final static String TAG = UserTypeAdapter.class.getName();
 
     @Override
-    public void write(JsonWriter out, User value) throws IOException {
+    public void toJson(JsonWriter out, User value) throws IOException {
     }
 
     @Override
-    public User read(JsonReader in) throws IOException {
-        if (in.peek() == JsonToken.NULL) {
+    public User fromJson(JsonReader in) throws IOException {
+        if (in.peek() == JsonReader.Token.NULL) {
             in.nextNull();
             return null;
         }
@@ -60,7 +59,7 @@ public class UserTypeAdapter extends NewsTypeAdapter<User> {
                     user.setLastLogin(new Date(in.nextLong() * 1000));
                     break;
                 case "avatar":
-                    if(in.peek() == JsonToken.NULL)
+                    if(in.peek() == JsonReader.Token.NULL)
                         in.skipValue();
                     else
                         readAvatar(in, user, name);

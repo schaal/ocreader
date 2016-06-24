@@ -22,9 +22,8 @@ package email.schaal.ocreader.model;
 
 import android.util.Log;
 
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
+import com.squareup.moshi.JsonReader;
+import com.squareup.moshi.JsonWriter;
 
 import java.io.IOException;
 
@@ -37,12 +36,12 @@ public class StatusTypeAdapter extends NewsTypeAdapter<Status> {
     private final static String TAG = StatusTypeAdapter.class.getName();
 
     @Override
-    public void write(JsonWriter out, Status value) throws IOException {
+    public void toJson(JsonWriter out, Status value) throws IOException {
     }
 
     @Override
-    public Status read(JsonReader in) throws IOException {
-        if (in.peek() == JsonToken.NULL) {
+    public Status fromJson(JsonReader in) throws IOException {
+        if (in.peek() == JsonReader.Token.NULL) {
             in.nextNull();
             return null;
         }

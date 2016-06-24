@@ -23,9 +23,8 @@ package email.schaal.ocreader.model;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
+import com.squareup.moshi.JsonReader;
+import com.squareup.moshi.JsonWriter;
 
 import java.io.IOException;
 
@@ -38,12 +37,12 @@ public class FeedTypeAdapter extends NewsTypeAdapter<Feed> {
     private final static String TAG = FeedTypeAdapter.class.getName();
 
     @Override
-    public void write(JsonWriter out, Feed value) throws IOException {
+    public void toJson(JsonWriter out, Feed value) throws IOException {
     }
 
     @Override
-    public Feed read(JsonReader in) throws IOException {
-        if (in.peek() == JsonToken.NULL) {
+    public Feed fromJson(JsonReader in) throws IOException {
+        if (in.peek() == JsonReader.Token.NULL) {
             in.nextNull();
             return null;
         }

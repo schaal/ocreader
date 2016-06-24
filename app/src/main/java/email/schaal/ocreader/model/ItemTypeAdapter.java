@@ -22,9 +22,8 @@ package email.schaal.ocreader.model;
 
 import android.util.Log;
 
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
+import com.squareup.moshi.JsonReader;
+import com.squareup.moshi.JsonWriter;
 
 import java.io.IOException;
 import java.util.Date;
@@ -38,12 +37,12 @@ public class ItemTypeAdapter extends NewsTypeAdapter<Item> {
     private final static String TAG = ItemTypeAdapter.class.getName();
 
     @Override
-    public void write(JsonWriter out, Item value) throws IOException {
+    public void toJson(JsonWriter out, Item value) throws IOException {
     }
 
     @Override
-    public Item read(JsonReader in) throws IOException {
-        if (in.peek() == JsonToken.NULL) {
+    public Item fromJson(JsonReader in) throws IOException {
+        if (in.peek() == JsonReader.Token.NULL) {
             in.nextNull();
             return null;
         }
@@ -77,13 +76,13 @@ public class ItemTypeAdapter extends NewsTypeAdapter<Item> {
                     item.setBody(in.nextString());
                     break;
                 case "enclosureMime":
-                    if(in.peek() != JsonToken.NULL)
+                    if(in.peek() != JsonReader.Token.NULL)
                         item.setEnclosureMime(StringUtils.nullIfEmpty(in.nextString()));
                     else
                         in.skipValue();
                     break;
                 case "enclosureLink":
-                    if(in.peek() != JsonToken.NULL)
+                    if(in.peek() != JsonReader.Token.NULL)
                         item.setEnclosureLink(StringUtils.nullIfEmpty(in.nextString()));
                     else
                         in.skipValue();

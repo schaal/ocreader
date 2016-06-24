@@ -22,9 +22,8 @@ package email.schaal.ocreader.model;
 
 import android.util.Log;
 
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
+import com.squareup.moshi.JsonReader;
+import com.squareup.moshi.JsonWriter;
 
 import java.io.IOException;
 
@@ -35,12 +34,12 @@ public class FolderTypeAdapter extends NewsTypeAdapter<Folder> {
     private final static String TAG = FolderTypeAdapter.class.getName();
 
     @Override
-    public void write(JsonWriter out, Folder value) throws IOException {
+    public void toJson(JsonWriter out, Folder value) throws IOException {
     }
 
     @Override
-    public Folder read(JsonReader in) throws IOException {
-        if (in.peek() == JsonToken.NULL) {
+    public Folder fromJson(JsonReader in) throws IOException {
+        if (in.peek() == JsonReader.Token.NULL) {
             in.nextNull();
             return null;
         }

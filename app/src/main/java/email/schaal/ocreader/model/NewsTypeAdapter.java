@@ -2,20 +2,19 @@ package email.schaal.ocreader.model;
 
 import android.util.Log;
 
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.JsonReader;
 
 import java.io.IOException;
 
 /**
  * Base class for TypeAdapters
  */
-public abstract class NewsTypeAdapter<T> extends TypeAdapter<T> {
+public abstract class NewsTypeAdapter<T> extends JsonAdapter<T> {
     private static final String TAG = NewsTypeAdapter.class.getName();
 
     protected String nullSafeString(JsonReader in) throws IOException {
-        if(in.peek() == JsonToken.NULL) {
+        if(in.peek() == JsonReader.Token.NULL) {
             Log.w(TAG, "unexpected NULL in json");
             in.nextNull();
             return null;
