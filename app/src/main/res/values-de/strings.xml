@@ -44,4 +44,5 @@
     <string name="action_mark_unstarred">Nicht mehr favorisieren</string>
     <string name="mark_previous_articles_read">Vorherige Artikel als gelesen markieren</string>
     <string name="mark_all_as_read">Alles als gelesen markieren</string>
+    <string name="play_media">Mediendatei abspielen</string>
 </resources>

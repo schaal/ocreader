@@ -77,5 +77,6 @@
     <string name="http_error">HTTP error %1$s</string>
     <string name="mark_previous_articles_read">Mark previous articles read</string>
     <string name="mark_all_as_read">Mark all as read</string>
+    <string name="play_media">Play media</string>
 
 </resources>
