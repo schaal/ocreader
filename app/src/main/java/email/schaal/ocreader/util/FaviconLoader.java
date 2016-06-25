@@ -128,13 +128,13 @@ public class FaviconLoader {
         private Context context;
 
         public Builder(@NonNull Context context, Feed feed) {
-            this.context = context;
+            this.context = context.getApplicationContext();
             this.feed = feed;
         }
 
         public Builder(@NonNull ImageView imageView, Feed feed) {
             this.imageView = imageView;
-            this.context = imageView.getContext();
+            this.context = imageView.getContext().getApplicationContext();
             this.feed = feed;
         }
 
