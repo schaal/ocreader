@@ -64,7 +64,7 @@ public class FaviconLoader {
             drawable = faviconCache.get(feed.getId());
 
             if(drawable == null) {
-                drawable = new TextDrawable.Builder().build(feed.getTitle().substring(0, 1).toUpperCase(), ColorGenerator.MATERIAL.getColor(feed.getId()));
+                drawable = new TextDrawable.Builder().build(feed.getTitle().substring(0, 1).toUpperCase(), getFeedColor(feed));
                 faviconCache.put(feed.getId(), drawable);
             }
         } else {
@@ -73,7 +73,11 @@ public class FaviconLoader {
         return drawable;
     }
 
-    public void load(FeedColorsListener listener) {
+    public static int getFeedColor(@NonNull Feed feed) {
+        return ColorGenerator.MATERIAL.getColor(feed.getUrl());
+    }
+
+    public void load(@NonNull FeedColorsListener listener) {
         listener.onStart();
         if(feed == null) {
             listener.onGenerated(null);
@@ -101,7 +105,7 @@ public class FaviconLoader {
                     imageView.setImageResource(placeholder);
                 }
             }
-            listener.onGenerated(new FeedColors(ColorGenerator.MATERIAL.getColor(feed.getId())));
+            listener.onGenerated(new FeedColors(getFeedColor(feed)));
         }
     }
 
@@ -157,7 +161,7 @@ public class FaviconLoader {
         private final Feed feed;
         private final FeedColorsListener listener;
 
-        public MyTarget(Feed feed, FeedColorsListener listener) {
+        public MyTarget(@NonNull Feed feed, @NonNull FeedColorsListener listener) {
             this.feed = feed;
             this.listener = listener;
         }
@@ -181,7 +185,7 @@ public class FaviconLoader {
 
         @Override
         public void onBitmapFailed(Drawable errorDrawable) {
-            listener.onGenerated(new FeedColors(ColorGenerator.MATERIAL.getColor(feed.getId())));
+            listener.onGenerated(new FeedColors(getFeedColor(feed)));
         }
 
         @Override
