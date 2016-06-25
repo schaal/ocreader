@@ -48,9 +48,9 @@ import io.realm.Sort;
  */
 public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private RealmList<Item> items;
-    private SparseArray<Item> selectedItems = new SparseArray<>();
+    private final SparseArray<Item> selectedItems = new SparseArray<>();
     private final DrawerManager.State state;
-    private Realm realm;
+    private final Realm realm;
     private final ItemViewHolder.OnClickListener clickListener;
     private final OnLoadMoreListener loadMoreListener;
 
