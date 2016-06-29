@@ -30,26 +30,12 @@
     android:padding="@dimen/materialize_spacing">
 
     <TextView
-        android:id="@+id/textViewTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:maxLines="2"
-        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:ellipsize="end"
-        tools:text="This is a very long title that will get ellipsized: Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy"
-        android:layout_alignTop="@+id/imageview_favicon"
-        android:layout_toRightOf="@+id/imageview_favicon"
-        android:layout_toLeftOf="@+id/buttons"
-        android:layout_toStartOf="@+id/buttons"
-        android:layout_toEndOf="@+id/imageview_favicon"/>
-
-    <TextView
         android:id="@+id/textViewFeedTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewTitle"
-        android:layout_alignLeft="@+id/textViewTitle"
-        android:layout_alignStart="@id/textViewTitle"
+        android:layout_below="@+id/buttons"
+        android:layout_alignLeft="@+id/buttons"
+        android:layout_alignStart="@id/buttons"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         tools:text="Feed title"
         android:layout_toLeftOf="@+id/textViewTime"
@@ -74,7 +60,19 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@id/imageview_favicon"
+        android:layout_toEndOf="@id/imageview_favicon">
+
+        <TextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:ellipsize="end"
+            tools:text="This is the article title"
+            android:layout_weight="1" />
 
         <ImageView
             android:id="@+id/play"
@@ -105,7 +103,7 @@
         android:textStyle="italic"
         tools:text="1h"
         android:id="@+id/textViewTime"
-        android:layout_below="@id/textViewTitle"
+        android:layout_below="@+id/buttons"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>
 
