@@ -21,4 +21,5 @@
 <resources>
     <dimen name="dialog_margin">24dp</dimen>
     <dimen name="fab_size_normal">56dp</dimen>
+    <dimen name="play_button">32dp</dimen>
 </resources>
