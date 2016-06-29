@@ -1,3 +1,12 @@
+## 0.11 (2016-06-29)
+
+The "New colors, please" release
+
+* Switch to a light blue color scheme (inspired by Nextcloud theme)
+* Improve performance in the article view
+* Add play button to play enclosed media in an external player
+* Use the hash of the feed url to generate the fallback color when the feed has no favicon
+
 ## 0.10 (2016-06-11)
 
 The "Smooth Operator" release
