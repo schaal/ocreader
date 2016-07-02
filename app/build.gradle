@@ -59,7 +59,6 @@ ext {
 }
 
 dependencies {
-
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     compile "com.android.support:support-v4:${versions.supportLib}"
@@ -76,6 +75,8 @@ dependencies {
     }
 
     compile 'org.jsoup:jsoup:1.9.2'
+
+    compile 'divstar:ico4a:v1.0'
 
     // Explictly set okhttp3 version
     compile 'com.squareup.okhttp3:okhttp:3.3.1'

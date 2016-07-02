@@ -36,6 +36,7 @@ import com.squareup.picasso.Picasso;
 import email.schaal.ocreader.api.APIService;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.util.AlarmUtils;
+import email.schaal.ocreader.util.IcoRequestHandler;
 import io.realm.RealmConfiguration;
 
 /**
@@ -54,9 +55,13 @@ public class OCReaderApplication extends Application {
         Queries.init(new RealmConfiguration.Builder(this));
         APIService.init(this);
         AlarmUtils.init(this);
+
+        OkHttp3Downloader downloader = new OkHttp3Downloader(this);
+
         Picasso picasso = new Picasso.Builder(this)
-                .downloader(new OkHttp3Downloader(this))
+                .downloader(downloader)
                 .defaultBitmapConfig(Bitmap.Config.ARGB_8888)
+                .addRequestHandler(new IcoRequestHandler(downloader))
                 .build();
 
         Picasso.setSingletonInstance(picasso);
