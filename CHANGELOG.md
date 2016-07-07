@@ -1,3 +1,9 @@
+## 0.12 (2016-07-07)
+
+The "Nothing to see here" release
+
+* Fix the build on f-droid
+
 ## 0.11 (2016-06-29)
 
 The "New colors, please" release
