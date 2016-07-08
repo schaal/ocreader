@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2016 Daniel Schaal <daniel@schaal.email>
+  ~
+  ~ This file is part of OCReader.
+  ~
+  ~ OCReader is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ OCReader is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with OCReader.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/materialize_spacing">
+
+    <ImageView
+        android:id="@+id/imageview_favicon"
+        android:layout_width="@dimen/materialize_icon"
+        android:layout_height="@dimen/materialize_icon"
+        android:layout_marginEnd="@dimen/materialize_spacing"
+        android:layout_marginRight="@dimen/materialize_spacing"
+        android:contentDescription="@string/feed_icon_description"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        tools:src="@drawable/ic_feed_icon"
+        android:layout_centerVertical="true" />
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:layout_toRightOf="@+id/imageview_favicon"
+        android:layout_toEndOf="@+id/imageview_favicon"
+        android:layout_toLeftOf="@+id/delete_feed"
+        android:layout_toStartOf="@+id/delete_feed"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        tools:text="This is the feed title" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_below="@id/textViewTitle"
+        android:layout_alignLeft="@id/textViewTitle"
+        android:layout_alignStart="@id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:spinnerMode="dropdown" />
+
+    <ImageView
+        android:id="@+id/delete_feed"
+        android:layout_width="@dimen/materialize_icon"
+        android:layout_height="@dimen/materialize_icon"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_delete"
+        android:tint="@color/md_red_500"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/delete_feed"
+        android:layout_centerVertical="true" />
+</RelativeLayout>

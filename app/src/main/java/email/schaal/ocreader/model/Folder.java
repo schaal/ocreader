@@ -58,4 +58,16 @@ public class Folder extends RealmObject implements TreeItem {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Folder)
+            return ((Folder) obj).getId() == getId();
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.valueOf(getId()).hashCode();
+    }
 }

@@ -28,6 +28,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
 import java.io.IOException;
@@ -53,6 +54,7 @@ import email.schaal.ocreader.model.Folder;
 import email.schaal.ocreader.model.FolderTypeAdapter;
 import email.schaal.ocreader.model.Item;
 import email.schaal.ocreader.model.ItemTypeAdapter;
+import email.schaal.ocreader.model.NewsError;
 import email.schaal.ocreader.model.StatusTypeAdapter;
 import email.schaal.ocreader.model.User;
 import email.schaal.ocreader.model.UserTypeAdapter;
@@ -86,6 +88,7 @@ public class APIService {
     private final Executor executor = Executors.newSingleThreadExecutor();
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final MoshiConverterFactory converterFactory;
+    private final JsonAdapter<NewsError> errorJsonAdapter;
 
     public void setHttpManager(HttpManager httpManager) {
         api = setupApi(httpManager);
@@ -251,13 +254,17 @@ public class APIService {
     }
 
     private APIService(Context context) {
-        converterFactory = MoshiConverterFactory.create(new Moshi.Builder()
+        final Moshi moshi = new Moshi.Builder()
                 .add(Folder.class, new FolderTypeAdapter())
                 .add(Feed.class, new FeedTypeAdapter())
                 .add(Item.class, new ItemTypeAdapter())
                 .add(User.class, new UserTypeAdapter())
                 .add(Status.class, new StatusTypeAdapter())
-                .build());
+                .build();
+
+        converterFactory = MoshiConverterFactory.create(moshi);
+
+        errorJsonAdapter = moshi.adapter(NewsError.class);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         String username = Preferences.USERNAME.getString(sharedPreferences);
@@ -309,7 +316,7 @@ public class APIService {
         Call<Feeds> createFeed(@Body Map<String, Object> feedMap);
 
         @PUT("feeds/{feedId}/move")
-        Call<Void> moveFeed(@Path("feedId") long feedId, @Body long folderId);
+        Call<Void> moveFeed(@Path("feedId") long feedId, @Body Map<String,Long> folderIdMap);
 
         @DELETE("feeds/{feedId}")
         Call<Void> deleteFeed(@Path("feedId") long feedId);
@@ -449,19 +456,22 @@ public class APIService {
         api.createFeed(feedMap).enqueue(new BaseRetrofitCallback<Feeds>(apiCallback) {
             @Override
             protected boolean onResponseReal(final Response<Feeds> response) {
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        Queries.insert(realm, Feed.class, response.body().getFeeds());
-                    }
-                });
+                // Set unreadCount to 0, items have not been fetched yet for this feed
+                Feed feed = response.body().getFeeds().get(0);
+                feed.setUnreadCount(0);
+
+                Queries.insert(realm, Feed.class, feed);
+
                 return true;
             }
         });
     }
 
     public void moveFeed(final Realm realm, final Feed feed, final long folderId, APICallback apiCallback) {
-        api.moveFeed(feed.getId(), (int) folderId).enqueue(new BaseRetrofitCallback<Void>(apiCallback) {
+        Map<String, Long> folderIdMap = new HashMap<>(1);
+        folderIdMap.put("folderId", folderId);
+
+        api.moveFeed(feed.getId(), folderIdMap).enqueue(new BaseRetrofitCallback<Void>(apiCallback) {
             @Override
             protected boolean onResponseReal(Response<Void> response) {
                 realm.executeTransaction(new Realm.Transaction() {
@@ -502,7 +512,14 @@ public class APIService {
                 if (onResponseReal(response))
                     callback.onSuccess();
             } else {
-                callback.onFailure(String.format(Locale.US, "%d: %s", response.code(), response.message()));
+                String message = response.message();
+                try {
+                    NewsError error = errorJsonAdapter.fromJson(response.errorBody().source());
+                    message = error.message;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                callback.onFailure(String.format(Locale.US, "%d: %s", response.code(), message));
             }
         }
 

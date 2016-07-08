@@ -46,4 +46,18 @@
     <string name="mark_all_as_read">Alles als gelesen markieren</string>
     <string name="play_media">Mediendatei abspielen</string>
     <string name="article_order">Sortierung umkehren</string>
+    <string name="feed_url">Feed URL</string>
+    <string name="title_activity_managefeeds">Feeds verwalten</string>
+    <string name="add_new_feed">Feed hinzufügen</string>
+    <string name="adding_feed">Feed wird hinzugefügt</string>
+    <string name="confirm_feed_deletion">Soll %s wirklich entfernt werden?</string>
+    <string name="delete">Entfernen</string>
+    <string name="delete_feed">Feed entfernen</string>
+    <string name="delete_feed_failed">Feed entfernen fehlgeschlagen</string>
+    <string name="deleting_feed">%s wird entfernt</string>
+    <string name="feed_add_failed">Feed hinzufügen fehlgeschlagen</string>
+    <string name="feed_move_failed">Feed verschieben fehlgeschlagen</string>
+    <string name="moving_feed">Feed wird verschoben</string>
+    <string name="add">Hinzufügen</string>
+    <string name="root_folder">Kein Ordner</string>
 </resources>

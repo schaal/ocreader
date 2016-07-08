@@ -79,5 +79,19 @@
     <string name="mark_all_as_read">Mark all as read</string>
     <string name="play_media">Play media</string>
     <string name="article_order">Reverse order</string>
+    <string name="title_activity_managefeeds">Manage feeds</string>
+    <string name="feed_url">Feed URL</string>
+    <string name="delete_feed">Delete feed</string>
+    <string name="add">Add</string>
+    <string name="add_new_feed">Add new feed</string>
+    <string name="adding_feed">Adding feed</string>
+    <string name="feed_add_failed">Failed to add feed</string>
+    <string name="confirm_feed_deletion">Do you want to delete the feed %s?</string>
+    <string name="moving_feed">Moving feed</string>
+    <string name="feed_move_failed">Failed to move feed</string>
+    <string name="delete_feed_failed">Failed to delete feed</string>
+    <string name="deleting_feed">Deleting %s</string>
+    <string name="delete">Delete</string>
+    <string name="root_folder">No folder</string>
 
 </resources>

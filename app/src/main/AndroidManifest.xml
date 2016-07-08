@@ -53,6 +53,10 @@
             android:label="@string/title_activity_item_pager"
             android:parentActivityName="email.schaal.ocreader.ListActivity" />
 
+        <activity android:name="email.schaal.ocreader.ManageFeedsActivity"
+            android:label="@string/title_activity_managefeeds"
+            android:parentActivityName="email.schaal.ocreader.ListActivity" />
+
         <service
             android:name="email.schaal.ocreader.service.SyncService"
             android:enabled="true"

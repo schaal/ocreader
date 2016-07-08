@@ -433,6 +433,11 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 case ItemPagerActivity.REQUEST_CODE:
                     layoutManager.scrollToPosition(data.getIntExtra(ItemPagerActivity.EXTRA_CURRENT_POSITION, -1));
                     break;
+                case ManageFeedsActivity.REQUEST_CODE:
+                    drawerManager.reset();
+                    reloadListFragment();
+                    drawerManager.reloadAdapters(getRealm(), isShowOnlyUnread());
+                    break;
             }
         }
     }
@@ -458,6 +463,9 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 return true;
             case R.id.menu_about:
                 showAboutDialog();
+                return true;
+            case R.id.menu_manage_feeds:
+                startActivityForResult(new Intent(this, ManageFeedsActivity.class), ManageFeedsActivity.REQUEST_CODE);
                 return true;
         }
         return super.onOptionsItemSelected(item);

@@ -9,6 +9,14 @@
         android:title="@string/article_order"
         android:icon="@drawable/ic_sort"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_manage_feeds"
+        android:title="@string/title_activity_managefeeds"
+        android:icon="@drawable/ic_feed_icon"
+        app:showAsAction="never"
+        />
+
     <item
         android:id="@+id/menu_about"
         android:title="@string/about"

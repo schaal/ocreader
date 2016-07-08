@@ -79,10 +79,12 @@ public class FeedTypeAdapter extends NewsTypeAdapter<Feed> {
                     feed.setUnreadCount(in.nextInt());
                     break;
                 case "ordering":
-                    feed.setOrdering(in.nextInt());
+                    // createFeed returns a feed with ordering set to NULL
+                    feed.setOrdering(nullSafeInt(in, 0));
                     break;
                 case "pinned":
-                    feed.setPinned(in.nextBoolean());
+                    // createFeed returns a feed with pinned set to NULL
+                    feed.setPinned(nullSafeBoolean(in, false));
                     break;
                 case "updateErrorCount":
                 case "lastUpdateError":
