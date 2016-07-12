@@ -120,12 +120,10 @@ public class Queries {
      * @param realm Realm object to query
      * @param treeItem TreeItem to query items from
      * @param onlyUnread Return only unread items?
-     * @param sortFieldname Sort using this fieldname
-     * @param order Sort using this order
      * @return items belonging to TreeItem, only unread if onlyUnread is true
      */
     @Nullable
-    public static RealmResults<Item> getItems(Realm realm, TreeItem treeItem, boolean onlyUnread, String sortFieldname, Sort order) {
+    public static RealmResults<Item> getItems(Realm realm, TreeItem treeItem, boolean onlyUnread) {
         RealmQuery<Item> query = null;
         // Whether to return only items with a distinct fingerprint
         boolean distinct = false;
@@ -159,10 +157,9 @@ public class Queries {
                 query.equalTo(Item.UNREAD, true);
 
             if(distinct) {
-                RealmResults<Item> distinctItems = query.distinct(Item.FINGERPRINT);
-                return distinctItems.sort(sortFieldname, order);
+                return query.distinct(Item.FINGERPRINT);
             } else {
-                return query.findAllSorted(sortFieldname, order);
+                return query.findAll();
             }
         } else
             return null;

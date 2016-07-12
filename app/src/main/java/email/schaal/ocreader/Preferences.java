@@ -23,6 +23,7 @@ package email.schaal.ocreader;
 import android.content.SharedPreferences;
 
 import email.schaal.ocreader.model.AllUnreadFolder;
+import io.realm.Sort;
 
 /**
  * Manage Preference values to store in SharedPreferences and retrieve those values.
@@ -33,6 +34,7 @@ public enum Preferences {
     USERNAME("username",null),
     PASSWORD("password", null),
     URL("url", null),
+    ORDER("order", Sort.DESCENDING),
 
     /** System preferences **/
     SYS_NEEDS_UPDATE_AFTER_SYNC("needs_update_after_sync", false),
@@ -66,6 +68,10 @@ public enum Preferences {
         if(defaultValue == null)
             return null;
         return preferences.getLong(key, (Long) defaultValue);
+    }
+
+    public Sort getOrder(SharedPreferences preferences) {
+        return preferences.getBoolean(key, Sort.ASCENDING.getValue()) == Sort.ASCENDING.getValue() ? Sort.ASCENDING : Sort.DESCENDING;
     }
 
     public static boolean hasCredentials(SharedPreferences preferences) {

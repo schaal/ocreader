@@ -5,6 +5,11 @@
       tools:context="email.schaal.ocreader.ListActivity">
 
     <item
+        android:id="@+id/menu_sort"
+        android:title="@string/article_order"
+        android:icon="@drawable/ic_sort"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/menu_about"
         android:title="@string/about"
         app:showAsAction="never"/>

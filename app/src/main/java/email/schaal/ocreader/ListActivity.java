@@ -83,6 +83,7 @@ import email.schaal.ocreader.view.ItemsAdapter;
 import email.schaal.ocreader.view.ScrollAwareFABBehavior;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
+import io.realm.Sort;
 
 public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ItemsAdapter.OnLoadMoreListener, OnCheckedChangeListener, ActionMode.Callback {
     private static final String TAG = ListActivity.class.getName();
@@ -321,7 +322,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         layoutManager = new LinearLayoutManager(this);
 
-        adapter = new ItemsAdapter(getRealm(), drawerManager.getState(), this, this);
+        adapter = new ItemsAdapter(getRealm(), drawerManager.getState(), this, this, Preferences.ORDER.getOrder(PreferenceManager.getDefaultSharedPreferences(this)));
 
         fab_mark_all_read = (FloatingActionButton) findViewById(R.id.fab_mark_all_as_read);
         fab_mark_all_read.setOnClickListener(new View.OnClickListener() {
@@ -366,7 +367,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         itemsRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         drawerManager.getState().restoreInstanceState(getRealm(), PreferenceManager.getDefaultSharedPreferences(this));
-        // TODO: 05.06.16 remove first argument
+
         adapter.updateItems(false);
 
         drawerManager.reloadAdapters(getRealm(), isShowOnlyUnread());
@@ -445,6 +446,16 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            case R.id.menu_sort:
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+                Sort order = Preferences.ORDER.getOrder(sharedPreferences) == Sort.ASCENDING ? Sort.DESCENDING : Sort.ASCENDING;
+
+                sharedPreferences.edit().putBoolean(Preferences.ORDER.getKey(), order.getValue()).apply();
+
+                adapter.setOrder(order);
+
+                return true;
             case R.id.menu_about:
                 showAboutDialog();
                 return true;

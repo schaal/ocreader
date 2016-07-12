@@ -30,6 +30,7 @@ import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.ColorInt;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.graphics.ColorUtils;
@@ -47,6 +48,7 @@ import email.schaal.ocreader.model.TemporaryFeed;
 import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.util.FeedColors;
 import email.schaal.ocreader.view.ProgressFloatingActionButton;
+import io.realm.Sort;
 
 public class ItemPagerActivity extends RealmActivity {
     private static final String TAG = ItemPagerActivity.class.getName();
@@ -54,6 +56,8 @@ public class ItemPagerActivity extends RealmActivity {
     public static final String POSITION = "position";
     public static final int REQUEST_CODE = 2;
     public static final String EXTRA_CURRENT_POSITION = "email.schaal.ocreader.extra.CURRENT_POSIION";
+
+    private Sort order;
 
     private TemporaryFeed temporaryFeed;
     private Toolbar toolbar;
@@ -74,6 +78,8 @@ public class ItemPagerActivity extends RealmActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        order = Preferences.ORDER.getOrder(PreferenceManager.getDefaultSharedPreferences(this));
 
         TypedArray typedArray = obtainStyledAttributes(new int[] { R.attr.colorPrimary, R.attr.colorAccent });
         try {
@@ -125,7 +131,7 @@ public class ItemPagerActivity extends RealmActivity {
     }
 
     public Item getItemForPosition(int position) {
-        return temporaryFeed.getItems().get(position);
+        return temporaryFeed.getItems().sort(Item.PUB_DATE, order).get(position);
     }
 
     @Override

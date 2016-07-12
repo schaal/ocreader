@@ -38,8 +38,8 @@ import email.schaal.ocreader.model.Item;
 import email.schaal.ocreader.model.TemporaryFeed;
 import email.schaal.ocreader.model.TreeItem;
 import email.schaal.ocreader.view.drawer.DrawerManager;
+import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -47,7 +47,7 @@ import io.realm.Sort;
  * Adapter for the RecyclerView to manage Items belonging to a certain TreeItem.
  */
 public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private RealmList<Item> items;
+    private OrderedRealmCollection<Item> items;
     private final SparseArray<Item> selectedItems = new SparseArray<>();
     private final DrawerManager.State state;
     private final Realm realm;
@@ -60,13 +60,23 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private TreeItem loadingMoreTreeItem;
 
-    public ItemsAdapter(Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, OnLoadMoreListener loadMoreListener) {
+    private Sort order;
+
+    public ItemsAdapter(Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, OnLoadMoreListener loadMoreListener, Sort order) {
         this.realm = realm;
         this.state = state;
         this.clickListener = clickListener;
         this.loadMoreListener = loadMoreListener;
 
+        this.order = order;
+
         setHasStableIds(true);
+    }
+
+    public void setOrder(Sort order) {
+        this.order = order;
+
+        updateItems(false);
     }
 
     public void updateItems(boolean updateTemporaryFeed) {
@@ -79,7 +89,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    RealmResults<Item> tempItems = Queries.getItems(realm, state.getTreeItem(), isOnlyUnread(), Item.PUB_DATE, Sort.DESCENDING);
+                    RealmResults<Item> tempItems = Queries.getItems(realm, state.getTreeItem(), isOnlyUnread());
                     temporaryFeed.setId(state.getTreeItem().getId());
                     temporaryFeed.setTitle(state.getTreeItem().getTitle());
                     temporaryFeed.getItems().clear();
@@ -90,8 +100,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             });
         }
 
-        if (temporaryFeed != null)
-            items = temporaryFeed.getItems();
+        items = temporaryFeed.getItems().sort(Item.PUB_DATE, order);
 
         notifyDataSetChanged();
     }
