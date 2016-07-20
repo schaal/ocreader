@@ -1,3 +1,10 @@
+## 0.13 (2016-07-20)
+
+The "upside down" release
+
+* Use the largest available favicon
+* Add ability to reverse article sort order
+
 ## 0.12 (2016-07-07)
 
 The "Nothing to see here" release
