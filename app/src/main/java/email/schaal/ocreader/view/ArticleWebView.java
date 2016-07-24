@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -92,7 +93,13 @@ public class ArticleWebView extends NestedScrollWebView {
             typedArray.recycle();
         }
 
-        getSettings().setJavaScriptEnabled(true);
+        WebSettings webSettings = getSettings();
+
+        webSettings.setJavaScriptEnabled(true);
+
+        webSettings.setBuiltInZoomControls(true);
+        webSettings.setDisplayZoomControls(false);
+
         addJavascriptInterface(new JsCallback(), "JsCallback");
     }
 
