@@ -9,6 +9,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v7.graphics.Palette;
 import android.util.LruCache;
 import android.widget.ImageView;
@@ -115,6 +116,12 @@ public class FaviconLoader {
                 .addTarget(DARK_VIBRANT)
                 .addTarget(VIBRANT)
                 .addTarget(LIGHT_MUTED)
+                .addFilter(new Palette.Filter() {
+                    @Override
+                    public boolean isAllowed(int rgb, float[] hsl) {
+                        return ColorUtils.calculateContrast(rgb, Color.WHITE) >= 4;
+                    }
+                })
                 .generate(paletteAsyncListener);
     }
 
