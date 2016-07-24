@@ -21,10 +21,8 @@
 package email.schaal.ocreader.util;
 
 import android.content.Context;
+import android.text.Html;
 import android.text.format.DateUtils;
-
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
 
 import java.util.Date;
 
@@ -68,6 +66,6 @@ public class StringUtils {
     }
 
     public static String cleanString(String source) {
-        return Jsoup.clean(source, Whitelist.none());
+        return Html.fromHtml(source).toString();
     }
 }
