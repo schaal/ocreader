@@ -34,20 +34,20 @@ import java.util.List;
  */
 public class ColorGenerator {
     public final static ColorGenerator MATERIAL = new ColorGenerator(Arrays.asList(
-                Material.Red._500.getAsColor(),
-                Material.Purple._500.getAsColor(),
-                Material.Indigo._500.getAsColor(),
-                Material.Blue._500.getAsColor(),
-                Material.LightBlue._500.getAsColor(),
-                Material.Cyan._500.getAsColor(),
-                Material.Teal._500.getAsColor(),
-                Material.Green._500.getAsColor(),
-                Material.LightGreen._500.getAsColor(),
-                Material.Lime._500.getAsColor(),
-                Material.Amber._500.getAsColor(),
-                Material.DeepOrange._500.getAsColor(),
-                Material.Brown._500.getAsColor(),
-                Material.BlueGrey._500.getAsColor()
+                Material.Red._900.getAsColor(),
+                Material.Purple._900.getAsColor(),
+                Material.Indigo._900.getAsColor(),
+                Material.Blue._900.getAsColor(),
+                Material.LightBlue._900.getAsColor(),
+                Material.Cyan._900.getAsColor(),
+                Material.Teal._900.getAsColor(),
+                Material.Green._900.getAsColor(),
+                Material.LightGreen._900.getAsColor(),
+                Material.Lime._900.getAsColor(),
+                Material.Amber._900.getAsColor(),
+                Material.DeepOrange._900.getAsColor(),
+                Material.Brown._900.getAsColor(),
+                Material.BlueGrey._900.getAsColor()
         ));
 
     private final List<Integer> mColors;
