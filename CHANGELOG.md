@@ -1,3 +1,9 @@
+## 0.14 (2016-07-25)
+
+* Only allow colors with high enough contrast as text colors for Feed titles
+* Decode HTML entities in Feed titles
+* Enable zoom on article views (useful for webcomics)
+
 ## 0.13 (2016-07-20)
 
 The "upside down" release
