@@ -87,9 +87,10 @@ public class FeedTypeAdapter extends NewsTypeAdapter<Feed> {
                     feed.setPinned(nullSafeBoolean(in, false));
                     break;
                 case "updateErrorCount":
+                    feed.setUpdateErrorCount(in.nextInt());
+                    break;
                 case "lastUpdateError":
-                    // TODO: 24.04.16 handle these
-                    in.skipValue();
+                    feed.setLastUpdateError(in.nextString());
                     break;
                 default:
                     Log.w(TAG, "Unknown value in feed json: " + name);
