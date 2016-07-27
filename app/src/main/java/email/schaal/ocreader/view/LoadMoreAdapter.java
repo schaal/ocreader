@@ -52,7 +52,7 @@ public class LoadMoreAdapter extends ItemsAdapter {
         return super.getItemCount() + footerCount();
     }
 
-    private int footerCount() {
+    protected int footerCount() {
         return hasLoadMore() ? 1 : 0;
     }
 

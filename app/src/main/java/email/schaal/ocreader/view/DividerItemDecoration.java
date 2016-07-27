@@ -31,6 +31,7 @@ import android.util.TypedValue;
 import android.view.View;
 
 import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_EMPTY;
+import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_ERROR;
 import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_ITEM;
 import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_LAST_ITEM;
 import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_LOADMORE;
@@ -102,6 +103,8 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
                 case VIEW_TYPE_LOADMORE:
                     dividerRect.left = paddingLeft;
                     break;
+                case VIEW_TYPE_ERROR:
+                    continue;
             }
 
             dividerRect.top = child.getBottom() + ((RecyclerView.LayoutParams) child.getLayoutParams()).bottomMargin;

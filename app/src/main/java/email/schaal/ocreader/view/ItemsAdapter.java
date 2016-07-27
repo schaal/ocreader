@@ -20,20 +20,14 @@
 
 package email.schaal.ocreader.view;
 
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ViewSwitcher;
 
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.model.AllUnreadFolder;
-import email.schaal.ocreader.model.Feed;
-import email.schaal.ocreader.model.Folder;
 import email.schaal.ocreader.model.Item;
 import email.schaal.ocreader.model.TemporaryFeed;
 import email.schaal.ocreader.model.TreeItem;
@@ -48,7 +42,6 @@ import io.realm.Sort;
  */
 public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private OrderedRealmCollection<Item> items;
-    private final SparseArray<Item> selectedItems = new SparseArray<>();
     protected final DrawerManager.State state;
     private final Realm realm;
     private final ItemViewHolder.OnClickListener clickListener;
@@ -57,6 +50,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public final static int VIEW_TYPE_LAST_ITEM = 1;
     public final static int VIEW_TYPE_EMPTY = 2;
     public final static int VIEW_TYPE_LOADMORE = 3;
+    public final static int VIEW_TYPE_ERROR = 4;
 
     private Sort order;
 
@@ -139,7 +133,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof ItemViewHolder) {
             Item item = items.get(position);
-            ((ItemViewHolder) holder).bindItem(item, position, selectedItems.get(position, null) != null);
+            ((ItemViewHolder) holder).bindItem(item, position);
         }
     }
 
@@ -167,54 +161,10 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return state.getStartDrawerItem() instanceof AllUnreadFolder;
     }
 
-    public void clearSelection() {
-        selectedItems.clear();
-        notifyDataSetChanged();
-    }
-
-    @Nullable
-    public Boolean firstSelectedUnread() {
-        if(selectedItems.size() > 0) {
-            return selectedItems.valueAt(0).isUnread();
-        } else {
-            return null;
-        }
-    }
-
-    @Nullable
-    public Boolean firstSelectedStarred() {
-        if(selectedItems.size() > 0) {
-            return selectedItems.valueAt(0).isStarred();
-        } else {
-            return null;
-        }
-    }
-
-    public int getSelectedItemsCount() {
-        return selectedItems.size();
-    }
-
-    public Item[] getSelectedItems() {
-        Item[] itemsIterable = new Item[selectedItems.size()];
-        for (int index = 0; index < selectedItems.size(); index++) {
-            itemsIterable[index] = selectedItems.valueAt(index);
-        }
-        return itemsIterable;
-    }
-
     private class EmptyStateViewHolder extends RecyclerView.ViewHolder {
         public EmptyStateViewHolder(View itemView) {
             super(itemView);
         }
-    }
-
-    public void toggleSelection(int position) {
-        if(selectedItems.get(position,null) != null) {
-            selectedItems.remove(position);
-        } else {
-            selectedItems.put(position, items.get(position));
-        }
-        notifyItemChanged(position);
     }
 
     public interface OnLoadMoreListener {

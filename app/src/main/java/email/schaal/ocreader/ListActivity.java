@@ -80,8 +80,8 @@ import email.schaal.ocreader.service.SyncService;
 import email.schaal.ocreader.view.DividerItemDecoration;
 import email.schaal.ocreader.view.ItemViewHolder;
 import email.schaal.ocreader.view.ItemsAdapter;
-import email.schaal.ocreader.view.LoadMoreAdapter;
 import email.schaal.ocreader.view.ScrollAwareFABBehavior;
+import email.schaal.ocreader.view.SelectableItemsAdapter;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
 import io.realm.Sort;
@@ -152,7 +152,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private SwipeRefreshLayout swipeRefreshLayout;
     private FloatingActionButton fab_mark_all_read;
 
-    private LoadMoreAdapter adapter;
+    private SelectableItemsAdapter adapter;
     private LinearLayoutManager layoutManager;
 
     @Override
@@ -323,7 +323,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         layoutManager = new LinearLayoutManager(this);
 
-        adapter = new LoadMoreAdapter(getRealm(), drawerManager.getState(), this, Preferences.ORDER.getOrder(PreferenceManager.getDefaultSharedPreferences(this)), this);
+        adapter = new SelectableItemsAdapter(getRealm(), drawerManager.getState(), this, Preferences.ORDER.getOrder(PreferenceManager.getDefaultSharedPreferences(this)), this);
 
         fab_mark_all_read = (FloatingActionButton) findViewById(R.id.fab_mark_all_as_read);
         fab_mark_all_read.setOnClickListener(new View.OnClickListener() {
@@ -492,7 +492,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             itemActivityIntent.putExtra(ItemPagerActivity.POSITION, position);
             startActivityForResult(itemActivityIntent, ItemPagerActivity.REQUEST_CODE);
         } else {
-            adapter.toggleSelection(position);
+            adapter.toggleSelection(item, position);
             if(adapter.getSelectedItemsCount() == 0)
                 actionMode.finish();
             else {
@@ -507,7 +507,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         if(actionMode != null || Preferences.SYS_SYNC_RUNNING.getBoolean(PreferenceManager.getDefaultSharedPreferences(this)))
             return;
 
-        adapter.toggleSelection(position);
+        adapter.toggleSelection(item, position);
         actionMode = startActionMode(this);
     }
 

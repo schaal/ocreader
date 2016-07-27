@@ -60,4 +60,6 @@
     <string name="moving_feed">Feed wird verschoben</string>
     <string name="add">Hinzufügen</string>
     <string name="root_folder">Kein Ordner</string>
+    <string name="feed_update_error">Fehler beim Aktualisieren dieses Feeds</string>
+    <string name="warning">Warnung</string>
 </resources>

@@ -88,7 +88,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
         };
     }
 
-    public void bindItem(final Item item, final int position, boolean selected) {
+    public void bindItem(final Item item, final int position) {
         textViewTitle.setText(item.getTitle());
 
         Feed feed = item.getFeed();
@@ -138,6 +138,9 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
         setUnreadState(item.isUnread());
         setStarredState(item.isStarred());
 
+    }
+
+    public void setSelected(boolean selected) {
         int backgroundResource = R.drawable.item_background;
         if (!selected) {
             int[] attrs = new int[]{R.attr.selectableItemBackground};

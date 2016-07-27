@@ -93,5 +93,7 @@
     <string name="deleting_feed">Deleting %s</string>
     <string name="delete">Delete</string>
     <string name="root_folder">No folder</string>
+    <string name="warning">Warning</string>
+    <string name="feed_update_error">Updating this feed failed</string>
 
 </resources>

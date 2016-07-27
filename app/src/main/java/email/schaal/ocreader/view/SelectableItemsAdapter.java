@@ -1,0 +1,73 @@
+package email.schaal.ocreader.view;
+
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+import android.util.SparseArray;
+
+import email.schaal.ocreader.model.Item;
+import email.schaal.ocreader.view.drawer.DrawerManager;
+import io.realm.Realm;
+import io.realm.Sort;
+
+/**
+ * Created by daniel on 21.08.16.
+ */
+
+public class SelectableItemsAdapter extends ErrorAdapter {
+    private final SparseArray<Item> selectedItems = new SparseArray<>();
+
+    public SelectableItemsAdapter(Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, OnLoadMoreListener loadMoreListener) {
+        super(realm, state, clickListener, order, loadMoreListener);
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        super.onBindViewHolder(holder, position);
+        if(holder instanceof ItemViewHolder)
+            ((ItemViewHolder) holder).setSelected(selectedItems.indexOfKey(position) >= 0);
+    }
+
+    public void clearSelection() {
+        selectedItems.clear();
+        notifyDataSetChanged();
+    }
+
+    @Nullable
+    public Boolean firstSelectedUnread() {
+        if(selectedItems.size() > 0) {
+            return selectedItems.valueAt(0).isUnread();
+        } else {
+            return null;
+        }
+    }
+
+    @Nullable
+    public Boolean firstSelectedStarred() {
+        if(selectedItems.size() > 0) {
+            return selectedItems.valueAt(0).isStarred();
+        } else {
+            return null;
+        }
+    }
+
+    public int getSelectedItemsCount() {
+        return selectedItems.size();
+    }
+
+    public Item[] getSelectedItems() {
+        Item[] itemsIterable = new Item[selectedItems.size()];
+        for (int index = 0; index < selectedItems.size(); index++) {
+            itemsIterable[index] = selectedItems.valueAt(index);
+        }
+        return itemsIterable;
+    }
+
+    public void toggleSelection(Item item, int position) {
+        if(selectedItems.indexOfKey(position + headerCount()) >= 0) {
+            selectedItems.remove(position + headerCount());
+        } else {
+            selectedItems.put(position + headerCount(), item);
+        }
+        notifyItemChanged(position + headerCount());
+    }
+}

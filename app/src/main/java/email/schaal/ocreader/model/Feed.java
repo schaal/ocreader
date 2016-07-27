@@ -204,4 +204,8 @@ public class Feed extends RealmObject implements TreeItem {
     public Folder getFolder() {
         return folder;
     }
+
+    public boolean isConsideredFailed() {
+        return updateErrorCount >= 50;
+    }
 }
