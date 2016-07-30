@@ -49,16 +49,20 @@ public class StringUtils {
         }
     }
 
-    public static String getTimeSpanString(Context context, Date date) {
+    public static String getTimeSpanString(Context context, Date startDate) {
+        return getTimeSpanString(context, startDate, new Date());
+    }
+
+    public static String getTimeSpanString(Context context, Date startDate, Date endDate) {
         String timeSpanString;
 
-        long timeDiff = (new Date().getTime() - date.getTime());
+        long timeDiff = (endDate.getTime() - startDate.getTime());
 
         if(timeDiff <= 0)
             timeSpanString = context.getString(R.string.now);
-        else if(timeDiff <= 60 * DateUtils.MINUTE_IN_MILLIS)
+        else if(timeDiff <= 59 * DateUtils.MINUTE_IN_MILLIS)
             timeSpanString = context.getString(R.string.minutes, timeDiff/DateUtils.MINUTE_IN_MILLIS);
-        else if(timeDiff <= 24 * DateUtils.HOUR_IN_MILLIS)
+        else if(timeDiff <= 23 * DateUtils.HOUR_IN_MILLIS)
             timeSpanString = context.getString(R.string.hours, timeDiff/DateUtils.HOUR_IN_MILLIS);
         else
             timeSpanString = context.getString(R.string.days, timeDiff / DateUtils.DAY_IN_MILLIS);
