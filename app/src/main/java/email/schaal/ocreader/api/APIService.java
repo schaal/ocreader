@@ -31,8 +31,10 @@ import android.support.annotation.Nullable;
 import com.squareup.moshi.Moshi;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -64,7 +66,9 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -292,14 +296,23 @@ public class APIService {
         Call<Folders> folders();
 
         @PUT("folders/{folderId}/read")
-        Call<Void> markItemsOfFolderRead(@Path("folderId") int folderId, @Body int newestItemId);
+        Call<Void> markItemsOfFolderRead(@Path("folderId") long folderId, @Body int newestItemId);
 
         /** FEEDS **/
         @GET("feeds")
         Call<Feeds> feeds();
 
         @PUT("feeds/{feedId}/read")
-        Call<Void> markItemsOfFeedRead(@Path("feedId") int feedId, @Body int newestItemId);
+        Call<Void> markItemsOfFeedRead(@Path("feedId") long feedId, @Body long newestItemId);
+
+        @POST("feeds")
+        Call<Feeds> createFeed(@Body Map<String, Object> feedMap);
+
+        @PUT("feeds/{feedId}/move")
+        Call<Void> moveFeed(@Path("feedId") long feedId, @Body long folderId);
+
+        @DELETE("feeds/{feedId}")
+        Call<Void> deleteFeed(@Path("feedId") long feedId);
 
         /** ITEMS **/
         @GET("items")
@@ -427,6 +440,50 @@ public class APIService {
         });
     }
 
+    public void createFeed(final Realm realm, final String url, final long folderId, APICallback apiCallback) {
+        Map<String, Object> feedMap = new HashMap<>(2);
+
+        feedMap.put("url", url);
+        feedMap.put("folderId", folderId);
+
+        api.createFeed(feedMap).enqueue(new BaseRetrofitCallback<Feeds>(apiCallback) {
+            @Override
+            protected boolean onResponseReal(final Response<Feeds> response) {
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        Queries.insert(realm, Feed.class, response.body().getFeeds());
+                    }
+                });
+                return true;
+            }
+        });
+    }
+
+    public void moveFeed(final Realm realm, final Feed feed, final long folderId, APICallback apiCallback) {
+        api.moveFeed(feed.getId(), (int) folderId).enqueue(new BaseRetrofitCallback<Void>(apiCallback) {
+            @Override
+            protected boolean onResponseReal(Response<Void> response) {
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        feed.setFolderId(folderId);
+                    }
+                });
+                return true;
+            }
+        });
+    }
+
+    public void deleteFeed(final Realm realm, final Feed feed, APICallback apiCallback) {
+        api.deleteFeed(feed.getId()).enqueue(new BaseRetrofitCallback<Void>(apiCallback) {
+            @Override
+            protected boolean onResponseReal(Response<Void> response) {
+                Queries.deleteFeed(realm, feed);
+                return true;
+            }
+        });
+    }
     public interface APICallback {
         void onSuccess();
         void onFailure(String errorMessage);
