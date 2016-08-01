@@ -33,8 +33,8 @@ public class StringUtilsTest {
 
     @Test
     public void testGetByLine() throws Exception {
-        assertEquals("From testFeed", StringUtils.getByLine(RuntimeEnvironment.application, null, "testFeed"));
-        assertEquals("By testAuthor from testFeed", StringUtils.getByLine(RuntimeEnvironment.application, "testAuthor", "testFeed"));
+        assertEquals("From testFeed", StringUtils.getByLine(RuntimeEnvironment.application, "testFeed", null));
+        assertEquals("By testAuthor from testFeed", StringUtils.getByLine(RuntimeEnvironment.application, "testFeed", "testAuthor"));
     }
 
     @Test

@@ -21,6 +21,8 @@
 package email.schaal.ocreader.util;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.format.DateUtils;
 
@@ -32,6 +34,7 @@ import email.schaal.ocreader.R;
  * Utility class to handle Strings.
  */
 public class StringUtils {
+    @Nullable
     public static String nullIfEmpty(String source) {
         if(source != null) {
             source = source.trim();
@@ -41,7 +44,8 @@ public class StringUtils {
         return source;
     }
 
-    public static String getByLine(Context context, String author, String feedTitle) {
+    @NonNull
+    public static String getByLine(@NonNull Context context, @NonNull String feedTitle, @Nullable String author) {
         if(author == null) {
             return context.getString(R.string.article_from, feedTitle);
         } else {
@@ -49,10 +53,12 @@ public class StringUtils {
         }
     }
 
+    @NonNull
     public static String getTimeSpanString(Context context, Date startDate) {
         return getTimeSpanString(context, startDate, new Date());
     }
 
+    @NonNull
     public static String getTimeSpanString(Context context, Date startDate, Date endDate) {
         String timeSpanString;
 
@@ -69,7 +75,8 @@ public class StringUtils {
         return timeSpanString;
     }
 
-    public static String cleanString(String source) {
+    @NonNull
+    public static String cleanString(@NonNull String source) {
         return Html.fromHtml(source).toString();
     }
 }
