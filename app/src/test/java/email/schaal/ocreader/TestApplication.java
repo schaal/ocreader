@@ -1,9 +1,11 @@
 package email.schaal.ocreader;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
 /**
- * Created by daniel on 25.07.16.
+ * Empty application for test purposes
  */
+@SuppressLint("Registered")
 public class TestApplication extends Application {
 }
