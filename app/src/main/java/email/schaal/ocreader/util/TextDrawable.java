@@ -35,6 +35,8 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.graphics.drawable.shapes.Shape;
 
+import java.util.Locale;
+
 /**
  * @author amulya
  */
@@ -55,7 +57,7 @@ public class TextDrawable extends ShapeDrawable {
         width = builder.width;
 
         // text and color
-        text = builder.toUpperCase ? builder.text.toUpperCase() : builder.text;
+        text = builder.toUpperCase ? builder.text.toUpperCase(Locale.getDefault()) : builder.text;
         color = builder.color;
 
         // text paint settings
@@ -149,7 +151,7 @@ public class TextDrawable extends ShapeDrawable {
             shape = new OvalShape();
             fontSize = -1;
             isBold = false;
-            toUpperCase = false;
+            toUpperCase = true;
         }
 
         public Builder width(int width) {
