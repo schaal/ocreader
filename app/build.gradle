@@ -89,8 +89,8 @@ dependencies {
 
     // Explicitly set version for support-annotations to prevent version conflicts
     androidTestCompile "com.android.support:support-annotations:${versions.supportLib}"
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
-    androidTestCompile 'com.android.support.test:runner:0.4.1'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    androidTestCompile 'com.android.support.test:runner:0.5'
 
     testCompile "org.robolectric:robolectric:3.1.1"
     testCompile 'junit:junit:4.12'
