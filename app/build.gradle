@@ -78,7 +78,7 @@ dependencies {
 
     compile 'divstar:ico4a:v1.0'
 
-    // Explictly set okhttp3 version
+    // Explicitly set okhttp3 version
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
 
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
