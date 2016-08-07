@@ -1,5 +1,6 @@
 package email.schaal.ocreader.view;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -40,6 +41,8 @@ public class AddNewFeedDialogFragment extends DialogFragment {
 
         builder.setTitle(R.string.add_new_feed);
 
+        // There is no root view yet
+        @SuppressLint("InflateParams")
         View view = activity.getLayoutInflater().inflate(R.layout.fragment_add_new_feed, null);
 
         final Spinner folderSpinner = (Spinner) view.findViewById(R.id.folder);
