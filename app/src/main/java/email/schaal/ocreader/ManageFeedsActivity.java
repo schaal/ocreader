@@ -58,7 +58,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
             }
         });
 
-        if(getIntent().getAction() != null && getIntent().getAction().equals(Intent.ACTION_SEND)) {
+        if(Intent.ACTION_SEND.equals(getIntent().getAction())) {
             showAddNewFeedDialog(getIntent().getStringExtra(Intent.EXTRA_TEXT));
         }
     }
