@@ -4,8 +4,10 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +26,8 @@ import email.schaal.ocreader.view.FeedsAdapter;
 import email.schaal.ocreader.view.FolderSpinnerAdapter;
 
 public class ManageFeedsActivity extends RealmActivity implements FeedManageListener {
+    private static final String TAG = ManageFeedsActivity.class.getName();
+
     public static final int REQUEST_CODE = 3;
 
     private FolderSpinnerAdapter folderSpinnerAdapter;
@@ -50,10 +54,25 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
         fabAddNewFeed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddNewFeedDialogFragment dialogFragment = new AddNewFeedDialogFragment();
-                dialogFragment.show(getFragmentManager(), "newfeed");
+                showAddNewFeedDialog(null);
             }
         });
+
+        if(getIntent().getAction() != null && getIntent().getAction().equals(Intent.ACTION_SEND)) {
+            showAddNewFeedDialog(getIntent().getStringExtra(Intent.EXTRA_TEXT));
+        }
+    }
+
+    private void showAddNewFeedDialog(@Nullable String url) {
+        AddNewFeedDialogFragment dialogFragment = new AddNewFeedDialogFragment();
+
+        if(url != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(AddNewFeedDialogFragment.ARG_URL, url);
+            dialogFragment.setArguments(bundle);
+        }
+
+        dialogFragment.show(getFragmentManager(), "newfeed");
     }
 
     public FolderSpinnerAdapter getFolderSpinnerAdapter() {

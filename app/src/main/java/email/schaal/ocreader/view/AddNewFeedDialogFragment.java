@@ -17,6 +17,8 @@ import email.schaal.ocreader.R;
  * Created by daniel on 02.08.16.
  */
 public class AddNewFeedDialogFragment extends DialogFragment {
+    public static final String ARG_URL = "url";
+
     private FeedManageListener listener;
 
     @Override
@@ -42,6 +44,12 @@ public class AddNewFeedDialogFragment extends DialogFragment {
 
         final Spinner folderSpinner = (Spinner) view.findViewById(R.id.folder);
         final TextView urlTextView = (TextView) view.findViewById(R.id.feed_url);
+
+        final Bundle arguments = getArguments();
+
+        if(arguments != null && arguments.containsKey(ARG_URL)) {
+            urlTextView.setText(arguments.getString(ARG_URL));
+        }
 
         folderSpinner.setAdapter(activity.getFolderSpinnerAdapter());
 

@@ -53,9 +53,16 @@
             android:label="@string/title_activity_item_pager"
             android:parentActivityName="email.schaal.ocreader.ListActivity" />
 
-        <activity android:name="email.schaal.ocreader.ManageFeedsActivity"
+        <activity
+            android:name="email.schaal.ocreader.ManageFeedsActivity"
             android:label="@string/title_activity_managefeeds"
-            android:parentActivityName="email.schaal.ocreader.ListActivity" />
+            android:parentActivityName="email.schaal.ocreader.ListActivity">
+            <intent-filter android:label="@string/add_new_feed">
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
 
         <service
             android:name="email.schaal.ocreader.service.SyncService"
