@@ -287,7 +287,7 @@ public class APIService {
         return retrofit.create(API.class);
     }
 
-    @SuppressWarnings("SameParameterValue,unused")
+    @SuppressWarnings("SameParameterValue")
     public interface API {
         /** SERVER **/
 
@@ -302,15 +302,9 @@ public class APIService {
         @GET("folders")
         Call<Folders> folders();
 
-        @PUT("folders/{folderId}/read")
-        Call<Void> markItemsOfFolderRead(@Path("folderId") long folderId, @Body int newestItemId);
-
         /** FEEDS **/
         @GET("feeds")
         Call<Feeds> feeds();
-
-        @PUT("feeds/{feedId}/read")
-        Call<Void> markItemsOfFeedRead(@Path("feedId") long feedId, @Body long newestItemId);
 
         @POST("feeds")
         Call<Feeds> createFeed(@Body Map<String, Object> feedMap);
@@ -339,26 +333,14 @@ public class APIService {
                 @Query("id") long id
         );
 
-        @PUT("items/{itemId}/read")
-        Call<Void> markItemRead(@Path("itemId") int itemId);
-
         @PUT("items/read/multiple")
         Call<Void> markItemsRead(@Body ItemIds items);
-
-        @PUT("items/{itemId}/unread")
-        Call<Void> markItemUnread(@Path("itemId") int itemId);
 
         @PUT("items/unread/multiple")
         Call<Void> markItemsUnread(@Body ItemIds items);
 
-        @PUT("items/{itemId}/{guidHash}/read")
-        Call<Void> markItemStarred(@Path("itemId") int itemId, @Path("guidHash") String guidHash);
-
         @PUT("items/star/multiple")
         Call<Void> markItemsStarred(@Body ItemMap itemMap);
-
-        @PUT("items/{itemId}/{guidHash}/unstarred")
-        Call<Void> markItemUnstarred(@Path("itemId") int itemId, @Path("guidHash") String guidHash);
 
         @PUT("items/unstar/multiple")
         Call<Void> markItemsUnstarred(@Body ItemMap itemMap);
