@@ -27,15 +27,23 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.View;
 
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
     private final Drawable mDivider;
+    private final int inset;
 
     private int size = 0;
 
     public DividerItemDecoration(Context context) {
+        this(context, 0);
+    }
+
+    public DividerItemDecoration(Context context, int dpinset) {
+        inset = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpinset, context.getResources().getDisplayMetrics());
+
         final TypedArray a = context
                 .obtainStyledAttributes(new int[]{android.R.attr.listDivider});
         mDivider = a.getDrawable(0);
@@ -70,7 +78,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
         int childCount = parent.getChildCount();
 
-        dividerRect.left = parent.getPaddingLeft();
+        dividerRect.left = parent.getPaddingLeft() + inset;
         dividerRect.right = parent.getWidth() - parent.getPaddingRight();
 
         for (int i = 0; i < childCount; i++) {
