@@ -6,7 +6,7 @@ import email.schaal.ocreader.model.Feed;
  * Created by daniel on 02.08.16.
  */
 public interface FeedManageListener {
-    void addNewFeed(String url, long folderId);
+    void addNewFeed(String url, long folderId, boolean finishAfterAdd);
     void deleteFeed(Feed feed);
     void moveFeed(Feed feed, long newFolderId, FeedViewHolder feedViewHolder);
 }

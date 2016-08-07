@@ -80,7 +80,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
     }
 
     @Override
-    public void addNewFeed(String url, long folderId) {
+    public void addNewFeed(String url, long folderId, final boolean finishAfterAdd) {
         final ProgressDialog progressDialog = showProgress(this, getString(R.string.adding_feed));
 
         APIService.getInstance().createFeed(getRealm(), url, folderId, new APIService.APICallback() {
@@ -88,6 +88,9 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
             public void onSuccess() {
                 progressDialog.dismiss();
                 setResult(RESULT_OK);
+
+                if(finishAfterAdd)
+                    finish();
             }
 
             @Override

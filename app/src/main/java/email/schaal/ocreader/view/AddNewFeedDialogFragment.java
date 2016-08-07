@@ -47,7 +47,9 @@ public class AddNewFeedDialogFragment extends DialogFragment {
 
         final Bundle arguments = getArguments();
 
-        if(arguments != null && arguments.containsKey(ARG_URL)) {
+        final boolean startedFromIntent = arguments != null && arguments.containsKey(ARG_URL);
+
+        if(startedFromIntent) {
             urlTextView.setText(arguments.getString(ARG_URL));
         }
 
@@ -57,7 +59,7 @@ public class AddNewFeedDialogFragment extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if(listener != null)
-                    listener.addNewFeed(urlTextView.getText().toString(), folderSpinner.getSelectedItemId());
+                    listener.addNewFeed(urlTextView.getText().toString(), folderSpinner.getSelectedItemId(), startedFromIntent);
             }
         });
 
