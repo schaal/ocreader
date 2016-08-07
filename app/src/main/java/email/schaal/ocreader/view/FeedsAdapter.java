@@ -22,7 +22,7 @@ public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.Vi
     private final static int VIEW_TYPE_EMPTY = 1;
 
     public FeedsAdapter(Context context, FolderSpinnerAdapter folderSpinnerAdapter, Realm realm, FeedManageListener listener) {
-        super(context, realm.where(Feed.class).findAll(), true);
+        super(context, realm.where(Feed.class).findAllSorted(Feed.TITLE), true);
         this.folderSpinnerAdapter = folderSpinnerAdapter;
         this.listener = listener;
     }
