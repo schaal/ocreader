@@ -3,6 +3,7 @@ package email.schaal.ocreader.database;
 import android.util.Log;
 
 import email.schaal.ocreader.model.Feed;
+import email.schaal.ocreader.model.Folder;
 import email.schaal.ocreader.model.Item;
 import io.realm.DynamicRealm;
 import io.realm.DynamicRealmObject;
@@ -18,7 +19,7 @@ class DatabaseMigration implements RealmMigration {
     private static final String TAG = DatabaseMigration.class.getName();
 
     @Override
-    public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
+    public void migrate(final DynamicRealm realm, long oldVersion, long newVersion) {
         Log.d(TAG, "Starting migration from " + oldVersion + "to " + newVersion);
 
         RealmSchema schema = realm.getSchema();
@@ -110,6 +111,23 @@ class DatabaseMigration implements RealmMigration {
                     .addField(Feed.LAST_UPDATE_ERROR, String.class)
                     .addField(Feed.UPDATE_ERROR_COUNT, int.class);
 
+            oldVersion++;
+        }
+
+        /**
+         * v7 -> v8
+         * - Add folder field to Feed
+         */
+        if (oldVersion == 7) {
+            schema.get("Feed")
+                    .addRealmObjectField(Feed.FOLDER, schema.get("Folder"))
+                    .transform(new RealmObjectSchema.Function() {
+                        @Override
+                        public void apply(DynamicRealmObject obj) {
+                            obj.setObject(Feed.FOLDER, realm.where("Folder")
+                                    .equalTo(Folder.ID, obj.getLong(Feed.FOLDER_ID)).findFirst());
+                        }
+                    });
             oldVersion++;
         }
     }

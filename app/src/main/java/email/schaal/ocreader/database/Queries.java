@@ -52,7 +52,7 @@ import io.realm.exceptions.RealmException;
 public class Queries {
     private final static String TAG = Queries.class.getName();
 
-    public final static int SCHEMA_VERSION = 7;
+    public final static int SCHEMA_VERSION = 8;
 
     private final static Realm.Transaction initialData = new Realm.Transaction() {
         @Override
@@ -217,6 +217,13 @@ public class Queries {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
+                if(clazz == Feed.class) {
+                    for(T element: elements) {
+                        Feed feed = (Feed) element;
+                        feed.setFolder(getOrCreateFolder(realm, feed.getFolderId()));
+                    }
+                }
+
                 realm.copyToRealmOrUpdate(elements);
 
                 RealmResults<T> results = realm.where(clazz).findAll();
@@ -387,7 +394,7 @@ public class Queries {
     }
 
     /**
-     * Return the feed with id feedId, or insert a new one into the database.
+     * Return the feed with id feedId, or insert a new (temporary) feed into the database.
      * @param realm Database to operate on
      * @param feedId id of the feed
      * @return Feed with id feedId (either from the database or a newly created one)
@@ -399,6 +406,26 @@ public class Queries {
             feed.setId(feedId);
         }
         return feed;
+    }
+
+    /**
+     * Return the folder with id folderId, or insert a new (temporary) folder into the database.
+     * @param realm Database to operate on
+     * @param folderId id of the folder
+     * @return Folder with id folderId (either from the database or a newly created one)
+     */
+    @Nullable
+    public static Folder getOrCreateFolder(Realm realm, long folderId) {
+        // root has folderId == 0, which has no folder in db
+        if(folderId == 0)
+            return null;
+
+        Folder folder = getFolder(realm, folderId);
+        if(folder == null) {
+            folder = realm.createObject(Folder.class);
+            folder.setId(folderId);
+        }
+        return folder;
     }
 
     public static void deleteFeed(final Realm realm, final Feed feed) {

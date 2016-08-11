@@ -42,6 +42,9 @@ public class Feed extends RealmObject implements TreeItem {
     private Long folderId;
     public static final String FOLDER_ID = "folderId";
 
+    private Folder folder;
+    public static final String FOLDER = "folder";
+
     private int unreadCount;
     public static final String UNREAD_COUNT = "unreadCount";
 
@@ -192,5 +195,13 @@ public class Feed extends RealmObject implements TreeItem {
 
     public void setLastUpdateError(String lastUpdateError) {
         this.lastUpdateError = lastUpdateError;
+    }
+
+    public void setFolder(Folder folder) {
+        this.folder = folder;
+    }
+
+    public Folder getFolder() {
+        return folder;
     }
 }
