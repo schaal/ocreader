@@ -1,12 +1,14 @@
 package email.schaal.ocreader.view;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -69,6 +71,18 @@ public class AddNewFeedDialogFragment extends DialogFragment {
         builder.setView(view);
 
         return builder.create();
+    }
+
+    public static void showDialog(Activity activity, @Nullable String url) {
+        AddNewFeedDialogFragment dialogFragment = new AddNewFeedDialogFragment();
+
+        if(url != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(AddNewFeedDialogFragment.ARG_URL, url);
+            dialogFragment.setArguments(bundle);
+        }
+
+        dialogFragment.show(activity.getFragmentManager(), "newfeed");
     }
 
 }

@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -55,25 +54,13 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
         fabAddNewFeed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showAddNewFeedDialog(null);
+                AddNewFeedDialogFragment.showDialog(ManageFeedsActivity.this, null);
             }
         });
 
         if(Intent.ACTION_SEND.equals(getIntent().getAction())) {
-            showAddNewFeedDialog(getIntent().getStringExtra(Intent.EXTRA_TEXT));
+            AddNewFeedDialogFragment.showDialog(this, getIntent().getStringExtra(Intent.EXTRA_TEXT));
         }
-    }
-
-    private void showAddNewFeedDialog(@Nullable String url) {
-        AddNewFeedDialogFragment dialogFragment = new AddNewFeedDialogFragment();
-
-        if(url != null) {
-            Bundle bundle = new Bundle();
-            bundle.putString(AddNewFeedDialogFragment.ARG_URL, url);
-            dialogFragment.setArguments(bundle);
-        }
-
-        dialogFragment.show(getFragmentManager(), "newfeed");
     }
 
     public FolderSpinnerAdapter getFolderSpinnerAdapter() {
