@@ -43,11 +43,8 @@ public class FeedViewHolder extends RecyclerView.ViewHolder implements FaviconLo
 
         onItemSelectedListener = new ToggleOnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, final long id) {
-                if (enabled) {
-                    listener.moveFeed(feed, id, FeedViewHolder.this);
-                }
-                enabled = true;
+            public void onRealItemSelected(AdapterView<?> parent, View view, int position, final long id) {
+                listener.moveFeed(feed, id, FeedViewHolder.this);
             }
         };
 
@@ -82,7 +79,16 @@ public class FeedViewHolder extends RecyclerView.ViewHolder implements FaviconLo
 
     private abstract class ToggleOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
         // To prevent this listener getting called multiple times
-        boolean enabled = false;
+        private boolean enabled = false;
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if(enabled)
+                onRealItemSelected(parent, view, position, id);
+            enabled = true;
+        }
+
+        protected abstract void onRealItemSelected(AdapterView<?> parent, View view, int position, long id);
 
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {
