@@ -154,7 +154,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
     }
 
     private void showErrorMessage(String title, String message) {
-        Toast.makeText(ManageFeedsActivity.this, title + "\n" + message, Toast.LENGTH_LONG).show();
+        Toast.makeText(ManageFeedsActivity.this, String.format("%s\n%s", title, message), Toast.LENGTH_LONG).show();
     }
 
     @NonNull
