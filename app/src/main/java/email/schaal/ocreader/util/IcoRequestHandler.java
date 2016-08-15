@@ -29,6 +29,7 @@ import com.squareup.picasso.Request;
 import com.squareup.picasso.RequestHandler;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import divstar.ico4a.codec.ico.ICODecoder;
@@ -54,15 +55,24 @@ public class IcoRequestHandler extends RequestHandler {
     @Override
     public Result load(Request request, int networkPolicy) throws IOException {
         Downloader.Response response = downloader.load(request.uri, networkPolicy);
-        if(response != null) {
-            List<Bitmap> bitmaps = ICODecoder.read(response.getInputStream());
+
+        if(response != null && response.getInputStream() != null) {
+            final InputStream inputStream = response.getInputStream();
+
+            List<Bitmap> bitmaps = ICODecoder.read(inputStream);
+
             Bitmap biggest = bitmaps.remove(0);
+
             for(Bitmap bitmap: bitmaps) {
                 if(bitmap.getHeight() > biggest.getHeight())
                     biggest = bitmap;
             }
+
+            inputStream.close();
+
             return new Result(biggest, Picasso.LoadedFrom.NETWORK);
         }
+
         return null;
     }
 }
