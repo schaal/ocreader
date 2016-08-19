@@ -12,7 +12,7 @@ import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 
 /**
- * Created by daniel on 08.07.16.
+ * RecyclerView Adapter for Feeds
  */
 public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.ViewHolder> {
     private final FeedManageListener listener;

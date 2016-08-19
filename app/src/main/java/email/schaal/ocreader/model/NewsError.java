@@ -1,7 +1,7 @@
 package email.schaal.ocreader.model;
 
 /**
- * Created by daniel on 05.08.16.
+ * Class to decode error json response
  */
 public class NewsError {
     public String message;

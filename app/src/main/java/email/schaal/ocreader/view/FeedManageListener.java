@@ -3,7 +3,7 @@ package email.schaal.ocreader.view;
 import email.schaal.ocreader.model.Feed;
 
 /**
- * Created by daniel on 02.08.16.
+ * Callbacks for feed management
  */
 public interface FeedManageListener {
     void addNewFeed(String url, long folderId, boolean finishAfterAdd);

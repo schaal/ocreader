@@ -13,7 +13,7 @@ import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.util.FeedColors;
 
 /**
- * Created by daniel on 08.07.16.
+ * ViewHolder displaying a Feed
  */
 public class FeedViewHolder extends RecyclerView.ViewHolder implements FaviconLoader.FeedColorsListener {
     private final TextView textViewTitle;

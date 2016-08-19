@@ -17,7 +17,7 @@ import email.schaal.ocreader.ManageFeedsActivity;
 import email.schaal.ocreader.R;
 
 /**
- * Created by daniel on 02.08.16.
+ * Display form to add new Feed
  */
 public class AddNewFeedDialogFragment extends DialogFragment {
     public static final String ARG_URL = "url";

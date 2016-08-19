@@ -12,7 +12,7 @@ import email.schaal.ocreader.model.Folder;
 import io.realm.OrderedRealmCollection;
 
 /**
- * Created by daniel on 08.07.16.
+ * Adapter for Spinner to display Folders
  */
 public class FolderSpinnerAdapter extends BaseAdapter {
     private static final String TAG = FolderSpinnerAdapter.class.getName();
