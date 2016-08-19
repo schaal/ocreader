@@ -33,20 +33,20 @@ import email.schaal.ocreader.service.SyncService;
  * the remote server.
  */
 public class AlarmUtils {
-    public static final int INTERVAL_FIVE_MINUTES = 5 * 60 * 1000;
+    private static final int INTERVAL_FIVE_MINUTES = 5 * 60 * 1000;
 
     private static AlarmUtils instance;
 
     private final AlarmManager alarmManager;
-    private final Context context;
+    private final PendingIntent pendingIntent;
 
-    private PendingIntent pendingIntent = null;
-    private final Intent syncChangesIntent;
+    private boolean alarmRunning = false;
 
     private AlarmUtils(Context context) {
-        this.context = context;
         this.alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        syncChangesIntent = new Intent(SyncService.ACTION_SYNC_CHANGES_ONLY, null, context, SyncService.class);
+
+        Intent syncChangesIntent = new Intent(SyncService.ACTION_SYNC_CHANGES_ONLY, null, context, SyncService.class);
+        pendingIntent = PendingIntent.getService(context, 0, syncChangesIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     public static void init(Context context) {
@@ -60,16 +60,16 @@ public class AlarmUtils {
     }
 
     public synchronized void cancelAlarm() {
-        if(pendingIntent != null)
+        if(alarmRunning) {
             alarmManager.cancel(pendingIntent);
-        pendingIntent = null;
+            alarmRunning = false;
+        }
     }
 
     public synchronized void setAlarm() {
-        if(pendingIntent == null) {
-            pendingIntent = PendingIntent.getService(context, 0, syncChangesIntent, PendingIntent.FLAG_ONE_SHOT);
-
+        if(!alarmRunning) {
             alarmManager.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + INTERVAL_FIVE_MINUTES, pendingIntent);
+            alarmRunning = true;
         }
     }
 }
