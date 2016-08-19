@@ -56,11 +56,12 @@ android {
 }
 
 ext {
-    versions = [supportLib: "24.1.1"]
+    versions = [supportLib: "24.2.0"]
 }
 
 dependencies {
-    compile "com.android.support:support-v4:${versions.supportLib}"
+    compile "com.android.support:support-compat:${versions.supportLib}"
+    compile "com.android.support:support-core-ui:${versions.supportLib}"
 
     compile "com.android.support:appcompat-v7:${versions.supportLib}"
     compile "com.android.support:recyclerview-v7:${versions.supportLib}"
