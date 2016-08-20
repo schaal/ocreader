@@ -24,10 +24,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import email.schaal.ocreader.model.AllUnreadFolder;
 import email.schaal.ocreader.model.Feed;
@@ -228,7 +229,7 @@ public class Queries {
 
                 RealmResults<T> results = realm.where(clazz).findAll();
 
-                List<T> itemsToRemove = new ArrayList<>();
+                Set<T> itemsToRemove = new HashSet<>();
 
                 // iterate through items in database and add items not in elements to itemsToRemove
                 for (T result : results) {
