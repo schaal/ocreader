@@ -32,6 +32,7 @@ import android.view.View;
 
 import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_EMPTY;
 import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_ITEM;
+import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_LAST_ITEM;
 import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_LOADMORE;
 
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
@@ -94,6 +95,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
                 case VIEW_TYPE_ITEM:
                     dividerRect.left = paddingLeft + inset;
                     break;
+                case VIEW_TYPE_LAST_ITEM:
                 case VIEW_TYPE_EMPTY:
                 case VIEW_TYPE_LOADMORE:
                     dividerRect.left = paddingLeft;

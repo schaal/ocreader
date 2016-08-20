@@ -55,8 +55,9 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final OnLoadMoreListener loadMoreListener;
 
     public final static int VIEW_TYPE_ITEM = 0;
-    public final static int VIEW_TYPE_EMPTY = 1;
-    public final static int VIEW_TYPE_LOADMORE = 2;
+    public final static int VIEW_TYPE_LAST_ITEM = 1;
+    public final static int VIEW_TYPE_EMPTY = 2;
+    public final static int VIEW_TYPE_LOADMORE = 3;
 
     private TreeItem loadingMoreTreeItem;
 
@@ -110,9 +111,12 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if(hasLoadMore() && position + 1 == getItemCount())
             return VIEW_TYPE_LOADMORE;
 
-        if(hasItems())
-            return VIEW_TYPE_ITEM;
-        else
+        if(hasItems()) {
+            if(position + 1 == getActualItemCount())
+                return VIEW_TYPE_LAST_ITEM;
+            else
+                return VIEW_TYPE_ITEM;
+        } else
             return VIEW_TYPE_EMPTY;
     }
 
@@ -130,6 +134,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         RecyclerView.ViewHolder holder = null;
         switch (viewType) {
             case VIEW_TYPE_ITEM:
+            case VIEW_TYPE_LAST_ITEM:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
                 holder = new ItemViewHolder(view, clickListener);
                 break;

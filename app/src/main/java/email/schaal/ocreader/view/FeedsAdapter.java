@@ -12,6 +12,7 @@ import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 
 import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_ITEM;
+import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_LAST_ITEM;
 
 /**
  * RecyclerView Adapter for Feeds
@@ -31,6 +32,7 @@ public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.Vi
         View view;
         switch (viewType) {
             case VIEW_TYPE_ITEM:
+            case VIEW_TYPE_LAST_ITEM:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_feed, parent, false);
                 return new FeedViewHolder(folderSpinnerAdapter, view, listener);
         }
