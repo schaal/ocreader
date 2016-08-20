@@ -54,9 +54,9 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final ItemViewHolder.OnClickListener clickListener;
     private final OnLoadMoreListener loadMoreListener;
 
-    private final static int VIEW_TYPE_ITEM = 0;
-    private final static int VIEW_TYPE_EMPTY = 1;
-    private final static int VIEW_TYPE_LOADMORE = 2;
+    public final static int VIEW_TYPE_ITEM = 0;
+    public final static int VIEW_TYPE_EMPTY = 1;
+    public final static int VIEW_TYPE_LOADMORE = 2;
 
     private TreeItem loadingMoreTreeItem;
 

@@ -11,15 +11,14 @@ import email.schaal.ocreader.model.Feed;
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 
+import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_ITEM;
+
 /**
  * RecyclerView Adapter for Feeds
  */
 public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.ViewHolder> {
     private final FeedManageListener listener;
     private final FolderSpinnerAdapter folderSpinnerAdapter;
-
-    private final static int VIEW_TYPE_FEED = 0;
-    private final static int VIEW_TYPE_EMPTY = 1;
 
     public FeedsAdapter(Context context, FolderSpinnerAdapter folderSpinnerAdapter, Realm realm, FeedManageListener listener) {
         super(context, realm.where(Feed.class).findAllSorted(Feed.TITLE), true);
@@ -31,7 +30,7 @@ public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.Vi
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
         switch (viewType) {
-            case VIEW_TYPE_FEED:
+            case VIEW_TYPE_ITEM:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_feed, parent, false);
                 return new FeedViewHolder(folderSpinnerAdapter, view, listener);
         }
@@ -49,6 +48,6 @@ public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.Vi
 
     @Override
     public int getItemViewType(int position) {
-        return VIEW_TYPE_FEED;
+        return VIEW_TYPE_ITEM;
     }
 }

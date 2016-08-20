@@ -30,6 +30,10 @@ import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
 
+import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_EMPTY;
+import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_ITEM;
+import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_LOADMORE;
+
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
     private final Drawable mDivider;
@@ -70,22 +74,33 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         if (mDivider == null)
             return;
 
-        if (!(parent.getLayoutManager() instanceof LinearLayoutManager) ||
-                ((LinearLayoutManager) parent.getLayoutManager()).getOrientation() != LinearLayoutManager.VERTICAL) {
+        final RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
+
+        if (!(layoutManager instanceof LinearLayoutManager) ||
+                ((LinearLayoutManager) layoutManager).getOrientation() != LinearLayoutManager.VERTICAL) {
             throw new IllegalStateException(
                     "DividerItemDecoration can only be used with a vertical LinearLayoutManager.");
         }
 
-        int childCount = parent.getChildCount();
+        final int childCount = parent.getChildCount();
+        final int paddingLeft = parent.getPaddingLeft();
 
-        dividerRect.left = parent.getPaddingLeft() + inset;
         dividerRect.right = parent.getWidth() - parent.getPaddingRight();
 
         for (int i = 0; i < childCount; i++) {
-            View child = parent.getChildAt(i);
-            RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
+            final View child = parent.getChildAt(i);
 
-            dividerRect.top = child.getBottom() + params.bottomMargin;
+            switch (layoutManager.getItemViewType(child)) {
+                case VIEW_TYPE_ITEM:
+                    dividerRect.left = paddingLeft + inset;
+                    break;
+                case VIEW_TYPE_EMPTY:
+                case VIEW_TYPE_LOADMORE:
+                    dividerRect.left = paddingLeft;
+                    break;
+            }
+
+            dividerRect.top = child.getBottom() + ((RecyclerView.LayoutParams) child.getLayoutParams()).bottomMargin;
             dividerRect.bottom = dividerRect.top + size;
 
             mDivider.setBounds(dividerRect);
