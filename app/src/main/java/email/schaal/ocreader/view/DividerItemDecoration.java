@@ -84,7 +84,9 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         }
 
         final int childCount = parent.getChildCount();
+
         final int paddingLeft = parent.getPaddingLeft();
+        final int paddingLeftInset = paddingLeft + inset;
 
         dividerRect.right = parent.getWidth() - parent.getPaddingRight();
 
@@ -93,7 +95,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
             switch (layoutManager.getItemViewType(child)) {
                 case VIEW_TYPE_ITEM:
-                    dividerRect.left = paddingLeft + inset;
+                    dividerRect.left = paddingLeftInset;
                     break;
                 case VIEW_TYPE_LAST_ITEM:
                 case VIEW_TYPE_EMPTY:
