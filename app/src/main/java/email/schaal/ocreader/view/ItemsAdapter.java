@@ -49,25 +49,21 @@ import io.realm.Sort;
 public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private OrderedRealmCollection<Item> items;
     private final SparseArray<Item> selectedItems = new SparseArray<>();
-    private final DrawerManager.State state;
+    protected final DrawerManager.State state;
     private final Realm realm;
     private final ItemViewHolder.OnClickListener clickListener;
-    private final OnLoadMoreListener loadMoreListener;
 
     public final static int VIEW_TYPE_ITEM = 0;
     public final static int VIEW_TYPE_LAST_ITEM = 1;
     public final static int VIEW_TYPE_EMPTY = 2;
     public final static int VIEW_TYPE_LOADMORE = 3;
 
-    private TreeItem loadingMoreTreeItem;
-
     private Sort order;
 
-    public ItemsAdapter(Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, OnLoadMoreListener loadMoreListener, Sort order) {
+    public ItemsAdapter(Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order) {
         this.realm = realm;
         this.state = state;
         this.clickListener = clickListener;
-        this.loadMoreListener = loadMoreListener;
 
         this.order = order;
 
@@ -108,11 +104,8 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-        if(hasLoadMore() && position + 1 == getItemCount())
-            return VIEW_TYPE_LOADMORE;
-
         if(hasItems()) {
-            if(position + 1 == getActualItemCount())
+            if(position == getActualItemCount() - 1)
                 return VIEW_TYPE_LAST_ITEM;
             else
                 return VIEW_TYPE_ITEM;
@@ -122,10 +115,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private boolean hasItems() {
         return items != null && items.size() > 0;
-    }
-
-    private boolean hasLoadMore() {
-        return state.getTreeItem() instanceof Feed || state.getTreeItem() instanceof Folder;
     }
 
     @Override
@@ -142,10 +131,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_empty, parent, false);
                 holder = new EmptyStateViewHolder(view);
                 break;
-            case VIEW_TYPE_LOADMORE:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_loadmore, parent, false);
-                holder = new LoadMoreViewHolder(view);
-                break;
         }
         return holder;
     }
@@ -156,10 +141,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             Item item = items.get(position);
             ((ItemViewHolder) holder).bindItem(item, position, selectedItems.get(position, null) != null);
         }
-        else if(holder instanceof LoadMoreViewHolder) {
-            ((LoadMoreViewHolder) holder).showProgress(
-                    loadingMoreTreeItem != null && loadingMoreTreeItem.equals(state.getTreeItem()));
-        }
     }
 
     @Override
@@ -167,8 +148,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         int itemCount = getActualItemCount();
         if(itemCount == 0)
             itemCount = 1;
-        if(hasLoadMore())
-            itemCount++;
         return itemCount;
     }
 
@@ -186,10 +165,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private boolean isOnlyUnread() {
         return state.getStartDrawerItem() instanceof AllUnreadFolder;
-    }
-
-    public void resetLoadMore() {
-        loadingMoreTreeItem = null;
     }
 
     public void clearSelection() {
@@ -230,36 +205,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private class EmptyStateViewHolder extends RecyclerView.ViewHolder {
         public EmptyStateViewHolder(View itemView) {
             super(itemView);
-        }
-    }
-
-    private class LoadMoreViewHolder extends RecyclerView.ViewHolder {
-        private final static int CHILD_BUTTON_INDEX = 0;
-        private final static int CHILD_PROGRESS_INDEX = 1;
-
-        private final Button loadMoreButton;
-        private final ViewSwitcher loadMoreViewSwitcher;
-
-        public LoadMoreViewHolder(View itemView) {
-            super(itemView);
-            loadMoreButton = (Button) itemView.findViewById(R.id.buttonLoadMore);
-            loadMoreViewSwitcher = (ViewSwitcher) itemView.findViewById(R.id.loadMoreViewSwitcher);
-
-            loadMoreButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showProgress(true);
-                    loadingMoreTreeItem = state.getTreeItem();
-                    loadMoreListener.onLoadMore(state.getTreeItem());
-                }
-            });
-        }
-
-        public void showProgress(boolean loading) {
-            if(loading)
-                loadMoreViewSwitcher.setDisplayedChild(CHILD_PROGRESS_INDEX);
-            else
-                loadMoreViewSwitcher.setDisplayedChild(CHILD_BUTTON_INDEX);
         }
     }
 

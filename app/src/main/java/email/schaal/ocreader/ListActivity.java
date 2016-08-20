@@ -80,6 +80,7 @@ import email.schaal.ocreader.service.SyncService;
 import email.schaal.ocreader.view.DividerItemDecoration;
 import email.schaal.ocreader.view.ItemViewHolder;
 import email.schaal.ocreader.view.ItemsAdapter;
+import email.schaal.ocreader.view.LoadMoreAdapter;
 import email.schaal.ocreader.view.ScrollAwareFABBehavior;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
@@ -151,7 +152,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private SwipeRefreshLayout swipeRefreshLayout;
     private FloatingActionButton fab_mark_all_read;
 
-    private ItemsAdapter adapter;
+    private LoadMoreAdapter adapter;
     private LinearLayoutManager layoutManager;
 
     @Override
@@ -322,7 +323,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         layoutManager = new LinearLayoutManager(this);
 
-        adapter = new ItemsAdapter(getRealm(), drawerManager.getState(), this, this, Preferences.ORDER.getOrder(PreferenceManager.getDefaultSharedPreferences(this)));
+        adapter = new LoadMoreAdapter(getRealm(), drawerManager.getState(), this, Preferences.ORDER.getOrder(PreferenceManager.getDefaultSharedPreferences(this)), this);
 
         fab_mark_all_read = (FloatingActionButton) findViewById(R.id.fab_mark_all_as_read);
         fab_mark_all_read.setOnClickListener(new View.OnClickListener() {
