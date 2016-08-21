@@ -10,9 +10,8 @@ import io.realm.Realm;
 import io.realm.Sort;
 
 /**
- * Created by daniel on 21.08.16.
+ * Make item viewholders selectable
  */
-
 public class SelectableItemsAdapter extends ErrorAdapter {
     private final SparseArray<Item> selectedItems = new SparseArray<>();
 
