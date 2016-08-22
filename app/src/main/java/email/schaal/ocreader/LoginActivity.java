@@ -24,7 +24,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -41,16 +40,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.github.zafarkhaja.semver.Version;
-
-import email.schaal.ocreader.api.APIService;
+import email.schaal.ocreader.api.API;
 import email.schaal.ocreader.api.json.Status;
-import email.schaal.ocreader.http.HttpManager;
 import email.schaal.ocreader.util.LoginError;
 import okhttp3.HttpUrl;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * A login screen that offers login via email/password.
@@ -58,18 +51,8 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity {
     public static final int REQUEST_CODE = 1;
 
-    // First version with user api support
-    public static final Version MIN_SUPPORTED_VERSION = Version.forIntegers(6,0,5);
-
     public static final String EXTRA_IMPROPERLY_CONFIGURED_CRON = "email.schaal.ocreader.extra.improperlyConfiguredCron";
     private static final int WARNING_RECEIVED = 666;
-
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private Call<Status> mAuthTask = null;
-
-    private HttpManager httpManager;
 
     // UI references.
     private EditText mUsernameView;
@@ -154,9 +137,6 @@ public class LoginActivity extends AppCompatActivity {
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
 
         // Reset errors.
         mUsernameView.setError(null);
@@ -198,10 +178,22 @@ public class LoginActivity extends AppCompatActivity {
             // perform the user login attempt.
             showProgress(true);
             url = url.newBuilder().addPathSegment("").build();
-            httpManager = new HttpManager(username, password, url);
-            APIService.API api = APIService.getInstance().setupApi(httpManager);
-            mAuthTask = api.status();
-            mAuthTask.enqueue(new LoginCallback());
+
+            API.login(this, url, username, password, new API.APICallback<Status, LoginError>() {
+                @Override
+                public void onSuccess(Status status) {
+                    Intent data = new Intent(Intent.ACTION_VIEW);
+                    data.putExtra(EXTRA_IMPROPERLY_CONFIGURED_CRON, status.isImproperlyConfiguredCron());
+                    setResult(RESULT_OK);
+                    finish();
+                }
+
+                @Override
+                public void onFailure(LoginError loginError) {
+                    showError(loginError);
+                    showProgress(false);
+                }
+            });
         }
     }
 
@@ -244,58 +236,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         } else {
             mStatusView.setVisibility(View.GONE);
-        }
-    }
-
-    private class LoginCallback implements Callback<Status> {
-        private void onCompletion() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-
-        @Override
-        public void onResponse(Call<Status> call, Response<Status> response) {
-            onCompletion();
-
-            LoginError error = null;
-
-            if(response.isSuccessful()) {
-                Status status = response.body();
-                Version version = status.getVersion();
-
-                if(version == null) {
-                    error = new LoginError("Couldn't detect Nextcloud News version, check your ownCloud setup");
-                } else if(version.lessThan(MIN_SUPPORTED_VERSION)) {
-                    error = new LoginError(getString(R.string.update_warning, MIN_SUPPORTED_VERSION.toString(), version.toString()));
-                } else {
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
-                    preferences.edit()
-                            .putString(Preferences.USERNAME.getKey(), httpManager.getCredentials().getUsername())
-                            .putString(Preferences.PASSWORD.getKey(), httpManager.getCredentials().getPassword())
-                            .putString(Preferences.URL.getKey(), httpManager.getCredentials().getRootUrl().toString())
-                            .apply();
-
-                    APIService.getInstance().setHttpManager(httpManager);
-                    Intent data = new Intent(Intent.ACTION_VIEW);
-                    data.putExtra(EXTRA_IMPROPERLY_CONFIGURED_CRON, status.isImproperlyConfiguredCron());
-                    data.setData(Uri.parse(httpManager.getCredentials().getRootUrl().resolve("/index.php/apps/news").toString()));
-                    setResult(RESULT_OK, data);
-                    finish();
-                }
-            } else {
-                error = LoginError.getError(LoginActivity.this, response.code(), response.message());
-            }
-
-            showError(error);
-        }
-
-        @Override
-        public void onFailure(Call<Status> call, Throwable t) {
-            onCompletion();
-
-            t.printStackTrace();
-
-            showError(LoginError.getError(LoginActivity.this, t));
         }
     }
 

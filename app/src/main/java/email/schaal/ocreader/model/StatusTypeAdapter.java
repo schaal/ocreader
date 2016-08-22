@@ -56,7 +56,11 @@ public class StatusTypeAdapter extends NewsTypeAdapter<Status> {
                     status.setVersion(nullSafeString(in));
                     break;
                 case "warnings":
+                case "issues":
+                    // warnings in api v1-2, issues in api v2
                     readWarnings(in, status);
+                    break;
+                case "user":
                     break;
                 default:
                     Log.w(TAG, "Unknown value in status json: " + name);

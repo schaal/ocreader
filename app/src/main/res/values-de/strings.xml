@@ -65,4 +65,5 @@
     <string name="save">Speichern</string>
     <string name="edit_feed">Feed bearbeiten</string>
     <string name="folder">Ordner</string>
+    <string name="error_not_compatible">Diese Version von Nextcloud News ist nicht kompatibel mit dieser App</string>
 </resources>

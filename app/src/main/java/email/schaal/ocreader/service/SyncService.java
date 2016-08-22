@@ -25,26 +25,17 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import email.schaal.ocreader.Preferences;
-import email.schaal.ocreader.api.APIService;
-import email.schaal.ocreader.database.Queries;
+import email.schaal.ocreader.api.API;
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Item;
-import email.schaal.ocreader.model.StarredFolder;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -64,11 +55,9 @@ public class SyncService extends Service {
     public static final String EXTRA_TYPE = "email.schaal.ocreader.action.extra.TYPE";
     public static final String EXTRA_INITIAL_SYNC = "email.schaal.ocreader.action.extra.INITIAL_SYNC";
 
-    private static final int MAX_ITEMS = 10000;
-
     private SharedPreferences sharedPreferences;
 
-    private enum SyncType {
+    public enum SyncType {
         FULL_SYNC(ACTION_FULL_SYNC),
         SYNC_CHANGES_ONLY(ACTION_SYNC_CHANGES_ONLY),
         LOAD_MORE(ACTION_LOAD_MORE);
@@ -95,7 +84,6 @@ public class SyncService extends Service {
         syncFilter.addAction(SYNC_FINISHED);
     }
 
-    private final Executor executor = Executors.newSingleThreadExecutor();
     private Realm realm;
 
     @Nullable
@@ -126,63 +114,25 @@ public class SyncService extends Service {
         if(syncType != null) {
             notifySyncStatus(SYNC_STARTED, action);
 
-            APIService.getInstance().syncChanges(new APIService.OnCompletionListener() {
+            if(!API.isLoggedIn()) {
+                API.init(this);
+            }
+
+            API.getInstance().sync(realm, syncType, intent, new API.APICallback<Void, String>() {
                 @Override
-                public void onCompleted(boolean result) {
-                    if(result) {
-                        CountdownAPICallback apiCallback;
+                public void onSuccess(Void n) {
+                    realm.executeTransaction(postProcessFeedTransaction);
+                    onFinished();
+                }
 
-                        switch (syncType) {
-                            case SYNC_CHANGES_ONLY:
-                                notifySyncStatus(SYNC_FINISHED, action);
-                                stopSelf(startId);
-                                break;
-                            case FULL_SYNC:
-                                long lastSync = 0L;
+                @Override
+                public void onFailure(String errorMessage) {
+                    onFinished();
+                }
 
-                                if (!intent.getBooleanExtra(EXTRA_INITIAL_SYNC, false))
-                                    lastSync = getLastSyncTimestamp(realm);
-
-                                apiCallback = new CountdownAPICallback(new CountDownLatch(lastSync == 0L ? 5 : 4));
-
-                                APIService.getInstance().user(realm, apiCallback);
-                                APIService.getInstance().folders(realm, apiCallback);
-                                APIService.getInstance().feeds(realm, apiCallback);
-
-                                if (lastSync == 0L) {
-                                    APIService.getInstance().starredItems(realm, apiCallback);
-                                    APIService.getInstance().items(realm, apiCallback);
-                                } else {
-                                    Queries.removeExcessItems(realm, MAX_ITEMS);
-                                    APIService.getInstance().updatedItems(realm, lastSync, apiCallback);
-                                }
-
-                                waitForCountdownLatch(startId, action, apiCallback.countDownLatch);
-                                break;
-                            case LOAD_MORE:
-                                long id = intent.getLongExtra(EXTRA_ID, -1);
-                                long offset = intent.getLongExtra(EXTRA_OFFSET, 0);
-                                boolean isFeed = intent.getBooleanExtra(EXTRA_IS_FEED, false);
-
-                                APIService.QueryType queryType;
-
-                                if (id == StarredFolder.ID) {
-                                    queryType = APIService.QueryType.STARRED;
-                                    id = 0;
-                                } else {
-                                    queryType = isFeed ? APIService.QueryType.FEED : APIService.QueryType.FOLDER;
-                                }
-
-                                apiCallback = new CountdownAPICallback(new CountDownLatch(1));
-                                APIService.getInstance().moreItems(realm, queryType, offset, id, apiCallback);
-
-                                waitForCountdownLatch(startId, action, apiCallback.countDownLatch);
-                                break;
-                        }
-                    } else {
-                        notifySyncStatus(SYNC_FINISHED, action);
-                        stopSelf(startId);
-                    }
+                private void onFinished() {
+                    notifySyncStatus(SYNC_FINISHED, action);
+                    stopSelf(startId);
                 }
             });
         } else {
@@ -205,36 +155,6 @@ public class SyncService extends Service {
             }
         }
     };
-
-    private void waitForCountdownLatch(final int startId, final String action, final CountDownLatch countDownLatch) {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    countDownLatch.await();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            realm.executeTransaction(postProcessFeedTransaction);
-                            notifySyncStatus(SYNC_FINISHED, action);
-                            stopSelf(startId);
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    private long getLastSyncTimestamp(Realm realm) {
-        Number lastSync = realm.where(Item.class).max(Item.LAST_MODIFIED);
-
-        return lastSync != null ? lastSync.longValue() : 0;
-    }
-
-    private final Handler handler = new Handler(Looper.getMainLooper());
 
     private void notifySyncStatus(@NonNull String action, String type) {
         final boolean syncStarted = action.equals(SYNC_STARTED);
@@ -273,24 +193,4 @@ public class SyncService extends Service {
         activity.startService(loadMoreIntent);
     }
 
-    private class CountdownAPICallback implements APIService.APICallback {
-        private final CountDownLatch countDownLatch;
-
-        private CountdownAPICallback(CountDownLatch countDownLatch) {
-            this.countDownLatch = countDownLatch;
-        }
-
-        @Override
-        public void onSuccess() {
-            countDownLatch.countDown();
-        }
-
-        @Override
-        public void onFailure(String errorMessage) {
-            countDownLatch.countDown();
-
-            Toast.makeText(SyncService.this, errorMessage, Toast.LENGTH_LONG).show();
-            Log.w(TAG, errorMessage);
-        }
-    }
 }

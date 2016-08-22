@@ -32,6 +32,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -404,11 +405,11 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable final Intent data) {
         if(resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
                 case LoginActivity.REQUEST_CODE:
-                    if (data.getBooleanExtra(LoginActivity.EXTRA_IMPROPERLY_CONFIGURED_CRON, false)) {
+                    if (data != null && data.getBooleanExtra(LoginActivity.EXTRA_IMPROPERLY_CONFIGURED_CRON, false)) {
                         Snackbar snackbar = Snackbar.make(findViewById(R.id.coordinator_layout), R.string.updater_improperly_configured, Snackbar.LENGTH_INDEFINITE);
                         snackbar.setAction(R.string.more_info, new View.OnClickListener() {
                             @Override
@@ -430,7 +431,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                     SyncService.startSync(this, true);
                     break;
                 case ItemPagerActivity.REQUEST_CODE:
-                    layoutManager.scrollToPosition(data.getIntExtra(ItemPagerActivity.EXTRA_CURRENT_POSITION, -1));
+                    if(data != null)
+                        layoutManager.scrollToPosition(data.getIntExtra(ItemPagerActivity.EXTRA_CURRENT_POSITION, -1));
                     break;
                 case ManageFeedsActivity.REQUEST_CODE:
                     drawerManager.reset();

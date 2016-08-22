@@ -14,8 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
-import email.schaal.ocreader.api.APIService;
 import email.schaal.ocreader.database.Queries;
+import email.schaal.ocreader.api.API;
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Folder;
 import email.schaal.ocreader.view.AddNewFeedDialogFragment;
@@ -73,9 +73,9 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
     public void addNewFeed(String url, long folderId, final boolean finishAfterAdd) {
         final ProgressDialog progressDialog = showProgress(this, getString(R.string.adding_feed));
 
-        APIService.getInstance().createFeed(getRealm(), url, folderId, new APIService.APICallback() {
+        API.getInstance().createFeed(getRealm(), url, folderId, new API.APICallback<Void, String>() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(Void n) {
                 progressDialog.dismiss();
                 setResult(RESULT_OK);
 
@@ -100,9 +100,9 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
                     public void onClick(DialogInterface dialog, int which) {
                         final ProgressDialog progressDialog = showProgress(ManageFeedsActivity.this, getString(R.string.deleting_feed, feed.getTitle()));
 
-                        APIService.getInstance().deleteFeed(getRealm(), feed, new APIService.APICallback() {
+                        API.getInstance().deleteFeed(getRealm(), feed, new API.APICallback<Void, String>() {
                             @Override
-                            public void onSuccess() {
+                            public void onSuccess(Void n) {
                                 progressDialog.dismiss();
                                 setResult(RESULT_OK);
                             }
@@ -130,9 +130,9 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
         final Feed feed = Queries.getFeed(getRealm(), feedId);
         final ProgressDialog progressDialog = showProgress(this, getString(R.string.moving_feed));
 
-        APIService.getInstance().moveFeed(getRealm(), feed, folderId, new APIService.APICallback() {
+        API.getInstance().moveFeed(getRealm(), feed, folderId, new API.APICallback<Void, String>() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(Void v) {
                 progressDialog.dismiss();
                 setResult(RESULT_OK);
             }

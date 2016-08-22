@@ -22,6 +22,7 @@ package email.schaal.ocreader;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -33,7 +34,6 @@ import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
-import email.schaal.ocreader.api.APIService;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.util.AlarmUtils;
 import email.schaal.ocreader.util.IcoRequestHandler;
@@ -48,12 +48,15 @@ public class OCReaderApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        PreferenceManager.getDefaultSharedPreferences(this)
-                .edit()
+
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        preferences.edit()
                 .putBoolean(Preferences.SYS_SYNC_RUNNING.getKey(), false)
                 .apply();
+
         Queries.init(new RealmConfiguration.Builder(this));
-        APIService.init(this);
+
         AlarmUtils.init(this);
 
         OkHttp3Downloader downloader = new OkHttp3Downloader(this);

@@ -1,7 +1,5 @@
 package email.schaal.ocreader.model;
 
-import android.util.Log;
-
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonReader;
 

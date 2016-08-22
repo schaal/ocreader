@@ -21,25 +21,21 @@
 package email.schaal.ocreader.api;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
-import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.Moshi;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import email.schaal.ocreader.Preferences;
+import email.schaal.ocreader.api.json.APILevels;
 import email.schaal.ocreader.api.json.Feeds;
 import email.schaal.ocreader.api.json.Folders;
 import email.schaal.ocreader.api.json.ItemIds;
@@ -49,24 +45,18 @@ import email.schaal.ocreader.api.json.Status;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.http.HttpManager;
 import email.schaal.ocreader.model.Feed;
-import email.schaal.ocreader.model.FeedTypeAdapter;
 import email.schaal.ocreader.model.Folder;
-import email.schaal.ocreader.model.FolderTypeAdapter;
 import email.schaal.ocreader.model.Item;
-import email.schaal.ocreader.model.ItemTypeAdapter;
-import email.schaal.ocreader.model.NewsError;
-import email.schaal.ocreader.model.StatusTypeAdapter;
+import email.schaal.ocreader.model.StarredFolder;
 import email.schaal.ocreader.model.User;
-import email.schaal.ocreader.model.UserTypeAdapter;
+import email.schaal.ocreader.service.SyncService;
 import email.schaal.ocreader.util.AlarmUtils;
 import io.realm.Realm;
 import io.realm.RealmResults;
-import okhttp3.HttpUrl;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.moshi.MoshiConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -75,24 +65,20 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-/**
- * This class encapsulates the Nextcloud News API and communicates with the remote ownCloud instance.
- */
-public class APIService {
-    private static final String TAG = APIService.class.getName();
+import static email.schaal.ocreader.service.SyncService.EXTRA_ID;
+import static email.schaal.ocreader.service.SyncService.EXTRA_IS_FEED;
+import static email.schaal.ocreader.service.SyncService.EXTRA_OFFSET;
 
-    private static final String ROOT_PATH_APIv1_2 = "./index.php/apps/news/api/v1-2/";
+/**
+ * This class encapsulates the Nextcloud News API v1-2
+ */
+class APIv12 extends API {
+    private static final String TAG = APIv12.class.getName();
 
     private static final int BATCH_SIZE = 100;
 
     private final Executor executor = Executors.newSingleThreadExecutor();
     private final Handler handler = new Handler(Looper.getMainLooper());
-    private final MoshiConverterFactory converterFactory;
-    private final JsonAdapter<NewsError> errorJsonAdapter;
-
-    public void setHttpManager(HttpManager httpManager) {
-        api = setupApi(httpManager);
-    }
 
     private enum MarkAction {
         MARK_READ(Item.UNREAD, Item.UNREAD_CHANGED, false),
@@ -123,19 +109,19 @@ public class APIService {
         }
     }
 
-    public interface OnCompletionListener {
+    private interface OnCompletionListener {
         void onCompleted(boolean result);
     }
 
     private abstract class ResultRunnable implements Runnable {
         protected final boolean result;
 
-        public ResultRunnable(boolean result) {
+        private ResultRunnable(boolean result) {
             this.result = result;
         }
     }
 
-    public void syncChanges(@Nullable final OnCompletionListener completionListener) {
+    private void syncChanges(@Nullable final OnCompletionListener completionListener) {
         AlarmUtils.getInstance().cancelAlarm();
 
         executor.execute(new Runnable() {
@@ -222,7 +208,7 @@ public class APIService {
         return response.isSuccessful();
     }
 
-    public enum QueryType {
+    private enum QueryType {
         FEED(0),
         FOLDER(1),
         STARRED(2),
@@ -239,56 +225,25 @@ public class APIService {
         }
     }
 
-    private static APIService instance;
+    private APIv12Interface api;
 
-    private API api;
-
-    public static void init(Context context) {
-        instance = new APIService(context);
+    APIv12(Context context) {
+        super(context, APILevels.Level.V12);
     }
 
-    public static APIService getInstance() {
-        if(instance == null)
-            throw new IllegalStateException("initialize first");
-        return instance;
-    }
-
-    private APIService(Context context) {
-        final Moshi moshi = new Moshi.Builder()
-                .add(Folder.class, new FolderTypeAdapter())
-                .add(Feed.class, new FeedTypeAdapter())
-                .add(Item.class, new ItemTypeAdapter())
-                .add(User.class, new UserTypeAdapter())
-                .add(Status.class, new StatusTypeAdapter())
-                .build();
-
-        converterFactory = MoshiConverterFactory.create(moshi);
-
-        errorJsonAdapter = moshi.adapter(NewsError.class);
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String username = Preferences.USERNAME.getString(sharedPreferences);
-        if(username != null) {
-            String password = Preferences.PASSWORD.getString(sharedPreferences);
-            String url = Preferences.URL.getString(sharedPreferences);
-            api = setupApi(new HttpManager(username, password, HttpUrl.parse(url)));
-        }
-    }
-
-    public API setupApi(HttpManager httpManager) {
-        HttpUrl baseUrl = httpManager.getCredentials().getRootUrl().resolve(ROOT_PATH_APIv1_2);
-
+    @Override
+    public void setupApi(HttpManager httpManager) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
+                .baseUrl(httpManager.getCredentials().getRootUrl().resolve(String.format("%s%s/", API_ROOT, apiLevel.getLevel())))
                 .client(httpManager.getClient())
                 .addConverterFactory(converterFactory)
                 .build();
 
-        return retrofit.create(API.class);
+        api = retrofit.create(APIv12Interface.class);
     }
 
     @SuppressWarnings("SameParameterValue")
-    public interface API {
+    private interface APIv12Interface {
         /** SERVER **/
 
         /** Since 6.0.5 **/
@@ -346,7 +301,97 @@ public class APIService {
         Call<Void> markItemsUnstarred(@Body ItemMap itemMap);
     }
 
-    public void user(final Realm realm, final APICallback callback) {
+    @Override
+    protected void metaData(Callback<Status> callback) {
+        api.status().enqueue(callback);
+    }
+
+    private static final int MAX_ITEMS = 10000;
+
+    @Override
+    public void sync(final Realm realm, final SyncService.SyncType syncType, final Intent intent, final APICallback<Void, String> callback) {
+        syncChanges(new OnCompletionListener() {
+            @Override
+            public void onCompleted(boolean result) {
+                if(result) {
+                    CountdownAPICallback apiCallback;
+
+                    switch (syncType) {
+                        case SYNC_CHANGES_ONLY:
+                            callback.onSuccess(null);
+                            break;
+                        case FULL_SYNC:
+                            long lastSync = getLastSyncTimestamp(realm);
+
+                            apiCallback = new CountdownAPICallback(new CountDownLatch(lastSync == 0L ? 5 : 4));
+
+                            user(realm, apiCallback);
+                            folders(realm, apiCallback);
+                            feeds(realm, apiCallback);
+
+                            if (lastSync == 0L) {
+                                starredItems(realm, apiCallback);
+                                items(realm, apiCallback);
+                            } else {
+                                Queries.removeExcessItems(realm, MAX_ITEMS);
+                                updatedItems(realm, lastSync, apiCallback);
+                            }
+
+                            waitForCountdownLatch(apiCallback.countDownLatch, callback);
+                            break;
+                        case LOAD_MORE:
+                            long id = intent.getLongExtra(EXTRA_ID, -1);
+                            long offset = intent.getLongExtra(EXTRA_OFFSET, 0);
+                            boolean isFeed = intent.getBooleanExtra(EXTRA_IS_FEED, false);
+
+                            QueryType queryType;
+
+                            if (id == StarredFolder.ID) {
+                                queryType = QueryType.STARRED;
+                                id = 0;
+                            } else {
+                                queryType = isFeed ? QueryType.FEED : QueryType.FOLDER;
+                            }
+
+                            moreItems(realm, queryType, offset, id, callback);
+
+                            break;
+                    }
+                } else {
+                    callback.onFailure("");
+                }
+            }
+        });
+
+    }
+
+    private void waitForCountdownLatch(final CountDownLatch countDownLatch, final APICallback<Void, String> callback) {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    countDownLatch.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onSuccess(null);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private long getLastSyncTimestamp(Realm realm) {
+        final Number lastSync = realm.where(Item.class).max(Item.LAST_MODIFIED);
+
+        return lastSync != null ? lastSync.longValue() : 0;
+    }
+
+    private void user(final Realm realm, final APICallback<Void, String> callback) {
         api.user().enqueue(new BaseRetrofitCallback<User>(callback) {
             @Override
             protected boolean onResponseReal(Response<User> response) {
@@ -356,7 +401,7 @@ public class APIService {
         });
     }
 
-    public void items(final Realm realm, final APICallback callback) {
+    private void items(final Realm realm, final APICallback<Void, String> callback) {
         api.items(-1, 0L, QueryType.ALL.getType(), 0L, false, false).enqueue(new BaseRetrofitCallback<Items>(callback) {
             @Override
             public boolean onResponseReal(Response<Items> response) {
@@ -369,7 +414,7 @@ public class APIService {
         });
     }
 
-    public void updatedItems(final Realm realm, long lastSync, final APICallback callback) {
+    private void updatedItems(final Realm realm, long lastSync, final APICallback<Void, String> callback) {
         api.updatedItems(lastSync, QueryType.ALL.getType(), 0L).enqueue(new BaseRetrofitCallback<Items>(callback) {
             @Override
             protected boolean onResponseReal(Response<Items> response) {
@@ -380,7 +425,7 @@ public class APIService {
         });
     }
 
-    public void starredItems(final Realm realm, final APICallback callback) {
+    private void starredItems(final Realm realm, final APICallback<Void, String> callback) {
         api.items(-1, 0L, QueryType.STARRED.getType(), 0L, true, false).enqueue(new BaseRetrofitCallback<Items>(callback) {
             @Override
             protected boolean onResponseReal(Response<Items> response) {
@@ -392,7 +437,7 @@ public class APIService {
         });
     }
 
-    public void moreItems(final Realm realm, final QueryType type, final long offset, final long id, final APICallback callback) {
+    private void moreItems(final Realm realm, final QueryType type, final long offset, final long id, final APICallback<Void, String> callback) {
         api.items(BATCH_SIZE, offset, type.getType(), id, true, false).enqueue(new BaseRetrofitCallback<Items>(callback) {
             @Override
             public boolean onResponseReal(Response<Items> response) {
@@ -403,7 +448,7 @@ public class APIService {
         });
     }
 
-    public void folders(final Realm realm, final APICallback callback) {
+    private void folders(final Realm realm, final APICallback<Void, String> callback) {
         api.folders().enqueue(new BaseRetrofitCallback<Folders>(callback) {
             @Override
             public boolean onResponseReal(Response<Folders> response) {
@@ -415,7 +460,7 @@ public class APIService {
         });
     }
 
-    public void feeds(final Realm realm, final APICallback callback) {
+    private void feeds(final Realm realm, final APICallback<Void, String> callback) {
         api.feeds().enqueue(new BaseRetrofitCallback<Feeds>(callback) {
             @Override
             protected boolean onResponseReal(Response<Feeds> response) {
@@ -429,8 +474,9 @@ public class APIService {
         });
     }
 
-    public void createFeed(final Realm realm, final String url, final long folderId, APICallback apiCallback) {
-        Map<String, Object> feedMap = new HashMap<>(2);
+    @Override
+    public void createFeed(final Realm realm, final String url, final long folderId, APICallback<Void, String> apiCallback) {
+        final Map<String, Object> feedMap = new HashMap<>(2);
 
         feedMap.put("url", url);
         feedMap.put("folderId", folderId);
@@ -449,8 +495,9 @@ public class APIService {
         });
     }
 
-    public void moveFeed(final Realm realm, final Feed feed, final long folderId, APICallback apiCallback) {
-        Map<String, Long> folderIdMap = new HashMap<>(1);
+    @Override
+    public void moveFeed(final Realm realm, final Feed feed, final long folderId, APICallback<Void, String> apiCallback) {
+        final Map<String, Long> folderIdMap = new HashMap<>(1);
         folderIdMap.put("folderId", folderId);
 
         api.moveFeed(feed.getId(), folderIdMap).enqueue(new BaseRetrofitCallback<Void>(apiCallback) {
@@ -468,7 +515,8 @@ public class APIService {
         });
     }
 
-    public void deleteFeed(final Realm realm, final Feed feed, APICallback apiCallback) {
+    @Override
+    public void deleteFeed(final Realm realm, final Feed feed, APICallback<Void, String> apiCallback) {
         api.deleteFeed(feed.getId()).enqueue(new BaseRetrofitCallback<Void>(apiCallback) {
             @Override
             protected boolean onResponseReal(Response<Void> response) {
@@ -477,48 +525,22 @@ public class APIService {
             }
         });
     }
-    public interface APICallback {
-        void onSuccess();
-        void onFailure(String errorMessage);
-    }
 
-    private abstract class BaseRetrofitCallback<T> implements Callback<T> {
-        final APICallback callback;
+    private class CountdownAPICallback implements API.APICallback<Void, String> {
+        private final CountDownLatch countDownLatch;
 
-        public BaseRetrofitCallback(APICallback callback) {
-            this.callback = callback;
+        private CountdownAPICallback(CountDownLatch countDownLatch) {
+            this.countDownLatch = countDownLatch;
         }
 
         @Override
-        public final void onResponse(Call<T> call, Response<T> response) {
-            if (response.isSuccessful()) {
-                if (onResponseReal(response))
-                    callback.onSuccess();
-            } else {
-                String message = response.message();
-                try {
-                    NewsError error = errorJsonAdapter.fromJson(response.errorBody().source());
-                    message = error.message;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                callback.onFailure(String.format(Locale.US, "%d: %s", response.code(), message));
-            }
+        public void onSuccess(Void n) {
+            countDownLatch.countDown();
         }
-
-        /**
-         * Handle the response
-         *
-         * @param response Retrofit response
-         * @return true iff sync event is finished, false iff another run is necessary.
-         */
-        protected abstract boolean onResponseReal(Response<T> response);
 
         @Override
-        public void onFailure(Call<T> call, Throwable t) {
-            t.printStackTrace();
-            callback.onFailure(t.getLocalizedMessage());
+        public void onFailure(String errorMessage) {
+            countDownLatch.countDown();
         }
     }
-
 }
