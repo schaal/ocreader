@@ -1,3 +1,9 @@
+## 0.15 (2016-08-24)
+
+* It's now possible to manage feeds directly in the app
+    * Add new feeds via Share Dialog from other apps
+* Small design improvements (inset dividers)
+
 ## 0.14 (2016-07-25)
 
 * Only allow colors with high enough contrast as text colors for Feed titles
