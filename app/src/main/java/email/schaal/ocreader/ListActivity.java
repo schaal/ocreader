@@ -97,10 +97,12 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(SyncService.SYNC_STARTED) || intent.getAction().equals(SyncService.SYNC_FINISHED)) {
+            final String action = intent.getAction();
+
+            if(action.equals(SyncService.SYNC_STARTED) || action.equals(SyncService.SYNC_FINISHED)) {
                 switch (intent.getStringExtra(SyncService.EXTRA_TYPE)) {
                     case SyncService.ACTION_LOAD_MORE:
-                        if (intent.getAction().equals(SyncService.SYNC_FINISHED)) {
+                        if (action.equals(SyncService.SYNC_FINISHED)) {
                             adapter.updateItems(true);
                             adapter.resetLoadMore();
                         }
