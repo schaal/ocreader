@@ -1,3 +1,7 @@
+## 0.16 (2016-08-26)
+
+* Fix crash when trying to login
+
 ## 0.15 (2016-08-24)
 
 * It's now possible to manage feeds directly in the app
