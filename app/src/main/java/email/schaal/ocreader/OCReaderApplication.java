@@ -73,6 +73,11 @@ public class OCReaderApplication extends Application {
             }
 
             @Override
+            public void set(ImageView imageView, Uri uri, Drawable placeholder, String tag) {
+                set(imageView, uri, placeholder);
+            }
+
+            @Override
             public void cancel(ImageView imageView) {
                 Picasso.with(imageView.getContext()).cancelRequest(imageView);
             }
