@@ -19,11 +19,9 @@ import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_LAST_ITEM;
  */
 public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.ViewHolder> {
     private final FeedManageListener listener;
-    private final FolderSpinnerAdapter folderSpinnerAdapter;
 
-    public FeedsAdapter(Context context, FolderSpinnerAdapter folderSpinnerAdapter, Realm realm, FeedManageListener listener) {
+    public FeedsAdapter(Context context, Realm realm, FeedManageListener listener) {
         super(context, realm.where(Feed.class).findAllSorted(Feed.TITLE), true);
-        this.folderSpinnerAdapter = folderSpinnerAdapter;
         this.listener = listener;
     }
 
@@ -34,7 +32,7 @@ public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.Vi
             case VIEW_TYPE_ITEM:
             case VIEW_TYPE_LAST_ITEM:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_feed, parent, false);
-                return new FeedViewHolder(folderSpinnerAdapter, view, listener);
+                return new FeedViewHolder(view, listener);
         }
         return null;
     }

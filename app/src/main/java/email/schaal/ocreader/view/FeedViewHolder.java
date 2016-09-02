@@ -4,7 +4,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import email.schaal.ocreader.R;
@@ -18,39 +17,26 @@ import email.schaal.ocreader.util.FeedColors;
 public class FeedViewHolder extends RecyclerView.ViewHolder implements FaviconLoader.FeedColorsListener {
     private final TextView textViewTitle;
     private final ImageView imageViewFavicon;
-    private final Spinner folderSpinner;
+    private final TextView textViewFolder;
     private final ImageView deleteButton;
-    private final FolderSpinnerAdapter folderSpinnerAdapter;
     private final FeedManageListener listener;
-    private ToggleOnItemSelectedListener onItemSelectedListener;
 
-    public FeedViewHolder(FolderSpinnerAdapter folderSpinnerAdapter, View itemView, FeedManageListener listener) {
+    public FeedViewHolder(View itemView, FeedManageListener listener) {
         super(itemView);
 
         this.listener = listener;
-        this.folderSpinnerAdapter = folderSpinnerAdapter;
 
         textViewTitle = (TextView) itemView.findViewById(R.id.textViewTitle);
         imageViewFavicon = (ImageView) itemView.findViewById(R.id.imageview_favicon);
         deleteButton = (ImageView) itemView.findViewById(R.id.delete_feed);
 
-        folderSpinner = (Spinner) itemView.findViewById(R.id.spinner);
-        folderSpinner.setAdapter(folderSpinnerAdapter);
+        textViewFolder = (TextView) itemView.findViewById(R.id.textViewFolder);
     }
 
     public void bindFeed(final Feed feed) {
         textViewTitle.setText(feed.getTitle());
 
-        onItemSelectedListener = new ToggleOnItemSelectedListener() {
-            @Override
-            public void onRealItemSelected(AdapterView<?> parent, View view, int position, final long id) {
-                listener.moveFeed(feed, id, FeedViewHolder.this);
-            }
-        };
-
-        updateFolderSpinner(feed);
-
-        folderSpinner.setOnItemSelectedListener(onItemSelectedListener);
+        textViewFolder.setText(feed.getFolderTitle(itemView.getContext()));
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,12 +45,13 @@ public class FeedViewHolder extends RecyclerView.ViewHolder implements FaviconLo
             }
         });
 
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.showFeedDialog(feed);
+            }
+        });
         new FaviconLoader.Builder(imageViewFavicon, feed).build().load(this);
-    }
-
-    public void updateFolderSpinner(Feed feed) {
-        onItemSelectedListener.enabled = false;
-        folderSpinner.setSelection(folderSpinnerAdapter.getPosition(feed.getFolderId()));
     }
 
     @Override
@@ -75,24 +62,5 @@ public class FeedViewHolder extends RecyclerView.ViewHolder implements FaviconLo
     @Override
     public void onStart() {
 
-    }
-
-    private abstract class ToggleOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
-        // To prevent this listener getting called multiple times
-        private boolean enabled = false;
-
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if(enabled)
-                onRealItemSelected(parent, view, position, id);
-            enabled = true;
-        }
-
-        protected abstract void onRealItemSelected(AdapterView<?> parent, View view, int position, long id);
-
-        @Override
-        public void onNothingSelected(AdapterView<?> adapterView) {
-
-        }
     }
  }

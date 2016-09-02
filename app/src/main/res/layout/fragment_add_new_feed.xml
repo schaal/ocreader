@@ -13,6 +13,8 @@
             android:id="@+id/feed_url"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:lines="1"
+            android:inputType="textUri"
             android:hint="@string/feed_url" />
 
     </android.support.design.widget.TextInputLayout>

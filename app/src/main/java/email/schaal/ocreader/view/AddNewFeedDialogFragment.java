@@ -15,12 +15,16 @@ import android.widget.TextView;
 
 import email.schaal.ocreader.ManageFeedsActivity;
 import email.schaal.ocreader.R;
+import email.schaal.ocreader.model.Feed;
 
 /**
  * Display form to add new Feed
  */
 public class AddNewFeedDialogFragment extends DialogFragment {
     public static final String ARG_URL = "url";
+    public static final String ARG_FOLDER_ID = "folder_id";
+    public static final String ARG_FINISH_AFTER_CLOSE = "finish_after_close";
+    private static final String ARG_FEED_ID = "feed_id";
 
     private FeedManageListener listener;
 
@@ -41,8 +45,6 @@ public class AddNewFeedDialogFragment extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
-        builder.setTitle(R.string.add_new_feed);
-
         // There is no root view yet
         @SuppressLint("InflateParams")
         View view = activity.getLayoutInflater().inflate(R.layout.fragment_add_new_feed, null);
@@ -51,20 +53,30 @@ public class AddNewFeedDialogFragment extends DialogFragment {
         final TextView urlTextView = (TextView) view.findViewById(R.id.feed_url);
 
         final Bundle arguments = getArguments();
+        final long feedId = arguments.getLong(ARG_FEED_ID, -1);
+        final boolean newFeed = feedId < 0;
 
-        final boolean startedFromIntent = arguments != null && arguments.containsKey(ARG_URL);
+        builder.setTitle(newFeed ? R.string.add_new_feed : R.string.edit_feed);
 
-        if(startedFromIntent) {
-            urlTextView.setText(arguments.getString(ARG_URL));
-        }
+        urlTextView.setEnabled(newFeed);
+
+        final boolean finishAfterClose;
 
         folderSpinner.setAdapter(activity.getFolderSpinnerAdapter());
 
-        builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+        urlTextView.setText(arguments.getString(ARG_URL));
+        folderSpinner.setSelection(activity.getFolderSpinnerAdapter().getPosition(arguments.getLong(ARG_FOLDER_ID, 0)));
+        finishAfterClose = arguments.getBoolean(ARG_FINISH_AFTER_CLOSE, false);
+
+        builder.setPositiveButton(newFeed ? R.string.add : R.string.edit, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                if(listener != null)
-                    listener.addNewFeed(urlTextView.getText().toString(), folderSpinner.getSelectedItemId(), startedFromIntent);
+                if(listener != null) {
+                    if(newFeed)
+                        listener.addNewFeed(urlTextView.getText().toString(), folderSpinner.getSelectedItemId(), finishAfterClose);
+                    else
+                        listener.changeFeed(urlTextView.getText().toString(), feedId, folderSpinner.getSelectedItemId());
+                }
             }
         });
 
@@ -73,16 +85,28 @@ public class AddNewFeedDialogFragment extends DialogFragment {
         return builder.create();
     }
 
-    public static void showDialog(Activity activity, @Nullable String url) {
+    /**
+     * Show feed edit dialog
+     * @param activity Activity to get the FragmentManager
+     * @param feed feed to edit or add (id < 0 means add new feed, id >=0 means edit existing feed)
+     * @param finishAfterClose should the activity be finished after operation was successful
+     */
+    public static void show(Activity activity, @Nullable Feed feed, boolean finishAfterClose) {
         AddNewFeedDialogFragment dialogFragment = new AddNewFeedDialogFragment();
 
-        if(url != null) {
-            Bundle bundle = new Bundle();
-            bundle.putString(AddNewFeedDialogFragment.ARG_URL, url);
-            dialogFragment.setArguments(bundle);
+        Bundle bundle = new Bundle();
+
+        bundle.putBoolean(ARG_FINISH_AFTER_CLOSE, finishAfterClose);
+
+        if(feed != null) {
+            bundle.putString(ARG_URL, feed.getUrl());
+            if (feed.getId() >= 0) {
+                bundle.putLong(ARG_FEED_ID, feed.getId());
+                bundle.putLong(ARG_FOLDER_ID, feed.getFolderId());
+            }
         }
 
+        dialogFragment.setArguments(bundle);
         dialogFragment.show(activity.getFragmentManager(), "newfeed");
     }
-
 }

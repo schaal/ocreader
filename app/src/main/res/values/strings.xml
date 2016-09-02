@@ -95,5 +95,7 @@
     <string name="root_folder">No folder</string>
     <string name="warning">Warning</string>
     <string name="feed_update_error">Updating this feed failed</string>
+    <string name="edit_feed">Edit Feed</string>
+    <string name="edit">Edit</string>
 
 </resources>

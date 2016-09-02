@@ -15,12 +15,12 @@ import android.view.View;
 import android.widget.Toast;
 
 import email.schaal.ocreader.api.APIService;
+import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Folder;
 import email.schaal.ocreader.view.AddNewFeedDialogFragment;
 import email.schaal.ocreader.view.DividerItemDecoration;
 import email.schaal.ocreader.view.FeedManageListener;
-import email.schaal.ocreader.view.FeedViewHolder;
 import email.schaal.ocreader.view.FeedsAdapter;
 import email.schaal.ocreader.view.FolderSpinnerAdapter;
 
@@ -44,7 +44,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
         folderSpinnerAdapter = new FolderSpinnerAdapter(this, getRealm().where(Folder.class).findAllSorted(Folder.TITLE));
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.feeds_recyclerview);
-        FeedsAdapter adapter = new FeedsAdapter(this, folderSpinnerAdapter, getRealm(), this);
+        FeedsAdapter adapter = new FeedsAdapter(this, getRealm(), this);
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -54,12 +54,14 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
         fabAddNewFeed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddNewFeedDialogFragment.showDialog(ManageFeedsActivity.this, null);
+                AddNewFeedDialogFragment.show(ManageFeedsActivity.this, null, false);
             }
         });
 
         if(Intent.ACTION_SEND.equals(getIntent().getAction())) {
-            AddNewFeedDialogFragment.showDialog(this, getIntent().getStringExtra(Intent.EXTRA_TEXT));
+            Feed feed = new Feed(-1);
+            feed.setUrl(getIntent().getStringExtra(Intent.EXTRA_TEXT));
+            AddNewFeedDialogFragment.show(this, feed, true);
         }
     }
 
@@ -119,10 +121,16 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
     }
 
     @Override
-    public void moveFeed(final Feed feed, long newFolderId, final FeedViewHolder feedViewHolder) {
+    public void showFeedDialog(Feed feed) {
+        AddNewFeedDialogFragment.show(this, feed, false);
+    }
+
+    @Override
+    public void changeFeed(String url, long feedId, long folderId) {
+        final Feed feed = Queries.getFeed(getRealm(), feedId);
         final ProgressDialog progressDialog = showProgress(this, getString(R.string.moving_feed));
 
-        APIService.getInstance().moveFeed(getRealm(), feed, newFolderId, new APIService.APICallback() {
+        APIService.getInstance().moveFeed(getRealm(), feed, folderId, new APIService.APICallback() {
             @Override
             public void onSuccess() {
                 progressDialog.dismiss();
@@ -132,12 +140,9 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
             @Override
             public void onFailure(String errorMessage) {
                 progressDialog.cancel();
-                // Reset folderSpinner to old folder
-                feedViewHolder.updateFolderSpinner(feed);
                 showErrorMessage(getString(R.string.feed_move_failed), errorMessage);
             }
         });
-
     }
 
     private void showErrorMessage(String title, String message) {

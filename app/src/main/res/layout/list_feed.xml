@@ -22,6 +22,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
     android:padding="@dimen/materialize_spacing">
 
     <ImageView
@@ -49,8 +50,8 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         tools:text="This is the feed title" />
 
-    <Spinner
-        android:id="@+id/spinner"
+    <TextView
+        android:id="@+id/textViewFolder"
         android:layout_below="@id/textViewTitle"
         android:layout_alignLeft="@id/textViewTitle"
         android:layout_alignStart="@id/textViewTitle"

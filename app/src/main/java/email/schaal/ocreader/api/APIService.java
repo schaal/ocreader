@@ -460,6 +460,7 @@ public class APIService {
                     @Override
                     public void execute(Realm realm) {
                         feed.setFolderId(folderId);
+                        feed.setFolder(Queries.getOrCreateFolder(realm, folderId));
                     }
                 });
                 return true;

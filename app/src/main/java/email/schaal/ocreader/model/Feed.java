@@ -20,8 +20,11 @@
 
 package email.schaal.ocreader.model;
 
+import android.content.Context;
+
 import java.util.Date;
 
+import email.schaal.ocreader.R;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -203,6 +206,16 @@ public class Feed extends RealmObject implements TreeItem {
 
     public Folder getFolder() {
         return folder;
+    }
+
+    public String getFolderTitle(Context context) {
+        if(folder == null) {
+            if(folderId == 0)
+                return context.getString(R.string.root_folder);
+            else
+                return null;
+        } else
+            return folder.getTitle();
     }
 
     public boolean isConsideredFailed() {
