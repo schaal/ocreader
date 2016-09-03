@@ -42,7 +42,10 @@ public enum Preferences {
 
     SYS_STARTDRAWERITEMID("startdrawer_itemid", AllUnreadFolder.ID),
     SYS_ENDRAWERITEM_ID("enddrawer_itemid", null),
-    SYS_ISFEED("isfeed", false);
+    SYS_ISFEED("isfeed", false),
+
+    SYS_DETECTED_API_LEVEL("detected_api_level", null),
+    SYS_APIv2_ETAG("apiv2_etag", null);
 
     private final String key;
     private final Object defaultValue;
@@ -75,6 +78,6 @@ public enum Preferences {
     }
 
     public static boolean hasCredentials(SharedPreferences preferences) {
-        return USERNAME.getString(preferences) != null;
+        return USERNAME.getString(preferences) != null && SYS_DETECTED_API_LEVEL.getString(preferences) != null;
     }
 }

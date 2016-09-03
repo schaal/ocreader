@@ -22,6 +22,7 @@ package email.schaal.ocreader.api;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -309,7 +310,7 @@ class APIv12 extends API {
     private static final int MAX_ITEMS = 10000;
 
     @Override
-    public void sync(final Realm realm, final SyncService.SyncType syncType, final Intent intent, final APICallback<Void, String> callback) {
+    public void sync(SharedPreferences sharedPreferences, final Realm realm, final SyncService.SyncType syncType, final Intent intent, final APICallback<Void, String> callback) {
         syncChanges(new OnCompletionListener() {
             @Override
             public void onCompleted(boolean result) {
@@ -391,7 +392,8 @@ class APIv12 extends API {
         return lastSync != null ? lastSync.longValue() : 0;
     }
 
-    private void user(final Realm realm, final APICallback<Void, String> callback) {
+    @Override
+    public void user(final Realm realm, final APICallback<Void, String> callback) {
         api.user().enqueue(new BaseRetrofitCallback<User>(callback) {
             @Override
             protected boolean onResponseReal(Response<User> response) {
@@ -526,7 +528,7 @@ class APIv12 extends API {
         });
     }
 
-    private class CountdownAPICallback implements API.APICallback<Void, String> {
+    private class CountdownAPICallback implements APICallback<Void, String> {
         private final CountDownLatch countDownLatch;
 
         private CountdownAPICallback(CountDownLatch countDownLatch) {

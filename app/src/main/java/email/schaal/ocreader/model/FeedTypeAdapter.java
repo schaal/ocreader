@@ -37,7 +37,19 @@ public class FeedTypeAdapter extends NewsTypeAdapter<Feed> {
     private final static String TAG = FeedTypeAdapter.class.getName();
 
     @Override
-    public void toJson(JsonWriter out, Feed value) throws IOException {
+    public void toJson(JsonWriter out, Feed feed) throws IOException {
+        out.beginObject();
+
+        // Only write url for new feeds (id < 0)
+        if(feed.getId() >= 0) {
+            out.name("url");
+            out.value(feed.getUrl());
+        }
+
+        out.name("folderId");
+        out.value(feed.getFolderId());
+
+        out.endObject();
     }
 
     @Override
@@ -67,6 +79,7 @@ public class FeedTypeAdapter extends NewsTypeAdapter<Feed> {
                     feed.setFaviconLink(faviconLink);
                     break;
                 case "title":
+                case "name":
                     feed.setTitle(StringUtils.cleanString(in.nextString()));
                     break;
                 case "added":
@@ -92,6 +105,9 @@ public class FeedTypeAdapter extends NewsTypeAdapter<Feed> {
                 case "lastUpdateError":
                     feed.setLastUpdateError(nullSafeString(in));
                     break;
+                case "error":
+                    parseError(in, feed);
+                    break;
                 default:
                     Log.w(TAG, "Unknown value in feed json: " + name);
                     in.skipValue();
@@ -100,5 +116,20 @@ public class FeedTypeAdapter extends NewsTypeAdapter<Feed> {
         }
         in.endObject();
         return feed;
+    }
+
+    private void parseError(JsonReader in, Feed feed) throws IOException {
+        in.beginObject();
+        while(in.hasNext()) {
+            switch (in.nextName()) {
+                case "code":
+                    in.skipValue();
+                    break;
+                case "message":
+                    feed.setLastUpdateError(nullSafeString(in));
+                    break;
+            }
+        }
+        in.endObject();
     }
 }

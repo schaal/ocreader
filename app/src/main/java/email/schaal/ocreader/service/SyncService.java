@@ -107,6 +107,12 @@ public class SyncService extends Service {
 
     @Override
     public int onStartCommand(final Intent intent, int flags, final int startId) {
+        // Don't start sync when not logged in yet
+        if(!Preferences.hasCredentials(sharedPreferences)) {
+            stopSelf(startId);
+            return START_NOT_STICKY;
+        }
+
         final String action = intent.getAction();
 
         final SyncType syncType = SyncType.get(action);
@@ -118,7 +124,7 @@ public class SyncService extends Service {
                 API.init(this);
             }
 
-            API.getInstance().sync(realm, syncType, intent, new API.APICallback<Void, String>() {
+            API.getInstance().sync(sharedPreferences, realm, syncType, intent, new API.APICallback<Void, String>() {
                 @Override
                 public void onSuccess(Void n) {
                     realm.executeTransaction(postProcessFeedTransaction);

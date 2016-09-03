@@ -61,6 +61,7 @@ public class StatusTypeAdapter extends NewsTypeAdapter<Status> {
                     readWarnings(in, status);
                     break;
                 case "user":
+                    status.setUser(new UserTypeAdapter().fromJson(in));
                     break;
                 default:
                     Log.w(TAG, "Unknown value in status json: " + name);

@@ -41,17 +41,13 @@ public class HttpManager {
     private HostCredentials credentials = null;
 
     public HttpManager(String username, String password, HttpUrl url) {
-        this();
-
-        credentials = new HostCredentials(username, password, url);
-    }
-
-    public HttpManager() {
         client = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
                 .addInterceptor(new AuthorizationInterceptor())
                 .build();
+
+        credentials = new HostCredentials(username, password, url);
     }
 
     public HostCredentials getCredentials() {
@@ -64,26 +60,14 @@ public class HttpManager {
 
     public class HostCredentials {
         private final String credentials;
-        private final String username;
-        private final String password;
         private final HttpUrl rootUrl;
 
-        public HostCredentials(String username, String password, HttpUrl url) {
-            this.username = username;
-            this.password = password;
+        private HostCredentials(String username, String password, HttpUrl url) {
             this.credentials = Credentials.basic(username, password);
             this.rootUrl = url;
         }
 
-        public String getUsername() {
-            return username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public String getCredentials() {
+        String getCredentials() {
             return credentials;
         }
 
@@ -93,7 +77,7 @@ public class HttpManager {
     }
 
     private class AuthorizationInterceptor implements Interceptor {
-        public AuthorizationInterceptor() {
+        AuthorizationInterceptor() {
         }
 
         @Override

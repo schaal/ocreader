@@ -10,6 +10,7 @@ import java.util.List;
 
 public class APILevels {
     public enum Level {
+        V2("v2"),
         V12("v1-2");
 
         private final String level;

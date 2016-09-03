@@ -26,6 +26,8 @@ import android.support.annotation.Nullable;
 import com.github.zafarkhaja.semver.UnexpectedCharacterException;
 import com.github.zafarkhaja.semver.Version;
 
+import email.schaal.ocreader.model.User;
+
 /**
  * Encapsulates the JSON response for the status api call
  */
@@ -33,6 +35,19 @@ public class Status {
     @Nullable
     private Version version;
     private boolean improperlyConfiguredCron;
+
+    /* Only returned by API v2 */
+    @Nullable
+    private User user;
+
+    @Nullable
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(@Nullable User user) {
+        this.user = user;
+    }
 
     @Nullable
     public Version getVersion() {

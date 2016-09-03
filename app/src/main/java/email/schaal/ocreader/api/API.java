@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -86,7 +87,9 @@ public abstract class API {
 
     protected abstract void metaData(Callback<Status> callback);
 
-    public abstract void sync(final Realm realm, SyncService.SyncType syncType, Intent intent, final APICallback<Void, String> apiCallback);
+    public abstract void user(final Realm realm, final APICallback<Void, String> apiCallback);
+
+    public abstract void sync(SharedPreferences sharedPreferences, final Realm realm, SyncService.SyncType syncType, Intent intent, final APICallback<Void, String> apiCallback);
 
     public abstract void createFeed(final Realm realm, final String url, final long folderId, final APICallback<Void, String> apiCallback);
 
@@ -120,10 +123,13 @@ public abstract class API {
                 if(response.isSuccessful()) {
                     loginInstance = null;
 
-                    APILevels.Level apiLevel = response.body().highestSupportedApi();
+                    final APILevels.Level apiLevel = response.body().highestSupportedApi();
 
                     if (apiLevel != null) {
                         switch (apiLevel) {
+                            case V2:
+                                loginInstance = new APIv2(context);
+                                break;
                             case V12:
                                 loginInstance = new APIv12(context);
                                 break;
@@ -143,6 +149,7 @@ public abstract class API {
                                             .putString(Preferences.USERNAME.getKey(), username)
                                             .putString(Preferences.PASSWORD.getKey(), password)
                                             .putString(Preferences.URL.getKey(), resolvedBaseUrl.toString())
+                                            .putString(Preferences.SYS_DETECTED_API_LEVEL.getKey(), apiLevel.getLevel())
                                             .apply();
 
                                     instance = loginInstance;
@@ -187,7 +194,19 @@ public abstract class API {
     }
 
     public static void init(Context context) {
-        instance = new APIv12(context);
+        APILevels.Level apiLevel = APILevels.Level.get(Preferences.SYS_DETECTED_API_LEVEL.getString(PreferenceManager.getDefaultSharedPreferences(context)));
+        if (apiLevel != null) {
+            switch (apiLevel) {
+                case V2:
+                    instance = new APIv2(context);
+                    break;
+                case V12:
+                    instance = new APIv12(context);
+                    break;
+            }
+        } else {
+            throw new IllegalStateException("Not logged in");
+        }
     }
 
     public interface APICallback<S,F> {
@@ -196,9 +215,10 @@ public abstract class API {
     }
 
     abstract class BaseRetrofitCallback<T> implements Callback<T> {
+        @Nullable
         final APICallback<Void, String> callback;
 
-        BaseRetrofitCallback(APICallback<Void, String> callback) {
+        BaseRetrofitCallback(@Nullable APICallback<Void, String> callback) {
             this.callback = callback;
         }
 
@@ -206,7 +226,9 @@ public abstract class API {
         public final void onResponse(Call<T> call, Response<T> response) {
             if (response.isSuccessful()) {
                 if (onResponseReal(response))
-                    callback.onSuccess(null);
+                    if (callback != null) {
+                        callback.onSuccess(null);
+                    }
             } else {
                 String message = response.message();
                 try {
@@ -215,7 +237,9 @@ public abstract class API {
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
-                    callback.onFailure(String.format(Locale.US, "%d: %s", response.code(), message));
+                    if (callback != null) {
+                        callback.onFailure(String.format(Locale.US, "%d: %s", response.code(), message));
+                    }
                 }
             }
         }
@@ -231,7 +255,8 @@ public abstract class API {
         @Override
         public void onFailure(Call<T> call, Throwable t) {
             t.printStackTrace();
-            callback.onFailure(t.getLocalizedMessage());
+            if(callback != null)
+                callback.onFailure(t.getLocalizedMessage());
         }
     }
 }

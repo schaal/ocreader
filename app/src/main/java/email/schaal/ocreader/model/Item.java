@@ -52,6 +52,9 @@ public class Item extends RealmObject {
     private Date pubDate;
     public static final String PUB_DATE = "pubDate";
 
+    private Date updatedAt;
+    public static final String UPDATED_AT = "updatedAt";
+
     private String body;
     public static final String BODY = "body";
 
@@ -83,6 +86,10 @@ public class Item extends RealmObject {
     @Index
     private String fingerprint;
     public static final String FINGERPRINT = "fingerprint";
+
+    @Index
+    private String contentHash;
+    public static final String CONTENT_HASH = "contentHash";
 
     public Item() {
     }
@@ -146,6 +153,14 @@ public class Item extends RealmObject {
 
     public void setPubDate(Date pubDate) {
         this.pubDate = pubDate;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public String getBody() {
@@ -238,6 +253,14 @@ public class Item extends RealmObject {
 
     public String getFingerprint() {
         return fingerprint;
+    }
+
+    public String getContentHash() {
+        return contentHash;
+    }
+
+    public void setContentHash(String contentHash) {
+        this.contentHash = contentHash;
     }
 
     public void setFingerprint(String fingerprint) {

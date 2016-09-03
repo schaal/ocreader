@@ -20,12 +20,15 @@
 
 package email.schaal.ocreader.model;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.squareup.moshi.JsonReader;
 import com.squareup.moshi.JsonWriter;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.Date;
 
 import email.schaal.ocreader.util.StringUtils;
@@ -37,7 +40,19 @@ public class ItemTypeAdapter extends NewsTypeAdapter<Item> {
     private final static String TAG = ItemTypeAdapter.class.getName();
 
     @Override
-    public void toJson(JsonWriter out, Item value) throws IOException {
+    public void toJson(JsonWriter out, Item item) throws IOException {
+        out.beginObject();
+
+        out.name(Item.ID).value(item.getId());
+        out.name(Item.CONTENT_HASH).value(item.getContentHash());
+
+        if(item.isUnreadChanged())
+            out.name("isUnread").value(!item.isUnread());
+
+        if(item.isStarredChanged())
+            out.name("isStarred").value(!item.isStarred());
+
+        out.endObject();
     }
 
     @Override
@@ -87,13 +102,26 @@ public class ItemTypeAdapter extends NewsTypeAdapter<Item> {
                     else
                         in.skipValue();
                     break;
+                case "publishedAt":
+                    item.setPubDate(parseDate(in.nextString()));
+                    break;
+                case "updatedAt":
+                    item.setUpdatedAt(parseDate(in.nextString()));
+                    break;
+                case "enclosure":
+                    parseEnclosure(in, item);
+                    break;
                 case "feedId":
                     item.setFeedId(in.nextLong());
+                    break;
+                case "isUnread":
+                    item.setUnread(!in.nextBoolean());
                     break;
                 case "unread":
                     item.setUnread(in.nextBoolean());
                     break;
                 case "starred":
+                case "isStarred":
                     item.setStarred(in.nextBoolean());
                     break;
                 case "lastModified":
@@ -106,8 +134,7 @@ public class ItemTypeAdapter extends NewsTypeAdapter<Item> {
                     item.setFingerprint(in.nextString());
                     break;
                 case "contentHash":
-                    // Not necessary right now
-                    in.skipValue();
+                    item.setContentHash(in.nextString());
                     break;
                 default:
                     Log.w(TAG, "Unknown value in item json: " + name);
@@ -117,5 +144,30 @@ public class ItemTypeAdapter extends NewsTypeAdapter<Item> {
         }
         in.endObject();
         return item;
+    }
+
+    private void parseEnclosure(JsonReader in, Item item) throws IOException {
+        in.beginObject();
+        while(in.hasNext()) {
+            switch (in.nextName()) {
+                case "mimeType":
+                    item.setEnclosureMime(nullSafeString(in));
+                    break;
+                case "url":
+                    item.setEnclosureLink(nullSafeString(in));
+                    break;
+            }
+        }
+        in.endObject();
+    }
+
+    @Nullable
+    private Date parseDate(String source) {
+        try {
+            return DateFormat.getDateTimeInstance().parse(source);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

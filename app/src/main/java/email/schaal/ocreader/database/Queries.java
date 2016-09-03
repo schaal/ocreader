@@ -24,11 +24,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import email.schaal.ocreader.model.AllUnreadFolder;
 import email.schaal.ocreader.model.Feed;
@@ -53,7 +52,7 @@ import io.realm.exceptions.RealmException;
 public class Queries {
     private final static String TAG = Queries.class.getName();
 
-    public final static int SCHEMA_VERSION = 8;
+    public final static int SCHEMA_VERSION = 9;
 
     private final static Realm.Transaction initialData = new Realm.Transaction() {
         @Override
@@ -74,7 +73,7 @@ public class Queries {
     public static void init(RealmConfiguration.Builder builder) {
         RealmConfiguration realmConfiguration = builder
                 .schemaVersion(SCHEMA_VERSION)
-                .migration(migration)
+                .deleteRealmIfMigrationNeeded()
                 .initialData(initialData)
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);
@@ -191,20 +190,33 @@ public class Queries {
         return realm.where(Feed.class).findAllSorted(Feed.PINNED, Sort.ASCENDING, Feed.TITLE, Sort.ASCENDING);
     }
 
-    public static <T extends RealmObject> void insert(Realm realm, final Class<T> clazz, final Iterable<T> elements) {
+    public static <T extends RealmObject> void insert(Realm realm, final Class<T> clazz, final Collection<T> elements) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 if(clazz == Item.class) {
                     for (T element : elements) {
                         Item item = (Item) element;
-                        item.setFeed(getOrCreateFeed(realm, item.getFeedId()));
+                        if (item.getTitle() == null) {
+                            // Reduced item
+                            final Item fullItem = realm.where(Item.class).equalTo(Item.CONTENT_HASH, item.getContentHash()).findFirst();
+                            if (fullItem != null) {
+                                fullItem.setUnread(item.isUnread());
+                                fullItem.setStarred(item.isStarred());
+                            } else {
+                                Log.w(TAG, "Full item is not available");
+                            }
+                        } else {
+                            // new full item
+                            item.setFeed(getOrCreateFeed(realm, item.getFeedId()));
+                            realm.insertOrUpdate(item);
+                        }
                     }
+                } else {
+                    realm.insertOrUpdate(elements);
                 }
-                realm.copyToRealmOrUpdate(elements);
             }
         });
-
     }
 
     public static <T extends RealmObject> void insert(Realm realm, final Class<T> clazz, final T element) {
@@ -212,41 +224,48 @@ public class Queries {
     }
 
     public static <T extends RealmObject & TreeItem> void deleteAndInsert(Realm realm, final Class<T> clazz, final List<T> elements) {
-        // Sort elements for binary search
         Collections.sort(elements, TreeItem.COMPARATOR);
 
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                if(clazz == Feed.class) {
-                    for(T element: elements) {
-                        Feed feed = (Feed) element;
-                        feed.setFolder(getOrCreateFolder(realm, feed.getFolderId()));
+                final RealmResults<T> databaseItems = realm.where(clazz).findAllSorted(Feed.ID, Sort.ASCENDING);
+
+                final Iterator<T> databaseIterator = databaseItems.iterator();
+
+                for (T element : elements) {
+                    T currentDatabaseItem;
+
+                    // The lists are sorted by id, so if currentDatabaseItem.getId() < element.getId() we can remove it from the database
+                    while (databaseIterator.hasNext() && (currentDatabaseItem = databaseIterator.next()).getId() < element.getId()) {
+                        deleteTreeItem(realm, currentDatabaseItem, clazz);
+                    }
+
+                    // Only update if the item returned is not reduced
+                    if (element.getTitle() != null) {
+                        if (clazz == Feed.class) {
+                            final Feed feed = (Feed) element;
+                            feed.setFolder(getOrCreateFolder(realm, feed.getFolderId()));
+                        }
+                        realm.insertOrUpdate(element);
                     }
                 }
 
-                realm.copyToRealmOrUpdate(elements);
-
-                RealmResults<T> results = realm.where(clazz).findAll();
-
-                Set<T> itemsToRemove = new HashSet<>();
-
-                // iterate through items in database and add items not in elements to itemsToRemove
-                for (T result : results) {
-                    final int found = Collections.binarySearch(elements, result, TreeItem.COMPARATOR);
-                    if (found < 0)
-                        itemsToRemove.add(result);
-                }
-
-                for(T toRemove: itemsToRemove) {
-                    if(clazz == Feed.class) {
-                        // Also remove items belonging to feed being removed from database
-                        realm.where(Item.class).equalTo(Item.FEED_ID, toRemove.getId()).findAll().deleteAllFromRealm();
-                    }
-                    toRemove.deleteFromRealm();
+                // Remove remaining items from the database
+                while (databaseIterator.hasNext()) {
+                    deleteTreeItem(realm, databaseIterator.next(), clazz);
                 }
             }
         });
+    }
+
+    private static <T extends RealmObject & TreeItem> void deleteTreeItem(Realm realm, T item, Class<T> clazz) {
+        if (clazz == Feed.class) {
+            // Also remove items belonging to feed being removed from database
+            realm.where(Item.class).equalTo(Item.FEED_ID, item.getId()).findAll().deleteAllFromRealm();
+        }
+
+        item.deleteFromRealm();
     }
 
     @NonNull
