@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2015-2016 Daniel Schaal <daniel@schaal.email>
+  ~ Copyright (C) 2016 Daniel Schaal <daniel@schaal.email>
   ~
   ~ This file is part of OCReader.
   ~
@@ -19,12 +19,6 @@
   ~
   -->
 
-<email.schaal.ocreader.view.ArticleWebView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/webView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:titleColor="?android:attr/textColorPrimary"
-    app:backgroundColor="?android:colorBackground"
-    app:fontColor="?android:colorForeground" />
+<resources>
+    <color name="selected_background">@color/md_grey_800</color>
+</resources>

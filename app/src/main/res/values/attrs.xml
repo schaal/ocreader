@@ -5,5 +5,7 @@
     </declare-styleable>
     <declare-styleable name="ArticleWebView">
         <attr name="titleColor" format="color" />
+        <attr name="backgroundColor" format="color" />
+        <attr name="fontColor" format="color" />
     </declare-styleable>
 </resources>

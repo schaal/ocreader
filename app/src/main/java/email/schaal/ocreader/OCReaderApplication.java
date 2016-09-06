@@ -28,6 +28,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatDelegate;
 import android.widget.ImageView;
 
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
@@ -47,6 +48,7 @@ public class OCReaderApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 

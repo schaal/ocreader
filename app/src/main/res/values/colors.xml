@@ -27,4 +27,5 @@
     <color name="selected_background">@color/md_grey_300</color>
     <color name="star">@color/md_yellow_A700</color>
     <color name="progress">#66FFFFFF</color>
+    <color name="delete">@color/md_red_500</color>
 </resources>
