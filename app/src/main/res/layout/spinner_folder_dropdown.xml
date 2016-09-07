@@ -6,5 +6,5 @@
     android:layout_height="wrap_content"
     android:padding="@dimen/materialize_spacing"
     android:textAppearance="@style/TextAppearance.AppCompat.Small"
-    android:textColor="@color/md_black_1000"
+    android:textColor="?android:colorForeground"
     tools:text="Folder title" />
