@@ -2,7 +2,6 @@ package email.schaal.ocreader.view;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -51,7 +50,7 @@ public class FeedViewHolder extends RecyclerView.ViewHolder implements FaviconLo
                 listener.showFeedDialog(feed);
             }
         });
-        new FaviconLoader.Builder(imageViewFavicon, feed).build().load(this);
+        new FaviconLoader.Builder(imageViewFavicon, feed).build().load(itemView.getContext(), this);
     }
 
     @Override

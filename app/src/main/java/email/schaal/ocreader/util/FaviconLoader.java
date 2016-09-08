@@ -39,12 +39,10 @@ public class FaviconLoader {
     private final ImageView imageView;
     private final Feed feed;
     private final boolean generateFallbackImage;
-    private final Context context;
 
     private FaviconLoader(Builder builder) {
         placeholder = builder.placeholder;
         imageView = builder.imageView;
-        context = builder.context;
         feed = builder.feed;
         generateFallbackImage = builder.generateFallbackImage;
     }
@@ -78,7 +76,7 @@ public class FaviconLoader {
         return ColorGenerator.MATERIAL.getColor(feed.getUrl());
     }
 
-    public void load(@NonNull FeedColorsListener listener) {
+    public void load(Context context, @NonNull FeedColorsListener listener) {
         listener.onStart();
         if(feed == null) {
             listener.onGenerated(null);
@@ -136,16 +134,13 @@ public class FaviconLoader {
         private ImageView imageView;
         private Feed feed;
         private boolean generateFallbackImage = true;
-        private Context context;
 
-        public Builder(@NonNull Context context, Feed feed) {
-            this.context = context.getApplicationContext();
+        public Builder(Feed feed) {
             this.feed = feed;
         }
 
         public Builder(@NonNull ImageView imageView, Feed feed) {
             this.imageView = imageView;
-            this.context = imageView.getContext().getApplicationContext();
             this.feed = feed;
         }
 

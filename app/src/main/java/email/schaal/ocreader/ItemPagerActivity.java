@@ -314,7 +314,7 @@ public class ItemPagerActivity extends RealmActivity {
                     .withGenerateFallbackImage(false)
                     .withPlaceholder(R.drawable.ic_open_in_browser)
                     .build()
-                    .load(toListener);
+                    .load(ItemPagerActivity.this, toListener);
 
             progressFrom = progressTo;
             progressTo = (float) (position + 1) / (float) mSectionsPagerAdapter.getCount();
