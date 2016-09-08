@@ -64,8 +64,7 @@ public class FolderSpinnerAdapter extends BaseAdapter {
 
     private View getSpinnerView(int position, View convertView, ViewGroup parent, @LayoutRes int layout) {
         View view = convertView != null ? convertView : View.inflate(parent.getContext(), layout, null);
-        TextView textViewTitle = (TextView) view.findViewById(R.id.textViewTitle);
-        textViewTitle.setText((String)getItem(position));
+        ((TextView)view).setText((String)getItem(position));
         return view;
     }
 
