@@ -103,7 +103,7 @@ public class ItemPagerActivity extends RealmActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(item != null) {
+                if(item != null && item.getUrl() != null) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.getUrl()));
                     startActivity(intent);
                 }
@@ -124,10 +124,12 @@ public class ItemPagerActivity extends RealmActivity {
     }
 
     private void shareArticle() {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, item.getUrl());
-        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_article)));
+        if(item.getUrl() != null) {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, item.getUrl());
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.share_article)));
+        }
     }
 
     public Item getItemForPosition(int position) {

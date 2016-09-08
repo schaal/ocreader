@@ -61,7 +61,7 @@ public class ItemTypeAdapter extends NewsTypeAdapter<Item> {
                     item.setGuidHash(in.nextString());
                     break;
                 case "url":
-                    item.setUrl(in.nextString());
+                    item.setUrl(nullSafeString(in));
                     break;
                 case "title":
                     item.setTitle(StringUtils.cleanString(in.nextString()));

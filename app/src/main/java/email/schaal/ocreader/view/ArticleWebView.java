@@ -155,7 +155,7 @@ public class ArticleWebView extends NestedScrollWebView {
 
         pageBuilder.append(String.format(
                 "<a href=\"%s\" class=\"title\">%s</a><p class=\"byline\">%s</p>",
-                item.getUrl(),
+                item.getUrl() != null ? item.getUrl() : "",
                 item.getTitle(),
                 StringUtils.getByLine(context, String.format("<a href=\"%s\">%s</a>", feed.getLink(), feed.getTitle()), item.getAuthor())
                 )

@@ -20,6 +20,8 @@
 
 package email.schaal.ocreader.model;
 
+import android.support.annotation.Nullable;
+
 import java.util.Date;
 
 import io.realm.RealmObject;
@@ -39,6 +41,7 @@ public class Item extends RealmObject {
     private String guidHash;
     public final static String GUID_HASH = "guidHash";
 
+    @Nullable
     private String url;
 
     private String title;
@@ -112,11 +115,12 @@ public class Item extends RealmObject {
         this.guidHash = guidHash;
     }
 
+    @Nullable
     public String getUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
+    public void setUrl(@Nullable String url) {
         this.url = url;
     }
 
