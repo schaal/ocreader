@@ -20,11 +20,11 @@ public class FolderSpinnerAdapter extends BaseAdapter {
     private final static int VIEW_TYPE_NONE = 0;
     private final static int VIEW_TYPE_FOLDER = 1;
 
-    private final Context context;
+    private final String rootFolder;
     private final OrderedRealmCollection<Folder> folders;
 
     public FolderSpinnerAdapter(Context context, OrderedRealmCollection<Folder> folders) {
-        this.context = context;
+        this.rootFolder = context.getString(R.string.root_folder);
         this.folders = folders;
     }
 
@@ -36,7 +36,7 @@ public class FolderSpinnerAdapter extends BaseAdapter {
     @Override
     public Object getItem(int position) {
         if(position == 0)
-            return context.getString(R.string.root_folder);
+            return rootFolder;
         return folders.get(position-1).getTitle();
     }
 
