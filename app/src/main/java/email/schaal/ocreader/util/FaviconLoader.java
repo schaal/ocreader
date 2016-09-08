@@ -23,6 +23,7 @@ import java.util.Locale;
 
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.model.Feed;
+import hugo.weaving.DebugLog;
 
 import static android.support.v7.graphics.Target.DARK_VIBRANT;
 import static android.support.v7.graphics.Target.LIGHT_MUTED;

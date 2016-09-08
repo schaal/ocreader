@@ -30,10 +30,10 @@ import email.schaal.ocreader.R;
 public class AllUnreadFolder implements TreeItem, TreeIconable {
     public final static long ID = -10;
 
-    private final Context context;
+    private final String title;
 
     public AllUnreadFolder(Context context) {
-        this.context = context;
+        this.title = context.getString(R.string.unread_items);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class AllUnreadFolder implements TreeItem, TreeIconable {
 
     @Override
     public String getTitle() {
-        return context.getString(R.string.unread_items);
+        return title;
     }
 
     @Override
