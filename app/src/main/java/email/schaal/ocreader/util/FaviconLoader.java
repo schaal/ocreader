@@ -1,10 +1,12 @@
 package email.schaal.ocreader.util;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,16 +25,13 @@ import java.util.Locale;
 
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.model.Feed;
-import hugo.weaving.DebugLog;
-
-import static android.support.v7.graphics.Target.DARK_VIBRANT;
-import static android.support.v7.graphics.Target.LIGHT_MUTED;
-import static android.support.v7.graphics.Target.VIBRANT;
 
 /**
  * Load favicons
  */
 public class FaviconLoader {
+    private static final String TAG = FaviconLoader.class.getCanonicalName();
+
     private final static LruCache<Long, FeedColors> feedColorsCache = new LruCache<>(32);
     private final static LruCache<Long, Drawable> faviconCache = new LruCache<>(32);
 
@@ -85,9 +84,12 @@ public class FaviconLoader {
         }
 
         if(feed.getFaviconLink() != null) {
+            TypedArray typedArray = context.obtainStyledAttributes(new int[] { android.R.attr.colorBackground });
+            final int colorBackground = typedArray.getColor(0, Color.WHITE);
+            typedArray.recycle();
             // load favicon
             RequestCreator requestCreator = Picasso.with(context).load(feed.getFaviconLink());
-            MyTarget myTarget = new MyTarget(feed, listener);
+            MyTarget myTarget = new MyTarget(feed, listener, colorBackground);
 
             if(imageView != null) {
                 requestCreator.placeholder(placeholder).into(imageView, myTarget);
@@ -109,18 +111,9 @@ public class FaviconLoader {
         }
     }
 
-    private void generatePalette(Bitmap bitmap, Palette.PaletteAsyncListener paletteAsyncListener) {
+    private void generatePalette(Bitmap bitmap, Palette.Filter filter, Palette.PaletteAsyncListener paletteAsyncListener) {
         new Palette.Builder(bitmap)
-                .clearTargets()
-                .addTarget(DARK_VIBRANT)
-                .addTarget(VIBRANT)
-                .addTarget(LIGHT_MUTED)
-                .addFilter(new Palette.Filter() {
-                    @Override
-                    public boolean isAllowed(int rgb, float[] hsl) {
-                        return ColorUtils.calculateContrast(rgb, Color.WHITE) >= 4;
-                    }
-                })
+                .addFilter(filter)
                 .generate(paletteAsyncListener);
     }
 
@@ -163,17 +156,24 @@ public class FaviconLoader {
     private class MyTarget implements Target, Callback {
         private final Feed feed;
         private final FeedColorsListener listener;
+        private final Palette.Filter contrastFilter;
 
-        public MyTarget(@NonNull Feed feed, @NonNull FeedColorsListener listener) {
+        public MyTarget(@NonNull Feed feed, @NonNull FeedColorsListener listener, final @ColorInt int backgroundColor) {
             this.feed = feed;
             this.listener = listener;
+            contrastFilter = new Palette.Filter() {
+                @Override
+                public boolean isAllowed(int rgb, float[] hsl) {
+                    return ColorUtils.calculateContrast(rgb, backgroundColor) >= 4;
+                }
+            };
         }
 
         @Override
         public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
             final FeedColors cachedFeedColors = feedColorsCache.get(feed.getId());
             if(cachedFeedColors == null) {
-                generatePalette(bitmap, new Palette.PaletteAsyncListener() {
+                generatePalette(bitmap, contrastFilter, new Palette.PaletteAsyncListener() {
                     @Override
                     public void onGenerated(Palette palette) {
                         FeedColors feedColors = new FeedColors(palette);
