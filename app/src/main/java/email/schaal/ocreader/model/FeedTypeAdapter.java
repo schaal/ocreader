@@ -87,7 +87,7 @@ public class FeedTypeAdapter extends NewsTypeAdapter<Feed> {
                     feed.setPinned(nullSafeBoolean(in, false));
                     break;
                 case "updateErrorCount":
-                    feed.setUpdateErrorCount(in.nextInt());
+                    feed.setUpdateErrorCount(nullSafeInt(in, 0));
                     break;
                 case "lastUpdateError":
                     feed.setLastUpdateError(nullSafeString(in));
