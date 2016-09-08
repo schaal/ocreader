@@ -62,6 +62,6 @@
     <string name="root_folder">Kein Ordner</string>
     <string name="feed_update_error">Fehler beim Aktualisieren dieses Feeds</string>
     <string name="warning">Warnung</string>
-    <string name="edit">Bearbeiten</string>
+    <string name="save">Speichern</string>
     <string name="edit_feed">Feed bearbeiten</string>
 </resources>

@@ -68,7 +68,7 @@ public class AddNewFeedDialogFragment extends DialogFragment {
         folderSpinner.setSelection(activity.getFolderSpinnerAdapter().getPosition(arguments.getLong(ARG_FOLDER_ID, 0)));
         finishAfterClose = arguments.getBoolean(ARG_FINISH_AFTER_CLOSE, false);
 
-        builder.setPositiveButton(newFeed ? R.string.add : R.string.edit, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(newFeed ? R.string.add : R.string.save, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 if(listener != null) {
