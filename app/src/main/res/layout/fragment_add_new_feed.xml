@@ -19,6 +19,16 @@
 
     </android.support.design.widget.TextInputLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/folder"
+        android:layout_marginTop="@dimen/materialize_spacing"
+        android:layout_marginStart="@dimen/materialize_baseline_grid_small"
+        android:layout_marginLeft="@dimen/materialize_baseline_grid_small"
+        android:textAppearance="@style/TextAppearance.Design.Hint"
+        android:labelFor="@+id/folder"/>
+
     <Spinner
         android:id="@+id/folder"
         android:layout_width="match_parent"
