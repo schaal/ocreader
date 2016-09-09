@@ -1,7 +1,7 @@
 ## 0.17 (2016-09-08)
 
 * Use the same dialog for changing and adding a feed
-* Use the dominant favicon color asa color for a feed
+* Use the dominant favicon color as feed color
 * Handle the case when the returned item url is NULL
 
 ## 0.16 (2016-08-26)
