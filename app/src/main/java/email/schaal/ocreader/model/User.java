@@ -33,6 +33,7 @@ public class User extends RealmObject {
     @PrimaryKey
     @Required
     private String userId;
+    public final static String USER_ID = "userId";
 
     private String displayName;
     private Date lastLogin;
