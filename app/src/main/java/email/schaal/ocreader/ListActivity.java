@@ -232,8 +232,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 })
                 .build();
 
-        ArrayList<IDrawerItem> stickyItems = new ArrayList<>(1);
-
         refreshDrawerItem = new PrimaryDrawerItem()
                 .withName(getString(R.string.action_sync))
                 .withSelectable(false)
@@ -247,12 +245,10 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                     }
                 });
 
-        stickyItems.add(refreshDrawerItem);
-
         DrawerBuilder startDrawerBuilder = new DrawerBuilder()
                 .withActivity(this)
                 .withAccountHeader(accountHeader)
-                .withStickyDrawerItems(stickyItems)
+                .addStickyDrawerItems(refreshDrawerItem)
                 .withOnDrawerListener(new Drawer.OnDrawerListener() {
                     @Override
                     public void onDrawerOpened(View drawerView) {
