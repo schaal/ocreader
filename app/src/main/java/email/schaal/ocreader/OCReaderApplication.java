@@ -69,12 +69,12 @@ public class OCReaderApplication extends Application {
         DrawerImageLoader.init(new DrawerImageLoader.IDrawerImageLoader() {
             @Override
             public void set(ImageView imageView, Uri uri, Drawable placeholder) {
-                Picasso.with(imageView.getContext()).load(uri).placeholder(placeholder).into(imageView);
+                set(imageView, uri, placeholder, null);
             }
 
             @Override
             public void set(ImageView imageView, Uri uri, Drawable placeholder, String tag) {
-                set(imageView, uri, placeholder);
+                Picasso.with(imageView.getContext()).load(uri).placeholder(placeholder).into(imageView);
             }
 
             @Override
@@ -89,7 +89,20 @@ public class OCReaderApplication extends Application {
 
             @Override
             public Drawable placeholder(Context ctx, String tag) {
-                return ContextCompat.getDrawable(ctx, R.drawable.ic_feed_icon);
+                final int drawableRes;
+                if(tag == null)
+                    tag = "";
+
+                switch (tag) {
+                    case "PROFILE":
+                        drawableRes = R.drawable.ic_launcher;
+                        break;
+                    default:
+                        drawableRes = R.drawable.ic_feed_icon;
+                        break;
+                }
+
+                return ContextCompat.getDrawable(ctx, drawableRes);
             }
         });
     }
