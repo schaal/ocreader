@@ -21,9 +21,7 @@
 package email.schaal.ocreader;
 
 import android.app.Fragment;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,13 +76,6 @@ public class ItemPageFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_item_pager, container, false);
 
         webView = (ArticleWebView) rootView.findViewById(R.id.webView);
-
-        // Using software rendering to prevent frozen or blank webviews
-        // See https://code.google.com/p/chromium/issues/detail?id=501901
-        if(Build.HARDWARE.equals("qcom") && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            Log.w(TAG, "Using software rendering");
-            webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        }
 
         return rootView;
     }
