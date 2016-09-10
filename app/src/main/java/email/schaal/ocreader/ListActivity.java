@@ -321,7 +321,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         layoutManager = new LinearLayoutManager(this);
 
-        adapter = new SelectableItemsAdapter(getRealm(), drawerManager.getState(), this, Preferences.ORDER.getOrder(PreferenceManager.getDefaultSharedPreferences(this)), this);
+        adapter = new SelectableItemsAdapter(getRealm(), drawerManager.getState(), this, Preferences.ORDER.getOrder(preferences), this);
 
         fab_mark_all_read = (FloatingActionButton) findViewById(R.id.fab_mark_all_as_read);
         fab_mark_all_read.setOnClickListener(new View.OnClickListener() {
