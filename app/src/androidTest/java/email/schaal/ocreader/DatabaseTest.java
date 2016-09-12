@@ -94,7 +94,7 @@ public class DatabaseTest {
             Folder folder = getTestFolder();
 
             realm = Realm.getDefaultInstance();
-            Queries.insert(realm, Folder.class, folder);
+            Queries.insert(realm, folder);
 
             Folder dbFolder = Queries.getFolder(realm, 1);
 
@@ -114,7 +114,7 @@ public class DatabaseTest {
             Feed feed = getTestFeed();
 
             realm = Realm.getDefaultInstance();
-            Queries.insert(realm, Feed.class, feed);
+            Queries.insert(realm, feed);
 
             feed = Queries.getFeed(realm, 1);
 
@@ -135,8 +135,8 @@ public class DatabaseTest {
             Item item = getTestItem();
 
             realm = Realm.getDefaultInstance();
-            Queries.insert(realm, Feed.class, feed);
-            Queries.insert(realm, Item.class, item);
+            Queries.insert(realm, feed);
+            Queries.insert(realm, item);
 
             item = realm.where(Item.class).findFirst();
 

@@ -22,6 +22,7 @@ package email.schaal.ocreader.model;
 
 import java.util.Date;
 
+import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
@@ -29,7 +30,7 @@ import io.realm.annotations.Required;
 /**
  * RealmObject representing User information.
  */
-public class User extends RealmObject {
+public class User extends RealmObject implements Insertable {
     @PrimaryKey
     @Required
     private String userId;
@@ -78,5 +79,10 @@ public class User extends RealmObject {
 
     public void setAvatarMime(String avatarMime) {
         this.avatarMime = avatarMime;
+    }
+
+    @Override
+    public void insert(Realm realm) {
+        realm.insertOrUpdate(this);
     }
 }

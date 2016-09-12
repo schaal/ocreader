@@ -21,17 +21,24 @@
 package email.schaal.ocreader.model;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.Date;
 
+import email.schaal.ocreader.database.Queries;
+import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 
+import static email.schaal.ocreader.database.Queries.getOrCreateFeed;
+
 /**
  * RealmObject representing a feed Item.
  */
-public class Item extends RealmObject {
+public class Item extends RealmObject implements Insertable {
+    private static final String TAG = Item.class.getName();
+
     @PrimaryKey
     private long id;
     public final static String ID = "id";
@@ -265,5 +272,24 @@ public class Item extends RealmObject {
 
     public void setFingerprint(String fingerprint) {
         this.fingerprint = fingerprint;
+    }
+
+    @Override
+    public void insert(Realm realm) {
+        if (getTitle() == null) {
+            // Reduced item
+            final Item fullItem = realm.where(Item.class).equalTo(Item.CONTENT_HASH, getContentHash()).findFirst();
+            if (fullItem != null) {
+                fullItem.setUnread(isUnread());
+                fullItem.setStarred(isStarred());
+            } else {
+                Log.w(TAG, "Full item is not available");
+            }
+        } else {
+            // new full item
+            setFeed(Queries.getOrCreateFeed(realm, getFeedId()));
+            realm.insertOrUpdate(this);
+        }
+
     }
 }

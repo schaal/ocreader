@@ -84,7 +84,7 @@ class APIv2 extends API {
         api.metaData().enqueue(new BaseRetrofitCallback<Status>(apiCallback) {
             @Override
             protected boolean onResponseReal(Response<Status> response) {
-                Queries.insert(realm, User.class, response.body().getUser());
+                Queries.insert(realm, response.body().getUser());
                 return true;
             }
         });
@@ -99,7 +99,7 @@ class APIv2 extends API {
 
                 Queries.deleteAndInsert(realm, Folder.class, response.body().getFolders());
                 Queries.deleteAndInsert(realm, Feed.class, response.body().getFeeds());
-                Queries.insert(realm, Item.class, response.body().getItems());
+                Queries.insert(realm, response.body().getItems());
                 return true;
             }
         };
@@ -144,7 +144,7 @@ class APIv2 extends API {
                 Feed feed = response.body().getFeeds().get(0);
                 feed.setUnreadCount(0);
 
-                Queries.insert(realm, Feed.class, feed);
+                Queries.insert(realm, feed);
 
                 return true;
             }
@@ -160,7 +160,7 @@ class APIv2 extends API {
         api.changeFeed(feed.getId(), changedFeed).enqueue(new BaseRetrofitCallback<Map<String,Feed>>(apiCallback) {
             @Override
             protected boolean onResponseReal(Response<Map<String,Feed>> response) {
-                Queries.insert(realm, Feed.class, response.body().get("feed"));
+                Queries.insert(realm, response.body().get("feed"));
                 return true;
             }
         });

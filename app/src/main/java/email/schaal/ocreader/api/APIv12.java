@@ -397,7 +397,7 @@ class APIv12 extends API {
         api.user().enqueue(new BaseRetrofitCallback<User>(callback) {
             @Override
             protected boolean onResponseReal(Response<User> response) {
-                Queries.insert(realm, User.class, response.body());
+                Queries.insert(realm, response.body());
                 return true;
             }
         });
@@ -409,7 +409,7 @@ class APIv12 extends API {
             public boolean onResponseReal(Response<Items> response) {
                 final List<Item> items = response.body().getItems();
 
-                Queries.insert(realm, Item.class, items);
+                Queries.insert(realm, items);
 
                 return true;
             }
@@ -421,7 +421,7 @@ class APIv12 extends API {
             @Override
             protected boolean onResponseReal(Response<Items> response) {
                 List<Item> items = response.body().getItems();
-                Queries.insert(realm, Item.class, items);
+                Queries.insert(realm, items);
                 return true;
             }
         });
@@ -433,7 +433,7 @@ class APIv12 extends API {
             protected boolean onResponseReal(Response<Items> response) {
                 final List<Item> items = response.body().getItems();
 
-                Queries.insert(realm, Item.class, items);
+                Queries.insert(realm, items);
                 return true;
             }
         });
@@ -444,7 +444,7 @@ class APIv12 extends API {
             @Override
             public boolean onResponseReal(Response<Items> response) {
                 final List<Item> items = response.body().getItems();
-                Queries.insert(realm, Item.class, items);
+                Queries.insert(realm, items);
                 return true;
             }
         });
@@ -490,7 +490,7 @@ class APIv12 extends API {
                 Feed feed = response.body().getFeeds().get(0);
                 feed.setUnreadCount(0);
 
-                Queries.insert(realm, Feed.class, feed);
+                Queries.insert(realm, feed);
 
                 return true;
             }

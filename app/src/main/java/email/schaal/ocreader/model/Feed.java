@@ -25,13 +25,14 @@ import android.content.Context;
 import java.util.Date;
 
 import email.schaal.ocreader.R;
+import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
  * RealmObject representing a Feed
  */
-public class Feed extends RealmObject implements TreeItem {
+public class Feed extends RealmObject implements TreeItem, Insertable {
     @PrimaryKey
     private long id;
 
@@ -220,5 +221,10 @@ public class Feed extends RealmObject implements TreeItem {
 
     public boolean isConsideredFailed() {
         return updateErrorCount >= 50;
+    }
+
+    @Override
+    public void insert(Realm realm) {
+        realm.insertOrUpdate(this);
     }
 }

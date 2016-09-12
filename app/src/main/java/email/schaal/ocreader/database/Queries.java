@@ -32,6 +32,7 @@ import java.util.List;
 import email.schaal.ocreader.model.AllUnreadFolder;
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Folder;
+import email.schaal.ocreader.model.Insertable;
 import email.schaal.ocreader.model.Item;
 import email.schaal.ocreader.model.StarredFolder;
 import email.schaal.ocreader.model.TemporaryFeed;
@@ -190,37 +191,25 @@ public class Queries {
         return realm.where(Feed.class).findAllSorted(Feed.PINNED, Sort.ASCENDING, Feed.TITLE, Sort.ASCENDING);
     }
 
-    public static <T extends RealmObject> void insert(Realm realm, final Class<T> clazz, final Collection<T> elements) {
+    public static void insert(Realm realm, @Nullable final Insertable element) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                if(clazz == Item.class) {
-                    for (T element : elements) {
-                        Item item = (Item) element;
-                        if (item.getTitle() == null) {
-                            // Reduced item
-                            final Item fullItem = realm.where(Item.class).equalTo(Item.CONTENT_HASH, item.getContentHash()).findFirst();
-                            if (fullItem != null) {
-                                fullItem.setUnread(item.isUnread());
-                                fullItem.setStarred(item.isStarred());
-                            } else {
-                                Log.w(TAG, "Full item is not available");
-                            }
-                        } else {
-                            // new full item
-                            item.setFeed(getOrCreateFeed(realm, item.getFeedId()));
-                            realm.insertOrUpdate(item);
-                        }
-                    }
-                } else {
-                    realm.insertOrUpdate(elements);
-                }
+                if(element != null)
+                    element.insert(realm);
             }
         });
     }
 
-    public static <T extends RealmObject> void insert(Realm realm, final Class<T> clazz, final T element) {
-        insert(realm, clazz, Collections.singleton(element));
+    public static void insert(Realm realm, final Iterable<? extends Insertable> elements) {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                for(final Insertable element: elements) {
+                    element.insert(realm);
+                }
+            }
+        });
     }
 
     public static <T extends RealmObject & TreeItem> void deleteAndInsert(Realm realm, final Class<T> clazz, final List<T> elements) {

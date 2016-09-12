@@ -20,13 +20,14 @@
 
 package email.schaal.ocreader.model;
 
+import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
  * RealmObject representing a Folder.
  */
-public class Folder extends RealmObject implements TreeItem {
+public class Folder extends RealmObject implements TreeItem, Insertable {
     @PrimaryKey
     private long id;
 
@@ -69,5 +70,10 @@ public class Folder extends RealmObject implements TreeItem {
     @Override
     public int hashCode() {
         return Long.valueOf(getId()).hashCode();
+    }
+
+    @Override
+    public void insert(Realm realm) {
+        realm.insertOrUpdate(this);
     }
 }
