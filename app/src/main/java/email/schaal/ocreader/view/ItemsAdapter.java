@@ -82,7 +82,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 public void execute(Realm realm) {
                     RealmResults<Item> tempItems = Queries.getItems(realm, state.getTreeItem(), isOnlyUnread());
                     temporaryFeed.setId(state.getTreeItem().getId());
-                    temporaryFeed.setTitle(state.getTreeItem().getTitle());
+                    temporaryFeed.setName(state.getTreeItem().getName());
                     temporaryFeed.getItems().clear();
                     if (tempItems != null) {
                         temporaryFeed.getItems().addAll(tempItems);

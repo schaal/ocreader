@@ -37,7 +37,7 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
     private long id;
 
     private String url;
-    private String title;
+    private String name;
     private String link;
     private String faviconLink;
     public static final String FAVICON_LINK = "faviconLink";
@@ -121,12 +121,12 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
     }
 
     @Override
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Date getAdded() {
@@ -216,7 +216,7 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
             else
                 return null;
         } else
-            return folder.getTitle();
+            return folder.getName();
     }
 
     public boolean isConsideredFailed() {

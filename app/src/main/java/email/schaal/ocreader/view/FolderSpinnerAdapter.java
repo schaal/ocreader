@@ -37,7 +37,7 @@ public class FolderSpinnerAdapter extends BaseAdapter {
     public Object getItem(int position) {
         if(position == 0)
             return rootFolder;
-        return folders.get(position-1).getTitle();
+        return folders.get(position-1).getName();
     }
 
     @Override

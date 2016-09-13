@@ -30,10 +30,10 @@ import email.schaal.ocreader.R;
 public class StarredFolder implements TreeItem, TreeIconable {
     public final static long ID = -11;
 
-    private final String title;
+    private final String name;
 
     public StarredFolder(Context context) {
-        this.title = context.getString(R.string.starred_items);
+        this.name = context.getString(R.string.starred_items);
     }
 
     @Override
@@ -42,8 +42,8 @@ public class StarredFolder implements TreeItem, TreeIconable {
     }
 
     @Override
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
     @Override

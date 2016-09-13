@@ -157,7 +157,7 @@ public class ArticleWebView extends NestedScrollWebView {
                 "<a href=\"%s\" class=\"title\">%s</a><p class=\"byline\">%s</p>",
                 item.getUrl() != null ? item.getUrl() : "",
                 item.getTitle(),
-                StringUtils.getByLine(context, String.format("<a href=\"%s\">%s</a>", feed.getLink(), feed.getTitle()), item.getAuthor())
+                StringUtils.getByLine(context, String.format("<a href=\"%s\">%s</a>", feed.getLink(), feed.getName()), item.getAuthor())
                 )
         );
 

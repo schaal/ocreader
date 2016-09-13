@@ -95,7 +95,7 @@ public class ItemPagerActivity extends RealmActivity {
 
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(temporaryFeed.getTitle());
+        getSupportActionBar().setTitle(temporaryFeed.getName());
 
         final SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
 

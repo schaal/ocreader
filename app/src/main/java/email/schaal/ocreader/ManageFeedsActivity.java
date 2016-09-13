@@ -41,7 +41,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        folderSpinnerAdapter = new FolderSpinnerAdapter(this, getRealm().where(Folder.class).findAllSorted(Folder.TITLE));
+        folderSpinnerAdapter = new FolderSpinnerAdapter(this, getRealm().where(Folder.class).findAllSorted(Folder.NAME));
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.feeds_recyclerview);
         FeedsAdapter adapter = new FeedsAdapter(this, getRealm(), this);
@@ -94,11 +94,11 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
     @Override
     public void deleteFeed(final Feed feed) {
         new AlertDialog.Builder(this)
-                .setMessage(getString(R.string.confirm_feed_deletion, feed.getTitle()))
+                .setMessage(getString(R.string.confirm_feed_deletion, feed.getName()))
                 .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        final ProgressDialog progressDialog = showProgress(ManageFeedsActivity.this, getString(R.string.deleting_feed, feed.getTitle()));
+                        final ProgressDialog progressDialog = showProgress(ManageFeedsActivity.this, getString(R.string.deleting_feed, feed.getName()));
 
                         API.getInstance().deleteFeed(getRealm(), feed, new API.APICallback<Void, String>() {
                             @Override

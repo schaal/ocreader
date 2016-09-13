@@ -53,14 +53,14 @@ public class DatabaseTest {
 
     private Folder getTestFolder() {
         Folder folder = new Folder(1);
-        folder.setTitle("TestFolderTitle");
+        folder.setName("TestFolderTitle");
         return folder;
     }
 
     private Feed getTestFeed() {
         Feed feed = new Feed();
         feed.setId(1);
-        feed.setTitle("TestFeedTitle");
+        feed.setName("TestFeedTitle");
         return feed;
     }
 
@@ -99,7 +99,7 @@ public class DatabaseTest {
             Folder dbFolder = Queries.getFolder(realm, 1);
 
             assertNotNull(dbFolder);
-            assertEquals(dbFolder.getTitle(), "TestFolderTitle");
+            assertEquals(dbFolder.getName(), "TestFolderTitle");
 
         } finally {
             assertNotNull(realm);
@@ -119,7 +119,7 @@ public class DatabaseTest {
             feed = Queries.getFeed(realm, 1);
 
             assertNotNull(feed);
-            assertEquals(feed.getTitle(), "TestFeedTitle");
+            assertEquals(feed.getName(), "TestFeedTitle");
 
         } finally {
             assertNotNull(realm);

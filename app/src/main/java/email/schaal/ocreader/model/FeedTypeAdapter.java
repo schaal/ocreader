@@ -78,9 +78,10 @@ public class FeedTypeAdapter extends NewsTypeAdapter<Feed> {
                         faviconLink = null;
                     feed.setFaviconLink(faviconLink);
                     break;
+                // title in API v1-2, name in API v2
                 case "title":
                 case "name":
-                    feed.setTitle(StringUtils.cleanString(in.nextString()));
+                    feed.setName(StringUtils.cleanString(in.nextString()));
                     break;
                 case "added":
                     in.skipValue();

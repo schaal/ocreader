@@ -31,10 +31,7 @@ public class Folder extends RealmObject implements TreeItem, Insertable {
     @PrimaryKey
     private long id;
 
-    /**
-     * This is called "name" in the json response, but use "title" for consistency with feed
-     */
-    private String title;
+    private String name;
 
     public Folder() {
     }
@@ -52,12 +49,12 @@ public class Folder extends RealmObject implements TreeItem, Insertable {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

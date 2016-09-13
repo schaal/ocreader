@@ -24,7 +24,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -183,12 +182,12 @@ public class Queries {
             query = realm.where(Folder.class);
         }
 
-        return query != null ? query.findAllSorted(Folder.TITLE, Sort.ASCENDING) : null;
+        return query != null ? query.findAllSorted(Folder.NAME, Sort.ASCENDING) : null;
     }
 
     @NonNull
     public static RealmResults<Feed> getFeeds(Realm realm) {
-        return realm.where(Feed.class).findAllSorted(Feed.PINNED, Sort.ASCENDING, Feed.TITLE, Sort.ASCENDING);
+        return realm.where(Feed.class).findAllSorted(Feed.PINNED, Sort.ASCENDING, Feed.NAME, Sort.ASCENDING);
     }
 
     public static void insert(Realm realm, @Nullable final Insertable element) {
@@ -218,7 +217,7 @@ public class Queries {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                final RealmResults<T> databaseItems = realm.where(clazz).findAllSorted(Feed.ID, Sort.ASCENDING);
+                final RealmResults<T> databaseItems = realm.where(clazz).findAllSorted(TreeItem.ID, Sort.ASCENDING);
 
                 final Iterator<T> databaseIterator = databaseItems.iterator();
 
@@ -231,7 +230,7 @@ public class Queries {
                     }
 
                     // Only update if the item returned is not reduced
-                    if (element.getTitle() != null) {
+                    if (element.getName() != null) {
                         if (clazz == Feed.class) {
                             final Feed feed = (Feed) element;
                             feed.setFolder(getOrCreateFolder(realm, feed.getFolderId()));
@@ -263,7 +262,7 @@ public class Queries {
         if(onlyUnread) {
             query.greaterThan(Feed.UNREAD_COUNT, 0);
         }
-        return query.findAllSorted(Feed.TITLE, Sort.ASCENDING);
+        return query.findAllSorted(Feed.NAME, Sort.ASCENDING);
     }
 
     public static int getCount(Realm realm, TreeItem item) {
@@ -294,7 +293,7 @@ public class Queries {
             feedQuery = null;
         }
 
-        return feedQuery != null ? feedQuery.findAllSorted(Feed.TITLE, Sort.ASCENDING) : null;
+        return feedQuery != null ? feedQuery.findAllSorted(Feed.NAME, Sort.ASCENDING) : null;
     }
 
     public static void removeExcessItems(Realm realm, final int maxItems) {

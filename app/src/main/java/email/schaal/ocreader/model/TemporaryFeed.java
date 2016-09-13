@@ -30,11 +30,9 @@ public class TemporaryFeed extends RealmObject {
     private long id;
     public static final String ID = "id";
 
-    private String title;
-    public static final String TITLE = "title";
+    private String name;
 
     private RealmList<Item> items;
-    public static final String ITEMS = "items";
 
     public TemporaryFeed() {
     }
@@ -47,12 +45,12 @@ public class TemporaryFeed extends RealmObject {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public RealmList<Item> getItems() {

@@ -69,7 +69,6 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.model.interfaces.Tagable;
 
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
 
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.model.Feed;
@@ -373,7 +372,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         drawerManager.reloadAdapters(getRealm(), isShowOnlyUnread());
 
         //noinspection ConstantConditions
-        getSupportActionBar().setTitle(drawerManager.getState().getTreeItem().getTitle());
+        getSupportActionBar().setTitle(drawerManager.getState().getTreeItem().getName());
     }
 
     private boolean isShowOnlyUnread() {
@@ -399,7 +398,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
     private void reloadListFragment() {
         //noinspection ConstantConditions
-        getSupportActionBar().setTitle(drawerManager.getState().getTreeItem().getTitle());
+        getSupportActionBar().setTitle(drawerManager.getState().getTreeItem().getName());
         adapter.updateItems(true);
         layoutManager.scrollToPosition(0);
     }

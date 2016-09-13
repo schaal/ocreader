@@ -21,7 +21,7 @@ public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.Vi
     private final FeedManageListener listener;
 
     public FeedsAdapter(Context context, Realm realm, FeedManageListener listener) {
-        super(context, realm.where(Feed.class).findAllSorted(Feed.TITLE), true);
+        super(context, realm.where(Feed.class).findAllSorted(Feed.NAME), true);
         this.listener = listener;
     }
 

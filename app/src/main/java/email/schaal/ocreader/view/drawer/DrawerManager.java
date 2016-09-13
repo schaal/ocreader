@@ -192,7 +192,7 @@ public class DrawerManager {
 
             drawerItems.add(new SectionDrawerItem()
                     .withDivider(false)
-                    .withName(state.getStartDrawerItem().getTitle()));
+                    .withName(state.getStartDrawerItem().getName()));
 
             if (feeds != null) {
                 for (Feed feed : feeds) {

@@ -27,7 +27,7 @@ import java.util.Comparator;
  */
 public interface TreeItem {
     String ID = "id";
-    String TITLE = "title";
+    String NAME = "name";
 
     Comparator<TreeItem> COMPARATOR = new Comparator<TreeItem>() {
         @Override
@@ -37,5 +37,5 @@ public interface TreeItem {
     };
 
     long getId();
-    String getTitle();
+    String getName();
 }

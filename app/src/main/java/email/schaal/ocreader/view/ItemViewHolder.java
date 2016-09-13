@@ -93,7 +93,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
 
         Feed feed = item.getFeed();
         if(feed != null) {
-            textViewFeedTitle.setText(feed.getTitle());
+            textViewFeedTitle.setText(feed.getName());
         } else {
             Log.w(TAG, "Feed == null");
             textViewFeedTitle.setText("");

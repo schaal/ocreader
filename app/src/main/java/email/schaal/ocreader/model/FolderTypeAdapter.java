@@ -52,7 +52,7 @@ public class FolderTypeAdapter extends NewsTypeAdapter<Folder> {
                     folder.setId(in.nextLong());
                     break;
                 case "name":
-                    folder.setTitle(in.nextString());
+                    folder.setName(in.nextString());
                     break;
                 default:
                     Log.w(TAG, "Unknown value in folder json: " + name);

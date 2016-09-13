@@ -43,7 +43,7 @@ public class FaviconLoaderTest {
     @Test
     public void testGetDrawable() throws Exception {
         Feed feed = new Feed();
-        feed.setTitle("Test");
+        feed.setName("Test");
         feed.setUrl("http://example.com");
         feed.setFaviconLink(null);
 

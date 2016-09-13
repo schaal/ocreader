@@ -33,7 +33,7 @@ public class FeedViewHolder extends RecyclerView.ViewHolder implements FaviconLo
     }
 
     public void bindFeed(final Feed feed) {
-        textViewTitle.setText(feed.getTitle());
+        textViewTitle.setText(feed.getName());
 
         textViewFolder.setText(feed.getFolderTitle(itemView.getContext()));
 

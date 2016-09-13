@@ -58,7 +58,7 @@ public class TreeItemDrawerItem extends PrimaryDrawerItem {
         } else if(item instanceof Folder) {
             withIcon(R.drawable.ic_folder);
         }
-        withName(item.getTitle());
+        withName(item.getName());
         withTag(item);
         withIconTintingEnabled(true);
     }
