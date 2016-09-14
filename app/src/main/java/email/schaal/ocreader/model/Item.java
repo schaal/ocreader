@@ -31,8 +31,6 @@ import io.realm.RealmObject;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 
-import static email.schaal.ocreader.database.Queries.getOrCreateFeed;
-
 /**
  * RealmObject representing a feed Item.
  */

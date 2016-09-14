@@ -22,8 +22,11 @@ package email.schaal.ocreader.model;
 
 import android.content.Context;
 
+import java.util.List;
+
 import email.schaal.ocreader.R;
 import io.realm.Realm;
+import io.realm.Sort;
 
 /**
  * TreeItem representing the folder with all unread items.
@@ -50,6 +53,11 @@ public class AllUnreadFolder implements TreeItem, TreeIconable {
     @Override
     public int getCount(Realm realm) {
         return realm.where(Feed.class).sum(Feed.UNREAD_COUNT).intValue();
+    }
+
+    @Override
+    public List<Feed> getFeeds(Realm realm) {
+        return realm.where(Feed.class).greaterThan(Feed.UNREAD_COUNT, 0).findAllSorted(Feed.NAME, Sort.ASCENDING);
     }
 
     @Override

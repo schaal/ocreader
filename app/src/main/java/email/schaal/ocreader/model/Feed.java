@@ -22,7 +22,9 @@ package email.schaal.ocreader.model;
 
 import android.content.Context;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.Queries;
@@ -129,6 +131,11 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
     @Override
     public int getCount(Realm realm) {
         return getUnreadCount();
+    }
+
+    @Override
+    public List<Feed> getFeeds(Realm realm) {
+        return Collections.singletonList(this);
     }
 
     public void setName(String name) {

@@ -133,7 +133,7 @@ public class Queries {
         else if(treeItem instanceof Folder) {
             distinct = true;
             // Get all feeds belonging to Folder treeItem
-            RealmResults<Feed> feeds = getFeedsForTreeItem(realm, treeItem);
+            List<Feed> feeds = treeItem.getFeeds(realm);
             if(feeds != null && feeds.size() > 0) {
                 // Find all items belonging to any feed from this folder
                 Iterator<Feed> feedIterator = feeds.iterator();
@@ -256,23 +256,6 @@ public class Queries {
             query.greaterThan(Feed.UNREAD_COUNT, 0);
         }
         return query.findAllSorted(Feed.NAME, Sort.ASCENDING);
-    }
-
-    @Nullable
-    public static RealmResults<Feed> getFeedsForTreeItem(Realm realm, TreeItem item) {
-        RealmQuery<Feed> feedQuery = realm.where(Feed.class);
-
-        if(item instanceof AllUnreadFolder) {
-            feedQuery.greaterThan(Feed.UNREAD_COUNT, 0);
-        } else if(item instanceof StarredFolder) {
-            feedQuery.greaterThan(Feed.STARRED_COUNT, 0);
-        } else if(item instanceof Folder) {
-            feedQuery.equalTo(Feed.FOLDER_ID, item.getId());
-        } else {
-            feedQuery = null;
-        }
-
-        return feedQuery != null ? feedQuery.findAllSorted(Feed.NAME, Sort.ASCENDING) : null;
     }
 
     public static void removeExcessItems(Realm realm, final int maxItems) {

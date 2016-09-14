@@ -20,8 +20,11 @@
 
 package email.schaal.ocreader.model;
 
+import java.util.List;
+
 import io.realm.Realm;
 import io.realm.RealmObject;
+import io.realm.Sort;
 import io.realm.annotations.PrimaryKey;
 
 /**
@@ -56,6 +59,11 @@ public class Folder extends RealmObject implements TreeItem, Insertable {
     @Override
     public int getCount(Realm realm) {
         return realm.where(Feed.class).equalTo(Feed.FOLDER_ID, getId()).sum(Feed.UNREAD_COUNT).intValue();
+    }
+
+    @Override
+    public List<Feed> getFeeds(Realm realm) {
+        return realm.where(Feed.class).equalTo(Feed.FOLDER_ID, getId()).findAllSorted(Feed.NAME, Sort.ASCENDING);
     }
 
     public void setName(String name) {

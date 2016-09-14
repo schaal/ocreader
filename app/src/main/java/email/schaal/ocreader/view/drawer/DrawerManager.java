@@ -182,7 +182,7 @@ public class DrawerManager {
 
         @Override
         protected List<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread) {
-            List<Feed> feeds = Queries.getFeedsForTreeItem(realm, state.getStartDrawerItem());
+            List<Feed> feeds = state.getStartDrawerItem().getFeeds(realm);
             List<IDrawerItem> drawerItems = new ArrayList<>((feeds != null ? feeds.size() : 0) + 1);
 
             if (state.isFeedSelected())

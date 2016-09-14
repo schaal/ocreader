@@ -22,8 +22,11 @@ package email.schaal.ocreader.model;
 
 import android.content.Context;
 
+import java.util.List;
+
 import email.schaal.ocreader.R;
 import io.realm.Realm;
+import io.realm.Sort;
 
 /**
  * TreeItem representing the folder with starred items.
@@ -50,6 +53,11 @@ public class StarredFolder implements TreeItem, TreeIconable {
     @Override
     public int getCount(Realm realm) {
         return (int) realm.where(Item.class).equalTo(Item.STARRED, true).count();
+    }
+
+    @Override
+    public List<Feed> getFeeds(Realm realm) {
+        return realm.where(Feed.class).greaterThan(Feed.STARRED_COUNT, 0).findAllSorted(Feed.NAME, Sort.ASCENDING);
     }
 
     @Override

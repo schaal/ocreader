@@ -21,6 +21,7 @@
 package email.schaal.ocreader.model;
 
 import java.util.Comparator;
+import java.util.List;
 
 import io.realm.Realm;
 
@@ -41,4 +42,5 @@ public interface TreeItem {
     long getId();
     String getName();
     int getCount(Realm realm);
+    List<Feed> getFeeds(Realm realm);
 }

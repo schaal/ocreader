@@ -18,7 +18,6 @@ import email.schaal.ocreader.http.HttpManager;
 import email.schaal.ocreader.model.Feed;
 import email.schaal.ocreader.model.Folder;
 import email.schaal.ocreader.model.Item;
-import email.schaal.ocreader.model.User;
 import email.schaal.ocreader.service.SyncService;
 import io.realm.Realm;
 import retrofit2.Call;
