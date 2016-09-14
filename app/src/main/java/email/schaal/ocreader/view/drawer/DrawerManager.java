@@ -132,7 +132,7 @@ public class DrawerManager {
             for(IDrawerItem drawerItem: topDrawerItems) {
                 if(drawerItem.getTag() instanceof TreeItem) {
                     TreeItem item = (TreeItem) drawerItem.getTag();
-                    int count = Queries.getCount(realm, item);
+                    int count = item.getCount(realm);
                     if(count > 0 && drawerItem instanceof Badgeable)
                         ((Badgeable) drawerItem).withBadge(String.valueOf(count));
                     if (state.getStartDrawerItem().getId() == item.getId()) {
@@ -161,8 +161,6 @@ public class DrawerManager {
 
             PrimaryDrawerItem drawerItem = new TreeItemDrawerItem(item);
 
-            int count = Queries.getCount(realm, item);
-
             if (item instanceof Feed) {
                 shouldSelect = state.isFeedSelected();
             } else {
@@ -171,7 +169,7 @@ public class DrawerManager {
 
             shouldSelect = shouldSelect && state.getStartDrawerItem().getId() == item.getId();
 
-            drawerItem.withBadge(count);
+            drawerItem.withBadge(item.getCount(realm));
 
             return drawerItem.withSetSelected(shouldSelect);
         }

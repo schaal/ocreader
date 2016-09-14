@@ -22,6 +22,8 @@ package email.schaal.ocreader.model;
 
 import java.util.Comparator;
 
+import io.realm.Realm;
+
 /**
  * Interface representing a TreeItem (Feed, Folder or "special" Folders such as AllUnreadFolder).
  */
@@ -38,4 +40,5 @@ public interface TreeItem {
 
     long getId();
     String getName();
+    int getCount(Realm realm);
 }

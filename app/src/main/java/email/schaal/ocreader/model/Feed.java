@@ -126,6 +126,11 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
         return name;
     }
 
+    @Override
+    public int getCount(Realm realm) {
+        return getUnreadCount();
+    }
+
     public void setName(String name) {
         this.name = name;
     }

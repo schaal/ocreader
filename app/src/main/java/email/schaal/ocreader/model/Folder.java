@@ -53,6 +53,11 @@ public class Folder extends RealmObject implements TreeItem, Insertable {
         return name;
     }
 
+    @Override
+    public int getCount(Realm realm) {
+        return realm.where(Feed.class).equalTo(Feed.FOLDER_ID, getId()).sum(Feed.UNREAD_COUNT).intValue();
+    }
+
     public void setName(String name) {
         this.name = name;
     }

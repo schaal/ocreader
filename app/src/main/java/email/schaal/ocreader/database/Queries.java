@@ -258,20 +258,6 @@ public class Queries {
         return query.findAllSorted(Feed.NAME, Sort.ASCENDING);
     }
 
-    public static int getCount(Realm realm, TreeItem item) {
-        int count = 0;
-        if(item instanceof AllUnreadFolder) {
-            count = realm.where(Feed.class).sum(Feed.UNREAD_COUNT).intValue();
-        } else if (item instanceof StarredFolder) {
-            count = (int) realm.where(Item.class).equalTo(Item.STARRED, true).count();
-        } else if (item instanceof Folder) {
-            count = realm.where(Feed.class).equalTo(Feed.FOLDER_ID, item.getId()).sum(Feed.UNREAD_COUNT).intValue();
-        } else if(item instanceof Feed) {
-            count = ((Feed)item).getUnreadCount();
-        }
-        return count;
-    }
-
     @Nullable
     public static RealmResults<Feed> getFeedsForTreeItem(Realm realm, TreeItem item) {
         RealmQuery<Feed> feedQuery = realm.where(Feed.class);
