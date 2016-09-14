@@ -25,6 +25,7 @@ import android.content.Context;
 import java.util.Date;
 
 import email.schaal.ocreader.R;
+import email.schaal.ocreader.database.Queries;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -225,6 +226,9 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
 
     @Override
     public void insert(Realm realm) {
-        realm.insertOrUpdate(this);
+        if(getName() != null) {
+            setFolder(Queries.getOrCreateFolder(realm, folderId));
+            realm.insertOrUpdate(this);
+        }
     }
 }

@@ -71,6 +71,7 @@ public class Folder extends RealmObject implements TreeItem, Insertable {
 
     @Override
     public void insert(Realm realm) {
-        realm.insertOrUpdate(this);
+        if(getName() != null)
+            realm.insertOrUpdate(this);
     }
 }

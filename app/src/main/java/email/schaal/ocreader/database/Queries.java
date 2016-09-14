@@ -229,14 +229,7 @@ public class Queries {
                         deleteTreeItem(realm, currentDatabaseItem, clazz);
                     }
 
-                    // Only update if the item returned is not reduced
-                    if (element.getName() != null) {
-                        if (clazz == Feed.class) {
-                            final Feed feed = (Feed) element;
-                            feed.setFolder(getOrCreateFolder(realm, feed.getFolderId()));
-                        }
-                        realm.insertOrUpdate(element);
-                    }
+                    realm.insertOrUpdate(element);
                 }
 
                 // Remove remaining items from the database
