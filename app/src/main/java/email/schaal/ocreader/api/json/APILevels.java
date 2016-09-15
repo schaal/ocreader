@@ -10,17 +10,19 @@ import java.util.List;
 
 public class APILevels {
     public enum Level {
-        V2("v2"),
-        V12("v1-2");
+        V2("v2", false),
+        V12("v1-2", true);
 
         private final String level;
+        private final boolean supported;
 
         public String getLevel() {
             return level;
         }
 
-        Level(String level) {
+        Level(String level, boolean supported) {
             this.level = level;
+            this.supported = supported;
         }
 
         @Nullable
@@ -38,7 +40,7 @@ public class APILevels {
     @Nullable
     public Level highestSupportedApi() {
         for(Level level : Level.values())
-            if(apiLevels.contains(level.getLevel()))
+            if(level.supported && apiLevels.contains(level.getLevel()))
                 return level;
 
         return null;
