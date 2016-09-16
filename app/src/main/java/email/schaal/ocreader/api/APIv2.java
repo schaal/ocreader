@@ -11,6 +11,7 @@ import java.util.Map;
 import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.api.json.APILevels;
 import email.schaal.ocreader.api.json.Feeds;
+import email.schaal.ocreader.api.json.Items;
 import email.schaal.ocreader.api.json.Status;
 import email.schaal.ocreader.api.json.v2.SyncResponse;
 import email.schaal.ocreader.database.Queries;
@@ -45,7 +46,7 @@ class APIv2 extends API {
         Call<SyncResponse> sync();
 
         @POST("sync")
-        Call<SyncResponse> sync(@Header("If-None-Match") String etag, @Body Map<String, List<Item>> items);
+        Call<SyncResponse> sync(@Header("If-None-Match") String etag, @Body Items items);
 
         @POST("feeds")
         Call<Feeds> createFeed(@Body Feed feed);
@@ -114,12 +115,10 @@ class APIv2 extends API {
                 if(etag == null) {
                     api.sync().enqueue(retrofitCallback);
                 } else {
-                    final List<Item> changedItems = realm.where(Item.class).equalTo(Item.UNREAD_CHANGED, true).or().equalTo(Item.STARRED_CHANGED, true).findAll();
-                    final Map<String,List<Item>> itemMap = new HashMap<>(1);
+                    final Items items = new Items();
+                    items.setItems(realm.where(Item.class).equalTo(Item.UNREAD_CHANGED, true).or().equalTo(Item.STARRED_CHANGED, true).findAll());
 
-                    itemMap.put("items", changedItems);
-
-                    api.sync(etag, itemMap).enqueue(retrofitCallback);
+                    api.sync(etag, items).enqueue(retrofitCallback);
                 }
                 break;
             case LOAD_MORE:
