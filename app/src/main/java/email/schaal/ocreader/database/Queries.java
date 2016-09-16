@@ -211,7 +211,7 @@ public class Queries {
         });
     }
 
-    public static <T extends RealmObject & TreeItem> void deleteAndInsert(Realm realm, final Class<T> clazz, final List<T> elements) {
+    public static <T extends RealmObject & TreeItem & Insertable> void deleteAndInsert(Realm realm, final Class<T> clazz, final List<T> elements) {
         Collections.sort(elements, TreeItem.COMPARATOR);
 
         realm.executeTransaction(new Realm.Transaction() {
@@ -229,7 +229,7 @@ public class Queries {
                         deleteTreeItem(realm, currentDatabaseItem);
                     }
 
-                    realm.insertOrUpdate(element);
+                    element.insert(realm);
                 }
 
                 // Remove remaining items from the database
