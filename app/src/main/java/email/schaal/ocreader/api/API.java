@@ -136,7 +136,7 @@ public abstract class API {
                         }
                     }
 
-                    if(loginInstance == null) {
+                    if(loginInstance == null || apiLevel == null) {
                         loginCallback.onFailure(new LoginError(context.getString(R.string.error_not_compatible)));
                     } else {
                         loginInstance.setupApi(httpManager);
