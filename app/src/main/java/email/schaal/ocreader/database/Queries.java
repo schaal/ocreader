@@ -105,16 +105,6 @@ public class Queries {
         }
     }
 
-    @Nullable
-    public static Folder getFolder(Realm realm, long id) {
-        return realm.where(Folder.class).equalTo(Folder.ID, id).findFirst();
-    }
-
-    @Nullable
-    public static Feed getFeed(Realm realm, long id) {
-        return realm.where(Feed.class).equalTo(Feed.ID, id).findFirst();
-    }
-
     /**
      * Get all items belonging to treeItem, sorted by sortFieldname using order
      * @param realm Realm object to query
@@ -183,11 +173,6 @@ public class Queries {
         }
 
         return query != null ? query.findAllSorted(Folder.NAME, Sort.ASCENDING) : null;
-    }
-
-    @NonNull
-    public static RealmResults<Feed> getFeeds(Realm realm) {
-        return realm.where(Feed.class).findAllSorted(Feed.PINNED, Sort.ASCENDING, Feed.NAME, Sort.ASCENDING);
     }
 
     public static void insert(Realm realm, @Nullable final Insertable element) {
@@ -361,7 +346,7 @@ public class Queries {
      * @return Feed with id feedId (either from the database or a newly created one)
      */
     public static Feed getOrCreateFeed(Realm realm, long feedId) {
-        Feed feed = getFeed(realm, feedId);
+        Feed feed = Feed.get(realm, feedId);
         if(feed == null) {
             feed = realm.createObject(Feed.class);
             feed.setId(feedId);
@@ -381,7 +366,7 @@ public class Queries {
         if(folderId == 0)
             return null;
 
-        Folder folder = getFolder(realm, folderId);
+        Folder folder = Folder.get(realm, folderId);
         if(folder == null) {
             folder = realm.createObject(Folder.class);
             folder.setId(folderId);

@@ -21,6 +21,7 @@
 package email.schaal.ocreader.model;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import java.util.Collections;
 import java.util.Date;
@@ -30,6 +31,7 @@ import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.Queries;
 import io.realm.Realm;
 import io.realm.RealmObject;
+import io.realm.Sort;
 import io.realm.annotations.PrimaryKey;
 
 /**
@@ -248,5 +250,10 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
     public void delete(Realm realm) {
         realm.where(Item.class).equalTo(Item.FEED_ID, getId()).findAll().deleteAllFromRealm();
         deleteFromRealm();
+    }
+
+    @Nullable
+    public static Feed get(Realm realm, long id) {
+        return realm.where(Feed.class).equalTo(Feed.ID, id).findFirst();
     }
 }

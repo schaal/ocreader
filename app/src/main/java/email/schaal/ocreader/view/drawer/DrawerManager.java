@@ -248,12 +248,12 @@ public class DrawerManager {
                 startDrawerItem = starredFolder;
             } else {
                 if (isFeed) {
-                    startDrawerItem = Queries.getFeed(realm, startDrawerItemId);
+                    startDrawerItem = Feed.get(realm, startDrawerItemId);
                 } else {
-                    startDrawerItem = Queries.getFolder(realm, startDrawerItemId);
+                    startDrawerItem = Folder.get(realm, startDrawerItemId);
                 }
                 if(endDrawerItemId != null) {
-                    endDrawerItem = Queries.getFeed(realm, endDrawerItemId);
+                    endDrawerItem = Feed.get(realm, endDrawerItemId);
                 }
             }
 

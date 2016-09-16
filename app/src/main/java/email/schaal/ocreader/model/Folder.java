@@ -20,6 +20,8 @@
 
 package email.schaal.ocreader.model;
 
+import android.support.annotation.Nullable;
+
 import java.util.List;
 
 import io.realm.Realm;
@@ -94,5 +96,10 @@ public class Folder extends RealmObject implements TreeItem, Insertable {
             feed.delete(realm);
         }
         deleteFromRealm();
+    }
+
+    @Nullable
+    public static Folder get(Realm realm, long id) {
+        return realm.where(Folder.class).equalTo(Folder.ID, id).findFirst();
     }
 }

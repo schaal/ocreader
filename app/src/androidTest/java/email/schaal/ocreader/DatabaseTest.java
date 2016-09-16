@@ -96,7 +96,7 @@ public class DatabaseTest {
             realm = Realm.getDefaultInstance();
             Queries.insert(realm, folder);
 
-            Folder dbFolder = Queries.getFolder(realm, 1);
+            Folder dbFolder = Folder.get(realm, 1);
 
             assertNotNull(dbFolder);
             assertEquals(dbFolder.getName(), "TestFolderTitle");
@@ -116,7 +116,7 @@ public class DatabaseTest {
             realm = Realm.getDefaultInstance();
             Queries.insert(realm, feed);
 
-            feed = Queries.getFeed(realm, 1);
+            feed = Feed.get(realm, 1);
 
             assertNotNull(feed);
             assertEquals(feed.getName(), "TestFeedTitle");

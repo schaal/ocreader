@@ -127,7 +127,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
 
     @Override
     public void changeFeed(String url, long feedId, long folderId) {
-        final Feed feed = Queries.getFeed(getRealm(), feedId);
+        final Feed feed = Feed.get(getRealm(), feedId);
         final ProgressDialog progressDialog = showProgress(this, getString(R.string.moving_feed));
 
         API.getInstance().moveFeed(getRealm(), feed, folderId, new API.APICallback<Void, String>() {
