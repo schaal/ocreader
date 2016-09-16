@@ -1,4 +1,4 @@
-package email.schaal.ocreader.api.json;
+package email.schaal.ocreader.api.json.v12;
 
 import java.util.HashMap;
 import java.util.HashSet;
