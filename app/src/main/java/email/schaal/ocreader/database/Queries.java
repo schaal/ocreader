@@ -226,7 +226,7 @@ public class Queries {
 
                     // The lists are sorted by id, so if currentDatabaseItem.getId() < element.getId() we can remove it from the database
                     while (databaseIterator.hasNext() && (currentDatabaseItem = databaseIterator.next()).getId() < element.getId()) {
-                        deleteTreeItem(realm, currentDatabaseItem);
+                        currentDatabaseItem.delete(realm);
                     }
 
                     element.insert(realm);
@@ -234,19 +234,10 @@ public class Queries {
 
                 // Remove remaining items from the database
                 while (databaseIterator.hasNext()) {
-                    deleteTreeItem(realm, databaseIterator.next());
+                    databaseIterator.next().delete(realm);
                 }
             }
         });
-    }
-
-    private static <T extends RealmObject & TreeItem> void deleteTreeItem(Realm realm, T item) {
-        if (item instanceof Feed) {
-            // Also remove items belonging to feed being removed from database
-            realm.where(Item.class).equalTo(Item.FEED_ID, item.getId()).findAll().deleteAllFromRealm();
-        }
-
-        item.deleteFromRealm();
     }
 
     @NonNull

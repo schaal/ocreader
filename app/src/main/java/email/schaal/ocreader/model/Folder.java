@@ -87,4 +87,12 @@ public class Folder extends RealmObject implements TreeItem, Insertable {
         if(getName() != null)
             realm.insertOrUpdate(this);
     }
+
+    @Override
+    public void delete(Realm realm) {
+        for(Feed feed: getFeeds(realm)) {
+            feed.delete(realm);
+        }
+        deleteFromRealm();
+    }
 }

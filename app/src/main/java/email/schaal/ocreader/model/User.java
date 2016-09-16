@@ -85,4 +85,9 @@ public class User extends RealmObject implements Insertable {
     public void insert(Realm realm) {
         realm.insertOrUpdate(this);
     }
+
+    @Override
+    public void delete(Realm realm) {
+        deleteFromRealm();
+    }
 }

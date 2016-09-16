@@ -243,4 +243,10 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
             realm.insertOrUpdate(this);
         }
     }
+
+    @Override
+    public void delete(Realm realm) {
+        realm.where(Item.class).equalTo(Item.FEED_ID, getId()).findAll().deleteAllFromRealm();
+        deleteFromRealm();
+    }
 }

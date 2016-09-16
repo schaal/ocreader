@@ -290,4 +290,9 @@ public class Item extends RealmObject implements Insertable {
         }
 
     }
+
+    @Override
+    public void delete(Realm realm) {
+        deleteFromRealm();
+    }
 }

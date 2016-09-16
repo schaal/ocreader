@@ -12,4 +12,5 @@ public interface Insertable {
      * @param realm Database to insert object into.
      */
     void insert(Realm realm);
+    void delete(Realm realm);
 }
