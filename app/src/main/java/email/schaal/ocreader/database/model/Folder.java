@@ -22,10 +22,12 @@ package email.schaal.ocreader.database.model;
 
 import android.support.annotation.Nullable;
 
+import java.util.Iterator;
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
+import io.realm.RealmQuery;
 import io.realm.Sort;
 import io.realm.annotations.PrimaryKey;
 
@@ -66,6 +68,25 @@ public class Folder extends RealmObject implements TreeItem, Insertable {
     @Override
     public List<Feed> getFeeds(Realm realm) {
         return realm.where(Feed.class).equalTo(Feed.FOLDER_ID, getId()).findAllSorted(Feed.NAME, Sort.ASCENDING);
+    }
+
+    @Override
+    public List<Item> getItems(Realm realm, boolean onlyUnread) {
+        // Get all feeds belonging to Folder treeItem
+        List<Feed> feeds = getFeeds(realm);
+        RealmQuery<Item> query = null;
+        if(feeds != null && feeds.size() > 0) {
+            // Find all items belonging to any feed from this folder
+            Iterator<Feed> feedIterator = feeds.iterator();
+            query = realm.where(Item.class)
+                    .equalTo(Item.FEED_ID, feedIterator.next().getId());
+            while (feedIterator.hasNext()) {
+                query.or().equalTo(Item.FEED_ID, feedIterator.next().getId());
+            }
+            if(onlyUnread)
+                query.equalTo(Item.UNREAD, true);
+        }
+        return query != null ? query.distinct(Item.FINGERPRINT) : null;
     }
 
     public void setName(String name) {

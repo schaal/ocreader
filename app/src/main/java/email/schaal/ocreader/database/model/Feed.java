@@ -139,6 +139,11 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
         return Collections.singletonList(this);
     }
 
+    @Override
+    public List<Item> getItems(Realm realm, boolean onlyUnread) {
+        return realm.where(Item.class).equalTo(Item.FEED_ID, id).findAll();
+    }
+
     public void setName(String name) {
         this.name = name;
     }

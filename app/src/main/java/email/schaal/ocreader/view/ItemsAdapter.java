@@ -25,6 +25,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.database.model.AllUnreadFolder;
@@ -80,7 +82,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    RealmResults<Item> tempItems = Queries.getItems(realm, state.getTreeItem(), isOnlyUnread());
+                    List<Item> tempItems = state.getTreeItem().getItems(realm, isOnlyUnread());
                     temporaryFeed.setId(state.getTreeItem().getId());
                     temporaryFeed.setName(state.getTreeItem().getName());
                     temporaryFeed.getItems().clear();

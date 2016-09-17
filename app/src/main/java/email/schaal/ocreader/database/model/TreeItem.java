@@ -43,4 +43,5 @@ public interface TreeItem {
     String getName();
     int getCount(Realm realm);
     List<Feed> getFeeds(Realm realm);
+    List<Item> getItems(Realm realm, boolean onlyUnread);
 }

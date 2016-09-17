@@ -61,6 +61,11 @@ public class AllUnreadFolder implements TreeItem, TreeIconable {
     }
 
     @Override
+    public List<Item> getItems(Realm realm, boolean onlyUnread) {
+        return realm.where(Item.class).equalTo(Item.UNREAD, true).distinct(Item.FINGERPRINT);
+    }
+
+    @Override
     public int getIcon() {
         return R.drawable.ic_feed_icon;
     }

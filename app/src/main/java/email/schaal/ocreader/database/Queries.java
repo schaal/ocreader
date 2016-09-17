@@ -105,56 +105,6 @@ public class Queries {
         }
     }
 
-    /**
-     * Get all items belonging to treeItem, sorted by sortFieldname using order
-     * @param realm Realm object to query
-     * @param treeItem TreeItem to query items from
-     * @param onlyUnread Return only unread items?
-     * @return items belonging to TreeItem, only unread if onlyUnread is true
-     */
-    @Nullable
-    public static RealmResults<Item> getItems(Realm realm, TreeItem treeItem, boolean onlyUnread) {
-        RealmQuery<Item> query = null;
-        // Whether to return only items with a distinct fingerprint
-        boolean distinct = false;
-
-        if(treeItem instanceof Feed)
-            query = realm.where(Item.class).equalTo(Item.FEED_ID, treeItem.getId());
-        else if(treeItem instanceof Folder) {
-            distinct = true;
-            // Get all feeds belonging to Folder treeItem
-            List<Feed> feeds = treeItem.getFeeds(realm);
-            if(feeds != null && feeds.size() > 0) {
-                // Find all items belonging to any feed from this folder
-                Iterator<Feed> feedIterator = feeds.iterator();
-                query = realm.where(Item.class)
-                        .equalTo(Item.FEED_ID, feedIterator.next().getId());
-                while (feedIterator.hasNext()) {
-                    query.or().equalTo(Item.FEED_ID, feedIterator.next().getId());
-                }
-            }
-        } else if(treeItem instanceof AllUnreadFolder) {
-            distinct = true;
-            query = realm.where(Item.class).equalTo(Item.UNREAD, true);
-            // prevent onlyUnread from adding the same condition again
-            onlyUnread = false;
-        } else if(treeItem instanceof StarredFolder) {
-            query = realm.where(Item.class).equalTo(Item.STARRED, true);
-        }
-
-        if (query != null) {
-            if(onlyUnread)
-                query.equalTo(Item.UNREAD, true);
-
-            if(distinct) {
-                return query.distinct(Item.FINGERPRINT);
-            } else {
-                return query.findAll();
-            }
-        } else
-            return null;
-    }
-
     @Nullable
     public static RealmResults<Folder> getFolders(Realm realm, boolean onlyUnread) {
         RealmQuery<Folder> query = null;

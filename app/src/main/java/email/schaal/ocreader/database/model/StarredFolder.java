@@ -61,6 +61,11 @@ public class StarredFolder implements TreeItem, TreeIconable {
     }
 
     @Override
+    public List<Item> getItems(Realm realm, boolean onlyUnread) {
+        return realm.where(Item.class).equalTo(Item.STARRED, true).findAll();
+    }
+
+    @Override
     public int getIcon() {
         return R.drawable.ic_star_outline;
     }
