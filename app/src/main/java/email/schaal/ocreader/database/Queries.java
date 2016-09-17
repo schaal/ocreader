@@ -269,41 +269,6 @@ public class Queries {
             AlarmUtils.getInstance().cancelAlarm();
     }
 
-    /**
-     * Return the feed with id feedId, or insert a new (temporary) feed into the database.
-     * @param realm Database to operate on
-     * @param feedId id of the feed
-     * @return Feed with id feedId (either from the database or a newly created one)
-     */
-    public static Feed getOrCreateFeed(Realm realm, long feedId) {
-        Feed feed = Feed.get(realm, feedId);
-        if(feed == null) {
-            feed = realm.createObject(Feed.class);
-            feed.setId(feedId);
-        }
-        return feed;
-    }
-
-    /**
-     * Return the folder with id folderId, or insert a new (temporary) folder into the database.
-     * @param realm Database to operate on
-     * @param folderId id of the folder
-     * @return Folder with id folderId (either from the database or a newly created one)
-     */
-    @Nullable
-    public static Folder getOrCreateFolder(Realm realm, long folderId) {
-        // root has folderId == 0, which has no folder in db
-        if(folderId == 0)
-            return null;
-
-        Folder folder = Folder.get(realm, folderId);
-        if(folder == null) {
-            folder = realm.createObject(Folder.class);
-            folder.setId(folderId);
-        }
-        return folder;
-    }
-
     public static void deleteFeed(final Realm realm, final Feed feed) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override

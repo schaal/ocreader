@@ -285,7 +285,7 @@ public class Item extends RealmObject implements Insertable {
             }
         } else {
             // new full item
-            setFeed(Queries.getOrCreateFeed(realm, getFeedId()));
+            setFeed(Feed.getOrCreate(realm, getFeedId()));
             realm.insertOrUpdate(this);
         }
 

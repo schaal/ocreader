@@ -245,7 +245,7 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
     @Override
     public void insert(Realm realm) {
         if(getName() != null) {
-            setFolder(Queries.getOrCreateFolder(realm, folderId));
+            setFolder(Folder.getOrCreate(realm, folderId));
             realm.insertOrUpdate(this);
         }
     }
@@ -259,5 +259,20 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
     @Nullable
     public static Feed get(Realm realm, long id) {
         return realm.where(Feed.class).equalTo(Feed.ID, id).findFirst();
+    }
+
+    /**
+     * Return the feed with id feedId, or insert a new (temporary) feed into the database.
+     * @param realm Database to operate on
+     * @param feedId id of the feed
+     * @return Feed with id feedId (either from the database or a newly created one)
+     */
+    public static Feed getOrCreate(Realm realm, long feedId) {
+        Feed feed = Feed.get(realm, feedId);
+        if(feed == null) {
+            feed = realm.createObject(Feed.class);
+            feed.setId(feedId);
+        }
+        return feed;
     }
 }

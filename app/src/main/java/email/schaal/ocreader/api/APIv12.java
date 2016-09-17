@@ -509,7 +509,7 @@ class APIv12 extends API {
                     @Override
                     public void execute(Realm realm) {
                         feed.setFolderId(folderId);
-                        feed.setFolder(Queries.getOrCreateFolder(realm, folderId));
+                        feed.setFolder(Folder.getOrCreate(realm, folderId));
                     }
                 });
                 return true;
