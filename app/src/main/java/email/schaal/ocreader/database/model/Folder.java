@@ -28,6 +28,7 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
+import io.realm.RealmResults;
 import io.realm.Sort;
 import io.realm.annotations.PrimaryKey;
 
@@ -122,5 +123,25 @@ public class Folder extends RealmObject implements TreeItem, Insertable {
     @Nullable
     public static Folder get(Realm realm, long id) {
         return realm.where(Folder.class).equalTo(Folder.ID, id).findFirst();
+    }
+
+    @Nullable
+    public static List<Folder> getAll(Realm realm, boolean onlyUnread) {
+        RealmQuery<Folder> query = null;
+        if(onlyUnread) {
+            RealmResults<Feed> unreadFeeds = realm.where(Feed.class).greaterThan(Feed.UNREAD_COUNT, 0).notEqualTo(Feed.FOLDER_ID, 0).findAll();
+            if(unreadFeeds.size() > 0) {
+                Iterator<Feed> feedIterator = unreadFeeds.iterator();
+                query = realm.where(Folder.class)
+                        .equalTo(Folder.ID, feedIterator.next().getFolderId());
+                while (feedIterator.hasNext()) {
+                    query.or().equalTo(Folder.ID, feedIterator.next().getFolderId());
+                }
+            }
+        } else {
+            query = realm.where(Folder.class);
+        }
+
+        return query != null ? query.findAllSorted(Folder.NAME, Sort.ASCENDING) : null;
     }
 }

@@ -105,26 +105,6 @@ public class Queries {
         }
     }
 
-    @Nullable
-    public static RealmResults<Folder> getFolders(Realm realm, boolean onlyUnread) {
-        RealmQuery<Folder> query = null;
-        if(onlyUnread) {
-            RealmResults<Feed> unreadFeeds = realm.where(Feed.class).greaterThan(Feed.UNREAD_COUNT, 0).notEqualTo(Feed.FOLDER_ID, 0).findAll();
-            if(unreadFeeds.size() > 0) {
-                Iterator<Feed> feedIterator = unreadFeeds.iterator();
-                query = realm.where(Folder.class)
-                        .equalTo(Folder.ID, feedIterator.next().getFolderId());
-                while (feedIterator.hasNext()) {
-                    query.or().equalTo(Folder.ID, feedIterator.next().getFolderId());
-                }
-            }
-        } else {
-            query = realm.where(Folder.class);
-        }
-
-        return query != null ? query.findAllSorted(Folder.NAME, Sort.ASCENDING) : null;
-    }
-
     public static void insert(Realm realm, @Nullable final Insertable element) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override

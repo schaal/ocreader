@@ -142,7 +142,7 @@ public class DrawerManager {
                 }
             }
 
-            final RealmResults<Folder> folders = Queries.getFolders(realm, showOnlyUnread);
+            final List<Folder> folders = Folder.getAll(realm, showOnlyUnread);
             if(folders != null) {
                 for (Folder folder : folders) {
                     drawerItems.add(getDrawerItem(realm, folder));
