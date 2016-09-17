@@ -14,10 +14,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
-import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.api.API;
-import email.schaal.ocreader.model.Feed;
-import email.schaal.ocreader.model.Folder;
+import email.schaal.ocreader.database.model.Feed;
+import email.schaal.ocreader.database.model.Folder;
 import email.schaal.ocreader.view.AddNewFeedDialogFragment;
 import email.schaal.ocreader.view.DividerItemDecoration;
 import email.schaal.ocreader.view.FeedManageListener;

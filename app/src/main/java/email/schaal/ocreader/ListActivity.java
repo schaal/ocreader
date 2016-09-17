@@ -71,11 +71,11 @@ import com.mikepenz.materialdrawer.model.interfaces.Tagable;
 import java.io.ByteArrayInputStream;
 
 import email.schaal.ocreader.database.Queries;
-import email.schaal.ocreader.model.Feed;
-import email.schaal.ocreader.model.Item;
-import email.schaal.ocreader.model.TemporaryFeed;
-import email.schaal.ocreader.model.TreeItem;
-import email.schaal.ocreader.model.User;
+import email.schaal.ocreader.database.model.Feed;
+import email.schaal.ocreader.database.model.Item;
+import email.schaal.ocreader.database.model.TemporaryFeed;
+import email.schaal.ocreader.database.model.TreeItem;
+import email.schaal.ocreader.database.model.User;
 import email.schaal.ocreader.service.SyncService;
 import email.schaal.ocreader.view.DividerItemDecoration;
 import email.schaal.ocreader.view.ItemViewHolder;

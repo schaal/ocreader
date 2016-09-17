@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import email.schaal.ocreader.ManageFeedsActivity;
 import email.schaal.ocreader.R;
-import email.schaal.ocreader.model.Feed;
+import email.schaal.ocreader.database.model.Feed;
 
 /**
  * Display form to add new Feed

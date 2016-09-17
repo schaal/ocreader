@@ -8,9 +8,9 @@ import android.widget.Button;
 import android.widget.ViewSwitcher;
 
 import email.schaal.ocreader.R;
-import email.schaal.ocreader.model.Feed;
-import email.schaal.ocreader.model.Folder;
-import email.schaal.ocreader.model.TreeItem;
+import email.schaal.ocreader.database.model.Feed;
+import email.schaal.ocreader.database.model.Folder;
+import email.schaal.ocreader.database.model.TreeItem;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
 import io.realm.Sort;

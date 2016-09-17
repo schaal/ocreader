@@ -1,4 +1,4 @@
-package email.schaal.ocreader.model;
+package email.schaal.ocreader.api.json;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonReader;

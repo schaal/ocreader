@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 
-import email.schaal.ocreader.model.Item;
+import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
 import io.realm.Sort;

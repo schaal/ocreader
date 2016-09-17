@@ -29,5 +29,5 @@
 -dontnote android.net.http.**
 
 #project
--keep class email.schaal.ocreader.model.Item
+-keep class email.schaal.ocreader.database.model.Item
 -keep class email.schaal.ocreader.view.ArticleWebView$1

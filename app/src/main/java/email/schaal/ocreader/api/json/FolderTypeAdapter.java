@@ -18,7 +18,7 @@
  *
  */
 
-package email.schaal.ocreader.model;
+package email.schaal.ocreader.api.json;
 
 import android.util.Log;
 
@@ -26,6 +26,8 @@ import com.squareup.moshi.JsonReader;
 import com.squareup.moshi.JsonWriter;
 
 import java.io.IOException;
+
+import email.schaal.ocreader.database.model.Folder;
 
 /**
  * TypeAdapter to deserialize the JSON response for Folders.

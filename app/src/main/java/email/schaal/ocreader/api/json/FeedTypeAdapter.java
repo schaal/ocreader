@@ -18,7 +18,7 @@
  *
  */
 
-package email.schaal.ocreader.model;
+package email.schaal.ocreader.api.json;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -28,6 +28,7 @@ import com.squareup.moshi.JsonWriter;
 
 import java.io.IOException;
 
+import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.util.StringUtils;
 
 /**

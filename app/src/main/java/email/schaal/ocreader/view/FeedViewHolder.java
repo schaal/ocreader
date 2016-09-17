@@ -6,7 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import email.schaal.ocreader.R;
-import email.schaal.ocreader.model.Feed;
+import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.util.FeedColors;
 

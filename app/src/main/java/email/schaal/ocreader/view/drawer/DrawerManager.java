@@ -38,11 +38,11 @@ import java.util.List;
 import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.Queries;
-import email.schaal.ocreader.model.AllUnreadFolder;
-import email.schaal.ocreader.model.Feed;
-import email.schaal.ocreader.model.Folder;
-import email.schaal.ocreader.model.StarredFolder;
-import email.schaal.ocreader.model.TreeItem;
+import email.schaal.ocreader.database.model.AllUnreadFolder;
+import email.schaal.ocreader.database.model.Feed;
+import email.schaal.ocreader.database.model.Folder;
+import email.schaal.ocreader.database.model.StarredFolder;
+import email.schaal.ocreader.database.model.TreeItem;
 import io.realm.Realm;
 import io.realm.RealmResults;
 

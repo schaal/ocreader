@@ -18,7 +18,7 @@
  *
  */
 
-package email.schaal.ocreader.model;
+package email.schaal.ocreader.api.json;
 
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -31,6 +31,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
 
+import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.util.StringUtils;
 
 /**

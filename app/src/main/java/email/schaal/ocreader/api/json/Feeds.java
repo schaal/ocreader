@@ -2,7 +2,7 @@ package email.schaal.ocreader.api.json;
 
 import java.util.List;
 
-import email.schaal.ocreader.model.Feed;
+import email.schaal.ocreader.database.model.Feed;
 
 /**
  * Class to deserialize the json response for feeds

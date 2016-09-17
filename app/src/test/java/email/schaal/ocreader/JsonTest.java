@@ -11,10 +11,10 @@ import org.robolectric.annotation.Config;
 
 import java.io.IOException;
 
-import email.schaal.ocreader.model.Feed;
-import email.schaal.ocreader.model.FeedTypeAdapter;
-import email.schaal.ocreader.model.Item;
-import email.schaal.ocreader.model.ItemTypeAdapter;
+import email.schaal.ocreader.database.model.Feed;
+import email.schaal.ocreader.api.json.FeedTypeAdapter;
+import email.schaal.ocreader.database.model.Item;
+import email.schaal.ocreader.api.json.ItemTypeAdapter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

@@ -14,7 +14,7 @@ import org.robolectric.annotation.Config;
 import java.util.ArrayList;
 import java.util.List;
 
-import email.schaal.ocreader.model.Feed;
+import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.util.TextDrawable;
 

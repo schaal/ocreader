@@ -31,9 +31,9 @@ import org.junit.runner.RunWith;
 import java.util.Date;
 
 import email.schaal.ocreader.database.Queries;
-import email.schaal.ocreader.model.Feed;
-import email.schaal.ocreader.model.Folder;
-import email.schaal.ocreader.model.Item;
+import email.schaal.ocreader.database.model.Feed;
+import email.schaal.ocreader.database.model.Folder;
+import email.schaal.ocreader.database.model.Item;
 import io.realm.Realm;
 
 import static org.junit.Assert.assertEquals;

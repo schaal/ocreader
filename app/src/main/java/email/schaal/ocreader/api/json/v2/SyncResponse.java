@@ -2,9 +2,9 @@ package email.schaal.ocreader.api.json.v2;
 
 import java.util.List;
 
-import email.schaal.ocreader.model.Feed;
-import email.schaal.ocreader.model.Folder;
-import email.schaal.ocreader.model.Item;
+import email.schaal.ocreader.database.model.Feed;
+import email.schaal.ocreader.database.model.Folder;
+import email.schaal.ocreader.database.model.Item;
 
 /**
  * Created by daniel on 03.09.16.

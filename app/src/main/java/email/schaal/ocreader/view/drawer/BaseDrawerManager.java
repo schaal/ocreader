@@ -30,7 +30,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import java.util.List;
 
-import email.schaal.ocreader.model.TreeItem;
+import email.schaal.ocreader.database.model.TreeItem;
 import io.realm.Realm;
 
 /**

@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import email.schaal.ocreader.R;
-import email.schaal.ocreader.model.Folder;
+import email.schaal.ocreader.database.model.Folder;
 import io.realm.OrderedRealmCollection;
 
 /**

@@ -1,6 +1,6 @@
 package email.schaal.ocreader.view;
 
-import email.schaal.ocreader.model.Feed;
+import email.schaal.ocreader.database.model.Feed;
 
 /**
  * Callbacks for feed management

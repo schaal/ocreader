@@ -3,7 +3,7 @@ package email.schaal.ocreader.api.json.v12;
 import java.util.HashSet;
 import java.util.Set;
 
-import email.schaal.ocreader.model.Item;
+import email.schaal.ocreader.database.model.Item;
 
 /**
  * Aggregates item ids, used to mark multiple items as read

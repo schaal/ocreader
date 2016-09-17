@@ -18,7 +18,7 @@
  *
  */
 
-package email.schaal.ocreader.model;
+package email.schaal.ocreader.api.json;
 
 import android.util.Log;
 
@@ -27,6 +27,8 @@ import com.squareup.moshi.JsonWriter;
 
 import java.io.IOException;
 import java.util.Date;
+
+import email.schaal.ocreader.database.model.User;
 
 /**
  * TypeAdapter to deserialize the JSON response for Users.

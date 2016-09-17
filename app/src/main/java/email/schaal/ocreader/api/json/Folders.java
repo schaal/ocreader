@@ -2,7 +2,7 @@ package email.schaal.ocreader.api.json;
 
 import java.util.List;
 
-import email.schaal.ocreader.model.Folder;
+import email.schaal.ocreader.database.model.Folder;
 
 /**
  * Class to deserialize the json response for folders

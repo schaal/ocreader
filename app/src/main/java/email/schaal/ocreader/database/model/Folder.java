@@ -18,7 +18,7 @@
  *
  */
 
-package email.schaal.ocreader.model;
+package email.schaal.ocreader.database.model;
 
 import android.support.annotation.Nullable;
 

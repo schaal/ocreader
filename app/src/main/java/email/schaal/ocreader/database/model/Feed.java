@@ -18,7 +18,7 @@
  *
  */
 
-package email.schaal.ocreader.model;
+package email.schaal.ocreader.database.model;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -31,7 +31,6 @@ import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.Queries;
 import io.realm.Realm;
 import io.realm.RealmObject;
-import io.realm.Sort;
 import io.realm.annotations.PrimaryKey;
 
 /**

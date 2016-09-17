@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import email.schaal.ocreader.model.Item;
+import email.schaal.ocreader.database.model.Item;
 
 /**
  * Aggregates feedIds and guidHashes, used to mark multiple items as starred

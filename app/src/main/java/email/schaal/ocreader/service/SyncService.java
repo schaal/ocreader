@@ -34,8 +34,8 @@ import android.util.Log;
 
 import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.api.API;
-import email.schaal.ocreader.model.Feed;
-import email.schaal.ocreader.model.Item;
+import email.schaal.ocreader.database.model.Feed;
+import email.schaal.ocreader.database.model.Item;
 import io.realm.Realm;
 import io.realm.RealmResults;
 

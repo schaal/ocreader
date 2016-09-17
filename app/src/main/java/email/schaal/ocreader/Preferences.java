@@ -22,7 +22,7 @@ package email.schaal.ocreader;
 
 import android.content.SharedPreferences;
 
-import email.schaal.ocreader.model.AllUnreadFolder;
+import email.schaal.ocreader.database.model.AllUnreadFolder;
 import io.realm.Sort;
 
 /**

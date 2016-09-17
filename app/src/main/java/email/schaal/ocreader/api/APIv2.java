@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import email.schaal.ocreader.Preferences;
@@ -16,9 +14,9 @@ import email.schaal.ocreader.api.json.Status;
 import email.schaal.ocreader.api.json.v2.SyncResponse;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.http.HttpManager;
-import email.schaal.ocreader.model.Feed;
-import email.schaal.ocreader.model.Folder;
-import email.schaal.ocreader.model.Item;
+import email.schaal.ocreader.database.model.Feed;
+import email.schaal.ocreader.database.model.Folder;
+import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.service.SyncService;
 import io.realm.Realm;
 import retrofit2.Call;

@@ -26,7 +26,7 @@ import android.support.annotation.Nullable;
 import com.github.zafarkhaja.semver.UnexpectedCharacterException;
 import com.github.zafarkhaja.semver.Version;
 
-import email.schaal.ocreader.model.User;
+import email.schaal.ocreader.database.model.User;
 
 /**
  * Encapsulates the JSON response for the status api call

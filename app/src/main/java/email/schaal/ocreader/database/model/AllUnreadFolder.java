@@ -18,7 +18,7 @@
  *
  */
 
-package email.schaal.ocreader.model;
+package email.schaal.ocreader.database.model;
 
 import android.content.Context;
 
@@ -29,15 +29,15 @@ import io.realm.Realm;
 import io.realm.Sort;
 
 /**
- * TreeItem representing the folder with starred items.
+ * TreeItem representing the folder with all unread items.
  */
-public class StarredFolder implements TreeItem, TreeIconable {
-    public final static long ID = -11;
+public class AllUnreadFolder implements TreeItem, TreeIconable {
+    public final static long ID = -10;
 
     private final String name;
 
-    public StarredFolder(Context context) {
-        this.name = context.getString(R.string.starred_items);
+    public AllUnreadFolder(Context context) {
+        this.name = context.getString(R.string.unread_items);
     }
 
     @Override
@@ -52,16 +52,16 @@ public class StarredFolder implements TreeItem, TreeIconable {
 
     @Override
     public int getCount(Realm realm) {
-        return (int) realm.where(Item.class).equalTo(Item.STARRED, true).count();
+        return realm.where(Feed.class).sum(Feed.UNREAD_COUNT).intValue();
     }
 
     @Override
     public List<Feed> getFeeds(Realm realm) {
-        return realm.where(Feed.class).greaterThan(Feed.STARRED_COUNT, 0).findAllSorted(Feed.NAME, Sort.ASCENDING);
+        return realm.where(Feed.class).greaterThan(Feed.UNREAD_COUNT, 0).findAllSorted(Feed.NAME, Sort.ASCENDING);
     }
 
     @Override
     public int getIcon() {
-        return R.drawable.ic_star_outline;
+        return R.drawable.ic_feed_icon;
     }
 }

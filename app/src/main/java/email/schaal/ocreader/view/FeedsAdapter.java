@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import email.schaal.ocreader.R;
-import email.schaal.ocreader.model.Feed;
+import email.schaal.ocreader.database.model.Feed;
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 

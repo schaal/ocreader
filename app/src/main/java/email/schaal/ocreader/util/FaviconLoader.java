@@ -24,7 +24,7 @@ import com.squareup.picasso.Target;
 import java.util.Locale;
 
 import email.schaal.ocreader.R;
-import email.schaal.ocreader.model.Feed;
+import email.schaal.ocreader.database.model.Feed;
 
 /**
  * Load favicons

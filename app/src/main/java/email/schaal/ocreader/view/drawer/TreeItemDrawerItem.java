@@ -31,10 +31,10 @@ import com.mikepenz.materialdrawer.model.BaseViewHolder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 
 import email.schaal.ocreader.R;
-import email.schaal.ocreader.model.Feed;
-import email.schaal.ocreader.model.Folder;
-import email.schaal.ocreader.model.TreeIconable;
-import email.schaal.ocreader.model.TreeItem;
+import email.schaal.ocreader.database.model.Feed;
+import email.schaal.ocreader.database.model.Folder;
+import email.schaal.ocreader.database.model.TreeIconable;
+import email.schaal.ocreader.database.model.TreeItem;
 import email.schaal.ocreader.util.FaviconLoader;
 
 /**

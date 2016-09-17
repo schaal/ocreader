@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import email.schaal.ocreader.R;
-import email.schaal.ocreader.model.Feed;
+import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
 import io.realm.Sort;
