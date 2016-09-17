@@ -167,7 +167,12 @@ class APIv2 extends API {
         api.deleteFeed(feed.getId()).enqueue(new BaseRetrofitCallback<Void>(apiCallback) {
             @Override
             protected boolean onResponseReal(Response<Void> response) {
-                Queries.deleteFeed(realm, feed);
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        feed.delete(realm);
+                    }
+                });
                 return true;
             }
         });

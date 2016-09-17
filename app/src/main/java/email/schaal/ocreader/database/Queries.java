@@ -268,14 +268,4 @@ public class Queries {
         else
             AlarmUtils.getInstance().cancelAlarm();
     }
-
-    public static void deleteFeed(final Realm realm, final Feed feed) {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                realm.where(Item.class).equalTo(Item.FEED_ID, feed.getId()).findAll().deleteAllFromRealm();
-                feed.deleteFromRealm();
-            }
-        });
-    }
 }
