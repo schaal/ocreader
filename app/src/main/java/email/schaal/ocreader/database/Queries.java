@@ -180,29 +180,37 @@ public class Queries {
         });
     }
 
-    public static void markTemporaryFeedAsRead(Realm realm, @Nullable final Long lastItemId, Realm.Transaction.OnSuccess onSuccess, Realm.Transaction.OnError onError) {
+    public static void markAboveAsRead(Realm realm, final List<Item> items, final long lastItemId) {
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                try {
+                    for(Item item: items) {
+                        item.setUnread(false);
+                        if(item.getId() == lastItemId) {
+                            break;
+                        }
+                    }
+                } finally {
+                    checkAlarm(realm);
+                }
+            }
+        });
+    }
+
+    public static void markTemporaryFeedAsRead(Realm realm, Realm.Transaction.OnSuccess onSuccess, Realm.Transaction.OnError onError) {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 try {
                     TemporaryFeed temporaryFeed = realm.where(TemporaryFeed.class).findFirst();
 
-                    RealmQuery<Item> itemRealmQuery = temporaryFeed.getItems()
+                    RealmResults<Item> unreadItems = temporaryFeed.getItems()
                             .where()
-                            .equalTo(Item.UNREAD, true);
-
-                    // Make sure lastItem is in the query results
-                    if(lastItemId != null && lastItemId >= 0) {
-                        itemRealmQuery.or().equalTo(Item.ID, lastItemId);
-                    }
-
-                    RealmResults<Item> unreadItems = itemRealmQuery.findAll();
+                            .equalTo(Item.UNREAD, true).findAll();
 
                     for(Item item: unreadItems) {
                         item.setUnread(false);
-                        if(lastItemId != null && item.getId() == lastItemId) {
-                            break;
-                        }
                     }
                 } finally {
                     checkAlarm(realm);

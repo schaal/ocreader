@@ -163,6 +163,10 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return state.getStartDrawerItem() instanceof AllUnreadFolder;
     }
 
+    public OrderedRealmCollection<Item> getItems() {
+        return items;
+    }
+
     private class EmptyStateViewHolder extends RecyclerView.ViewHolder {
         public EmptyStateViewHolder(View itemView) {
             super(itemView);

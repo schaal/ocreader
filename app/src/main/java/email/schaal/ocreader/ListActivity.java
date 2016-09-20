@@ -332,7 +332,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
             @Override
             public void onClick(final View v) {
-                Queries.markTemporaryFeedAsRead(getRealm(), null,
+                Queries.markTemporaryFeedAsRead(getRealm(),
                         new Realm.Transaction.OnSuccess() {
                             @Override
                             public void onSuccess() {
@@ -604,18 +604,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 mode.finish();
                 return true;
             case R.id.action_mark_above_read:
-                Queries.markTemporaryFeedAsRead(getRealm(), adapter.getSelectedItems()[0].getId(),
-                        new Realm.Transaction.OnSuccess() {
-                            @Override
-                            public void onSuccess() {
-                                adapter.updateItems(false);
-                            }
-                        }, new Realm.Transaction.OnError() {
-                            @Override
-                            public void onError(Throwable error) {
-                                error.printStackTrace();
-                            }
-                        });
+                Queries.markAboveAsRead(getRealm(), adapter.getItems(), adapter.getSelectedItems()[0].getId());
                 mode.finish();
                 return true;
         }
