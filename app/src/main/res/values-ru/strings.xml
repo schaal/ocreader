@@ -1,0 +1,103 @@
+<!--
+  ~ Copyright (C) 2015-2016 Daniel Schaal <daniel@schaal.email>
+  ~
+  ~ This file is part of OCReader.
+  ~
+  ~ OCReader is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ OCReader is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with OCReader.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  -->
+
+<resources>
+    <string name="app_name" translatable="false">OCReader</string>
+    <string name="app_year_author" translatable="false">2016 Daniel Schaal</string>
+    <string name="app_url" translatable="false">https://github.com/schaal/ocreader</string>
+
+    <string name="about_app"><![CDATA[<h3>Copyright</h3>%1$s<h3>License</h3>This app is licensed under the GPLv3 or later<h3>Source</h3>%2$s]]></string>
+    <string name="about">About</string>
+
+    <string name="action_mark_read">Mark as read</string>
+    <string name="action_mark_starred">Mark as starred</string>
+    <string name="action_mark_unstarred">Mark as unstarred</string>
+    <string name="action_mark_unread">Mark as unread</string>
+    <string name="action_sync">Synchronize</string>
+
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_url">Server address</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_incorrect_username_or_password">Username or password is incorrect</string>
+    <string name="error_oc_not_found">Could not find ownCloud instance</string>
+    <string name="error_incorrect_url">This url is invalid</string>
+    <string name="error_field_required">This field is required</string>
+
+    <string name="unread_items">Unread articles</string>
+    <string name="starred_items">Starred articles</string>
+
+    <string name="article_by_from">By %1$s from %2$s</string>
+    <string name="article_from">From %1$s</string>
+
+    <string name="title_activity_item_pager">Item</string>
+
+    <string name="feed_icon_description">Feed icon</string>
+
+    <string name="now">now</string>
+
+    <string name="minutes">%dm</string>
+    <string name="hours">%dh</string>
+    <string name="days">%dd</string>
+    <string name="no_articles">There are no articles here</string>
+    <string name="load_more">Load more</string>
+    <string name="starred">Starred</string>
+    <string name="only_unread">Only unread</string>
+    <string name="share_article">Share Article</string>
+    <string name="account_settings">Account Settings</string>
+    <string name="update_warning">Please update Nextcloud News to continue (minimum supported version: %1$s). Your version is %2$s</string>
+    <string name="updater_improperly_configured">News App updater is improperly configured</string>
+    <string name="more_info">More info</string>
+    <string name="untrusted_certificate">Couldn\'t verify certificate, please check your SSL setup</string>
+    <string name="ocnews_too_old">Nextcloud News not installed or too old</string>
+    <string name="error_unknown_host">Unknown Host</string>
+    <string name="error_insecure_connection">Insecure connection, press sign in again to continue anyway</string>
+    <string name="action_sign_in_insecurely">Sign in insecurely</string>
+    <string name="http_error">HTTP error %1$d</string>
+    <string name="mark_previous_articles_read">Mark previous articles read</string>
+    <string name="mark_all_as_read">Mark all as read</string>
+    <string name="play_media">Play media</string>
+    <string name="article_order">Reverse order</string>
+    <string name="title_activity_managefeeds">Manage feeds</string>
+    <string name="feed_url">Feed URL</string>
+    <string name="delete_feed">Delete feed</string>
+    <string name="add">Add</string>
+    <string name="add_new_feed">Add new feed</string>
+    <string name="adding_feed">Adding feed</string>
+    <string name="feed_add_failed">Failed to add feed</string>
+    <string name="confirm_feed_deletion">Do you want to delete the feed %s?</string>
+    <string name="moving_feed">Moving feed</string>
+    <string name="feed_move_failed">Failed to move feed</string>
+    <string name="delete_feed_failed">Failed to delete feed</string>
+    <string name="deleting_feed">Deleting %s</string>
+    <string name="delete">Delete</string>
+    <string name="root_folder">No folder</string>
+    <string name="warning">Warning</string>
+    <string name="feed_update_error">Updating this feed failed</string>
+    <string name="edit_feed">Edit Feed</string>
+    <string name="save">Save</string>
+    <string name="folder">Folder</string>
+    <string name="error_not_compatible">The installed version of Nextcloud News is not compatible with this app.</string>
+
+</resources>
