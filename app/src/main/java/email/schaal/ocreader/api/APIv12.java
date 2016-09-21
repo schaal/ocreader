@@ -307,8 +307,6 @@ class APIv12 extends API {
         api.status().enqueue(callback);
     }
 
-    private static final int MAX_ITEMS = 10000;
-
     @Override
     public void sync(SharedPreferences sharedPreferences, final Realm realm, final SyncService.SyncType syncType, final Intent intent, final APICallback<Void, String> callback) {
         syncChanges(new OnCompletionListener() {
@@ -334,7 +332,6 @@ class APIv12 extends API {
                                 starredItems(realm, apiCallback);
                                 items(realm, apiCallback);
                             } else {
-                                Queries.removeExcessItems(realm, MAX_ITEMS);
                                 updatedItems(realm, lastSync, apiCallback);
                             }
 

@@ -34,6 +34,7 @@ import android.util.Log;
 
 import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.api.API;
+import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.database.model.Item;
 import io.realm.Realm;
@@ -127,6 +128,7 @@ public class SyncService extends Service {
             API.getInstance().sync(sharedPreferences, realm, syncType, intent, new API.APICallback<Void, String>() {
                 @Override
                 public void onSuccess(Void n) {
+                    Queries.removeExcessItems(realm, Queries.MAX_ITEMS);
                     realm.executeTransaction(postProcessFeedTransaction);
                     onFinished();
                 }

@@ -64,6 +64,8 @@ public class Queries {
 
     private final static RealmMigration migration = new DatabaseMigration();
 
+    public static final int MAX_ITEMS = 10000;
+
     public static void closeRealm(@Nullable Realm realm) {
         if(realm != null) {
             realm.close();
