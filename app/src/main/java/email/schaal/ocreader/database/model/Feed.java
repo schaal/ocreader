@@ -28,7 +28,6 @@ import java.util.Date;
 import java.util.List;
 
 import email.schaal.ocreader.R;
-import email.schaal.ocreader.database.Queries;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -135,7 +134,7 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
     }
 
     @Override
-    public List<Feed> getFeeds(Realm realm) {
+    public List<Feed> getFeeds(Realm realm, boolean onlyUnread) {
         return Collections.singletonList(this);
     }
 

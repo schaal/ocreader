@@ -26,6 +26,7 @@ import java.util.List;
 
 import email.schaal.ocreader.R;
 import io.realm.Realm;
+import io.realm.RealmQuery;
 import io.realm.Sort;
 
 /**
@@ -56,13 +57,16 @@ public class StarredFolder implements TreeItem, TreeIconable {
     }
 
     @Override
-    public List<Feed> getFeeds(Realm realm) {
+    public List<Feed> getFeeds(Realm realm, boolean onlyUnread) {
         return realm.where(Feed.class).greaterThan(Feed.STARRED_COUNT, 0).findAllSorted(Feed.NAME, Sort.ASCENDING);
     }
 
     @Override
     public List<Item> getItems(Realm realm, boolean onlyUnread) {
-        return realm.where(Item.class).equalTo(Item.STARRED, true).findAll();
+        final RealmQuery<Item> query = realm.where(Item.class).equalTo(Item.STARRED, true);
+        if(onlyUnread)
+            query.greaterThan(Feed.UNREAD_COUNT, 0);
+        return query.findAll();
     }
 
     @Override

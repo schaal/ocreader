@@ -67,14 +67,17 @@ public class Folder extends RealmObject implements TreeItem, Insertable {
     }
 
     @Override
-    public List<Feed> getFeeds(Realm realm) {
-        return realm.where(Feed.class).equalTo(Feed.FOLDER_ID, getId()).findAllSorted(Feed.NAME, Sort.ASCENDING);
+    public List<Feed> getFeeds(Realm realm, boolean onlyUnread) {
+        final RealmQuery<Feed> query = realm.where(Feed.class).equalTo(Feed.FOLDER_ID, getId());
+        if(onlyUnread)
+            query.greaterThan(Feed.UNREAD_COUNT, 0);
+        return query.findAllSorted(Feed.NAME, Sort.ASCENDING);
     }
 
     @Override
     public List<Item> getItems(Realm realm, boolean onlyUnread) {
         // Get all feeds belonging to Folder treeItem
-        List<Feed> feeds = getFeeds(realm);
+        List<Feed> feeds = getFeeds(realm, onlyUnread);
         RealmQuery<Item> query = null;
         if(feeds != null && feeds.size() > 0) {
             // Find all items belonging to any feed from this folder
@@ -114,7 +117,7 @@ public class Folder extends RealmObject implements TreeItem, Insertable {
 
     @Override
     public void delete(Realm realm) {
-        for(Feed feed: getFeeds(realm)) {
+        for(Feed feed: getFeeds(realm, false)) {
             feed.delete(realm);
         }
         deleteFromRealm();

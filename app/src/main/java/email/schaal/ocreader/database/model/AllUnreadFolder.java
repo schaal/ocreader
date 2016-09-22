@@ -56,7 +56,7 @@ public class AllUnreadFolder implements TreeItem, TreeIconable {
     }
 
     @Override
-    public List<Feed> getFeeds(Realm realm) {
+    public List<Feed> getFeeds(Realm realm, boolean onlyUnread) {
         return realm.where(Feed.class).greaterThan(Feed.UNREAD_COUNT, 0).findAllSorted(Feed.NAME, Sort.ASCENDING);
     }
 

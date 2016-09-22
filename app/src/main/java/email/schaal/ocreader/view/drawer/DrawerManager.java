@@ -44,7 +44,6 @@ import email.schaal.ocreader.database.model.Folder;
 import email.schaal.ocreader.database.model.StarredFolder;
 import email.schaal.ocreader.database.model.TreeItem;
 import io.realm.Realm;
-import io.realm.RealmResults;
 
 /**
  * Manages the drawers displaying feeds and folders.
@@ -182,7 +181,7 @@ public class DrawerManager {
 
         @Override
         protected List<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread) {
-            List<Feed> feeds = state.getStartDrawerItem().getFeeds(realm);
+            List<Feed> feeds = state.getStartDrawerItem().getFeeds(realm, showOnlyUnread);
             List<IDrawerItem> drawerItems = new ArrayList<>((feeds != null ? feeds.size() : 0) + 1);
 
             if (state.isFeedSelected())
