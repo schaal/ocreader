@@ -31,6 +31,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.api.API;
@@ -135,6 +136,7 @@ public class SyncService extends Service {
 
                 @Override
                 public void onFailure(String errorMessage) {
+                    Toast.makeText(SyncService.this, errorMessage, Toast.LENGTH_SHORT).show();
                     onFinished();
                 }
 
