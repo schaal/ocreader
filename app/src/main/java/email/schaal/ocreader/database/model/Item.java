@@ -25,7 +25,6 @@ import android.util.Log;
 
 import java.util.Date;
 
-import email.schaal.ocreader.database.Queries;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.Index;

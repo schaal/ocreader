@@ -28,7 +28,6 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import email.schaal.ocreader.R;
-import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.database.model.AllUnreadFolder;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.database.model.TemporaryFeed;
@@ -36,7 +35,6 @@ import email.schaal.ocreader.database.model.TreeItem;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
-import io.realm.RealmResults;
 import io.realm.Sort;
 
 /**

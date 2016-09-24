@@ -28,12 +28,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import email.schaal.ocreader.database.model.AllUnreadFolder;
 import email.schaal.ocreader.database.model.Feed;
-import email.schaal.ocreader.database.model.Folder;
 import email.schaal.ocreader.database.model.Insertable;
 import email.schaal.ocreader.database.model.Item;
-import email.schaal.ocreader.database.model.StarredFolder;
 import email.schaal.ocreader.database.model.TemporaryFeed;
 import email.schaal.ocreader.database.model.TreeItem;
 import email.schaal.ocreader.util.AlarmUtils;
