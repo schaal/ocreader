@@ -1,0 +1,101 @@
+<!--
+  ~ Copyright (C) 2015-2016 Daniel Schaal <daniel@schaal.email>
+  ~
+  ~ This file is part of OCReader.
+  ~
+  ~ OCReader is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ OCReader is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with OCReader.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  -->
+
+<resources>
+    <string name="app_name" translatable="false">OCReader</string>
+    <string name="app_year_author" translatable="false">2016 Daniel Schaal</string>
+    <string name="app_url" translatable="false">https://github.com/schaal/ocreader</string>
+
+    <string name="about_app"><![CDATA[<h3>Copyright</h3>%1$s<h3>License</h3>This app is licensed under the GPLv3 or later<h3>Source</h3>%2$s]]></string>
+    <string name="about">About</string>
+
+    <string name="action_mark_read">Отметить как прочитанное</string>
+    <string name="action_mark_starred">Отметить как избранные</string>
+    <string name="action_mark_unstarred">Удалить из избранного</string>
+    <string name="action_mark_unread">Отметить как непрочитанное</string>
+    <string name="action_sync">Синхронизировать</string>
+
+    <string name="title_activity_login">Войти в систему</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_username">Имя пользователя</string>
+    <string name="prompt_password">Пароль</string>
+    <string name="prompt_url">Адрес сервера</string>
+    <string name="action_sign_in">Вход</string>
+    <string name="action_sign_in_short">Вход</string>
+    <string name="error_incorrect_username_or_password">Логин или пароль неверны</string>
+    <string name="error_oc_not_found">Не удалось найти экземпляр Nextcloud</string>
+    <string name="error_incorrect_url">Данный URL некорректный</string>
+    <string name="error_field_required">Это поле обязательно к заполнению</string>
+
+    <string name="unread_items">Непрочитанное</string>
+    <string name="starred_items">Избранные статьи</string>
+
+    <string name="article_by_from">By %1$s from %2$s</string>
+    <string name="article_from">From %1$s</string>
+
+    <string name="title_activity_item_pager">Item</string>
+
+    <string name="feed_icon_description">Feed icon</string>
+
+    <string name="now">now</string>
+
+    <string name="minutes">%dm</string>
+    <string name="hours">%dh</string>
+    <string name="days">%dd</string>
+    <string name="no_articles">Там больше нет статей</string>
+    <string name="load_more">Загруть еще</string>
+    <string name="starred">Избранные</string>
+    <string name="only_unread">Только непрочитанные</string>
+    <string name="share_article">Поделиться статьей</string>
+    <string name="account_settings">Настройки аккаунта</string>
+    <string name="update_warning">Необходимо обновить Nextcloud News для продолжения (минимальная поддерживаемая версия: %1$s). Ваша версия: %2$s</string>
+    <string name="updater_improperly_configured">News App updater настроен неправильно</string>
+    <string name="more_info">Больше информации</string>
+    <string name="untrusted_certificate">Не удалось подтвердить сертификат, пожалуйста проверите ваши настройки SSL</string>
+    <string name="ocnews_too_old">Nextcloud News не установлен или слишком стар</string>
+    <string name="error_unknown_host">Неизвестный хост</string>
+    <string name="error_insecure_connection">Ненадежное подключение, нажмите снова войти в систему, чтобы продолжить в любом случае</string>
+    <string name="action_sign_in_insecurely">Небезопасный вход</string>
+    <string name="http_error">HTTP ошибка %1$d</string>
+    <string name="mark_previous_articles_read">Отметить предшествующие статьи как прочитанные</string>
+    <string name="mark_all_as_read">Отметить все как прочитанное</string>
+    <string name="play_media">Воспроизведение медиа</string>
+    <string name="article_order">Обратный порядок</string>
+    <string name="title_activity_managefeeds">Управление лентами</string>
+    <string name="feed_url">URL ленты</string>
+    <string name="delete_feed">Удалить ленту</string>
+    <string name="add">Добавить</string>
+    <string name="add_new_feed">Добавить новую ленту</string>
+    <string name="adding_feed">Добавление ленты</string>
+    <string name="feed_add_failed">Не удалось добавить ленту</string>
+    <string name="confirm_feed_deletion">Вы хотите удалить ленту %s?</string>
+    <string name="moving_feed">Перемещение ленту</string>
+    <string name="feed_move_failed">Не удалось переместить ленту</string>
+    <string name="delete_feed_failed">Не удалось удалить ленту</string>
+    <string name="deleting_feed">Удаление %s</string>
+    <string name="delete">Удалить</string>
+    <string name="root_folder">Без папки</string>
+    <string name="warning">Предупреждение</string>
+    <string name="feed_update_error">Обновить эту ленту не удалось</string>
+    <string name="edit_feed">Редактировать ленту</string>
+    <string name="save">Сохранить</string>
+
+</resources>
