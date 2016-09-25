@@ -91,7 +91,8 @@ public class FeedTypeAdapter extends NewsTypeAdapter<Feed> {
                     feed.setFolderId(in.nextLong());
                     break;
                 case "unreadCount":
-                    feed.setUnreadCount(in.nextInt());
+                    // skip unreadCount, calculated later in SyncService
+                    in.skipValue();
                     break;
                 case "ordering":
                     // createFeed returns a feed with ordering set to NULL
