@@ -155,11 +155,14 @@ public class SyncService extends Service {
     private final Realm.Transaction postProcessFeedTransaction = new Realm.Transaction() {
         @Override
         public void execute(Realm realm) {
-            final RealmResults<Feed> feeds = realm.where(Feed.class).findAll();
-            for (Feed feed: feeds) {
+            for (Feed feed: realm.where(Feed.class).findAll()) {
                 feed.setStarredCount((int) realm.where(Item.class)
-                                .equalTo(Item.FEED_ID, feed.getId())
-                                .equalTo(Item.STARRED, true).count()
+                        .equalTo(Item.FEED_ID, feed.getId())
+                        .equalTo(Item.STARRED, true).count()
+                );
+                feed.setUnreadCount((int) realm.where(Item.class)
+                        .equalTo(Item.FEED_ID, feed.getId())
+                        .equalTo(Item.UNREAD, true).count()
                 );
             }
         }
