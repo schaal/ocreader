@@ -156,8 +156,7 @@ public class SyncService extends Service {
         @Override
         public void execute(Realm realm) {
             final RealmResults<Feed> feeds = realm.where(Feed.class).findAll();
-            for (int i = 0, feedsSize = feeds.size(); i < feedsSize; i++) {
-                Feed feed = feeds.get(i);
+            for (Feed feed: feeds) {
                 feed.setStarredCount((int) realm.where(Item.class)
                                 .equalTo(Item.FEED_ID, feed.getId())
                                 .equalTo(Item.STARRED, true).count()
