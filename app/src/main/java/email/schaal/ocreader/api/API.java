@@ -23,7 +23,7 @@ import email.schaal.ocreader.database.model.Folder;
 import email.schaal.ocreader.api.json.FolderTypeAdapter;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.api.json.ItemTypeAdapter;
-import email.schaal.ocreader.database.model.NewsError;
+import email.schaal.ocreader.api.json.NewsError;
 import email.schaal.ocreader.api.json.StatusTypeAdapter;
 import email.schaal.ocreader.database.model.User;
 import email.schaal.ocreader.api.json.UserTypeAdapter;

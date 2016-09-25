@@ -1,4 +1,4 @@
-package email.schaal.ocreader.database.model;
+package email.schaal.ocreader.api.json;
 
 /**
  * Class to decode error json response
