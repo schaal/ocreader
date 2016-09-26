@@ -48,10 +48,10 @@ public class ItemTypeAdapter extends NewsTypeAdapter<Item> {
         out.name(Item.CONTENT_HASH).value(item.getContentHash());
 
         if(item.isUnreadChanged())
-            out.name("isUnread").value(!item.isUnread());
+            out.name("isUnread").value(item.isUnread());
 
         if(item.isStarredChanged())
-            out.name("isStarred").value(!item.isStarred());
+            out.name("isStarred").value(item.isStarred());
 
         out.endObject();
     }
