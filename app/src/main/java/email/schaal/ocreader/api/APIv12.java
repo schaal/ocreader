@@ -324,7 +324,7 @@ class APIv12 extends API {
                     switch (syncType) {
                         case SYNC_CHANGES_ONLY:
                             callback.onSuccess(null);
-                            break;
+                            return;
                         case FULL_SYNC:
                             long lastSync = getLastSyncTimestamp(realm);
 
