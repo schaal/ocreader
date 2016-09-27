@@ -57,7 +57,7 @@
     <string name="hours">%dh</string>
     <string name="days">%dd</string>
     <string name="no_articles">Там больше нет статей</string>
-    <string name="load_more">Загруть еще</string>
+    <string name="load_more">Загрузить еще</string>
     <string name="starred">Избранные</string>
     <string name="only_unread">Только непрочитанные</string>
     <string name="share_article">Поделиться статьей</string>
@@ -83,7 +83,7 @@
     <string name="adding_feed">Добавление ленты</string>
     <string name="feed_add_failed">Не удалось добавить ленту</string>
     <string name="confirm_feed_deletion">Вы хотите удалить ленту %s?</string>
-    <string name="moving_feed">Перемещение ленту</string>
+    <string name="moving_feed">Перемещение ленты</string>
     <string name="feed_move_failed">Не удалось переместить ленту</string>
     <string name="delete_feed_failed">Не удалось удалить ленту</string>
     <string name="deleting_feed">Удаление %s</string>
