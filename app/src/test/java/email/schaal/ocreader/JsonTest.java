@@ -60,7 +60,7 @@ public class JsonTest {
 
         expectedReducedItem.id = 1;
         expectedReducedItem.contentHash = "oijoijo";
-        expectedReducedItem.isUnread = true;
+        expectedReducedItem.isUnread = false;
         expectedReducedItem.isStarred = null;
 
         assertEquals(expectedReducedItem, reducedItem);
