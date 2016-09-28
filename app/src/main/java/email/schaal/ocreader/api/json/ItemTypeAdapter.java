@@ -116,8 +116,6 @@ public class ItemTypeAdapter extends NewsTypeAdapter<Item> {
                     item.setFeedId(in.nextLong());
                     break;
                 case "isUnread":
-                    item.setUnread(!in.nextBoolean());
-                    break;
                 case "unread":
                     item.setUnread(in.nextBoolean());
                     break;
