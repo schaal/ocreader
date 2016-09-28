@@ -20,6 +20,7 @@
 
 package email.schaal.ocreader.database;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -28,6 +29,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import email.schaal.ocreader.OCReaderApplication;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.database.model.Insertable;
 import email.schaal.ocreader.database.model.Item;
@@ -69,8 +71,9 @@ public class Queries {
         }
     }
 
-    public static void init(RealmConfiguration.Builder builder) {
-        RealmConfiguration realmConfiguration = builder
+    public static void init(Context context) {
+        Realm.init(context);
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
                 .schemaVersion(SCHEMA_VERSION)
                 .deleteRealmIfMigrationNeeded()
                 .initialData(initialData)

@@ -212,7 +212,7 @@ public class Item extends RealmObject implements Insertable {
     }
 
     public void setUnread(boolean unread) {
-        if(isValid() && this.unread != unread) {
+        if(isManaged() && this.unread != unread) {
             unreadChanged = !unreadChanged;
             feed.incrementUnreadCount(unread ? 1 : -1);
         }
@@ -224,7 +224,7 @@ public class Item extends RealmObject implements Insertable {
     }
 
     public void setStarred(boolean starred) {
-        if(isValid() && this.starred != starred) {
+        if(isManaged() && this.starred != starred) {
             starredChanged = !starredChanged;
             feed.incrementStarredCount(starred ? 1 : -1);
         }

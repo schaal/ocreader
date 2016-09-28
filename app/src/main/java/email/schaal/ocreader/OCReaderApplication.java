@@ -37,6 +37,7 @@ import com.squareup.picasso.Picasso;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.util.AlarmUtils;
 import email.schaal.ocreader.util.IcoRequestHandler;
+import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
 /**
@@ -55,7 +56,7 @@ public class OCReaderApplication extends Application {
                 .putBoolean(Preferences.SYS_SYNC_RUNNING.getKey(), false)
                 .apply();
 
-        Queries.init(new RealmConfiguration.Builder(this));
+        Queries.init(this);
 
         AlarmUtils.init(this);
 
