@@ -48,7 +48,8 @@ public class IcoRequestHandler extends RequestHandler {
 
     @Override
     public boolean canHandleRequest(Request data) {
-        return data.uri.getLastPathSegment().endsWith(".ico");
+        // icons from s.ytimg.com have .ico suffix, but are actually png files
+        return data.uri.getLastPathSegment().endsWith(".ico") && !data.uri.getHost().equals("s.ytimg.com");
     }
 
     @Nullable
