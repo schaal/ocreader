@@ -29,7 +29,9 @@ import com.squareup.moshi.JsonWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.util.StringUtils;
@@ -160,10 +162,12 @@ public class ItemTypeAdapter extends NewsTypeAdapter<Item> {
         in.endObject();
     }
 
+    private final static DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZ", Locale.US);
+
     @Nullable
     private Date parseDate(String source) {
         try {
-            return DateFormat.getDateTimeInstance().parse(source);
+            return iso8601Format.parse(source);
         } catch (ParseException e) {
             e.printStackTrace();
             return null;
