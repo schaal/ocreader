@@ -16,8 +16,8 @@ import io.realm.Sort;
  * Show a error viewholder for Feeds with too many update failures
  */
 public class ErrorAdapter extends LoadMoreAdapter {
-    public ErrorAdapter(Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, OnLoadMoreListener loadMoreListener) {
-        super(realm, state, clickListener, order, loadMoreListener);
+    public ErrorAdapter(Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, String sortField, OnLoadMoreListener loadMoreListener) {
+        super(realm, state, clickListener, order, sortField, loadMoreListener);
     }
 
     @Override

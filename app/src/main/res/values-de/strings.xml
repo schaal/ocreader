@@ -66,4 +66,7 @@
     <string name="edit_feed">Feed bearbeiten</string>
     <string name="folder">Ordner</string>
     <string name="error_not_compatible">Diese Version von Nextcloud News ist nicht kompatibel mit dieser App</string>
+    <string name="ascending">Aufsteigend</string>
+    <string name="publication_date">Veröffentlichungsdatum</string>
+    <string name="updated_date">Aktualisierungsdatum</string>
 </resources>

@@ -53,19 +53,22 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public final static int VIEW_TYPE_ERROR = 4;
 
     private Sort order;
+    private String sortField;
 
-    public ItemsAdapter(Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order) {
+    public ItemsAdapter(Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, String sortField) {
         this.realm = realm;
         this.state = state;
         this.clickListener = clickListener;
 
         this.order = order;
+        this.sortField = sortField;
 
         setHasStableIds(true);
     }
 
-    public void setOrder(Sort order) {
+    public void setOrder(Sort order, String sortField) {
         this.order = order;
+        this.sortField = sortField;
 
         updateItems(false);
     }
@@ -91,7 +94,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             });
         }
 
-        items = temporaryFeed.getItems().sort(Item.PUB_DATE, order);
+        items = temporaryFeed.getItems().sort(sortField, order);
 
         notifyDataSetChanged();
     }
@@ -163,6 +166,9 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public OrderedRealmCollection<Item> getItems() {
         return items;
+    }
+
+    public void updateSort() {
     }
 
     private class EmptyStateViewHolder extends RecyclerView.ViewHolder {

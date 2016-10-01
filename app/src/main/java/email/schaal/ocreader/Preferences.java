@@ -23,6 +23,7 @@ package email.schaal.ocreader;
 import android.content.SharedPreferences;
 
 import email.schaal.ocreader.database.model.AllUnreadFolder;
+import email.schaal.ocreader.database.model.Item;
 import io.realm.Sort;
 
 /**
@@ -35,6 +36,7 @@ public enum Preferences {
     PASSWORD("password", null),
     URL("url", null),
     ORDER("order", Sort.DESCENDING),
+    SORT_FIELD("sort_field", Item.PUB_DATE),
 
     /** System preferences **/
     SYS_NEEDS_UPDATE_AFTER_SYNC("needs_update_after_sync", false),

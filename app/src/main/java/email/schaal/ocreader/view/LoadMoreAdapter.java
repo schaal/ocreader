@@ -22,8 +22,8 @@ public class LoadMoreAdapter extends ItemsAdapter {
     private final ItemsAdapter.OnLoadMoreListener loadMoreListener;
     private TreeItem loadingMoreTreeItem;
 
-    public LoadMoreAdapter(Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, OnLoadMoreListener loadMoreListener) {
-        super(realm, state, clickListener, order);
+    public LoadMoreAdapter(Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, String sortField, OnLoadMoreListener loadMoreListener) {
+        super(realm, state, clickListener, order, sortField);
         this.loadMoreListener = loadMoreListener;
     }
 

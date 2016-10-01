@@ -41,6 +41,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -49,6 +50,7 @@ import android.util.Base64InputStream;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -321,7 +323,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         layoutManager = new LinearLayoutManager(this);
 
-        adapter = new SelectableItemsAdapter(getRealm(), drawerManager.getState(), this, Preferences.ORDER.getOrder(preferences), this);
+        adapter = new SelectableItemsAdapter(getRealm(), drawerManager.getState(), this, Preferences.ORDER.getOrder(preferences), Preferences.SORT_FIELD.getString(preferences), this);
 
         fab_mark_all_read = (FloatingActionButton) findViewById(R.id.fab_mark_all_as_read);
         fab_mark_all_read.setOnClickListener(new View.OnClickListener() {
@@ -452,13 +454,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.menu_sort:
-                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-                Sort order = Preferences.ORDER.getOrder(sharedPreferences) == Sort.ASCENDING ? Sort.DESCENDING : Sort.ASCENDING;
-
-                sharedPreferences.edit().putBoolean(Preferences.ORDER.getKey(), order.getValue()).apply();
-
-                adapter.setOrder(order);
+                showSortPopup(findViewById(R.id.menu_sort));
 
                 return true;
             case R.id.menu_about:
@@ -469,6 +465,55 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showSortPopup(View view) {
+        PopupMenu popupMenu = new PopupMenu(this, view);
+        popupMenu.inflate(R.menu.menu_sort);
+
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Sort order = Preferences.ORDER.getOrder(sharedPreferences) == Sort.ASCENDING ? Sort.DESCENDING : Sort.ASCENDING;
+        String field = Preferences.SORT_FIELD.getString(sharedPreferences);
+
+        final MenuItem orderMenuItem = popupMenu.getMenu().findItem(R.id.action_sort_order);
+        orderMenuItem.setChecked(order == Sort.ASCENDING);
+
+        final MenuItem selectedField;
+
+        if(field.equals(Item.PUB_DATE)) {
+            selectedField = popupMenu.getMenu().findItem(R.id.action_sort_pubdate);
+        } else {
+            selectedField = popupMenu.getMenu().findItem(R.id.action_sort_updatedate);
+        }
+        selectedField.setChecked(true);
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                boolean updateSort = false;
+
+                switch (item.getItemId()) {
+                    case R.id.action_sort_order:
+                        sharedPreferences.edit().putBoolean(Preferences.ORDER.getKey(), item.isChecked()).apply();
+                        updateSort = true;
+                        break;
+                    case R.id.action_sort_pubdate:
+                        sharedPreferences.edit().putString(Preferences.SORT_FIELD.getKey(), Item.PUB_DATE).apply();
+                        updateSort = true;
+                        break;
+                    case R.id.action_sort_updatedate:
+                        sharedPreferences.edit().putString(Preferences.SORT_FIELD.getKey(), Item.UPDATED_AT).apply();
+                        updateSort = true;
+                        break;
+                }
+                if(updateSort) {
+                    adapter.setOrder(Preferences.ORDER.getOrder(sharedPreferences), Preferences.SORT_FIELD.getString(sharedPreferences));
+                }
+                return updateSort;
+            }
+        });
+
+        popupMenu.show();
     }
 
     private void showAboutDialog() {

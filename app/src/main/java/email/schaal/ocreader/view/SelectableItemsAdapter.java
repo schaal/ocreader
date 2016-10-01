@@ -15,8 +15,8 @@ import io.realm.Sort;
 public class SelectableItemsAdapter extends ErrorAdapter {
     private final SparseArray<Item> selectedItems = new SparseArray<>();
 
-    public SelectableItemsAdapter(Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, OnLoadMoreListener loadMoreListener) {
-        super(realm, state, clickListener, order, loadMoreListener);
+    public SelectableItemsAdapter(Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, String sortField, OnLoadMoreListener loadMoreListener) {
+        super(realm, state, clickListener, order, sortField, loadMoreListener);
     }
 
     @Override
