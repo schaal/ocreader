@@ -78,7 +78,7 @@
     <string name="mark_previous_articles_read">Mark previous articles read</string>
     <string name="mark_all_as_read">Mark all as read</string>
     <string name="play_media">Play media</string>
-    <string name="article_order">Reverse order</string>
+    <string name="article_order">Change order</string>
     <string name="title_activity_managefeeds">Manage feeds</string>
     <string name="feed_url">Feed URL</string>
     <string name="delete_feed">Delete feed</string>

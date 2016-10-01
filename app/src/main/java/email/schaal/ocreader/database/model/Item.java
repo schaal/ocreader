@@ -157,6 +157,10 @@ public class Item extends RealmObject implements Insertable {
 
     public void setPubDate(Date pubDate) {
         this.pubDate = pubDate;
+        // Use pubDate for updatedAt, updatedAt only available on Nextcloud News >= 9.0.5
+        if(this.updatedAt == null) {
+            this.updatedAt = pubDate;
+        }
     }
 
     public Date getUpdatedAt() {
