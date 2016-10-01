@@ -137,6 +137,9 @@ public class ItemTypeAdapter extends NewsTypeAdapter<Item> {
                 case "contentHash":
                     item.setContentHash(in.nextString());
                     break;
+                case "updatedDate":
+                    item.setUpdatedAt(new Date(in.nextLong() * 1000));
+                    break;
                 default:
                     Log.w(TAG, "Unknown value in item json: " + name);
                     in.skipValue();
