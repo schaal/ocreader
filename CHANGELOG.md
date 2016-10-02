@@ -1,3 +1,12 @@
+## 0.18 (2016-10-02)
+
+Note: You will have to login and sync again due to internal changes after the upgrade
+
+* Add Russian translation (Thanks to @thfree)
+* Add more sorting options (sort by publication or update date)
+  * Only useful when using Nextcloud News >= 9.0.5 as the "real" publication date is not available on earlier versions (see https://github.com/nextcloud/news/pull/43)
+* Fix feed icons for youtube feeds
+
 ## 0.17 (2016-09-08)
 
 * Use the same dialog for changing and adding a feed
