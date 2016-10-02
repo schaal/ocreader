@@ -37,8 +37,6 @@ import com.squareup.picasso.Picasso;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.util.AlarmUtils;
 import email.schaal.ocreader.util.IcoRequestHandler;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 /**
  * Application class to setup the singletons

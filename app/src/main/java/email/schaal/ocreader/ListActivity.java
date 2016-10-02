@@ -50,7 +50,6 @@ import android.util.Base64InputStream;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;

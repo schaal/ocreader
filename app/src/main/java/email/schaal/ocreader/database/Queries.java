@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import email.schaal.ocreader.OCReaderApplication;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.database.model.Insertable;
 import email.schaal.ocreader.database.model.Item;
