@@ -319,7 +319,7 @@ class APIv12 extends API {
             @Override
             public void onCompleted(boolean result) {
                 if(result) {
-                    final Set<Callable<Runnable>> callables = new HashSet<>(5);
+                    final Set<Callable<Runnable>> callables = new HashSet<>(6);
 
                     switch (syncType) {
                         case SYNC_CHANGES_ONLY:
@@ -328,6 +328,7 @@ class APIv12 extends API {
                         case FULL_SYNC:
                             long lastSync = getLastSyncTimestamp(realm);
 
+                            callables.add(new UserCallable(realm));
                             callables.add(new FoldersCallable(realm));
                             callables.add(new FeedsCallable(realm));
 
@@ -433,6 +434,27 @@ class APIv12 extends API {
             if(response.isSuccessful())
                 return getRunnable(response);
             return null;
+        }
+    }
+
+    private class UserCallable extends RealmCallable<User> {
+        UserCallable(Realm realm) {
+            super(realm);
+        }
+
+        @Override
+        protected Runnable getRunnable(final Response<User> response) {
+            return new Runnable() {
+                @Override
+                public void run() {
+                    Queries.insert(realm, response.body());
+                }
+            };
+        }
+
+        @Override
+        protected Response<User> getResponse() throws IOException {
+            return api.user().execute();
         }
     }
 

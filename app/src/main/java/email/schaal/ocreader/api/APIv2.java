@@ -90,6 +90,7 @@ class APIv2 extends API {
 
     @Override
     public void sync(final SharedPreferences sharedPreferences, final Realm realm, SyncService.SyncType syncType, Intent intent, APICallback<Void, String> apiCallback) {
+        // TODO: 02.10.16 sync user
         final BaseRetrofitCallback<SyncResponse> retrofitCallback = new BaseRetrofitCallback<SyncResponse>(apiCallback) {
             @Override
             protected boolean onResponseReal(Response<SyncResponse> response) {
