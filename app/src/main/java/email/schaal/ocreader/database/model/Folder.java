@@ -142,8 +142,7 @@ public class Folder extends RealmObject implements TreeItem, Insertable {
 
         Folder folder = Folder.get(realm, folderId);
         if(folder == null) {
-            folder = realm.createObject(Folder.class);
-            folder.setId(folderId);
+            folder = realm.createObject(Folder.class, folderId);
         }
         return folder;
     }

@@ -269,8 +269,7 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
     public static Feed getOrCreate(Realm realm, long feedId) {
         Feed feed = Feed.get(realm, feedId);
         if(feed == null) {
-            feed = realm.createObject(Feed.class);
-            feed.setId(feedId);
+            feed = realm.createObject(Feed.class, feedId);
         }
         return feed;
     }
