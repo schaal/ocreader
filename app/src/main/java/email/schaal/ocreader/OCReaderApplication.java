@@ -35,6 +35,7 @@ import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
 import email.schaal.ocreader.database.Queries;
+import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.util.AlarmUtils;
 import email.schaal.ocreader.util.IcoRequestHandler;
 
@@ -52,6 +53,7 @@ public class OCReaderApplication extends Application {
 
         preferences.edit()
                 .putBoolean(Preferences.SYS_SYNC_RUNNING.getKey(), false)
+                .putString(Preferences.SORT_FIELD.getKey(), Item.ID)
                 .apply();
 
         Queries.init(this);

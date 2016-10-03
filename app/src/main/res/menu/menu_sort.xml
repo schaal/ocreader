@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single"
-        android:id="@+id/menu_group_sort_field">
+        android:id="@+id/menu_group_sort_field"
+        android:enabled="false"
+        android:visible="false">
         <item android:title="@string/publication_date"
             android:id="@+id/action_sort_pubdate" />
         <item android:title="@string/updated_date"
