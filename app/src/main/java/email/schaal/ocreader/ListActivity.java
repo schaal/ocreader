@@ -47,6 +47,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Base64;
 import android.util.Base64InputStream;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
@@ -471,11 +472,11 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         popupMenu.inflate(R.menu.menu_sort);
 
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        Sort order = Preferences.ORDER.getOrder(sharedPreferences) == Sort.ASCENDING ? Sort.DESCENDING : Sort.ASCENDING;
+        Sort order = Preferences.ORDER.getOrder(sharedPreferences);
         String field = Preferences.SORT_FIELD.getString(sharedPreferences);
 
         final MenuItem orderMenuItem = popupMenu.getMenu().findItem(R.id.action_sort_order);
-        orderMenuItem.setChecked(order == Sort.ASCENDING);
+        orderMenuItem.setChecked(order != Sort.ASCENDING);
 
         final MenuItem selectedField;
 
@@ -493,7 +494,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
                 switch (item.getItemId()) {
                     case R.id.action_sort_order:
-                        sharedPreferences.edit().putBoolean(Preferences.ORDER.getKey(), item.isChecked()).apply();
+                        item.setChecked(!item.isChecked());
+                        sharedPreferences.edit().putBoolean(Preferences.ORDER.getKey(), !item.isChecked()).apply();
                         updateSort = true;
                         break;
                     case R.id.action_sort_pubdate:
@@ -505,6 +507,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                         updateSort = true;
                         break;
                 }
+
                 if(updateSort) {
                     adapter.setOrder(Preferences.ORDER.getOrder(sharedPreferences), Preferences.SORT_FIELD.getString(sharedPreferences));
                 }
