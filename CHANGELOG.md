@@ -1,3 +1,9 @@
+## 0.19 (2016-10-03)
+
+* Use the same ordering as the web interface (Fixes #19)
+* Remove sorting options again, Nextcloud News with support for this is not released yet
+* Workaround bug in realm 2.0.0 (realm/realm-java#3505)
+
 ## 0.18 (2016-10-02)
 
 Note: You will have to login and sync again due to internal changes after the upgrade
