@@ -60,18 +60,24 @@ public class IcoRequestHandler extends RequestHandler {
         if(response != null && response.getInputStream() != null) {
             final InputStream inputStream = response.getInputStream();
 
-            List<Bitmap> bitmaps = ICODecoder.read(inputStream);
+            try {
+                List<Bitmap> bitmaps = ICODecoder.read(inputStream);
 
-            Bitmap biggest = bitmaps.remove(0);
+                Bitmap biggest = bitmaps.remove(0);
 
-            for(Bitmap bitmap: bitmaps) {
-                if(bitmap.getHeight() > biggest.getHeight())
-                    biggest = bitmap;
+                for (Bitmap bitmap : bitmaps) {
+                    if (bitmap.getHeight() > biggest.getHeight())
+                        biggest = bitmap;
+                }
+
+                return new Result(biggest, Picasso.LoadedFrom.NETWORK);
+            } finally {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-
-            inputStream.close();
-
-            return new Result(biggest, Picasso.LoadedFrom.NETWORK);
         }
 
         return null;
