@@ -48,6 +48,7 @@ import email.schaal.ocreader.database.model.TemporaryFeed;
 import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.util.FeedColors;
 import email.schaal.ocreader.view.ProgressFloatingActionButton;
+import io.realm.RealmResults;
 import io.realm.Sort;
 
 public class ItemPagerActivity extends RealmActivity {
@@ -57,10 +58,6 @@ public class ItemPagerActivity extends RealmActivity {
     public static final int REQUEST_CODE = 2;
     public static final String EXTRA_CURRENT_POSITION = "email.schaal.ocreader.extra.CURRENT_POSIION";
 
-    private Sort order;
-    private String sortField;
-
-    private TemporaryFeed temporaryFeed;
     private Toolbar toolbar;
     private ProgressFloatingActionButton fab;
 
@@ -71,6 +68,7 @@ public class ItemPagerActivity extends RealmActivity {
     private MenuItem menuItemMarkRead;
     private MenuItem menuItemMarkStarred;
     private ViewPager mViewPager;
+    private RealmResults<Item> items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +78,12 @@ public class ItemPagerActivity extends RealmActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        order = Preferences.ORDER.getOrder(PreferenceManager.getDefaultSharedPreferences(this));
-        sortField = Preferences.SORT_FIELD.getString(PreferenceManager.getDefaultSharedPreferences(this));
+        final Sort order = Preferences.ORDER.getOrder(PreferenceManager.getDefaultSharedPreferences(this));
+        final String sortField = Preferences.SORT_FIELD.getString(PreferenceManager.getDefaultSharedPreferences(this));
+
+        final TemporaryFeed temporaryFeed = getRealm().where(TemporaryFeed.class).findFirst();
+
+        items = temporaryFeed.getItems().sort(sortField, order);
 
         TypedArray typedArray = obtainStyledAttributes(new int[] { R.attr.colorPrimary, R.attr.colorAccent });
         try {
@@ -93,7 +95,6 @@ public class ItemPagerActivity extends RealmActivity {
         }
 
         int position = getIntent().getIntExtra(POSITION, 0);
-        temporaryFeed = getRealm().where(TemporaryFeed.class).findFirst();
 
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -135,7 +136,7 @@ public class ItemPagerActivity extends RealmActivity {
     }
 
     public Item getItemForPosition(int position) {
-        return temporaryFeed.getItems().sort(sortField, order).get(position);
+        return items.get(position);
     }
 
     @Override
@@ -224,7 +225,7 @@ public class ItemPagerActivity extends RealmActivity {
 
         @Override
         public int getCount() {
-            return temporaryFeed.getItems().size();
+            return items.size();
         }
     }
 
