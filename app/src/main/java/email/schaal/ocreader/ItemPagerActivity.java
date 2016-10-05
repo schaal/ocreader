@@ -58,6 +58,7 @@ public class ItemPagerActivity extends RealmActivity {
     public static final String EXTRA_CURRENT_POSITION = "email.schaal.ocreader.extra.CURRENT_POSIION";
 
     private Sort order;
+    private String sortField;
 
     private TemporaryFeed temporaryFeed;
     private Toolbar toolbar;
@@ -80,6 +81,7 @@ public class ItemPagerActivity extends RealmActivity {
         setSupportActionBar(toolbar);
 
         order = Preferences.ORDER.getOrder(PreferenceManager.getDefaultSharedPreferences(this));
+        sortField = Preferences.SORT_FIELD.getString(PreferenceManager.getDefaultSharedPreferences(this));
 
         TypedArray typedArray = obtainStyledAttributes(new int[] { R.attr.colorPrimary, R.attr.colorAccent });
         try {
@@ -133,7 +135,7 @@ public class ItemPagerActivity extends RealmActivity {
     }
 
     public Item getItemForPosition(int position) {
-        return temporaryFeed.getItems().sort(Item.PUB_DATE, order).get(position);
+        return temporaryFeed.getItems().sort(sortField, order).get(position);
     }
 
     @Override
