@@ -206,7 +206,7 @@ public class ItemPagerActivity extends RealmActivity {
     private class SectionsPagerAdapter extends FragmentStatePagerAdapter {
         private final WeakHashMap<Integer, ItemPageFragment> fragments;
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
             fragments = new WeakHashMap<>(getCount());
         }
@@ -230,7 +230,7 @@ public class ItemPagerActivity extends RealmActivity {
     }
 
     private class MyOnPageChangeListener implements ViewPager.OnPageChangeListener {
-        public static final int DURATION = 250;
+        static final int DURATION = 250;
         private final SectionsPagerAdapter mSectionsPagerAdapter;
 
         private final ValueAnimator.AnimatorUpdateListener animatorUpdateListener = new ValueAnimator.AnimatorUpdateListener() {
@@ -300,7 +300,7 @@ public class ItemPagerActivity extends RealmActivity {
             }
         };
 
-        public MyOnPageChangeListener(SectionsPagerAdapter mSectionsPagerAdapter) {
+        MyOnPageChangeListener(SectionsPagerAdapter mSectionsPagerAdapter) {
             this.mSectionsPagerAdapter = mSectionsPagerAdapter;
             colorTo = defaultToolbarColor;
             fabColorTo = defaultAccent;
