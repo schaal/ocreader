@@ -28,6 +28,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
@@ -94,16 +95,18 @@ public class OCReaderApplication extends Application {
             @Override
             public Drawable placeholder(Context ctx, String tag) {
                 final int drawableRes;
-                if(tag == null)
-                    tag = "";
 
-                switch (tag) {
-                    case "PROFILE":
-                        drawableRes = R.drawable.ic_launcher;
-                        break;
-                    default:
-                        drawableRes = R.drawable.ic_feed_icon;
-                        break;
+                if(tag != null) {
+                    switch (DrawerImageLoader.Tags.valueOf(tag)) {
+                        case PROFILE:
+                            drawableRes = R.drawable.ic_launcher;
+                            break;
+                        default:
+                            drawableRes = R.drawable.ic_feed_icon;
+                            break;
+                    }
+                } else {
+                    drawableRes = R.drawable.ic_feed_icon;
                 }
 
                 return ContextCompat.getDrawable(ctx, drawableRes);
