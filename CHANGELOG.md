@@ -1,3 +1,7 @@
+## 0.20 (2016-10-06)
+
+* Fix ordering in article view
+
 ## 0.19 (2016-10-03)
 
 * Use the same ordering as the web interface (Fixes #19)
