@@ -563,7 +563,13 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     }
 
     private void updateUserProfile() {
-        User user = getRealm().where(User.class).equalTo(User.USER_ID, Preferences.USERNAME.getString(PreferenceManager.getDefaultSharedPreferences(this))).findFirst();
+        final String username = Preferences.USERNAME.getString(PreferenceManager.getDefaultSharedPreferences(this));
+
+        User user = null;
+
+        if(username != null)
+            user = getRealm().where(User.class).equalTo(User.USER_ID, username).findFirst();
+
         if(user != null) {
             profileDrawerItem.withName(user.getDisplayName());
             String encodedImage = user.getAvatar();
