@@ -1,3 +1,7 @@
+## 0.21 (2016-10-06)
+
+* Fix crash when username is not known yet (Fixes #22)
+
 ## 0.20 (2016-10-06)
 
 * Fix ordering in article view
