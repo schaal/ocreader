@@ -565,24 +565,23 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private void updateUserProfile() {
         final String username = Preferences.USERNAME.getString(PreferenceManager.getDefaultSharedPreferences(this));
 
-        User user = null;
+        if(username != null) {
+            final User user = getRealm().where(User.class).equalTo(User.USER_ID, username).findFirst();
 
-        if(username != null)
-            user = getRealm().where(User.class).equalTo(User.USER_ID, username).findFirst();
-
-        if(user != null) {
-            profileDrawerItem.withName(user.getDisplayName());
-            String encodedImage = user.getAvatar();
-            if(encodedImage != null) {
-                Bitmap avatarBitmap = BitmapFactory.decodeStream(new Base64InputStream(new ByteArrayInputStream(encodedImage.getBytes()), Base64.DEFAULT));
-                profileDrawerItem.withIcon(avatarBitmap);
+            if (user != null) {
+                profileDrawerItem.withName(user.getDisplayName());
+                final String encodedImage = user.getAvatar();
+                if (encodedImage != null) {
+                    Bitmap avatarBitmap = BitmapFactory.decodeStream(new Base64InputStream(new ByteArrayInputStream(encodedImage.getBytes()), Base64.DEFAULT));
+                    profileDrawerItem.withIcon(avatarBitmap);
+                } else {
+                    profileDrawerItem.withIcon(R.drawable.ic_launcher);
+                }
+                if (accountHeader != null)
+                    accountHeader.updateProfile(profileDrawerItem);
             } else {
                 profileDrawerItem.withIcon(R.drawable.ic_launcher);
             }
-            if(accountHeader != null)
-                accountHeader.updateProfile(profileDrawerItem);
-        } else {
-            profileDrawerItem.withIcon(R.drawable.ic_launcher);
         }
     }
 
