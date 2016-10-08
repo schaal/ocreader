@@ -622,7 +622,6 @@ class APIv12 extends API {
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
-                        feed.setFolderId(folderId);
                         feed.setFolder(Folder.getOrCreate(realm, folderId));
                     }
                 });

@@ -220,6 +220,7 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
     }
 
     public void setFolder(Folder folder) {
+        this.folderId = folder.getId();
         this.folder = folder;
     }
 
