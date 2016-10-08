@@ -340,20 +340,11 @@ class APIv12 extends API {
                             }
                             break;
                         case LOAD_MORE:
-                            long id = intent.getLongExtra(EXTRA_ID, -1);
-                            long offset = intent.getLongExtra(EXTRA_OFFSET, 0);
-                            boolean isFeed = intent.getBooleanExtra(EXTRA_IS_FEED, false);
+                            final long id = intent.getLongExtra(EXTRA_ID, -1);
+                            final long offset = intent.getLongExtra(EXTRA_OFFSET, 0);
+                            final boolean isFeed = intent.getBooleanExtra(EXTRA_IS_FEED, false);
 
-                            final QueryType queryType;
-
-                            if (id == StarredFolder.ID) {
-                                queryType = QueryType.STARRED;
-                                id = 0;
-                            } else {
-                                queryType = isFeed ? QueryType.FEED : QueryType.FOLDER;
-                            }
-
-                            callables.add(new MoreItemsCallable(realm, queryType, offset, id));
+                            callables.add(new MoreItemsCallable(realm, isFeed, offset, id));
 
                             break;
                     }
@@ -529,11 +520,16 @@ class APIv12 extends API {
         private final long offset;
         private final long id;
 
-        MoreItemsCallable(Realm realm, final QueryType type, final long offset, final long id) {
+        MoreItemsCallable(Realm realm, final boolean isFeed, final long offset, final long id) {
             super(realm);
-            this.type = type;
             this.offset = offset;
-            this.id = id;
+            if (id == StarredFolder.ID) {
+                type = QueryType.STARRED;
+                this.id = 0;
+            } else {
+                type = isFeed ? QueryType.FEED : QueryType.FOLDER;
+                this.id = id;
+            }
         }
 
         @Override
