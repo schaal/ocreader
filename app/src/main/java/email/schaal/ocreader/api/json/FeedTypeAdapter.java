@@ -41,8 +41,8 @@ public class FeedTypeAdapter extends NewsTypeAdapter<Feed> {
     public void toJson(JsonWriter out, Feed feed) throws IOException {
         out.beginObject();
 
-        // Only write url for new feeds (id < 0)
-        if(feed.getId() >= 0) {
+        // Only write url for feeds that are not in the database
+        if(!feed.isManaged()) {
             out.name("url");
             out.value(feed.getUrl());
         }
