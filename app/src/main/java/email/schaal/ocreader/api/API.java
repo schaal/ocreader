@@ -79,7 +79,7 @@ public abstract class API {
     }
 
     private interface CommonAPI {
-        @GET("/index.php/apps/news/api")
+        @GET("index.php/apps/news/api")
         Call<APILevels> apiLevels();
     }
 
