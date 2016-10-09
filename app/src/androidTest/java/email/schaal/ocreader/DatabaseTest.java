@@ -59,6 +59,7 @@ public class DatabaseTest {
     private Feed getTestFeed() {
         Feed feed = new Feed();
         feed.setId(1);
+        feed.setFolderId(0L);
         feed.setName("TestFeedTitle");
         return feed;
     }
