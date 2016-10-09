@@ -32,6 +32,7 @@ import email.schaal.ocreader.database.model.AllUnreadFolder;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.database.model.TemporaryFeed;
 import email.schaal.ocreader.database.model.TreeItem;
+import email.schaal.ocreader.databinding.ListItemBinding;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
@@ -121,8 +122,8 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         switch (viewType) {
             case VIEW_TYPE_ITEM:
             case VIEW_TYPE_LAST_ITEM:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
-                holder = new ItemViewHolder(view, clickListener);
+                ListItemBinding binding = ListItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+                holder = new ItemViewHolder(binding, clickListener);
                 break;
             case VIEW_TYPE_EMPTY:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_empty, parent, false);

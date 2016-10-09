@@ -29,12 +29,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.database.model.Item;
+import email.schaal.ocreader.databinding.ListItemBinding;
 import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.util.FeedColors;
 import email.schaal.ocreader.util.StringUtils;
@@ -49,27 +48,14 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
 
     @ColorInt private final int defaultFeedTextColor;
 
-    private final TextView textViewTitle;
-    private final TextView textViewFeedTitle;
-    private final TextView textViewTime;
-    private final ImageView faviconImageView;
-    private final ImageView starImageView;
-    private final ImageView playButton;
+    private final ListItemBinding binding;
 
     private final View[] alphaViews;
 
-    public ItemViewHolder(final View itemView, final OnClickListener clickListener) {
-        super(itemView);
+    public ItemViewHolder(final ListItemBinding binding, final OnClickListener clickListener) {
+        super(binding.getRoot());
         this.clickListener = clickListener;
-
-        textViewTitle = (TextView) itemView.findViewById(R.id.textViewTitle);
-        textViewFeedTitle = (TextView) itemView.findViewById(R.id.textViewFeedTitle);
-        textViewTime = (TextView) itemView.findViewById(R.id.textViewTime);
-
-        faviconImageView = (ImageView) itemView.findViewById(R.id.imageview_favicon);
-        starImageView = (ImageView) itemView.findViewById(R.id.imageview_star);
-
-        playButton = (ImageView) itemView.findViewById(R.id.play);
+        this.binding = binding;
 
         TypedArray typedArray = itemView.getContext().obtainStyledAttributes(new int[] { android.R.attr.textColorSecondary });
         try {
@@ -79,31 +65,31 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
         }
 
         alphaViews = new View[] {
-                textViewTitle,
-                textViewFeedTitle,
-                textViewTime,
-                faviconImageView,
-                starImageView,
-                playButton
+                binding.textViewTitle,
+                binding.textViewFeedTitle,
+                binding.textViewTime,
+                binding.imageviewFavicon,
+                binding.imageviewStar,
+                binding.play
         };
     }
 
     public void bindItem(final Item item, final int position) {
-        textViewTitle.setText(item.getTitle());
+        binding.textViewTitle.setText(item.getTitle());
 
         Feed feed = item.getFeed();
         if(feed != null) {
-            textViewFeedTitle.setText(feed.getName());
+            binding.textViewFeedTitle.setText(feed.getName());
         } else {
             Log.w(TAG, "Feed == null");
-            textViewFeedTitle.setText("");
+            binding.textViewFeedTitle.setText("");
         }
 
-        textViewTime.setText(StringUtils.getTimeSpanString(itemView.getContext(), item.getPubDate()));
+        binding.textViewTime.setText(StringUtils.getTimeSpanString(itemView.getContext(), item.getPubDate()));
 
-        textViewFeedTitle.setTextColor(defaultFeedTextColor);
+        binding.textViewFeedTitle.setTextColor(defaultFeedTextColor);
 
-        new FaviconLoader.Builder(faviconImageView, feed).build().load(faviconImageView.getContext(), this);
+        new FaviconLoader.Builder(binding.imageviewFavicon, feed).build().load(binding.imageviewFavicon.getContext(), this);
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,8 +107,8 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
         });
 
         if(item.getEnclosureLink() != null) {
-            playButton.setVisibility(View.VISIBLE);
-            playButton.setOnClickListener(new View.OnClickListener() {
+            binding.play.setVisibility(View.VISIBLE);
+            binding.play.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent playIntent = new Intent(Intent.ACTION_VIEW);
@@ -131,8 +117,8 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
                 }
             });
         } else {
-            playButton.setVisibility(View.GONE);
-            playButton.setOnClickListener(null);
+            binding.play.setVisibility(View.GONE);
+            binding.play.setOnClickListener(null);
         }
 
         setUnreadState(item.isUnread());
@@ -171,12 +157,12 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
     }
 
     private void setStarredState(boolean starred) {
-        starImageView.setVisibility(starred ? View.VISIBLE : View.GONE);
+        binding.imageviewStar.setVisibility(starred ? View.VISIBLE : View.GONE);
     }
 
     @Override
     public void onGenerated(@Nullable FeedColors palette) {
-        textViewFeedTitle.setTextColor(FeedColors.get(palette, FeedColors.Type.TEXT, defaultFeedTextColor));
+        binding.textViewFeedTitle.setTextColor(FeedColors.get(palette, FeedColors.Type.TEXT, defaultFeedTextColor));
     }
 
     @Override
