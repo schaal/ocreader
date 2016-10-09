@@ -474,7 +474,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         String field = Preferences.SORT_FIELD.getString(sharedPreferences);
 
         final MenuItem orderMenuItem = popupMenu.getMenu().findItem(R.id.action_sort_order);
-        orderMenuItem.setChecked(order != Sort.ASCENDING);
+        orderMenuItem.setChecked(order == Sort.ASCENDING);
 
         final MenuItem selectedField;
 
