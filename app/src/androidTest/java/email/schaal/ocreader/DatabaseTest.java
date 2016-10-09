@@ -23,6 +23,7 @@ package email.schaal.ocreader;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -77,6 +78,11 @@ public class DatabaseTest {
 
     @Before
     public void setUp() {
+        Queries.resetDatabase();
+    }
+
+    @After
+    public void tearDown() {
         Queries.resetDatabase();
     }
 
