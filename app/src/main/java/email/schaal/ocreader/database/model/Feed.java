@@ -49,6 +49,7 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
     private Long folderId;
     public static final String FOLDER_ID = "folderId";
 
+    @Nullable
     private Folder folder;
     public static final String FOLDER = "folder";
 
@@ -219,11 +220,13 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
         this.lastUpdateError = lastUpdateError;
     }
 
-    public void setFolder(Folder folder) {
-        this.folderId = folder.getId();
+    public void setFolder(@Nullable Folder folder) {
+        if(folder != null)
+            this.folderId = folder.getId();
         this.folder = folder;
     }
 
+    @Nullable
     public Folder getFolder() {
         return folder;
     }
