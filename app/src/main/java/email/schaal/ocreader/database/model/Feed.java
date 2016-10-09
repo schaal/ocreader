@@ -224,6 +224,8 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
     public void setFolder(@Nullable Folder folder) {
         if(folder != null)
             this.folderId = folder.getId();
+        else
+            this.folderId = 0L;
         this.folder = folder;
     }
 
