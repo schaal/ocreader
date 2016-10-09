@@ -18,6 +18,7 @@
   ~
   -->
 
+<layout>
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -28,7 +29,7 @@
     android:fitsSystemWindows="true"
     tools:context="email.schaal.ocreader.LoginActivity">
 
-    <include layout="@layout/toolbar" />
+    <include android:id="@+id/toolbar_layout" layout="@layout/toolbar" />
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -132,3 +133,4 @@
         </ScrollView>
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
+</layout>

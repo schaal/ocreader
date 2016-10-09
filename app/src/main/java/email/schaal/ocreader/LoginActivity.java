@@ -24,6 +24,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -42,6 +43,7 @@ import android.widget.TextView;
 
 import email.schaal.ocreader.api.API;
 import email.schaal.ocreader.api.json.Status;
+import email.schaal.ocreader.databinding.ActivityLoginBinding;
 import email.schaal.ocreader.util.LoginError;
 import okhttp3.HttpUrl;
 
@@ -55,33 +57,16 @@ public class LoginActivity extends AppCompatActivity {
     private static final int WARNING_RECEIVED = 666;
 
     // UI references.
-    private EditText mUsernameView;
-    private EditText mPasswordView;
-    private EditText mUrlView;
-    private View mProgressView;
-    private View mLoginFormView;
-
-    private TextView mStatusView;
-    private Button mSignInButton;
+    private ActivityLoginBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(binding.toolbarLayout.toolbar);
 
-        // Set up the login form.
-        mUsernameView = (EditText) findViewById(R.id.username);
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mUrlView = (EditText) findViewById(R.id.url);
-        mProgressView = findViewById(R.id.login_progress);
-        mLoginFormView = findViewById(R.id.login_form);
-
-        mStatusView = (TextView) findViewById(R.id.status);
-
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        binding.password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
@@ -101,19 +86,18 @@ public class LoginActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(hasCredentials);
         getSupportActionBar().setDisplayHomeAsUpEnabled(hasCredentials);
 
-        mUsernameView.setText(Preferences.USERNAME.getString(sharedPreferences));
-        mPasswordView.setText(Preferences.PASSWORD.getString(sharedPreferences));
-        mUrlView.setText(Preferences.URL.getString(sharedPreferences));
+        binding.username.setText(Preferences.USERNAME.getString(sharedPreferences));
+        binding.password.setText(Preferences.PASSWORD.getString(sharedPreferences));
+        binding.url.setText(Preferences.URL.getString(sharedPreferences));
 
-        mSignInButton = (Button) findViewById(R.id.sign_in_button);
-        mSignInButton.setOnClickListener(new OnClickListener() {
+        binding.signInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
             }
         });
 
-        mUrlView.addTextChangedListener(new TextWatcher() {
+        binding.url.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -139,16 +123,16 @@ public class LoginActivity extends AppCompatActivity {
     private void attemptLogin() {
 
         // Reset errors.
-        mUsernameView.setError(null);
-        mPasswordView.setError(null);
-        mUrlView.setError(null);
+        binding.username.setError(null);
+        binding.password.setError(null);
+        binding.url.setError(null);
 
         LoginError error = null;
 
         // Store values at the time of the login attempt.
-        String username = mUsernameView.getText().toString();
-        String password = mPasswordView.getText().toString();
-        String urlString = mUrlView.getText().toString();
+        String username = binding.username.getText().toString();
+        String password = binding.password.getText().toString();
+        String urlString = binding.url.getText().toString();
         HttpUrl url = HttpUrl.parse(urlString);
 
         // Check for a valid username
@@ -164,7 +148,7 @@ public class LoginActivity extends AppCompatActivity {
             error = new LoginError(LoginError.Section.URL, getString(R.string.error_field_required));
         } else if (url == null) {
             error = new LoginError(LoginError.Section.URL, getString(R.string.error_incorrect_url));
-        } else if(mSignInButton.getTag() == null && !url.isHttps()) {
+        } else if(binding.signInButton.getTag() == null && !url.isHttps()) {
             error = new LoginError(LoginError.Section.URL, getString(R.string.error_insecure_connection));
             updateSecureState(false);
         }
@@ -199,11 +183,11 @@ public class LoginActivity extends AppCompatActivity {
 
     private void updateSecureState(boolean isSecure) {
         if(isSecure) {
-            mSignInButton.setTag(null);
-            mSignInButton.setText(R.string.action_sign_in);
+            binding.signInButton.setTag(null);
+            binding.signInButton.setText(R.string.action_sign_in);
         } else {
-            mSignInButton.setTag(WARNING_RECEIVED);
-            mSignInButton.setText(R.string.action_sign_in_insecurely);
+            binding.signInButton.setTag(WARNING_RECEIVED);
+            binding.signInButton.setText(R.string.action_sign_in_insecurely);
         }
     }
 
@@ -213,13 +197,13 @@ public class LoginActivity extends AppCompatActivity {
 
             switch (error.getSection()) {
                 case URL:
-                    errorView = mUrlView;
+                    errorView = binding.url;
                     break;
                 case USER:
-                    errorView = mUsernameView;
+                    errorView = binding.username;
                     break;
                 case PASSWORD:
-                    errorView = mPasswordView;
+                    errorView = binding.password;
                     break;
                 case NONE:
                     errorView = null;
@@ -229,13 +213,13 @@ public class LoginActivity extends AppCompatActivity {
             if(errorView != null) {
                 errorView.setError(error.getMessage());
                 errorView.requestFocus();
-                mStatusView.setVisibility(View.GONE);
+                binding.status.setVisibility(View.GONE);
             } else {
-                mStatusView.setVisibility(View.VISIBLE);
-                mStatusView.setText(error.getMessage());
+                binding.status.setVisibility(View.VISIBLE);
+                binding.status.setText(error.getMessage());
             }
         } else {
-            mStatusView.setVisibility(View.GONE);
+            binding.status.setVisibility(View.GONE);
         }
     }
 
@@ -245,21 +229,21 @@ public class LoginActivity extends AppCompatActivity {
     private void showProgress(final boolean show) {
         int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-        mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+        binding.loginForm.setVisibility(show ? View.GONE : View.VISIBLE);
+        binding.loginForm.animate().setDuration(shortAnimTime).alpha(
                 show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                binding.loginForm.setVisibility(show ? View.GONE : View.VISIBLE);
             }
         });
 
-        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-        mProgressView.animate().setDuration(shortAnimTime).alpha(
+        binding.loginProgress.setVisibility(show ? View.VISIBLE : View.GONE);
+        binding.loginProgress.animate().setDuration(shortAnimTime).alpha(
                 show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                binding.loginProgress.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         });
     }
