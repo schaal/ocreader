@@ -44,7 +44,6 @@ public class TextDrawable extends ShapeDrawable {
 
     private final Paint textPaint;
     private final String text;
-    private final int color;
     private final int height;
     private final int width;
     private final int fontSize;
@@ -58,7 +57,6 @@ public class TextDrawable extends ShapeDrawable {
 
         // text and color
         text = builder.toUpperCase ? builder.text.toUpperCase(Locale.getDefault()) : builder.text;
-        color = builder.color;
 
         // text paint settings
         fontSize = builder.fontSize;
@@ -73,7 +71,7 @@ public class TextDrawable extends ShapeDrawable {
 
         // drawable paint color
         Paint paint = getPaint();
-        paint.setColor(color);
+        paint.setColor(builder.color);
 
     }
 
