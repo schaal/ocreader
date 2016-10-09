@@ -49,7 +49,6 @@ import io.realm.Realm;
  * Manages the drawers displaying feeds and folders.
  */
 public class DrawerManager {
-    private static final String TAG = DrawerManager.class.getName();
 
     private final State state;
 

@@ -32,7 +32,6 @@ import email.schaal.ocreader.view.ArticleWebView;
  * Fragment to display a single feed item using a WebView.
  */
 public class ItemPageFragment extends Fragment {
-    private static final String TAG = ItemPageFragment.class.getName();
 
     public static final String ARG_POSITION = "ARG_POSITION";
 

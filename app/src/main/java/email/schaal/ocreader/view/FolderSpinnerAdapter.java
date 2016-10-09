@@ -15,7 +15,6 @@ import io.realm.OrderedRealmCollection;
  * Adapter for Spinner to display Folders
  */
 public class FolderSpinnerAdapter extends BaseAdapter {
-    private static final String TAG = FolderSpinnerAdapter.class.getName();
 
     private final static int VIEW_TYPE_NONE = 0;
     private final static int VIEW_TYPE_FOLDER = 1;

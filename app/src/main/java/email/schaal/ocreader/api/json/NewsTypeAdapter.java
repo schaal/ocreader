@@ -9,7 +9,6 @@ import java.io.IOException;
  * Base class for TypeAdapters
  */
 public abstract class NewsTypeAdapter<T> extends JsonAdapter<T> {
-    private static final String TAG = NewsTypeAdapter.class.getName();
 
     protected String nullSafeString(JsonReader in) throws IOException {
         if(in.peek() == JsonReader.Token.NULL) {

@@ -24,7 +24,6 @@ import email.schaal.ocreader.view.FeedsAdapter;
 import email.schaal.ocreader.view.FolderSpinnerAdapter;
 
 public class ManageFeedsActivity extends RealmActivity implements FeedManageListener {
-    private static final String TAG = ManageFeedsActivity.class.getName();
 
     public static final int REQUEST_CODE = 3;
 

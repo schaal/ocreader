@@ -35,7 +35,6 @@ import okhttp3.Response;
  * the ownCloud instance.
  */
 public class HttpManager {
-    private static final String TAG = HttpManager.class.getName();
 
     private final OkHttpClient client;
     private HostCredentials credentials = null;

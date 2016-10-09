@@ -78,7 +78,6 @@ import static email.schaal.ocreader.service.SyncService.EXTRA_OFFSET;
  * This class encapsulates the Nextcloud News API v1-2
  */
 class APIv12 extends API {
-    private static final String TAG = APIv12.class.getName();
 
     private static final int BATCH_SIZE = 100;
 

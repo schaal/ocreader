@@ -30,7 +30,6 @@ import email.schaal.ocreader.database.model.Feed;
  * Load favicons
  */
 public class FaviconLoader {
-    private static final String TAG = FaviconLoader.class.getCanonicalName();
 
     private final static LruCache<Long, FeedColors> feedColorsCache = new LruCache<>(32);
     private final static LruCache<Long, Drawable> faviconCache = new LruCache<>(32);

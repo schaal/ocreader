@@ -46,7 +46,6 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(AndroidJUnit4.class)
 public class DatabaseTest {
-    private static final String TAG = DatabaseTest.class.getName();
 
     @Rule
     public ActivityTestRule<ListActivity> activityTestRule = new ActivityTestRule<>(ListActivity.class);

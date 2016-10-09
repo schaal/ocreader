@@ -88,7 +88,6 @@ import io.realm.Realm;
 import io.realm.Sort;
 
 public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ItemsAdapter.OnLoadMoreListener, OnCheckedChangeListener, ActionMode.Callback {
-    private static final String TAG = ListActivity.class.getName();
 
     private static final int REFRESH_DRAWER_ITEM_ID = 999;
     public static final String LAYOUT_MANAGER_STATE = "LAYOUT_MANAGER_STATE";

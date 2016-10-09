@@ -52,7 +52,6 @@ import io.realm.RealmResults;
 import io.realm.Sort;
 
 public class ItemPagerActivity extends RealmActivity {
-    private static final String TAG = ItemPagerActivity.class.getName();
 
     public static final String POSITION = "position";
     public static final int REQUEST_CODE = 2;
