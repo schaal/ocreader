@@ -168,9 +168,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return items;
     }
 
-    public void updateSort() {
-    }
-
     private class EmptyStateViewHolder extends RecyclerView.ViewHolder {
         public EmptyStateViewHolder(View itemView) {
             super(itemView);

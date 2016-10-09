@@ -7,13 +7,12 @@ import email.schaal.ocreader.database.model.Folder;
 import email.schaal.ocreader.database.model.Item;
 
 /**
- * Created by daniel on 03.09.16.
+ * API response for sync call
  */
-
 public class SyncResponse {
-    public List<Folder> folders;
-    public List<Feed> feeds;
-    public List<Item> items;
+    private List<Folder> folders;
+    private List<Feed> feeds;
+    private List<Item> items;
 
     public List<Folder> getFolders() {
         return folders;

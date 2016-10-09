@@ -125,7 +125,7 @@ public class FaviconLoader {
         @DrawableRes
         private int placeholder = R.drawable.ic_feed_icon;
         private ImageView imageView;
-        private Feed feed;
+        private final Feed feed;
         private boolean generateFallbackImage = true;
 
         public Builder(Feed feed) {

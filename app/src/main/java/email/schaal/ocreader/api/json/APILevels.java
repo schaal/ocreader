@@ -5,9 +5,8 @@ import android.support.annotation.Nullable;
 import java.util.List;
 
 /**
- * Created by daniel on 22.08.16.
+ * API response containing supported API levels
  */
-
 public class APILevels {
     public enum Level {
         V2("v2", false),
