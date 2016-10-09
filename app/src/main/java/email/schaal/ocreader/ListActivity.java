@@ -26,6 +26,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -34,7 +35,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
@@ -43,7 +43,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Base64;
 import android.util.Base64InputStream;
@@ -77,6 +76,7 @@ import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.database.model.TemporaryFeed;
 import email.schaal.ocreader.database.model.TreeItem;
 import email.schaal.ocreader.database.model.User;
+import email.schaal.ocreader.databinding.ActivityListBinding;
 import email.schaal.ocreader.service.SyncService;
 import email.schaal.ocreader.view.DividerItemDecoration;
 import email.schaal.ocreader.view.ItemViewHolder;
@@ -93,6 +93,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     public static final String LAYOUT_MANAGER_STATE = "LAYOUT_MANAGER_STATE";
 
     private ActionMode actionMode;
+    private ActivityListBinding binding;
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -137,8 +138,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             startDrawer.updateStickyFooterItem(refreshDrawerItem);
         }
 
-        if (swipeRefreshLayout != null) {
-            swipeRefreshLayout.setRefreshing(syncRunning);
+        if (binding.swipeRefreshLayout != null) {
+            binding.swipeRefreshLayout.setRefreshing(syncRunning);
         }
 
         if(!syncRunning)
@@ -150,9 +151,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private ProfileDrawerItem profileDrawerItem;
     private PrimaryDrawerItem refreshDrawerItem;
     private AccountHeader accountHeader;
-
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private FloatingActionButton fab_mark_all_read;
 
     private SelectableItemsAdapter adapter;
     private LinearLayoutManager layoutManager;
@@ -182,15 +180,13 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_list);
+        setSupportActionBar(binding.toolbarLayout.toolbar);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setColorSchemeResources(R.color.primary);
-        swipeRefreshLayout.setOnRefreshListener(this);
+        binding.swipeRefreshLayout.setColorSchemeResources(R.color.primary);
+        binding.swipeRefreshLayout.setOnRefreshListener(this);
 
         profileDrawerItem = new ProfileDrawerItem()
                 .withName(preferences.getString(Preferences.USERNAME.getKey(), getString(R.string.app_name)))
@@ -312,7 +308,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                     }
                 });
 
-        startDrawerBuilder.withToolbar(toolbar);
+        startDrawerBuilder.withToolbar(binding.toolbarLayout.toolbar);
         startDrawer = startDrawerBuilder.build();
 
         drawerManager = new DrawerManager(this, startDrawer, endDrawerBuilder.append(startDrawer), isShowOnlyUnread(), this);
@@ -323,8 +319,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         adapter = new SelectableItemsAdapter(getRealm(), drawerManager.getState(), this, Preferences.ORDER.getOrder(preferences), Preferences.SORT_FIELD.getString(preferences), this);
 
-        fab_mark_all_read = (FloatingActionButton) findViewById(R.id.fab_mark_all_as_read);
-        fab_mark_all_read.setOnClickListener(new View.OnClickListener() {
+        binding.fabMarkAllAsRead.setOnClickListener(new View.OnClickListener() {
             private void onCompletion(View view) {
                 adapter.updateItems(false);
                 view.setEnabled(true);
@@ -348,7 +343,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             }
         });
 
-        fab_mark_all_read.setOnLongClickListener(new View.OnLongClickListener() {
+        binding.fabMarkAllAsRead.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 Toast.makeText(ListActivity.this, R.string.mark_all_as_read, Toast.LENGTH_SHORT).show();
@@ -608,9 +603,9 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         mode.getMenuInflater().inflate(R.menu.menu_item_list_action, menu);
         mode.setTitle(String.valueOf(adapter.getSelectedItemsCount()));
         startDrawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        swipeRefreshLayout.setEnabled(false);
-        fab_mark_all_read.setVisibility(View.GONE);
-        ((CoordinatorLayout.LayoutParams)fab_mark_all_read.getLayoutParams()).setBehavior(null);
+        binding.swipeRefreshLayout.setEnabled(false);
+        binding.fabMarkAllAsRead.setVisibility(View.GONE);
+        ((CoordinatorLayout.LayoutParams)binding.fabMarkAllAsRead.getLayoutParams()).setBehavior(null);
         return true;
     }
 
@@ -667,9 +662,9 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     public void onDestroyActionMode(ActionMode mode) {
         actionMode = null;
         startDrawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-        swipeRefreshLayout.setEnabled(true);
-        fab_mark_all_read.setVisibility(View.VISIBLE);
-        ((CoordinatorLayout.LayoutParams)fab_mark_all_read.getLayoutParams()).setBehavior(new ScrollAwareFABBehavior());
+        binding.swipeRefreshLayout.setEnabled(true);
+        binding.fabMarkAllAsRead.setVisibility(View.VISIBLE);
+        ((CoordinatorLayout.LayoutParams)binding.fabMarkAllAsRead.getLayoutParams()).setBehavior(new ScrollAwareFABBehavior());
         adapter.clearSelection();
     }
 }

@@ -19,6 +19,7 @@
   ~
   -->
 
+<layout>
 <android.support.design.widget.CoordinatorLayout
     android:id="@+id/coordinator_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -29,7 +30,7 @@
     android:fitsSystemWindows="true"
     tools:context="email.schaal.ocreader.ListActivity">
 
-    <include layout="@layout/toolbar" />
+    <include android:id="@+id/toolbar_layout" layout="@layout/toolbar" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
@@ -56,3 +57,4 @@
         android:tint="@color/md_white_1000"
         app:layout_behavior="email.schaal.ocreader.view.ScrollAwareFABBehavior" />
 </android.support.design.widget.CoordinatorLayout>
+</layout>
