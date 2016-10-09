@@ -30,6 +30,7 @@ import io.realm.annotations.Required;
 /**
  * RealmObject representing User information.
  */
+@SuppressWarnings("unused")
 public class User extends RealmObject implements Insertable {
     @PrimaryKey
     @Required

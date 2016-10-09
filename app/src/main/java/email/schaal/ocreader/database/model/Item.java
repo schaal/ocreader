@@ -33,6 +33,7 @@ import io.realm.annotations.PrimaryKey;
 /**
  * RealmObject representing a feed Item.
  */
+@SuppressWarnings("unused")
 public class Item extends RealmObject implements Insertable {
     private static final String TAG = Item.class.getName();
 

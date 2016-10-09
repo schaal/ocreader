@@ -26,6 +26,7 @@ import io.realm.RealmObject;
 /**
  * TemporaryFeed allows to store the currently displayed Items.
  */
+@SuppressWarnings("unused")
 public class TemporaryFeed extends RealmObject {
     private long id;
     public static final String ID = "id";

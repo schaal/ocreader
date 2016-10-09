@@ -35,6 +35,7 @@ import io.realm.annotations.PrimaryKey;
 /**
  * RealmObject representing a Feed
  */
+@SuppressWarnings("unused")
 public class Feed extends RealmObject implements TreeItem, Insertable {
     @PrimaryKey
     private long id;
