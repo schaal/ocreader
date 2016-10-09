@@ -62,7 +62,6 @@
     <string name="only_unread">Только непрочитанные</string>
     <string name="share_article">Поделиться статьей</string>
     <string name="account_settings">Настройки аккаунта</string>
-    <string name="update_warning">Необходимо обновить Nextcloud News для продолжения (минимальная поддерживаемая версия: %1$s). Ваша версия: %2$s</string>
     <string name="updater_improperly_configured">News App updater настроен неправильно</string>
     <string name="more_info">Больше информации</string>
     <string name="untrusted_certificate">Не удалось подтвердить сертификат, пожалуйста проверите ваши настройки SSL</string>
