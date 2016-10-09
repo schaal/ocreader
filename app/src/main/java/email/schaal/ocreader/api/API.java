@@ -225,10 +225,11 @@ public abstract class API {
         @Override
         public final void onResponse(Call<T> call, Response<T> response) {
             if (response.isSuccessful()) {
-                if (onResponseReal(response))
-                    if (callback != null) {
-                        callback.onSuccess(null);
-                    }
+                onResponseReal(response);
+
+                if (callback != null) {
+                    callback.onSuccess(null);
+                }
             } else {
                 String message = response.message();
                 try {
@@ -248,9 +249,8 @@ public abstract class API {
          * Handle the response
          *
          * @param response Retrofit response
-         * @return true iff sync event is finished, false iff another run is necessary.
          */
-        protected abstract boolean onResponseReal(Response<T> response);
+        protected abstract void onResponseReal(Response<T> response);
 
         @Override
         public void onFailure(Call<T> call, Throwable t) {

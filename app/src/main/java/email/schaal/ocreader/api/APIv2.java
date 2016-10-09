@@ -81,9 +81,8 @@ class APIv2 extends API {
     public void user(final Realm realm, APICallback<Void, String> apiCallback) {
         api.metaData().enqueue(new BaseRetrofitCallback<Status>(apiCallback) {
             @Override
-            protected boolean onResponseReal(Response<Status> response) {
+            protected void onResponseReal(Response<Status> response) {
                 Queries.insert(realm, response.body().getUser());
-                return true;
             }
         });
     }
@@ -93,13 +92,12 @@ class APIv2 extends API {
         // TODO: 02.10.16 sync user
         final BaseRetrofitCallback<SyncResponse> retrofitCallback = new BaseRetrofitCallback<SyncResponse>(apiCallback) {
             @Override
-            protected boolean onResponseReal(Response<SyncResponse> response) {
+            protected void onResponseReal(Response<SyncResponse> response) {
                 sharedPreferences.edit().putString(Preferences.SYS_APIv2_ETAG.getKey(), response.headers().get("Etag")).apply();
 
                 Queries.deleteAndInsert(realm, Folder.class, response.body().getFolders());
                 Queries.deleteAndInsert(realm, Feed.class, response.body().getFeeds());
                 Queries.insert(realm, response.body().getItems());
-                return true;
             }
         };
 
@@ -136,14 +134,12 @@ class APIv2 extends API {
 
         api.createFeed(feed).enqueue(new BaseRetrofitCallback<Feeds>(apiCallback) {
             @Override
-            protected boolean onResponseReal(final Response<Feeds> response) {
+            protected void onResponseReal(final Response<Feeds> response) {
                 // Set unreadCount to 0, items have not been fetched yet for this feed
                 Feed feed = response.body().getFeeds().get(0);
                 feed.setUnreadCount(0);
 
                 Queries.insert(realm, feed);
-
-                return true;
             }
         });
     }
@@ -156,9 +152,8 @@ class APIv2 extends API {
 
         api.changeFeed(feed.getId(), changedFeed).enqueue(new BaseRetrofitCallback<Map<String,Feed>>(apiCallback) {
             @Override
-            protected boolean onResponseReal(Response<Map<String,Feed>> response) {
+            protected void onResponseReal(Response<Map<String,Feed>> response) {
                 Queries.insert(realm, response.body().get("feed"));
-                return true;
             }
         });
     }
@@ -167,14 +162,13 @@ class APIv2 extends API {
     public void deleteFeed(final Realm realm, final Feed feed, APICallback<Void, String> apiCallback) {
         api.deleteFeed(feed.getId()).enqueue(new BaseRetrofitCallback<Void>(apiCallback) {
             @Override
-            protected boolean onResponseReal(Response<Void> response) {
+            protected void onResponseReal(Response<Void> response) {
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
                         feed.delete(realm);
                     }
                 });
-                return true;
             }
         });
     }

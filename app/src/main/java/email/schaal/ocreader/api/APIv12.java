@@ -401,9 +401,8 @@ class APIv12 extends API {
     public void user(final Realm realm, final APICallback<Void, String> callback) {
         api.user().enqueue(new BaseRetrofitCallback<User>(callback) {
             @Override
-            protected boolean onResponseReal(Response<User> response) {
+            protected void onResponseReal(Response<User> response) {
                 Queries.insert(realm, response.body());
-                return true;
             }
         });
     }
@@ -598,14 +597,12 @@ class APIv12 extends API {
 
         api.createFeed(feedMap).enqueue(new BaseRetrofitCallback<Feeds>(apiCallback) {
             @Override
-            protected boolean onResponseReal(final Response<Feeds> response) {
+            protected void onResponseReal(final Response<Feeds> response) {
                 // Set unreadCount to 0, items have not been fetched yet for this feed
                 Feed feed = response.body().getFeeds().get(0);
                 feed.setUnreadCount(0);
 
                 Queries.insert(realm, feed);
-
-                return true;
             }
         });
     }
@@ -617,14 +614,13 @@ class APIv12 extends API {
 
         api.moveFeed(feed.getId(), folderIdMap).enqueue(new BaseRetrofitCallback<Void>(apiCallback) {
             @Override
-            protected boolean onResponseReal(Response<Void> response) {
+            protected void onResponseReal(Response<Void> response) {
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
                         feed.setFolder(Folder.getOrCreate(realm, folderId));
                     }
                 });
-                return true;
             }
         });
     }
@@ -633,14 +629,13 @@ class APIv12 extends API {
     public void deleteFeed(final Realm realm, final Feed feed, APICallback<Void, String> apiCallback) {
         api.deleteFeed(feed.getId()).enqueue(new BaseRetrofitCallback<Void>(apiCallback) {
             @Override
-            protected boolean onResponseReal(Response<Void> response) {
+            protected void onResponseReal(Response<Void> response) {
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
                         feed.delete(realm);
                     }
                 });
-                return true;
             }
         });
     }
