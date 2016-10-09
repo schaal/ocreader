@@ -100,6 +100,6 @@
     <string name="error_not_compatible">The installed version of Nextcloud News is not compatible with this app.</string>
     <string name="publication_date">Publication Date</string>
     <string name="updated_date">Updated Date</string>
-    <string name="ascending">Ascending</string>
+    <string name="descending">Descending</string>
 
 </resources>

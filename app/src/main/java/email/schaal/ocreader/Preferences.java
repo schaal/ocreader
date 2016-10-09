@@ -35,7 +35,7 @@ public enum Preferences {
     USERNAME("username",null),
     PASSWORD("password", null),
     URL("url", null),
-    ORDER("order", Sort.DESCENDING),
+    ORDER("order", Sort.ASCENDING),
     SORT_FIELD("sort_field", Item.PUB_DATE),
 
     /** System preferences **/

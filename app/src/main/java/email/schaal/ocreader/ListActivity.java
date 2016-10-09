@@ -493,7 +493,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 switch (item.getItemId()) {
                     case R.id.action_sort_order:
                         item.setChecked(!item.isChecked());
-                        sharedPreferences.edit().putBoolean(Preferences.ORDER.getKey(), !item.isChecked()).apply();
+                        sharedPreferences.edit().putBoolean(Preferences.ORDER.getKey(), item.isChecked()).apply();
                         updateSort = true;
                         break;
                     case R.id.action_sort_pubdate:

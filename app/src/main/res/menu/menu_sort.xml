@@ -9,7 +9,7 @@
         <item android:title="@string/updated_date"
             android:id="@+id/action_sort_updatedate" />
     </group>
-    <item android:title="@string/ascending"
+    <item android:title="@string/descending"
         android:id="@+id/action_sort_order"
         android:checkable="true" />
 </menu>
