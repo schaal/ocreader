@@ -580,6 +580,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             } else {
                 profileDrawerItem.withIcon(R.drawable.ic_launcher);
             }
+        } else {
+            profileDrawerItem.withIcon(R.drawable.ic_launcher);
         }
     }
 
