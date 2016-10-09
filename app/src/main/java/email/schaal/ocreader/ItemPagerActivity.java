@@ -27,6 +27,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,7 +36,6 @@ import android.support.annotation.ColorInt;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,9 +45,9 @@ import java.util.WeakHashMap;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.database.model.TemporaryFeed;
+import email.schaal.ocreader.databinding.ActivityItemPagerBinding;
 import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.util.FeedColors;
-import email.schaal.ocreader.view.ProgressFloatingActionButton;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -57,8 +57,7 @@ public class ItemPagerActivity extends RealmActivity {
     public static final int REQUEST_CODE = 2;
     public static final String EXTRA_CURRENT_POSITION = "email.schaal.ocreader.extra.CURRENT_POSIION";
 
-    private Toolbar toolbar;
-    private ProgressFloatingActionButton fab;
+    private ActivityItemPagerBinding binding;
 
     @ColorInt private int defaultToolbarColor;
     @ColorInt private int defaultAccent;
@@ -72,10 +71,9 @@ public class ItemPagerActivity extends RealmActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_pager);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_item_pager);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(binding.toolbarLayout.toolbar);
 
         final Sort order = Preferences.ORDER.getOrder(PreferenceManager.getDefaultSharedPreferences(this));
         final String sortField = Preferences.SORT_FIELD.getString(PreferenceManager.getDefaultSharedPreferences(this));
@@ -101,8 +99,7 @@ public class ItemPagerActivity extends RealmActivity {
 
         final SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
 
-        fab = (ProgressFloatingActionButton) findViewById(R.id.fab_open_in_browser);
-        fab.setOnClickListener(new View.OnClickListener() {
+        binding.fabOpenInBrowser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(item != null && item.getUrl() != null) {
@@ -242,7 +239,7 @@ public class ItemPagerActivity extends RealmActivity {
                     getWindow().setStatusBarColor(statusbarColor);
                 }
 
-                toolbar.setBackgroundColor(backgroundColor);
+                binding.toolbarLayout.toolbar.setBackgroundColor(backgroundColor);
             }
         };
 
@@ -278,15 +275,15 @@ public class ItemPagerActivity extends RealmActivity {
                         getWindow().setStatusBarColor(statusbarColor);
                     }
 
-                    toolbar.setBackgroundColor(colorTo);
-                    fab.setBackgroundColor(fabColorTo);
+                    binding.toolbarLayout.toolbar.setBackgroundColor(colorTo);
+                    binding.fabOpenInBrowser.setBackgroundColor(fabColorTo);
                 } else {
                     ValueAnimator animator = ValueAnimator.ofInt(colorFrom, colorTo).setDuration(DURATION);
                     animator.setEvaluator(argbEvaluator);
                     animator.addUpdateListener(animatorUpdateListener);
                     animator.start();
 
-                    ObjectAnimator fabAnimator = ObjectAnimator.ofInt(fab, "backgroundColor", fabColorFrom, fabColorTo).setDuration(DURATION);
+                    ObjectAnimator fabAnimator = ObjectAnimator.ofInt(binding.fabOpenInBrowser, "backgroundColor", fabColorFrom, fabColorTo).setDuration(DURATION);
                     fabAnimator.setEvaluator(argbEvaluator);
                     fabAnimator.start();
                 }
@@ -314,7 +311,7 @@ public class ItemPagerActivity extends RealmActivity {
             item = getItemForPosition(position);
             setItemUnread(false);
 
-            new FaviconLoader.Builder(fab, item.getFeed())
+            new FaviconLoader.Builder(binding.fabOpenInBrowser, item.getFeed())
                     .withGenerateFallbackImage(false)
                     .withPlaceholder(R.drawable.ic_open_in_browser)
                     .build()
@@ -322,10 +319,10 @@ public class ItemPagerActivity extends RealmActivity {
 
             progressFrom = progressTo;
             progressTo = (float) (position + 1) / (float) mSectionsPagerAdapter.getCount();
-            fab.show();
+            binding.fabOpenInBrowser.show();
 
             ObjectAnimator progressAnimator = ObjectAnimator
-                    .ofFloat(fab, "progress", progressFrom, progressTo)
+                    .ofFloat(binding.fabOpenInBrowser, "progress", progressFrom, progressTo)
                     .setDuration(DURATION);
             progressAnimator.start();
         }

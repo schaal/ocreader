@@ -19,6 +19,7 @@
   ~
   -->
 
+<layout>
 <android.support.design.widget.CoordinatorLayout
     android:id="@+id/main_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -29,7 +30,7 @@
     android:fitsSystemWindows="true"
     tools:context="email.schaal.ocreader.ItemPagerActivity">
 
-    <include layout="@layout/toolbar" />
+    <include android:id="@+id/toolbar_layout" layout="@layout/toolbar" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/container"
@@ -49,3 +50,4 @@
         android:src="@drawable/ic_open_in_browser" />
 
 </android.support.design.widget.CoordinatorLayout>
+</layout>
