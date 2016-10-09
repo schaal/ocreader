@@ -18,6 +18,7 @@
   ~
   -->
 
+<layout>
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -28,7 +29,7 @@
     android:fitsSystemWindows="true"
     tools:context="email.schaal.ocreader.ManageFeedsActivity">
 
-    <include layout="@layout/toolbar" />
+    <include android:id="@+id/toolbar_layout" layout="@layout/toolbar" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/feeds_recyclerview"
@@ -48,3 +49,4 @@
         android:tint="@color/md_white_1000"
         app:layout_behavior="email.schaal.ocreader.view.ScrollAwareFABBehavior" />
 </android.support.design.widget.CoordinatorLayout>
+</layout>

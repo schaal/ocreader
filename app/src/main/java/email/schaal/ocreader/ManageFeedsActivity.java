@@ -5,18 +5,17 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
 import email.schaal.ocreader.api.API;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.database.model.Folder;
+import email.schaal.ocreader.databinding.ActivityManageFeedsBinding;
 import email.schaal.ocreader.view.AddNewFeedDialogFragment;
 import email.schaal.ocreader.view.DividerItemDecoration;
 import email.schaal.ocreader.view.FeedManageListener;
@@ -32,24 +31,22 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manage_feeds);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        ActivityManageFeedsBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_manage_feeds);
+
+        setSupportActionBar(binding.toolbarLayout.toolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         folderSpinnerAdapter = new FolderSpinnerAdapter(this, getRealm().where(Folder.class).findAllSorted(Folder.NAME));
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.feeds_recyclerview);
         FeedsAdapter adapter = new FeedsAdapter(this, getRealm(), this);
 
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.addItemDecoration(new DividerItemDecoration(this));
+        binding.feedsRecyclerview.setAdapter(adapter);
+        binding.feedsRecyclerview.setLayoutManager(new LinearLayoutManager(this));
+        binding.feedsRecyclerview.addItemDecoration(new DividerItemDecoration(this));
 
-        FloatingActionButton fabAddNewFeed = (FloatingActionButton) findViewById(R.id.fab_add_feed);
-        fabAddNewFeed.setOnClickListener(new View.OnClickListener() {
+        binding.fabAddFeed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AddNewFeedDialogFragment.show(ManageFeedsActivity.this, null, false);
