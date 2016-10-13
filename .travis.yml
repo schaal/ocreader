@@ -9,4 +9,4 @@ android:
 jdk:
    - oraclejdk8
 
-script: ./gradlew build -x lint
+script: ./gradlew check -x lint
