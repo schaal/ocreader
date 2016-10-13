@@ -74,7 +74,7 @@ public class Queries {
         Realm.init(context);
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
                 .schemaVersion(SCHEMA_VERSION)
-                .deleteRealmIfMigrationNeeded()
+                .migration(migration)
                 .initialData(initialData)
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);
