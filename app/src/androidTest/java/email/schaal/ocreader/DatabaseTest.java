@@ -37,6 +37,14 @@ import email.schaal.ocreader.database.model.Folder;
 import email.schaal.ocreader.database.model.Item;
 import io.realm.Realm;
 
+import static email.schaal.ocreader.TestGenerator.AUTHOR;
+import static email.schaal.ocreader.TestGenerator.BODY;
+import static email.schaal.ocreader.TestGenerator.FEED_TITLE;
+import static email.schaal.ocreader.TestGenerator.FOLDER_TITLE;
+import static email.schaal.ocreader.TestGenerator.ITEM_TITLE;
+import static email.schaal.ocreader.TestGenerator.getTestFeed;
+import static email.schaal.ocreader.TestGenerator.getTestFolder;
+import static email.schaal.ocreader.TestGenerator.getTestItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -50,31 +58,6 @@ public class DatabaseTest {
 
     @Rule
     public ActivityTestRule<ListActivity> activityTestRule = new ActivityTestRule<>(ListActivity.class);
-
-    private Folder getTestFolder() {
-        Folder folder = new Folder(1);
-        folder.setName("TestFolderTitle");
-        return folder;
-    }
-
-    private Feed getTestFeed() {
-        Feed feed = new Feed();
-        feed.setId(1);
-        feed.setFolderId(0L);
-        feed.setName("TestFeedTitle");
-        return feed;
-    }
-
-    private Item getTestItem() {
-        Item item = new Item();
-        item.setId(1);
-        item.setTitle("TestItemTitle");
-        item.setBody("TestBody");
-        item.setAuthor("TestAuthor");
-        item.setFeedId(1);
-        item.setLastModified(new Date().getTime() / 1000);
-        return item;
-    }
 
     @Before
     public void setUp() {
@@ -105,7 +88,7 @@ public class DatabaseTest {
             Folder dbFolder = Folder.get(realm, 1);
 
             assertNotNull(dbFolder);
-            assertEquals(dbFolder.getName(), "TestFolderTitle");
+            assertEquals(dbFolder.getName(), FOLDER_TITLE);
 
         } finally {
             assertNotNull(realm);
@@ -125,7 +108,7 @@ public class DatabaseTest {
             feed = Feed.get(realm, 1);
 
             assertNotNull(feed);
-            assertEquals(feed.getName(), "TestFeedTitle");
+            assertEquals(feed.getName(), FEED_TITLE);
 
         } finally {
             assertNotNull(realm);
@@ -147,9 +130,9 @@ public class DatabaseTest {
             item = realm.where(Item.class).findFirst();
 
             assertEquals(item.getId(), 1);
-            assertEquals(item.getTitle(), "TestItemTitle");
-            assertEquals(item.getBody(), "TestBody");
-            assertEquals(item.getAuthor(), "TestAuthor");
+            assertEquals(item.getTitle(), ITEM_TITLE);
+            assertEquals(item.getBody(), BODY);
+            assertEquals(item.getAuthor(), AUTHOR);
             assertNull(item.getEnclosureLink());
         } finally {
             assertNotNull(realm);
