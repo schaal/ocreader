@@ -1,6 +1,5 @@
 package email.schaal.ocreader;
 
-import android.net.SSLCertificateSocketFactory;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -13,11 +12,8 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
-import javax.net.ssl.SSLSocketFactory;
-
 import email.schaal.ocreader.database.Queries;
 import okhttp3.HttpUrl;
-import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 
 import static android.support.test.espresso.Espresso.onView;

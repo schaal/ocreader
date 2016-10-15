@@ -4,7 +4,6 @@ import android.util.Log;
 
 import io.realm.DynamicRealm;
 import io.realm.RealmMigration;
-import io.realm.exceptions.RealmMigrationNeededException;
 
 /**
  * RealmMigration to migrate database between schema versions

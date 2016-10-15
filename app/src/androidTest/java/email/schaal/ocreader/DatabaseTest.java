@@ -29,8 +29,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Date;
-
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.database.model.Folder;
