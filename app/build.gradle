@@ -58,7 +58,7 @@ android {
 }
 
 ext {
-    versions = [supportLib: "24.2.1"]
+    versions = [supportLib: "24.2.1", okhttp: "3.4.1"]
 }
 
 dependencies {
@@ -84,7 +84,7 @@ dependencies {
     compile 'com.github.schaal:ico4a:5d2300d'
 
     // Explicitly set okhttp3 version
-    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile "com.squareup.okhttp3:okhttp:${versions.okhttp}"
 
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-moshi:2.1.0'
@@ -96,6 +96,7 @@ dependencies {
     androidTestCompile "com.android.support:support-annotations:${versions.supportLib}"
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
     androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile "com.squareup.okhttp3:mockwebserver:${versions.okhttp}"
 
     testCompile "org.robolectric:robolectric:3.1.2"
     testCompile 'junit:junit:4.12'
