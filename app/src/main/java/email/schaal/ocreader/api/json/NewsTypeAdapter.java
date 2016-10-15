@@ -8,9 +8,8 @@ import java.io.IOException;
 /**
  * Base class for TypeAdapters
  */
-public abstract class NewsTypeAdapter<T> extends JsonAdapter<T> {
-
-    protected String nullSafeString(JsonReader in) throws IOException {
+abstract class NewsTypeAdapter<T> extends JsonAdapter<T> {
+    String nullSafeString(JsonReader in) throws IOException {
         if(in.peek() == JsonReader.Token.NULL) {
             in.nextNull();
             return null;
@@ -18,7 +17,7 @@ public abstract class NewsTypeAdapter<T> extends JsonAdapter<T> {
             return in.nextString();
     }
 
-    protected int nullSafeInt(JsonReader in, int def) throws IOException {
+    int nullSafeInt(JsonReader in, int def) throws IOException {
         if(in.peek() == JsonReader.Token.NULL) {
             in.nextNull();
             return def;
@@ -26,7 +25,7 @@ public abstract class NewsTypeAdapter<T> extends JsonAdapter<T> {
             return in.nextInt();
     }
 
-    protected boolean nullSafeBoolean(JsonReader in, boolean def) throws IOException {
+    boolean nullSafeBoolean(JsonReader in, boolean def) throws IOException {
         if(in.peek() == JsonReader.Token.NULL) {
             in.nextNull();
             return def;
