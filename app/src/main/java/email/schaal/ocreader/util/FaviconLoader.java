@@ -78,7 +78,7 @@ public class FaviconLoader {
     public void load(Context context, @NonNull FeedColorsListener listener) {
         listener.onStart();
         if(feed == null) {
-            listener.onGenerated(null);
+            listener.onGenerated(new FeedColors((Integer)null));
             return;
         }
 
@@ -117,7 +117,7 @@ public class FaviconLoader {
     }
 
     public interface FeedColorsListener {
-        void onGenerated(FeedColors feedColors);
+        void onGenerated(@NonNull FeedColors feedColors);
         void onStart();
     }
 

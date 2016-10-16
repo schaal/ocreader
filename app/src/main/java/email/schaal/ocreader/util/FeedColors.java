@@ -19,12 +19,12 @@ public class FeedColors {
         BACKGROUND
     }
 
-    public FeedColors(@NonNull Palette palette) {
+    FeedColors(@NonNull Palette palette) {
         colorMap.put(Type.TEXT, loadColor(palette.getDominantSwatch()));
         colorMap.put(Type.BACKGROUND, loadColor(palette.getMutedSwatch()));
     }
 
-    public FeedColors(@ColorInt int color) {
+    FeedColors(@Nullable @ColorInt Integer color) {
         colorMap.put(Type.BACKGROUND, color);
         colorMap.put(Type.TEXT, color);
     }
@@ -33,11 +33,8 @@ public class FeedColors {
         return swatch != null ? swatch.getRgb() : null;
     }
 
-    public static @ColorInt int get(@Nullable FeedColors feedColors, @NonNull Type type, @ColorInt int defaultColor) {
-        if(feedColors != null) {
-            Integer color = feedColors.colorMap.get(type);
-            return color != null ? color : defaultColor;
-        }
-        return defaultColor;
+    public @ColorInt int getColor(@NonNull Type type, @ColorInt int defaultColor) {
+        final Integer color = colorMap.get(type);
+        return color != null ? color : defaultColor;
     }
 }

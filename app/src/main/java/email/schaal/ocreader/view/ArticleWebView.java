@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Keep;
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.webkit.JavascriptInterface;
@@ -43,8 +43,8 @@ public class ArticleWebView extends NestedScrollWebView {
 
     private final FaviconLoader.FeedColorsListener feedColorsListener = new FaviconLoader.FeedColorsListener() {
         @Override
-        public void onGenerated(@Nullable FeedColors feedColors) {
-            int titleColor = FeedColors.get(feedColors, FeedColors.Type.TEXT, defaultTitleColor);
+        public void onGenerated(@NonNull FeedColors feedColors) {
+            int titleColor = feedColors.getColor(FeedColors.Type.TEXT, defaultTitleColor);
             String cssColor = FaviconLoader.getCssColor(titleColor);
             String javascript = String.format("javascript:(function(){document.styleSheets[0].cssRules[0].style.color=\"%s\";})()", cssColor);
             loadUrl(javascript);

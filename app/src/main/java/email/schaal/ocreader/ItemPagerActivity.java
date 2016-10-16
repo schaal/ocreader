@@ -33,6 +33,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorInt;
+import android.support.annotation.NonNull;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v4.view.ViewPager;
@@ -264,9 +265,9 @@ public class ItemPagerActivity extends RealmActivity {
         private boolean firstRun = true;
         private final FaviconLoader.FeedColorsListener toListener = new FaviconLoader.FeedColorsListener() {
             @Override
-            public void onGenerated(FeedColors feedColors) {
-                colorTo = FeedColors.get(feedColors, FeedColors.Type.TEXT, defaultToolbarColor);
-                fabColorTo = FeedColors.get(feedColors, FeedColors.Type.BACKGROUND, defaultAccent);
+            public void onGenerated(@NonNull FeedColors feedColors) {
+                colorTo = feedColors.getColor(FeedColors.Type.TEXT, defaultToolbarColor);
+                fabColorTo = feedColors.getColor(FeedColors.Type.BACKGROUND, defaultAccent);
 
                 if(firstRun) {
                     firstRun = false;

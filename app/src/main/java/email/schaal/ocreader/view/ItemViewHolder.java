@@ -25,7 +25,7 @@ import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.ColorInt;
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -161,8 +161,8 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
     }
 
     @Override
-    public void onGenerated(@Nullable FeedColors palette) {
-        binding.textViewFeedTitle.setTextColor(FeedColors.get(palette, FeedColors.Type.TEXT, defaultFeedTextColor));
+    public void onGenerated(@NonNull FeedColors feedColors) {
+        binding.textViewFeedTitle.setTextColor(feedColors.getColor(FeedColors.Type.TEXT, defaultFeedTextColor));
     }
 
     @Override

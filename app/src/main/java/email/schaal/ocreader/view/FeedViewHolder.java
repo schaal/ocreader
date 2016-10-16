@@ -1,5 +1,6 @@
 package email.schaal.ocreader.view;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -54,7 +55,7 @@ public class FeedViewHolder extends RecyclerView.ViewHolder implements FaviconLo
     }
 
     @Override
-    public void onGenerated(FeedColors feedColors) {
+    public void onGenerated(@NonNull FeedColors feedColors) {
 
     }
 
