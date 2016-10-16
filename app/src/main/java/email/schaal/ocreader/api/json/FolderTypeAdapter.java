@@ -22,6 +22,7 @@ package email.schaal.ocreader.api.json;
 
 import android.util.Log;
 
+import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonReader;
 import com.squareup.moshi.JsonWriter;
 
@@ -32,7 +33,7 @@ import email.schaal.ocreader.database.model.Folder;
 /**
  * TypeAdapter to deserialize the JSON response for Folders.
  */
-public class FolderTypeAdapter extends NewsTypeAdapter<Folder> {
+public class FolderTypeAdapter extends JsonAdapter<Folder> {
     private final static String TAG = FolderTypeAdapter.class.getName();
 
     @Override

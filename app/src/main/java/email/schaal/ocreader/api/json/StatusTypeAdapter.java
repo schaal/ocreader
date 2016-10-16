@@ -22,6 +22,7 @@ package email.schaal.ocreader.api.json;
 
 import android.util.Log;
 
+import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonReader;
 import com.squareup.moshi.JsonWriter;
 
@@ -30,7 +31,7 @@ import java.io.IOException;
 /**
  * TypeAdapter to deserialize the JSON response for the status api call.
  */
-public class StatusTypeAdapter extends NewsTypeAdapter<Status> {
+public class StatusTypeAdapter extends JsonAdapter<Status> {
     private final static String TAG = StatusTypeAdapter.class.getName();
 
     @Override
@@ -44,18 +45,20 @@ public class StatusTypeAdapter extends NewsTypeAdapter<Status> {
             return null;
         }
 
-        Status status = new Status();
+        final NullableJsonReader reader = new NullableJsonReader(in);
+        final Status status = new Status();
 
         in.beginObject();
+
         while (in.hasNext()) {
             String name = in.nextName();
             switch (name) {
                 case "version":
-                    status.setVersion(nullSafeString(in));
+                    status.setVersion(reader.nextString());
                     break;
                 case "warnings":
                 case "issues":
-                    // warnings in api v1-2, issues in api v2
+                    // this is called warnings in api v1-2, issues in api v2
                     readWarnings(in, status);
                     break;
                 case "user":

@@ -23,6 +23,7 @@ package email.schaal.ocreader.api.json;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonReader;
 import com.squareup.moshi.JsonWriter;
 
@@ -39,7 +40,7 @@ import email.schaal.ocreader.util.StringUtils;
 /**
  * TypeAdapter to deserialize the JSON response for feed Items.
  */
-public class ItemTypeAdapter extends NewsTypeAdapter<Item> {
+public class ItemTypeAdapter extends JsonAdapter<Item> {
     private final static String TAG = ItemTypeAdapter.class.getName();
 
     @Override
@@ -64,8 +65,13 @@ public class ItemTypeAdapter extends NewsTypeAdapter<Item> {
             in.nextNull();
             return null;
         }
-        Item item = new Item();
+
+        final NullableJsonReader reader = new NullableJsonReader(in);
+
+        final Item item = new Item();
+
         in.beginObject();
+
         while (in.hasNext()) {
             String name = in.nextName();
             switch (name) {
@@ -79,7 +85,7 @@ public class ItemTypeAdapter extends NewsTypeAdapter<Item> {
                     item.setGuidHash(in.nextString());
                     break;
                 case "url":
-                    item.setUrl(nullSafeString(in));
+                    item.setUrl(reader.nextString());
                     break;
                 case "title":
                     item.setTitle(StringUtils.cleanString(in.nextString()));
@@ -112,7 +118,7 @@ public class ItemTypeAdapter extends NewsTypeAdapter<Item> {
                     item.setUpdatedAt(parseDate(in.nextString()));
                     break;
                 case "enclosure":
-                    parseEnclosure(in, item);
+                    parseEnclosure(reader, item);
                     break;
                 case "feedId":
                     item.setFeedId(in.nextLong());
@@ -150,19 +156,19 @@ public class ItemTypeAdapter extends NewsTypeAdapter<Item> {
         return item;
     }
 
-    private void parseEnclosure(JsonReader in, Item item) throws IOException {
-        in.beginObject();
-        while(in.hasNext()) {
-            switch (in.nextName()) {
+    private void parseEnclosure(NullableJsonReader reader, Item item) throws IOException {
+        reader.in.beginObject();
+        while(reader.in.hasNext()) {
+            switch (reader.in.nextName()) {
                 case "mimeType":
-                    item.setEnclosureMime(nullSafeString(in));
+                    item.setEnclosureMime(reader.nextString());
                     break;
                 case "url":
-                    item.setEnclosureLink(nullSafeString(in));
+                    item.setEnclosureLink(reader.nextString());
                     break;
             }
         }
-        in.endObject();
+        reader.in.endObject();
     }
 
     private final static DateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZ", Locale.US);

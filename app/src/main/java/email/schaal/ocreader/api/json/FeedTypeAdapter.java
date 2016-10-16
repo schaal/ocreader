@@ -23,6 +23,7 @@ package email.schaal.ocreader.api.json;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonReader;
 import com.squareup.moshi.JsonWriter;
 
@@ -34,7 +35,7 @@ import email.schaal.ocreader.util.StringUtils;
 /**
  * TypeAdapter to deserialize the JSON response for Feeds.
  */
-public class FeedTypeAdapter extends NewsTypeAdapter<Feed> {
+public class FeedTypeAdapter extends JsonAdapter<Feed> {
     private final static String TAG = FeedTypeAdapter.class.getName();
 
     @Override
@@ -59,8 +60,13 @@ public class FeedTypeAdapter extends NewsTypeAdapter<Feed> {
             in.nextNull();
             return null;
         }
-        Feed feed = new Feed();
+
+        final NullableJsonReader reader = new NullableJsonReader(in);
+
+        final Feed feed = new Feed();
+
         in.beginObject();
+
         while (in.hasNext()) {
             String name = in.nextName();
             switch (name) {
@@ -68,13 +74,13 @@ public class FeedTypeAdapter extends NewsTypeAdapter<Feed> {
                     feed.setId(in.nextLong());
                     break;
                 case "url":
-                    feed.setUrl(nullSafeString(in));
+                    feed.setUrl(reader.nextString());
                     break;
                 case "link":
-                    feed.setLink(nullSafeString(in));
+                    feed.setLink(reader.nextString());
                     break;
                 case "faviconLink":
-                    String faviconLink = nullSafeString(in);
+                    String faviconLink = reader.nextString();
                     if (faviconLink != null && TextUtils.getTrimmedLength(faviconLink) == 0)
                         faviconLink = null;
                     feed.setFaviconLink(faviconLink);
@@ -96,20 +102,20 @@ public class FeedTypeAdapter extends NewsTypeAdapter<Feed> {
                     break;
                 case "ordering":
                     // createFeed returns a feed with ordering set to NULL
-                    feed.setOrdering(nullSafeInt(in, 0));
+                    feed.setOrdering(reader.nextInt(0));
                     break;
                 case "pinned":
                     // createFeed returns a feed with pinned set to NULL
-                    feed.setPinned(nullSafeBoolean(in, false));
+                    feed.setPinned(reader.nextBoolean(false));
                     break;
                 case "updateErrorCount":
-                    feed.setUpdateErrorCount(nullSafeInt(in, 0));
+                    feed.setUpdateErrorCount(reader.nextInt(0));
                     break;
                 case "lastUpdateError":
-                    feed.setLastUpdateError(nullSafeString(in));
+                    feed.setLastUpdateError(reader.nextString());
                     break;
                 case "error":
-                    parseError(in, feed);
+                    parseError(reader, feed);
                     break;
                 default:
                     Log.w(TAG, "Unknown value in feed json: " + name);
@@ -121,18 +127,18 @@ public class FeedTypeAdapter extends NewsTypeAdapter<Feed> {
         return feed;
     }
 
-    private void parseError(JsonReader in, Feed feed) throws IOException {
-        in.beginObject();
-        while(in.hasNext()) {
-            switch (in.nextName()) {
+    private void parseError(NullableJsonReader reader, Feed feed) throws IOException {
+        reader.in.beginObject();
+        while(reader.in.hasNext()) {
+            switch (reader.in.nextName()) {
                 case "code":
-                    in.skipValue();
+                    reader.in.skipValue();
                     break;
                 case "message":
-                    feed.setLastUpdateError(nullSafeString(in));
+                    feed.setLastUpdateError(reader.nextString());
                     break;
             }
         }
-        in.endObject();
+        reader.in.endObject();
     }
 }
