@@ -22,6 +22,7 @@ package email.schaal.ocreader.view.drawer;
 
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -52,9 +53,6 @@ public class TreeItemDrawerItem extends PrimaryDrawerItem {
                 withIcon(feed.getFaviconLink());
             else
                 withIcon(feed);
-            if(feed.isConsideredFailed()) {
-                withTextColor(Color.RED);
-            }
         } else if(item instanceof Folder) {
             withIcon(R.drawable.ic_folder);
         }
@@ -71,6 +69,9 @@ public class TreeItemDrawerItem extends PrimaryDrawerItem {
             ImageView imageView = getImageView(viewHolder);
             ImageHolder.applyTo(icon, imageView);
         } else if(feed != null) {
+            if(feed.isConsideredFailed()) {
+                withTextColor(ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.error));
+            }
             ImageView imageView = getImageView(viewHolder);
             imageView.setImageDrawable(FaviconLoader.getDrawable(imageView.getContext(), feed));
         }

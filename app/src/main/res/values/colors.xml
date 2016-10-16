@@ -28,4 +28,6 @@
     <color name="star">@color/md_yellow_A700</color>
     <color name="progress">#66FFFFFF</color>
     <color name="delete">@color/md_red_500</color>
+    <color name="warning">@color/md_amber_500</color>
+    <color name="error">@color/md_red_500</color>
 </resources>

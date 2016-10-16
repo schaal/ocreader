@@ -36,6 +36,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -406,7 +407,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                             public void onClick(View v) {
                                 startActivity(data);
                             }
-                        }).setActionTextColor(Color.RED);
+                        }).setActionTextColor(ContextCompat.getColor(this, R.color.warning));
                         TextView tv = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
                         tv.setTextColor(Color.WHITE);
                         snackbar.show();

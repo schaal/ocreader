@@ -48,7 +48,6 @@ public class OCReaderApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
