@@ -51,6 +51,9 @@ public class OCReaderApplication extends Application {
 
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        //noinspection WrongConstant
+        AppCompatDelegate.setDefaultNightMode(Preferences.DAY_NIGHT_MODE.getInt(preferences));
+
         preferences.edit()
                 .putBoolean(Preferences.SYS_SYNC_RUNNING.getKey(), false)
                 .putString(Preferences.SORT_FIELD.getKey(), Item.ID)
