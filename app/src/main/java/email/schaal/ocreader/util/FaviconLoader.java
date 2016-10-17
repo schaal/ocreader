@@ -187,7 +187,7 @@ public class FaviconLoader {
 
         @Override
         public void onBitmapFailed(Drawable errorDrawable) {
-            listener.onGenerated(new FeedColors(getFeedColor(feed)));
+            listener.onGenerated(new FeedColors((Integer)null));
         }
 
         @Override
