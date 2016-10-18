@@ -1,6 +1,7 @@
 package email.schaal.ocreader.util;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -62,7 +63,7 @@ public class FaviconLoader {
             drawable = faviconCache.get(feed.getId());
 
             if(drawable == null) {
-                drawable = new TextDrawable.Builder().build(feed.getName().substring(0, 1), getFeedColor(feed));
+                drawable = new TextDrawable.Builder().build(feed.getName().substring(0, 1), getFeedColor(context, feed));
                 faviconCache.put(feed.getId(), drawable);
             }
         } else {
@@ -71,8 +72,18 @@ public class FaviconLoader {
         return drawable;
     }
 
-    public static int getFeedColor(@NonNull Feed feed) {
-        return ColorGenerator.MATERIAL.getColor(feed.getUrl());
+    private static int getFeedColor(Context context, @NonNull Feed feed) {
+        final int currentNightMode = context.getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK;
+
+        final ColorGenerator generator;
+
+        if(currentNightMode == Configuration.UI_MODE_NIGHT_YES)
+            generator = ColorGenerator.MATERIAL_NIGHT;
+        else
+            generator = ColorGenerator.MATERIAL;
+
+        return generator.getColor(feed.getUrl());
     }
 
     public void load(Context context, @NonNull FeedColorsListener listener) {
@@ -106,7 +117,7 @@ public class FaviconLoader {
                     imageView.setImageResource(placeholder);
                 }
             }
-            listener.onGenerated(new FeedColors(getFeedColor(feed)));
+            listener.onGenerated(new FeedColors(getFeedColor(context, feed)));
         }
     }
 

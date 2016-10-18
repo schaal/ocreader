@@ -32,23 +32,40 @@ import java.util.List;
 /**
  * @author amulya
  */
-public class ColorGenerator {
-    public final static ColorGenerator MATERIAL = new ColorGenerator(Arrays.asList(
-                Material.Red._900.getAsColor(),
-                Material.Purple._900.getAsColor(),
-                Material.Indigo._900.getAsColor(),
-                Material.Blue._900.getAsColor(),
-                Material.LightBlue._900.getAsColor(),
-                Material.Cyan._900.getAsColor(),
-                Material.Teal._900.getAsColor(),
-                Material.Green._900.getAsColor(),
-                Material.LightGreen._900.getAsColor(),
-                Material.Lime._900.getAsColor(),
-                Material.Amber._900.getAsColor(),
-                Material.DeepOrange._900.getAsColor(),
-                Material.Brown._900.getAsColor(),
-                Material.BlueGrey._900.getAsColor()
-        ));
+class ColorGenerator {
+    final static ColorGenerator MATERIAL = new ColorGenerator(Arrays.asList(
+            Material.Red._900.getAsColor(),
+            Material.Purple._900.getAsColor(),
+            Material.Indigo._900.getAsColor(),
+            Material.Blue._900.getAsColor(),
+            Material.LightBlue._900.getAsColor(),
+            Material.Cyan._900.getAsColor(),
+            Material.Teal._900.getAsColor(),
+            Material.Green._900.getAsColor(),
+            Material.LightGreen._900.getAsColor(),
+            Material.Lime._900.getAsColor(),
+            Material.Amber._900.getAsColor(),
+            Material.DeepOrange._900.getAsColor(),
+            Material.Brown._900.getAsColor(),
+            Material.BlueGrey._900.getAsColor()
+    ));
+
+    final static ColorGenerator MATERIAL_NIGHT = new ColorGenerator(Arrays.asList(
+            Material.Red._400.getAsColor(),
+            Material.Purple._400.getAsColor(),
+            Material.Indigo._400.getAsColor(),
+            Material.Blue._400.getAsColor(),
+            Material.LightBlue._400.getAsColor(),
+            Material.Cyan._400.getAsColor(),
+            Material.Teal._400.getAsColor(),
+            Material.Green._400.getAsColor(),
+            Material.LightGreen._400.getAsColor(),
+            Material.Lime._400.getAsColor(),
+            Material.Amber._400.getAsColor(),
+            Material.DeepOrange._400.getAsColor(),
+            Material.Brown._400.getAsColor(),
+            Material.BlueGrey._400.getAsColor()
+    ));
 
     private final List<Integer> mColors;
 
