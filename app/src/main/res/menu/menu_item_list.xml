@@ -18,6 +18,12 @@
         />
 
     <item
+        android:id="@+id/menu_change_theme"
+        android:title="Switch to dark theme"
+        app:showAsAction="never"
+        />
+
+    <item
         android:id="@+id/menu_about"
         android:title="@string/about"
         app:showAsAction="never"/>

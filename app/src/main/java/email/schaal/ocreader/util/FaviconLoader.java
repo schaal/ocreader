@@ -73,17 +73,20 @@ public class FaviconLoader {
     }
 
     private static int getFeedColor(Context context, @NonNull Feed feed) {
-        final int currentNightMode = context.getResources().getConfiguration().uiMode
-                & Configuration.UI_MODE_NIGHT_MASK;
 
         final ColorGenerator generator;
 
-        if(currentNightMode == Configuration.UI_MODE_NIGHT_YES)
+        if(getCurrentNightMode(context) == Configuration.UI_MODE_NIGHT_YES)
             generator = ColorGenerator.MATERIAL_NIGHT;
         else
             generator = ColorGenerator.MATERIAL;
 
         return generator.getColor(feed.getUrl());
+    }
+
+    public static int getCurrentNightMode(Context context) {
+        return context.getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK;
     }
 
     public void load(Context context, @NonNull FeedColorsListener listener) {

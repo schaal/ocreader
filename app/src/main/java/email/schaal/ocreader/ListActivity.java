@@ -450,6 +450,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             case R.id.menu_about:
                 showAboutDialog();
                 return true;
+            case R.id.menu_change_theme:
+
             case R.id.menu_manage_feeds:
                 startActivityForResult(new Intent(this, ManageFeedsActivity.class), ManageFeedsActivity.REQUEST_CODE);
                 return true;
