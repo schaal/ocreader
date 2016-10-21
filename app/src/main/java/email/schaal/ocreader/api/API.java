@@ -173,10 +173,9 @@ public abstract class API {
                         });
                     }
                 } else {
-                    String message = getErrorMessage(errorJsonAdapter, response);
-                    Log.d(TAG, "API level call failed with error: " + response.code() + " " + message);
+                    Log.d(TAG, "API level call failed with error: " + response.code() + " " + getErrorMessage(errorJsonAdapter, response));
                     // Either nextcloud news is not installed or version prior 8.8.0
-                    loginCallback.onFailure(LoginError.getError(context, response.code(), message));
+                    loginCallback.onFailure(LoginError.getError(context, response.code(), context.getString(R.string.ncnews_too_old)));
                 }
             }
 

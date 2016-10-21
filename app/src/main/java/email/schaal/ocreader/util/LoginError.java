@@ -2,6 +2,8 @@ package email.schaal.ocreader.util;
 
 import android.content.Context;
 
+import java.io.IOException;
+import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.security.cert.CertificateException;
 
@@ -48,7 +50,7 @@ public class LoginError {
             case 404:
                 return new LoginError(Section.URL, context.getString(R.string.error_oc_not_found));
             case 405:
-                return new LoginError(Section.URL, context.getString(R.string.ocnews_too_old));
+                return new LoginError(Section.URL, context.getString(R.string.ncnews_too_old));
             default:
                 return new LoginError(context.getString(R.string.http_error, code) + ": " + defaultMessage);
         }
@@ -61,6 +63,10 @@ public class LoginError {
             if (t.getCause() instanceof CertificateException) {
                 return new LoginError(Section.URL, context.getString(R.string.untrusted_certificate));
             }
+        } else if (t instanceof ConnectException) {
+            return new LoginError(Section.URL, context.getString(R.string.could_not_connect));
+        } else if(t instanceof IOException) {
+            return new LoginError(Section.NONE, context.getString(R.string.ncnews_too_old));
         }
         return new LoginError(t.getLocalizedMessage());
     }

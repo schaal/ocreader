@@ -65,7 +65,7 @@
     <string name="updater_improperly_configured">News App updater настроен неправильно</string>
     <string name="more_info">Больше информации</string>
     <string name="untrusted_certificate">Не удалось подтвердить сертификат, пожалуйста проверите ваши настройки SSL</string>
-    <string name="ocnews_too_old">Nextcloud News не установлен или слишком стар</string>
+    <string name="ncnews_too_old">Nextcloud News не установлен или слишком стар</string>
     <string name="error_unknown_host">Неизвестный хост</string>
     <string name="error_insecure_connection">Ненадежное подключение, нажмите снова войти в систему, чтобы продолжить в любом случае</string>
     <string name="action_sign_in_insecurely">Небезопасный вход</string>
