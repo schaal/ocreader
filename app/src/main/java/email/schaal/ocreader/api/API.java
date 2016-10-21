@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -15,18 +16,18 @@ import java.util.Locale;
 import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.api.json.APILevels;
-import email.schaal.ocreader.api.json.Status;
-import email.schaal.ocreader.http.HttpManager;
-import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.api.json.FeedTypeAdapter;
-import email.schaal.ocreader.database.model.Folder;
 import email.schaal.ocreader.api.json.FolderTypeAdapter;
-import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.api.json.ItemTypeAdapter;
 import email.schaal.ocreader.api.json.NewsError;
+import email.schaal.ocreader.api.json.Status;
 import email.schaal.ocreader.api.json.StatusTypeAdapter;
-import email.schaal.ocreader.database.model.User;
 import email.schaal.ocreader.api.json.UserTypeAdapter;
+import email.schaal.ocreader.database.model.Feed;
+import email.schaal.ocreader.database.model.Folder;
+import email.schaal.ocreader.database.model.Item;
+import email.schaal.ocreader.database.model.User;
+import email.schaal.ocreader.http.HttpManager;
 import email.schaal.ocreader.service.SyncService;
 import email.schaal.ocreader.util.LoginError;
 import io.realm.Realm;
@@ -42,18 +43,20 @@ import retrofit2.http.GET;
  * Base class to implement API interfaces.
  */
 public abstract class API {
+    private static final String TAG = API.class.getName();
+
     private static API instance;
 
     final APILevels.Level apiLevel;
 
     final static String API_ROOT = "./index.php/apps/news/api/";
+    private final JsonAdapter<NewsError> errorJsonAdapter;
 
     public static API getInstance() {
         return instance;
     }
 
     final MoshiConverterFactory converterFactory;
-    private final JsonAdapter<NewsError> errorJsonAdapter;
 
     API(Context context, APILevels.Level apiLevel) {
         this.apiLevel = apiLevel;
@@ -106,7 +109,6 @@ public abstract class API {
         final HttpUrl resolvedBaseUrl = baseUrl.resolve("");
 
         final Moshi moshi = new Moshi.Builder().build();
-
         final JsonAdapter<NewsError> errorJsonAdapter = moshi.adapter(NewsError.class);
 
         final Retrofit retrofit = new Retrofit.Builder()
@@ -157,27 +159,24 @@ public abstract class API {
 
                                     loginCallback.onSuccess(response.body());
                                 } else {
-                                    String message = response.message();
-                                    try {
-                                        NewsError error = errorJsonAdapter.fromJson(response.errorBody().source());
-                                        message = error.message;
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    } finally {
-                                        loginCallback.onFailure(LoginError.getError(context, response.code(), message));
-                                    }
+                                    String message = getErrorMessage(errorJsonAdapter, response);
+                                    Log.d(TAG, "Metadata call failed with error: " + message);
+                                    loginCallback.onFailure(LoginError.getError(context, response.code(), message));
                                 }
                             }
 
                             @Override
                             public void onFailure(Call<Status> call, Throwable t) {
+                                t.printStackTrace();
                                 loginCallback.onFailure(LoginError.getError(context, t));
                             }
                         });
                     }
                 } else {
+                    String message = getErrorMessage(errorJsonAdapter, response);
+                    Log.d(TAG, "API level call failed with error: " + response.code() + " " + message);
                     // Either nextcloud news is not installed or version prior 8.8.0
-                    loginCallback.onFailure(LoginError.getError(context, response.code(), response.message()));
+                    loginCallback.onFailure(LoginError.getError(context, response.code(), message));
                 }
             }
 
@@ -191,6 +190,19 @@ public abstract class API {
 
     public static boolean isLoggedIn() {
         return instance != null;
+    }
+
+    private static String getErrorMessage(JsonAdapter<NewsError> adapter, Response<?> response) {
+        String message = response.message();
+
+        try {
+            NewsError error = adapter.fromJson(response.errorBody().source());
+            message = error.message;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return message;
     }
 
     public static void init(Context context) {
@@ -231,16 +243,9 @@ public abstract class API {
                     callback.onSuccess(null);
                 }
             } else {
-                String message = response.message();
-                try {
-                    NewsError error = errorJsonAdapter.fromJson(response.errorBody().source());
-                    message = error.message;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (callback != null) {
-                        callback.onFailure(String.format(Locale.US, "%d: %s", response.code(), message));
-                    }
+                String message = getErrorMessage(errorJsonAdapter, response);
+                if (callback != null) {
+                    callback.onFailure(String.format(Locale.US, "%d: %s", response.code(), message));
                 }
             }
         }
