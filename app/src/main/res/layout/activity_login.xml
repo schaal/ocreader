@@ -115,6 +115,7 @@
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_warning"
                     android:drawableStart="@drawable/ic_warning"
+                    android:drawablePadding="@dimen/materialize_spacing"
                     android:gravity="center_vertical"
                     android:visibility="gone"
                     tools:text="This is a warning!"
