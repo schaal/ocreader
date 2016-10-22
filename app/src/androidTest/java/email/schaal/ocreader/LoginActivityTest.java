@@ -62,4 +62,13 @@ public class LoginActivityTest {
         onView(withId(R.id.url)).check(matches(hasErrorText(activityTestRule.getActivity().getString(R.string.error_insecure_connection))));
         onView(withId(R.id.sign_in_button)).perform(click());
     }
+
+    @Test
+    public void testUnknownHost() throws IOException {
+        onView(withId(R.id.url)).perform(clearText(), typeText("https://unknown-host"));
+        onView(withId(R.id.username)).perform(clearText(), typeText("admin"));
+        onView(withId(R.id.password)).perform(clearText(), typeText("admin"));
+        onView(withId(R.id.sign_in_button)).perform(click());
+        onView(withId(R.id.url)).check(matches(hasErrorText(activityTestRule.getActivity().getString(R.string.error_unknown_host))));
+    }
 }
