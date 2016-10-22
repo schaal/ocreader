@@ -42,7 +42,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Base64;
 import android.util.Base64InputStream;
@@ -51,7 +50,6 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -313,8 +311,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         drawerManager = new DrawerManager(this, startDrawer, endDrawerBuilder.append(startDrawer), isShowOnlyUnread(), this);
 
-        RecyclerView itemsRecyclerView = (RecyclerView) findViewById(R.id.items_recyclerview);
-
         layoutManager = new LinearLayoutManager(this);
 
         adapter = new SelectableItemsAdapter(getRealm(), drawerManager.getState(), this, Preferences.ORDER.getOrder(preferences), Preferences.SORT_FIELD.getString(preferences), this);
@@ -351,14 +347,14 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             }
         });
 
-        itemsRecyclerView.setAdapter(adapter);
-        itemsRecyclerView.setLayoutManager(layoutManager);
+        binding.itemsRecyclerview.setAdapter(adapter);
+        binding.itemsRecyclerview.setLayoutManager(layoutManager);
 
         if(savedInstanceState != null)
             layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE));
 
-        itemsRecyclerView.addItemDecoration(new DividerItemDecoration(this, 40));
-        itemsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        binding.itemsRecyclerview.addItemDecoration(new DividerItemDecoration(this, 40));
+        binding.itemsRecyclerview.setItemAnimator(new DefaultItemAnimator());
 
         drawerManager.getState().restoreInstanceState(getRealm(), PreferenceManager.getDefaultSharedPreferences(this));
 
@@ -404,7 +400,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             switch (requestCode) {
                 case LoginActivity.REQUEST_CODE:
                     if (data != null && data.getBooleanExtra(LoginActivity.EXTRA_IMPROPERLY_CONFIGURED_CRON, false)) {
-                        Snackbar snackbar = Snackbar.make(findViewById(R.id.coordinator_layout), R.string.updater_improperly_configured, Snackbar.LENGTH_INDEFINITE);
+                        Snackbar snackbar = Snackbar.make(binding.coordinatorLayout, R.string.updater_improperly_configured, Snackbar.LENGTH_INDEFINITE);
                         snackbar.setAction(R.string.more_info, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -512,7 +508,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     }
 
     private void showAboutDialog() {
-        View aboutView = getLayoutInflater().inflate(R.layout.dialog_about, (ViewGroup) findViewById(R.id.coordinator_layout), false);
+        View aboutView = getLayoutInflater().inflate(R.layout.dialog_about, binding.coordinatorLayout, false);
 
         TextView textView = (TextView) aboutView.findViewById(R.id.textViewCopyright);
         //noinspection deprecation

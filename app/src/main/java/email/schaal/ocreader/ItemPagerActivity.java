@@ -66,7 +66,6 @@ public class ItemPagerActivity extends RealmActivity {
 
     private MenuItem menuItemMarkRead;
     private MenuItem menuItemMarkStarred;
-    private ViewPager mViewPager;
     private RealmResults<Item> items;
 
     @Override
@@ -110,17 +109,16 @@ public class ItemPagerActivity extends RealmActivity {
             }
         });
 
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        binding.container.setAdapter(mSectionsPagerAdapter);
 
         ViewPager.OnPageChangeListener pageChangeListener = new MyOnPageChangeListener(mSectionsPagerAdapter);
 
-        mViewPager.addOnPageChangeListener(pageChangeListener);
+        binding.container.addOnPageChangeListener(pageChangeListener);
 
         // The initial position is 0, so the pageChangeListener won't be called when setting the position to 0
         if(position == 0)
             pageChangeListener.onPageSelected(position);
-        mViewPager.setCurrentItem(position, false);
+        binding.container.setCurrentItem(position, false);
     }
 
     private void shareArticle() {
@@ -170,7 +168,7 @@ public class ItemPagerActivity extends RealmActivity {
 
     public void updateResult() {
         Intent result = new Intent();
-        result.putExtra(EXTRA_CURRENT_POSITION, mViewPager.getCurrentItem());
+        result.putExtra(EXTRA_CURRENT_POSITION, binding.container.getCurrentItem());
         setResult(RESULT_OK, result);
     }
 
