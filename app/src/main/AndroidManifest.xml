@@ -30,7 +30,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:allowBackup"
         android:allowBackup="false">
 
         <activity
