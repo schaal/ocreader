@@ -1,3 +1,8 @@
+## 0.22 (2016-10-23)
+
+* Fix login with subdirectory (Thanks to @Eloo) (Fixes #23)
+* Improve error messages when login failed
+
 ## 0.21 (2016-10-06)
 
 * Fix crash when username is not known yet (Fixes #22)
