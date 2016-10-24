@@ -26,6 +26,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -40,6 +41,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -451,7 +453,12 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 showAboutDialog();
                 return true;
             case R.id.menu_change_theme:
-
+                final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                final int daynightmode = Preferences.DAY_NIGHT_MODE.getInt(sharedPreferences) == AppCompatDelegate.MODE_NIGHT_NO ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO;
+                sharedPreferences.edit().putInt(Preferences.DAY_NIGHT_MODE.getKey(), daynightmode).apply();
+                AppCompatDelegate.setDefaultNightMode(daynightmode);
+                recreate();
+                return true;
             case R.id.menu_manage_feeds:
                 startActivityForResult(new Intent(this, ManageFeedsActivity.class), ManageFeedsActivity.REQUEST_CODE);
                 return true;
