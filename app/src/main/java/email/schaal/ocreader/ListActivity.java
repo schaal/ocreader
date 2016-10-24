@@ -79,6 +79,7 @@ import email.schaal.ocreader.database.model.TreeItem;
 import email.schaal.ocreader.database.model.User;
 import email.schaal.ocreader.databinding.ActivityListBinding;
 import email.schaal.ocreader.service.SyncService;
+import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.view.DividerItemDecoration;
 import email.schaal.ocreader.view.ItemViewHolder;
 import email.schaal.ocreader.view.ItemsAdapter;
@@ -457,6 +458,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 final int daynightmode = Preferences.DAY_NIGHT_MODE.getInt(sharedPreferences) == AppCompatDelegate.MODE_NIGHT_NO ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO;
                 sharedPreferences.edit().putInt(Preferences.DAY_NIGHT_MODE.getKey(), daynightmode).apply();
                 AppCompatDelegate.setDefaultNightMode(daynightmode);
+                FaviconLoader.clearCache();
                 recreate();
                 return true;
             case R.id.menu_manage_feeds:

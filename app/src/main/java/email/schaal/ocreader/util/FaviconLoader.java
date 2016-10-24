@@ -89,6 +89,10 @@ public class FaviconLoader {
                 & Configuration.UI_MODE_NIGHT_MASK;
     }
 
+    public static void clearCache() {
+        feedColorsCache.evictAll();
+        faviconCache.evictAll();
+    }
     public void load(Context context, @NonNull FeedColorsListener listener) {
         listener.onStart();
         if(feed == null) {
