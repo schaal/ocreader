@@ -3,7 +3,6 @@ package email.schaal.ocreader.view;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
@@ -67,6 +66,7 @@ public class ArticleWebView extends NestedScrollWebView {
     private final static String videoLink = "<a href=\"%s\">%s</a>";
 
     @ColorInt private int fontColor;
+    @ColorInt private int backgroundColor;
 
     public ArticleWebView(Context context) {
         super(context);
@@ -94,7 +94,7 @@ public class ArticleWebView extends NestedScrollWebView {
         try {
             defaultTitleColor = typedArray.getColor(R.styleable.ArticleWebView_titleColor, 0);
             fontColor = typedArray.getColor(R.styleable.ArticleWebView_fontColor, 0);
-            setBackgroundColor(typedArray.getColor(R.styleable.ArticleWebView_backgroundColor, 0));
+            backgroundColor = typedArray.getColor(R.styleable.ArticleWebView_backgroundColor, 0);
         } finally {
             typedArray.recycle();
         }
@@ -154,8 +154,8 @@ public class ArticleWebView extends NestedScrollWebView {
                 "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">");
 
         pageBuilder.append(String.format(
-                "<style type=\"text/css\">a:link, a:active,a:hover { color: %s } body { color: %s } blockquote { background-color: %s } %s</style>",
-                FaviconLoader.getCssColor(fontColor), FaviconLoader.getCssColor(defaultTitleColor), FaviconLoader.getCssColor(ContextCompat.getColor(context, R.color.selected_background)), css));
+                "<style type=\"text/css\">a:link, a:active,a:hover { color: %s } body { color: %s; background-color: %s } blockquote { background-color: %s } %s</style>",
+                FaviconLoader.getCssColor(fontColor), FaviconLoader.getCssColor(defaultTitleColor), FaviconLoader.getCssColor(backgroundColor), FaviconLoader.getCssColor(ContextCompat.getColor(context, R.color.selected_background)), css));
 
         pageBuilder.append("</head><body>");
 
