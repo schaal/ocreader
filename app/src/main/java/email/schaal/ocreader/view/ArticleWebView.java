@@ -95,6 +95,7 @@ public class ArticleWebView extends NestedScrollWebView {
             defaultTitleColor = typedArray.getColor(R.styleable.ArticleWebView_titleColor, 0);
             fontColor = typedArray.getColor(R.styleable.ArticleWebView_fontColor, 0);
             backgroundColor = typedArray.getColor(R.styleable.ArticleWebView_backgroundColor, 0);
+            setBackgroundColor(backgroundColor);
         } finally {
             typedArray.recycle();
         }
