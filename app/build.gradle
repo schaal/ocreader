@@ -79,7 +79,7 @@ dependencies {
 
     compile 'io.realm:android-adapters:1.3.0'
 
-    compile 'org.jsoup:jsoup:1.9.2'
+    compile 'org.jsoup:jsoup:1.10.1'
 
     compile 'com.github.schaal:ico4a:fde400c'
 
