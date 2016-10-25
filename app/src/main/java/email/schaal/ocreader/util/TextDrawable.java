@@ -34,6 +34,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.graphics.drawable.shapes.Shape;
+import android.support.annotation.ColorInt;
 
 import java.util.Locale;
 
@@ -150,6 +151,11 @@ public class TextDrawable extends ShapeDrawable {
             fontSize = -1;
             isBold = false;
             toUpperCase = true;
+        }
+
+        public Builder textColor(@ColorInt int textColor) {
+            this.textColor = textColor;
+            return this;
         }
 
         public Builder width(int width) {

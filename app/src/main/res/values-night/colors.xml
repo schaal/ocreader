@@ -21,4 +21,5 @@
 
 <resources>
     <color name="selected_background">@color/md_grey_800</color>
+    <color name="textdrawable">@color/md_light_primary_text</color>
 </resources>

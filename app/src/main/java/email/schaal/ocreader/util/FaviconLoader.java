@@ -63,7 +63,7 @@ public class FaviconLoader {
             drawable = faviconCache.get(feed.getId());
 
             if(drawable == null) {
-                drawable = new TextDrawable.Builder().build(feed.getName().substring(0, 1), getFeedColor(context, feed));
+                drawable = new TextDrawable.Builder().textColor(ContextCompat.getColor(context, R.color.textdrawable)).build(feed.getName().substring(0, 1), getFeedColor(context, feed));
                 faviconCache.put(feed.getId(), drawable);
             }
         } else {
