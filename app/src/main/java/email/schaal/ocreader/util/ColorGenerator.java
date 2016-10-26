@@ -24,47 +24,32 @@
 
 package email.schaal.ocreader.util;
 
-import com.mikepenz.materialize.color.Material;
+import android.support.annotation.ColorRes;
 
 import java.util.Arrays;
 import java.util.List;
+
+import email.schaal.ocreader.R;
 
 /**
  * @author amulya
  */
 class ColorGenerator {
     final static ColorGenerator MATERIAL = new ColorGenerator(Arrays.asList(
-            Material.Red._900.getAsColor(),
-            Material.Purple._900.getAsColor(),
-            Material.Indigo._900.getAsColor(),
-            Material.Blue._900.getAsColor(),
-            Material.LightBlue._900.getAsColor(),
-            Material.Cyan._900.getAsColor(),
-            Material.Teal._900.getAsColor(),
-            Material.Green._900.getAsColor(),
-            Material.LightGreen._900.getAsColor(),
-            Material.Lime._900.getAsColor(),
-            Material.Amber._900.getAsColor(),
-            Material.DeepOrange._900.getAsColor(),
-            Material.Brown._900.getAsColor(),
-            Material.BlueGrey._900.getAsColor()
-    ));
-
-    final static ColorGenerator MATERIAL_NIGHT = new ColorGenerator(Arrays.asList(
-            Material.Red._400.getAsColor(),
-            Material.Purple._400.getAsColor(),
-            Material.Indigo._400.getAsColor(),
-            Material.Blue._400.getAsColor(),
-            Material.LightBlue._400.getAsColor(),
-            Material.Cyan._400.getAsColor(),
-            Material.Teal._400.getAsColor(),
-            Material.Green._400.getAsColor(),
-            Material.LightGreen._400.getAsColor(),
-            Material.Lime._400.getAsColor(),
-            Material.Amber._400.getAsColor(),
-            Material.DeepOrange._400.getAsColor(),
-            Material.Brown._400.getAsColor(),
-            Material.BlueGrey._400.getAsColor()
+            R.color.tdb_Red,
+            R.color.tdb_Purple,
+            R.color.tdb_Indigo,
+            R.color.tdb_Blue,
+            R.color.tdb_LightBlue,
+            R.color.tdb_Cyan,
+            R.color.tdb_Teal,
+            R.color.tdb_Green,
+            R.color.tdb_LightGreen,
+            R.color.tdb_Lime,
+            R.color.tdb_Amber,
+            R.color.tdb_DeepOrange,
+            R.color.tdb_Brown,
+            R.color.tdb_BlueGrey
     ));
 
     private final List<Integer> mColors;
@@ -73,6 +58,7 @@ class ColorGenerator {
         mColors = colorList;
     }
 
+    @ColorRes
     public int getColor(Object key) {
         if(key != null)
             return mColors.get(Math.abs(key.hashCode()) % mColors.size());

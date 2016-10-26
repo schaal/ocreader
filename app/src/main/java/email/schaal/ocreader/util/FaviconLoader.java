@@ -1,7 +1,6 @@
 package email.schaal.ocreader.util;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -63,7 +62,7 @@ public class FaviconLoader {
             drawable = faviconCache.get(feed.getId());
 
             if(drawable == null) {
-                drawable = new TextDrawable.Builder().textColor(ContextCompat.getColor(context, R.color.textdrawable)).build(feed.getName().substring(0, 1), getFeedColor(context, feed));
+                drawable = new TextDrawable.Builder().textColor(ContextCompat.getColor(context, R.color.textdrawable_text)).build(feed.getName().substring(0, 1), getFeedColor(context, feed));
                 faviconCache.put(feed.getId(), drawable);
             }
         } else {
@@ -73,20 +72,7 @@ public class FaviconLoader {
     }
 
     private static int getFeedColor(Context context, @NonNull Feed feed) {
-
-        final ColorGenerator generator;
-
-        if(getCurrentNightMode(context) == Configuration.UI_MODE_NIGHT_YES)
-            generator = ColorGenerator.MATERIAL_NIGHT;
-        else
-            generator = ColorGenerator.MATERIAL;
-
-        return generator.getColor(feed.getUrl());
-    }
-
-    public static int getCurrentNightMode(Context context) {
-        return context.getResources().getConfiguration().uiMode
-                & Configuration.UI_MODE_NIGHT_MASK;
+        return ContextCompat.getColor(context,ColorGenerator.MATERIAL.getColor(feed.getUrl()));
     }
 
     public static void clearCache() {

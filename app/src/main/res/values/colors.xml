@@ -30,5 +30,21 @@
     <color name="delete">@color/md_red_500</color>
     <color name="warning">@color/md_amber_500</color>
     <color name="error">@color/md_red_500</color>
-    <color name="textdrawable">@color/md_dark_primary_text</color>
+    <color name="textdrawable_text">@color/md_dark_primary_text</color>
+
+    <!-- Background colors for textdrawable -->
+    <color name="tdb_Red">@color/md_red_900</color>
+    <color name="tdb_Purple">@color/md_purple_900</color>
+    <color name="tdb_Indigo">@color/md_indigo_900</color>
+    <color name="tdb_Blue">@color/md_blue_900</color>
+    <color name="tdb_LightBlue">@color/md_light_blue_900</color>
+    <color name="tdb_Cyan">@color/md_cyan_900</color>
+    <color name="tdb_Teal">@color/md_teal_900</color>
+    <color name="tdb_Green">@color/md_green_900</color>
+    <color name="tdb_LightGreen">@color/md_light_green_900</color>
+    <color name="tdb_Lime">@color/md_lime_900</color>
+    <color name="tdb_Amber">@color/md_amber_900</color>
+    <color name="tdb_DeepOrange">@color/md_deep_orange_900</color>
+    <color name="tdb_Brown">@color/md_brown_900</color>
+    <color name="tdb_BlueGrey">@color/md_blue_grey_900</color>
 </resources>

@@ -21,5 +21,21 @@
 
 <resources>
     <color name="selected_background">@color/md_grey_800</color>
-    <color name="textdrawable">@color/md_light_primary_text</color>
+    <color name="textdrawable_text">@color/md_light_primary_text</color>
+
+    <!-- Background colors for textdrawable -->
+    <color name="tdb_Red">@color/md_red_200</color>
+    <color name="tdb_Purple">@color/md_purple_200</color>
+    <color name="tdb_Indigo">@color/md_indigo_200</color>
+    <color name="tdb_Blue">@color/md_blue_200</color>
+    <color name="tdb_LightBlue">@color/md_light_blue_200</color>
+    <color name="tdb_Cyan">@color/md_cyan_200</color>
+    <color name="tdb_Teal">@color/md_teal_200</color>
+    <color name="tdb_Green">@color/md_green_200</color>
+    <color name="tdb_LightGreen">@color/md_light_green_200</color>
+    <color name="tdb_Lime">@color/md_lime_200</color>
+    <color name="tdb_Amber">@color/md_amber_200</color>
+    <color name="tdb_DeepOrange">@color/md_deep_orange_200</color>
+    <color name="tdb_Brown">@color/md_brown_200</color>
+    <color name="tdb_BlueGrey">@color/md_blue_grey_200</color>
 </resources>
