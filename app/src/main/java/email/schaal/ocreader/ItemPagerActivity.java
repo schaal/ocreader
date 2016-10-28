@@ -26,6 +26,7 @@ import android.animation.ValueAnimator;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -228,19 +229,27 @@ public class ItemPagerActivity extends RealmActivity {
         static final int DURATION = 250;
         private final SectionsPagerAdapter mSectionsPagerAdapter;
 
+        private final int currentNightMode;
+
         private final ValueAnimator.AnimatorUpdateListener animatorUpdateListener = new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 int backgroundColor = (int) animation.getAnimatedValue();
 
+                setStatusbarColor(backgroundColor);
+            }
+        };
+
+        private void setStatusbarColor(final int backgroundColor) {
+            // Don't set the toolbar color when in night mode (white text and icon tint doesn't work with feed color in night mode)
+            if (currentNightMode == Configuration.UI_MODE_NIGHT_NO) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     int statusbarColor = changeLightness(backgroundColor, 0.7f);
                     getWindow().setStatusBarColor(statusbarColor);
                 }
-
                 binding.toolbarLayout.toolbar.setBackgroundColor(backgroundColor);
             }
-        };
+        }
 
         private int changeLightness(int backgroundColor, float lightnessChange) {
             float[] hsl = new float[3];
@@ -269,12 +278,9 @@ public class ItemPagerActivity extends RealmActivity {
 
                 if(firstRun) {
                     firstRun = false;
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        int statusbarColor = changeLightness(colorTo, 0.7f);
-                        getWindow().setStatusBarColor(statusbarColor);
-                    }
 
-                    binding.toolbarLayout.toolbar.setBackgroundColor(colorTo);
+                    setStatusbarColor(colorTo);
+
                     binding.fabOpenInBrowser.setBackgroundColor(fabColorTo);
                 } else {
                     ValueAnimator animator = ValueAnimator.ofInt(colorFrom, colorTo).setDuration(DURATION);
@@ -299,6 +305,7 @@ public class ItemPagerActivity extends RealmActivity {
             this.mSectionsPagerAdapter = mSectionsPagerAdapter;
             colorTo = defaultToolbarColor;
             fabColorTo = defaultAccent;
+            currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         }
 
         @Override
