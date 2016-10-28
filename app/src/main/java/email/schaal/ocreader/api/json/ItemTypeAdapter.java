@@ -141,7 +141,9 @@ public class ItemTypeAdapter extends JsonAdapter<Item> {
                     item.setFingerprint(in.nextString());
                     break;
                 case "contentHash":
-                    item.setContentHash(in.nextString());
+                    // ignore for now, old items don't have this set yet.
+                    //item.setContentHash(in.nextString());
+                    in.skipValue();
                     break;
                 case "updatedDate":
                     item.setUpdatedAt(new Date(in.nextLong() * 1000));
