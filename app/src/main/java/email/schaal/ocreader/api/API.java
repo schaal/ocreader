@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.github.zafarkhaja.semver.Version;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
@@ -44,6 +45,7 @@ import retrofit2.http.GET;
  */
 public abstract class API {
     private static final String TAG = API.class.getName();
+    private static final Version MIN_VERSION = Version.forIntegers(8, 8, 2);
 
     private static API instance;
 
@@ -147,17 +149,28 @@ public abstract class API {
                             @Override
                             public void onResponse(Call<Status> call, Response<Status> response) {
                                 if(response.isSuccessful()) {
-                                    PreferenceManager.getDefaultSharedPreferences(context).edit()
-                                            .putString(Preferences.USERNAME.getKey(), username)
-                                            .putString(Preferences.PASSWORD.getKey(), password)
-                                            .putString(Preferences.URL.getKey(), resolvedBaseUrl.toString())
-                                            .putString(Preferences.SYS_DETECTED_API_LEVEL.getKey(), apiLevel.getLevel())
-                                            .apply();
+                                    final Version version = response.body().getVersion();
+                                    if(version != null && MIN_VERSION.lessThanOrEqualTo(version)) {
+                                        PreferenceManager.getDefaultSharedPreferences(context).edit()
+                                                .putString(Preferences.USERNAME.getKey(), username)
+                                                .putString(Preferences.PASSWORD.getKey(), password)
+                                                .putString(Preferences.URL.getKey(), resolvedBaseUrl.toString())
+                                                .putString(Preferences.SYS_DETECTED_API_LEVEL.getKey(), apiLevel.getLevel())
+                                                .apply();
 
-                                    instance = loginInstance;
-                                    loginInstance = null;
+                                        instance = loginInstance;
+                                        loginInstance = null;
 
-                                    loginCallback.onSuccess(response.body());
+                                        loginCallback.onSuccess(response.body());
+                                    } else {
+                                        if(version != null) {
+                                            Log.d(TAG, String.format("Nextcloud News version is less than minimally supported version: %s < %s", version.toString(), MIN_VERSION.toString()));
+                                            loginCallback.onFailure(new LoginError(context.getString(R.string.ncnews_too_old, MIN_VERSION.toString())));
+                                        } else {
+                                            Log.d(TAG, "Couldn't parse Nextcloud News version");
+                                            loginCallback.onFailure(new LoginError(context.getString(R.string.failed_detect_nc_version)));
+                                        }
+                                    }
                                 } else {
                                     String message = getErrorMessage(errorJsonAdapter, response);
                                     Log.d(TAG, "Metadata call failed with error: " + message);
@@ -175,7 +188,7 @@ public abstract class API {
                 } else {
                     Log.d(TAG, "API level call failed with error: " + response.code() + " " + getErrorMessage(errorJsonAdapter, response));
                     // Either nextcloud news is not installed or version prior 8.8.0
-                    loginCallback.onFailure(LoginError.getError(context, response.code(), context.getString(R.string.ncnews_too_old)));
+                    loginCallback.onFailure(LoginError.getError(context, response.code(), context.getString(R.string.ncnews_too_old, MIN_VERSION.toString())));
                 }
             }
 

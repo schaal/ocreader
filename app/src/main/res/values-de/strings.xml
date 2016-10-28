@@ -33,7 +33,7 @@
     <string name="more_info">Mehr Infos</string>
     <string name="updater_improperly_configured">News App Updater ist fehlerhaft eingerichtet</string>
     <string name="untrusted_certificate">Zertifikat ist nicht vertrauenswürdig, bitte überprüfen Sie das SSL Setup</string>
-    <string name="ncnews_too_old">Nextcloud News nicht installiert oder veraltet. Bitte installieren oder auf mindestens 8.8.0 aktualisieren</string>
+    <string name="ncnews_too_old">Nextcloud News nicht installiert oder veraltet. Bitte installieren oder auf mindestens %s aktualisieren</string>
     <string name="error_oc_not_found">ownCloud nicht gefunden</string>
     <string name="action_sign_in_insecurely">Unsicher anmelden</string>
     <string name="error_insecure_connection">Unsichere Verbindung, erneut Anmelden drücken um trotzdem fortzufahren</string>
@@ -68,4 +68,6 @@
     <string name="descending">Absteigend</string>
     <string name="publication_date">Veröffentlichungsdatum</string>
     <string name="updated_date">Aktualisierungsdatum</string>
+    <string name="failed_detect_nc_version">Version von Nextcloud News konnte nicht ermittelt werden</string>
+    <string name="could_not_connect">Verbindung mit dem Host fehlgeschlagen</string>
 </resources>

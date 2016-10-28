@@ -29,13 +29,15 @@ import okhttp3.mockwebserver.RecordedRequest;
  */
 
 class APIDispatcher extends Dispatcher {
+    String version = "8.8.2";
+
     @Override
     public MockResponse dispatch(RecordedRequest request) throws InterruptedException {
         String PATH_PREFIX = "/index.php/apps/news/api";
         if(request.getPath().equals(PATH_PREFIX))
             return new MockResponse().setBody("{ \"apiLevels\": [\"v1-2\"]}");
         else if(request.getPath().equals(PATH_PREFIX + "/v1-2/status"))
-            return new MockResponse().setBody("{ \"version\": \"8.8.0\", \"warnings\": { \"improperlyConfiguredCron\": false }}");
+            return new MockResponse().setBody(String.format("{ \"version\": \"%s\", \"warnings\": { \"improperlyConfiguredCron\": false }}", version));
         return new MockResponse().setResponseCode(404);
     }
 }

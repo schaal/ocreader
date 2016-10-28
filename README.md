@@ -2,7 +2,7 @@
 
 # [OCReader][1] - Android client for [Nextcloud News][0]
 
-OCReader is a client for a [Nextcloud News][0] instance (needs at least version 8.8.0).
+OCReader is a client for a [Nextcloud News][0] instance (needs at least version 8.8.2).
 
 [<img src="https://f-droid.org/badge/get-it-on.png"
       alt="Get it on F-Droid"

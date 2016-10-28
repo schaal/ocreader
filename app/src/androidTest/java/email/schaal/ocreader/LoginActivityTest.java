@@ -34,9 +34,10 @@ public class LoginActivityTest {
     public ActivityTestRule<LoginActivity> activityTestRule = new ActivityTestRule<>(LoginActivity.class);
 
     private final MockWebServer server = new MockWebServer();
+    private final APIDispatcher dispatcher = new APIDispatcher();
 
     public LoginActivityTest() {
-        server.setDispatcher(new APIDispatcher());
+        server.setDispatcher(dispatcher);
     }
 
     @Before
@@ -70,5 +71,22 @@ public class LoginActivityTest {
         onView(withId(R.id.password)).perform(clearText(), typeText("admin"));
         onView(withId(R.id.sign_in_button)).perform(click());
         onView(withId(R.id.url)).check(matches(hasErrorText(activityTestRule.getActivity().getString(R.string.error_unknown_host))));
+    }
+
+    @Test
+    public void testOutdatedVersion() throws IOException {
+        String originalVersion = dispatcher.version;
+        dispatcher.version = "8.8.0";
+
+        HttpUrl baseUrl = server.url("");
+
+        onView(withId(R.id.url)).perform(clearText(), typeText(baseUrl.toString()));
+        onView(withId(R.id.username)).perform(clearText(), typeText("admin"));
+        onView(withId(R.id.password)).perform(clearText(), typeText("admin"));
+        onView(withId(R.id.sign_in_button)).perform(click());
+        onView(withId(R.id.url)).check(matches(hasErrorText(activityTestRule.getActivity().getString(R.string.error_insecure_connection))));
+        onView(withId(R.id.sign_in_button)).perform(click());
+
+        dispatcher.version = originalVersion;
     }
 }
