@@ -1,3 +1,8 @@
+# 0.23 (2016-10-29)
+
+* Ignore contentHash for now, fixes syncing in certain circumstances (Fixes #26)
+* Add day/night theme support (Fixes #15)
+
 ## 0.22 (2016-10-23)
 
 * Fix login with subdirectory (Thanks to @Eloo) (Fixes #23)
