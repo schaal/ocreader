@@ -70,4 +70,5 @@
     <string name="updated_date">Aktualisierungsdatum</string>
     <string name="failed_detect_nc_version">Version von Nextcloud News konnte nicht ermittelt werden</string>
     <string name="could_not_connect">Verbindung mit dem Host fehlgeschlagen</string>
+    <string name="switch_app_theme">Wechsle App Thema</string>
 </resources>

@@ -19,7 +19,7 @@
 
     <item
         android:id="@+id/menu_change_theme"
-        android:title="Switch to dark theme"
+        android:title="@string/switch_app_theme"
         app:showAsAction="never"
         />
 

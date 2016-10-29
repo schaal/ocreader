@@ -103,5 +103,6 @@
     <string name="descending">Descending</string>
     <string name="could_not_connect">Could not connect to host</string>
     <string name="failed_detect_nc_version">Couldn\'t detect Nextcloud News version</string>
+    <string name="switch_app_theme">Switch app theme</string>
 
 </resources>
