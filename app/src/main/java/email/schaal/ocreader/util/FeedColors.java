@@ -15,6 +15,7 @@ import java.util.Map;
  * Generate text and background color for Feeds
  */
 public class FeedColors {
+    @Nullable
     private final Palette palette;
 
     public enum Type {
@@ -35,22 +36,29 @@ public class FeedColors {
             swatch = null;
         }
 
-        palette = new Palette.Builder(Collections.singletonList(swatch)).addTarget(Target.MUTED).generate();
+        if(swatch != null)
+            palette = new Palette.Builder(Collections.singletonList(swatch)).addTarget(Target.MUTED).generate();
+        else
+            palette = null;
     }
 
     @ColorInt public int getColor(@NonNull Type type, @ColorInt int defaultColor) {
         final Palette.Swatch swatch;
 
-        switch (type) {
-            case TEXT:
-                swatch = palette.getDominantSwatch();
-                break;
-            case BACKGROUND:
-                swatch = palette.getMutedSwatch();
-                break;
-            default:
-                swatch = null;
-                break;
+        if(palette != null) {
+            switch (type) {
+                case TEXT:
+                    swatch = palette.getDominantSwatch();
+                    break;
+                case BACKGROUND:
+                    swatch = palette.getMutedSwatch();
+                    break;
+                default:
+                    swatch = null;
+                    break;
+            }
+        } else {
+            swatch = null;
         }
 
         if(swatch != null)
