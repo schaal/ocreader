@@ -19,7 +19,6 @@ import static org.junit.Assert.assertNull;
  * Test class for StringUtils
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.M, application = TestApplication.class)
 public class StringUtilsTest {
 
     @Test

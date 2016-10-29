@@ -25,7 +25,6 @@ import static org.junit.Assert.assertTrue;
  * Tests for FaviconLoader
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.M, application = TestApplication.class)
 public class FaviconLoaderTest {
 
     @Test
