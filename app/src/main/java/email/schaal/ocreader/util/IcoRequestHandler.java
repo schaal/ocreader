@@ -21,6 +21,7 @@
 package email.schaal.ocreader.util;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.Nullable;
 
 import com.squareup.picasso.Downloader;
@@ -28,6 +29,8 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
 import com.squareup.picasso.RequestHandler;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -48,8 +51,7 @@ public class IcoRequestHandler extends RequestHandler {
 
     @Override
     public boolean canHandleRequest(Request data) {
-        // icons from s.ytimg.com have .ico suffix, but are actually png files
-        return data.uri.getLastPathSegment().endsWith(".ico") && !data.uri.getHost().equals("s.ytimg.com");
+        return data.uri.getLastPathSegment().endsWith(".ico");
     }
 
     @Nullable
@@ -59,9 +61,20 @@ public class IcoRequestHandler extends RequestHandler {
 
         if(response != null && response.getInputStream() != null) {
             final InputStream inputStream = response.getInputStream();
+            final byte[] buf;
+
+            {
+                byte[] b = new byte[1024];
+                int bytesRead;
+                final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                while ((bytesRead = inputStream.read(b)) != -1) {
+                    bos.write(b, 0, bytesRead);
+                }
+                buf = bos.toByteArray();
+            }
 
             try {
-                List<Bitmap> bitmaps = ICODecoder.read(inputStream);
+                List<Bitmap> bitmaps = ICODecoder.read(new ByteArrayInputStream(buf));
 
                 Bitmap biggest = bitmaps.remove(0);
 
@@ -71,6 +84,9 @@ public class IcoRequestHandler extends RequestHandler {
                 }
 
                 return new Result(biggest, Picasso.LoadedFrom.NETWORK);
+            } catch (IOException e) {
+                // Failed to decode ico file, try again using BitmapFactory
+                return new Result(BitmapFactory.decodeStream(new ByteArrayInputStream(buf)), Picasso.LoadedFrom.NETWORK);
             } finally {
                 try {
                     inputStream.close();
