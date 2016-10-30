@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.model.Feed;
+import email.schaal.ocreader.databinding.ListFeedBinding;
+import email.schaal.ocreader.databinding.ListItemBinding;
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 
@@ -31,8 +33,8 @@ public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.Vi
         switch (viewType) {
             case VIEW_TYPE_ITEM:
             case VIEW_TYPE_LAST_ITEM:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_feed, parent, false);
-                return new FeedViewHolder(view, listener);
+                ListFeedBinding binding = ListFeedBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+                return new FeedViewHolder(binding, listener);
         }
         return null;
     }
@@ -43,7 +45,6 @@ public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.Vi
             Feed feed = getItem(position);
             ((FeedViewHolder)holder).bindFeed(feed);
         }
-
     }
 
     @Override

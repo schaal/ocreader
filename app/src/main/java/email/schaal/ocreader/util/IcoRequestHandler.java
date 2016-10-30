@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import divstar.ico4a.codec.ico.ICODecoder;
+import hugo.weaving.DebugLog;
 
 /**
  * Handle requests for Picasso for ico files

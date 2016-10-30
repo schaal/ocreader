@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.model.Feed;
+import email.schaal.ocreader.databinding.ListFeedBinding;
 import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.util.FeedColors;
 
@@ -15,30 +16,22 @@ import email.schaal.ocreader.util.FeedColors;
  * ViewHolder displaying a Feed
  */
 public class FeedViewHolder extends RecyclerView.ViewHolder implements FaviconLoader.FeedColorsListener {
-    private final TextView textViewTitle;
-    private final ImageView imageViewFavicon;
-    private final TextView textViewFolder;
-    private final ImageView deleteButton;
+    private final ListFeedBinding binding;
     private final FeedManageListener listener;
 
-    public FeedViewHolder(View itemView, FeedManageListener listener) {
-        super(itemView);
+    public FeedViewHolder(ListFeedBinding binding, FeedManageListener listener) {
+        super(binding.getRoot());
 
+        this.binding = binding;
         this.listener = listener;
-
-        textViewTitle = (TextView) itemView.findViewById(R.id.textViewTitle);
-        imageViewFavicon = (ImageView) itemView.findViewById(R.id.imageview_favicon);
-        deleteButton = (ImageView) itemView.findViewById(R.id.delete_feed);
-
-        textViewFolder = (TextView) itemView.findViewById(R.id.textViewFolder);
     }
 
     public void bindFeed(final Feed feed) {
-        textViewTitle.setText(feed.getName());
+        binding.textViewTitle.setText(feed.getName());
 
-        textViewFolder.setText(feed.getFolderTitle(itemView.getContext()));
+        binding.textViewFolder.setText(feed.getFolderTitle(itemView.getContext()));
 
-        deleteButton.setOnClickListener(new View.OnClickListener() {
+        binding.deleteFeed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
                 listener.deleteFeed(feed);
@@ -51,7 +44,7 @@ public class FeedViewHolder extends RecyclerView.ViewHolder implements FaviconLo
                 listener.showFeedDialog(feed);
             }
         });
-        new FaviconLoader.Builder(imageViewFavicon, feed).build().load(itemView.getContext(), this);
+        new FaviconLoader.Builder(binding.imageviewFavicon, feed).build().load(itemView.getContext(), this);
     }
 
     @Override
