@@ -16,6 +16,7 @@ import android.widget.TextView;
 import email.schaal.ocreader.ManageFeedsActivity;
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.model.Feed;
+import email.schaal.ocreader.databinding.FragmentAddNewFeedBinding;
 
 /**
  * Display form to add new Feed
@@ -45,12 +46,7 @@ public class AddNewFeedDialogFragment extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
-        // There is no root view yet
-        @SuppressLint("InflateParams")
-        View view = activity.getLayoutInflater().inflate(R.layout.fragment_add_new_feed, null);
-
-        final Spinner folderSpinner = (Spinner) view.findViewById(R.id.folder);
-        final TextView urlTextView = (TextView) view.findViewById(R.id.feed_url);
+        final FragmentAddNewFeedBinding binding = FragmentAddNewFeedBinding.inflate(activity.getLayoutInflater());
 
         final Bundle arguments = getArguments();
         final long feedId = arguments.getLong(ARG_FEED_ID, -1);
@@ -58,14 +54,14 @@ public class AddNewFeedDialogFragment extends DialogFragment {
 
         builder.setTitle(newFeed ? R.string.add_new_feed : R.string.edit_feed);
 
-        urlTextView.setEnabled(newFeed);
+        binding.feedUrl.setEnabled(newFeed);
 
         final boolean finishAfterClose;
 
-        folderSpinner.setAdapter(activity.getFolderSpinnerAdapter());
+        binding.folder.setAdapter(activity.getFolderSpinnerAdapter());
 
-        urlTextView.setText(arguments.getString(ARG_URL));
-        folderSpinner.setSelection(activity.getFolderSpinnerAdapter().getPosition(arguments.getLong(ARG_FOLDER_ID, 0)));
+        binding.feedUrl.setText(arguments.getString(ARG_URL));
+        binding.folder.setSelection(activity.getFolderSpinnerAdapter().getPosition(arguments.getLong(ARG_FOLDER_ID, 0)));
         finishAfterClose = arguments.getBoolean(ARG_FINISH_AFTER_CLOSE, false);
 
         builder.setPositiveButton(newFeed ? R.string.add : R.string.save, new DialogInterface.OnClickListener() {
@@ -73,14 +69,14 @@ public class AddNewFeedDialogFragment extends DialogFragment {
             public void onClick(DialogInterface dialogInterface, int i) {
                 if(listener != null) {
                     if(newFeed)
-                        listener.addNewFeed(urlTextView.getText().toString(), folderSpinner.getSelectedItemId(), finishAfterClose);
+                        listener.addNewFeed(binding.feedUrl.getText().toString(), binding.folder.getSelectedItemId(), finishAfterClose);
                     else
-                        listener.changeFeed(urlTextView.getText().toString(), feedId, folderSpinner.getSelectedItemId());
+                        listener.changeFeed(binding.feedUrl.getText().toString(), feedId, binding.folder.getSelectedItemId());
                 }
             }
         });
 
-        builder.setView(view);
+        builder.setView(binding.getRoot());
 
         return builder.create();
     }
