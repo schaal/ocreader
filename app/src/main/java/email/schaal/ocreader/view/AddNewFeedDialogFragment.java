@@ -1,6 +1,5 @@
 package email.schaal.ocreader.view;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -9,9 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.View;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import email.schaal.ocreader.ManageFeedsActivity;
 import email.schaal.ocreader.R;

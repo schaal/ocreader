@@ -6,10 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.databinding.ListFeedBinding;
-import email.schaal.ocreader.databinding.ListItemBinding;
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 

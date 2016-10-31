@@ -1,13 +1,10 @@
 package email.schaal.ocreader;
 
-import android.os.Build;
-
 import com.squareup.moshi.Moshi;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 import java.io.IOException;
 

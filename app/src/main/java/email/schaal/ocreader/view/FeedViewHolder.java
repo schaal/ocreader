@@ -3,10 +3,7 @@ package email.schaal.ocreader.view;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.databinding.ListFeedBinding;
 import email.schaal.ocreader.util.FaviconLoader;
