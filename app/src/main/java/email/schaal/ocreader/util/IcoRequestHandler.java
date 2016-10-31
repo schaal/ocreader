@@ -23,6 +23,7 @@ package email.schaal.ocreader.util;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.squareup.picasso.Downloader;
 import com.squareup.picasso.Picasso;
@@ -43,6 +44,8 @@ import divstar.ico4a.codec.ico.ICODecoder;
  * Convert ico files containing multiple sizes to multiple images
  */
 public class IcoRequestHandler extends RequestHandler {
+    private final static String TAG = IcoRequestHandler.class.getSimpleName();
+
     private final Downloader downloader;
 
     public IcoRequestHandler(Downloader downloader) {
@@ -85,9 +88,9 @@ public class IcoRequestHandler extends RequestHandler {
 
                 return new Result(biggest, Picasso.LoadedFrom.NETWORK);
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.i(TAG, ".ico decoding failed, trying again using BitmapFactory: " + e.getLocalizedMessage());
                 // Failed to decode ico file, try again using BitmapFactory
-                return new Result(BitmapFactory.decodeStream(new ByteArrayInputStream(buf)), Picasso.LoadedFrom.NETWORK);
+                return new Result(BitmapFactory.decodeByteArray(buf, 0, buf.length), Picasso.LoadedFrom.NETWORK);
             } finally {
                 try {
                     inputStream.close();
