@@ -18,35 +18,36 @@
   ~
   -->
 
-<layout>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/coordinator_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context="email.schaal.ocreader.ManageFeedsActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
-    <include android:id="@+id/toolbar_layout" layout="@layout/toolbar" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/feeds_recyclerview"
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coordinator_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:fitsSystemWindows="true"
+        tools:context="email.schaal.ocreader.ManageFeedsActivity">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_add_feed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/materialize_screen_edge"
-        android:clickable="true"
-        android:src="@drawable/ic_add"
-        android:tint="@color/md_white_1000"
-        app:layout_behavior="email.schaal.ocreader.view.ScrollAwareFABBehavior" />
-</android.support.design.widget.CoordinatorLayout>
+        <include android:id="@+id/toolbar_layout"
+                 layout="@layout/toolbar"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/feeds_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_add_feed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/materialize_screen_edge"
+            android:clickable="true"
+            android:src="@drawable/ic_add"
+            android:tint="@color/md_white_1000"
+            app:layout_behavior="email.schaal.ocreader.view.ScrollAwareFABBehavior"/>
+    </android.support.design.widget.CoordinatorLayout>
 </layout>

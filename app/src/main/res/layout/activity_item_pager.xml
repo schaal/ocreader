@@ -19,35 +19,35 @@
   ~
   -->
 
-<layout>
-<android.support.design.widget.CoordinatorLayout
-    android:id="@+id/main_content"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context="email.schaal.ocreader.ItemPagerActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
-    <include android:id="@+id/toolbar_layout" layout="@layout/toolbar" />
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/container"
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        android:fitsSystemWindows="true"
+        tools:context="email.schaal.ocreader.ItemPagerActivity">
 
-    <email.schaal.ocreader.view.ProgressFloatingActionButton
-        android:id="@+id/fab_open_in_browser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/materialize_screen_edge"
-        android:clickable="true"
-        app:progressColor="@color/progress"
-        app:layout_behavior="email.schaal.ocreader.view.ScrollAwareFABBehavior"
-        android:src="@drawable/ic_open_in_browser" />
+        <include android:id="@+id/toolbar_layout"
+                 layout="@layout/toolbar"/>
 
-</android.support.design.widget.CoordinatorLayout>
+        <android.support.v4.view.ViewPager
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+        <email.schaal.ocreader.view.ProgressFloatingActionButton
+            android:id="@+id/fab_open_in_browser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/materialize_screen_edge"
+            android:clickable="true"
+            android:src="@drawable/ic_open_in_browser"
+            app:layout_behavior="email.schaal.ocreader.view.ScrollAwareFABBehavior"
+            app:progressColor="@color/progress"/>
+    </android.support.design.widget.CoordinatorLayout>
 </layout>

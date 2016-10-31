@@ -19,94 +19,94 @@
   ~
   -->
 
-<layout>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?attr/selectableItemBackground"
-    android:clickable="true"
-    android:focusable="true"
-    android:padding="@dimen/materialize_spacing">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/textViewFeedTitle"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/buttons"
-        android:layout_alignLeft="@+id/buttons"
-        android:layout_alignStart="@id/buttons"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        tools:text="Feed title"
-        android:layout_toLeftOf="@+id/textViewTime"
-        android:layout_toStartOf="@+id/textViewTime" />
-
-    <ImageView
-        android:id="@+id/imageview_favicon"
-        android:layout_width="@dimen/materialize_icon"
-        android:layout_height="@dimen/materialize_icon"
-        tools:src="@drawable/ic_feed_icon"
-        android:contentDescription="@string/feed_icon_description"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="@dimen/materialize_spacing"
-        android:layout_marginRight="@dimen/materialize_spacing"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"/>
-
-    <LinearLayout
-        android:id="@+id/buttons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@id/imageview_favicon"
-        android:layout_toEndOf="@id/imageview_favicon">
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/materialize_spacing">
 
         <TextView
-            android:id="@+id/textViewTitle"
-            android:layout_width="0dp"
+            android:id="@+id/textViewFeedTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLines="2"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-            android:ellipsize="end"
-            tools:text="This is the article title"
-            android:layout_weight="1" />
+            android:layout_alignLeft="@+id/buttons"
+            android:layout_alignStart="@id/buttons"
+            android:layout_below="@+id/buttons"
+            android:layout_toLeftOf="@+id/textViewTime"
+            android:layout_toStartOf="@+id/textViewTime"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            tools:text="Feed title"/>
 
         <ImageView
-            android:id="@+id/play"
-            android:layout_width="@dimen/play_button"
-            android:layout_height="@dimen/play_button"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:src="@drawable/ic_play_circle_outline"
-            android:visibility="gone"
-            android:contentDescription="@string/play_media"
-            tools:visibility="visible"/>
-
-        <ImageView
-            android:id="@+id/imageview_star"
+            android:id="@+id/imageview_favicon"
             android:layout_width="@dimen/materialize_icon"
             android:layout_height="@dimen/materialize_icon"
-            android:contentDescription="@string/starred"
-            android:src="@drawable/ic_star"
-            android:tint="@color/star"
-            android:visibility="gone"
-            tools:visibility="visible" />
-    </LinearLayout>
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/materialize_spacing"
+            android:layout_marginRight="@dimen/materialize_spacing"
+            android:contentDescription="@string/feed_icon_description"
+            tools:src="@drawable/ic_feed_icon"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textStyle="italic"
-        tools:text="1h"
-        android:id="@+id/textViewTime"
-        android:layout_below="@+id/buttons"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        <LinearLayout
+            android:id="@+id/buttons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@id/imageview_favicon"
+            android:layout_toRightOf="@id/imageview_favicon">
 
-</RelativeLayout>
+            <TextView
+                android:id="@+id/textViewTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                tools:text="This is the article title"/>
+
+            <ImageView
+                android:id="@+id/play"
+                android:layout_width="@dimen/play_button"
+                android:layout_height="@dimen/play_button"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:contentDescription="@string/play_media"
+                android:src="@drawable/ic_play_circle_outline"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+
+            <ImageView
+                android:id="@+id/imageview_star"
+                android:layout_width="@dimen/materialize_icon"
+                android:layout_height="@dimen/materialize_icon"
+                android:contentDescription="@string/starred"
+                android:src="@drawable/ic_star"
+                android:tint="@color/star"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textViewTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/buttons"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textStyle="italic"
+            tools:text="1h"/>
+
+    </RelativeLayout>
 </layout>
