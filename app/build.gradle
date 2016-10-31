@@ -81,7 +81,7 @@ dependencies {
 
     compile 'org.jsoup:jsoup:1.10.1'
 
-    compile 'com.github.schaal:ico4a:fde400c'
+    compile 'com.github.schaal:ico4a:7bf51e5'
 
     // Explicitly set okhttp3 version
     compile "com.squareup.okhttp3:okhttp:${versions.okhttp}"
