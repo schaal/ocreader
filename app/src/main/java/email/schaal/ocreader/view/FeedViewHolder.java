@@ -35,6 +35,13 @@ public class FeedViewHolder extends RecyclerView.ViewHolder implements FaviconLo
             }
         });
 
+        if(feed.isConsideredFailed()) {
+            binding.feedFailure.setVisibility(View.VISIBLE);
+            binding.feedFailure.setText(feed.getLastUpdateError());
+        } else {
+            binding.feedFailure.setVisibility(View.GONE);
+        }
+
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

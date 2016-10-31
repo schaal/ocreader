@@ -72,5 +72,17 @@
             android:contentDescription="@string/delete_feed"
             android:src="@drawable/ic_delete"
             android:tint="@color/delete"/>
+
+        <TextView
+            android:id="@+id/feed_failure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textViewFolder"
+            android:layout_alignLeft="@+id/textViewFolder"
+            android:layout_alignStart="@+id/textViewFolder"
+            android:visibility="gone"
+            android:textColor="@color/error"
+            tools:visibility="visible"
+            tools:text="This feed failed for some reason"/>
     </RelativeLayout>
 </layout>
