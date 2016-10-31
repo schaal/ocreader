@@ -85,6 +85,7 @@ public class IcoRequestHandler extends RequestHandler {
 
                 return new Result(biggest, Picasso.LoadedFrom.NETWORK);
             } catch (IOException e) {
+                e.printStackTrace();
                 // Failed to decode ico file, try again using BitmapFactory
                 return new Result(BitmapFactory.decodeStream(new ByteArrayInputStream(buf)), Picasso.LoadedFrom.NETWORK);
             } finally {
