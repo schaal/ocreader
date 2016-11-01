@@ -23,8 +23,14 @@ public class StringUtilsTest {
         String empty = "";
         String notEmpty = "Hello";
 
+        String emptyWithSpaces = " ";
+        String notEmptyWithSpaces = " Hello ";
+
         assertNull(StringUtils.nullIfEmpty(empty));
+        assertNull(StringUtils.nullIfEmpty(emptyWithSpaces));
+
         assertEquals(notEmpty, StringUtils.nullIfEmpty(notEmpty));
+        assertEquals("Hello", StringUtils.nullIfEmpty(notEmptyWithSpaces));
     }
 
     @Test
