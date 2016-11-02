@@ -9,4 +9,8 @@ android:
 jdk:
    - oraclejdk8
 
+cache:
+   directories:
+   - $HOME/.m2
+
 script: ./gradlew check -x lint
