@@ -10,7 +10,7 @@ jdk:
    - oraclejdk8
 
 cache:
-   directories:
+  directories:
    - $HOME/.m2
 
 script: ./gradlew check -x lint
