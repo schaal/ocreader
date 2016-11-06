@@ -67,7 +67,7 @@ public class AddNewFeedDialogFragment extends DialogFragment {
                     if(newFeed)
                         listener.addNewFeed(binding.feedUrl.getText().toString(), binding.folder.getSelectedItemId(), finishAfterClose);
                     else
-                        listener.changeFeed(binding.feedUrl.getText().toString(), feedId, binding.folder.getSelectedItemId());
+                        listener.changeFeed(feedId, binding.folder.getSelectedItemId());
                 }
             }
         });

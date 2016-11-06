@@ -8,7 +8,7 @@ import email.schaal.ocreader.database.model.Feed;
 public interface FeedManageListener {
     void addNewFeed(String url, long folderId, boolean finishAfterAdd);
     void deleteFeed(Feed feed);
-    void changeFeed(String url, long feedId, long folderId);
+    void changeFeed(long feedId, long folderId);
 
     void showFeedDialog(Feed feed);
 }
