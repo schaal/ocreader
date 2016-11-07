@@ -1,5 +1,6 @@
 package email.schaal.ocreader;
 
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -22,6 +23,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.hasErrorText;
+import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 /**
@@ -86,6 +88,8 @@ public class LoginActivityTest {
         onView(withId(R.id.sign_in_button)).perform(click());
         onView(withId(R.id.url)).check(matches(hasErrorText(activityTestRule.getActivity().getString(R.string.error_insecure_connection))));
         onView(withId(R.id.sign_in_button)).perform(click());
+
+        onView(withId(R.id.status)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
 
         dispatcher.version = originalVersion;
     }
