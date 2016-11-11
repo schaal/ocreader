@@ -403,16 +403,15 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             switch (requestCode) {
                 case LoginActivity.REQUEST_CODE:
                     if (data != null && data.getBooleanExtra(LoginActivity.EXTRA_IMPROPERLY_CONFIGURED_CRON, false)) {
-                        Snackbar snackbar = Snackbar.make(binding.coordinatorLayout, R.string.updater_improperly_configured, Snackbar.LENGTH_INDEFINITE);
-                        snackbar.setAction(R.string.more_info, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startActivity(data);
-                            }
-                        }).setActionTextColor(ContextCompat.getColor(this, R.color.warning));
-                        TextView tv = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
-                        tv.setTextColor(Color.WHITE);
-                        snackbar.show();
+                        Snackbar.make(binding.coordinatorLayout, R.string.updater_improperly_configured, Snackbar.LENGTH_INDEFINITE)
+                                .setAction(R.string.more_info, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        startActivity(data);
+                                    }
+                                })
+                                .setActionTextColor(ContextCompat.getColor(this, R.color.warning))
+                                .show();
                     }
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
                     profileDrawerItem.withName(Preferences.USERNAME.getString(preferences));
