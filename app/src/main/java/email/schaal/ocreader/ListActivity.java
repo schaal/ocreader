@@ -424,7 +424,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                     break;
                 case ItemPagerActivity.REQUEST_CODE:
                     if(data != null)
-                        layoutManager.scrollToPosition(data.getIntExtra(ItemPagerActivity.EXTRA_CURRENT_POSITION, -1));
+                        binding.itemsRecyclerview.smoothScrollToPosition(data.getIntExtra(ItemPagerActivity.EXTRA_CURRENT_POSITION, -1));
                     break;
                 case ManageFeedsActivity.REQUEST_CODE:
                     drawerManager.reset();
