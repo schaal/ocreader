@@ -1,4 +1,9 @@
-# 0.23 (2016-10-29)
+## 0.24 (2016-11-12)
+
+* Fix crash when favicon failed to load
+* Show feed failures in manage feeds activity
+
+## 0.23 (2016-10-29)
 
 * Ignore contentHash for now, fixes syncing in certain circumstances (Fixes #26)
 * Add day/night theme support (Fixes #15)
