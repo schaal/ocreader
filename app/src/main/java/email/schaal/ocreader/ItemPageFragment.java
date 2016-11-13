@@ -26,25 +26,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import email.schaal.ocreader.databinding.FragmentItemPagerBinding;
 import email.schaal.ocreader.view.ArticleWebView;
 
 /**
  * Fragment to display a single feed item using a WebView.
  */
 public class ItemPageFragment extends Fragment {
-
     public static final String ARG_POSITION = "ARG_POSITION";
 
-    private ArticleWebView webView;
+    private FragmentItemPagerBinding binding;
 
     public ItemPageFragment() {
     }
 
     public static ItemPageFragment newInstance(int position) {
-        ItemPageFragment fragment = new ItemPageFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(ARG_POSITION, position);
+
+        ItemPageFragment fragment = new ItemPageFragment();
         fragment.setArguments(bundle);
+
         return fragment;
     }
 
@@ -52,30 +54,28 @@ public class ItemPageFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        webView.setItem(((ItemPagerActivity) getActivity()).getItemForPosition(getArguments().getInt(ARG_POSITION)));
-
+        binding.webView.setItem(((ItemPagerActivity) getActivity()).getItemForPosition(getArguments().getInt(ARG_POSITION)));
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if(webView != null)
-            webView.onPause();
+
+        if(binding != null && binding.webView != null)
+            binding.webView.onPause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if(webView != null)
-            webView.onResume();
+        if(binding != null && binding.webView != null)
+            binding.webView.onResume();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_item_pager, container, false);
+        binding = FragmentItemPagerBinding.inflate(inflater, container, false);
 
-        webView = (ArticleWebView) rootView.findViewById(R.id.webView);
-
-        return rootView;
+        return binding.getRoot();
     }
 }
