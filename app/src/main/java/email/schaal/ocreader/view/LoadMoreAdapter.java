@@ -11,6 +11,7 @@ import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.database.model.Folder;
 import email.schaal.ocreader.database.model.TreeItem;
+import email.schaal.ocreader.databinding.ListLoadmoreBinding;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
 import io.realm.Sort;
@@ -84,15 +85,14 @@ public class LoadMoreAdapter extends ItemsAdapter {
         private final static int CHILD_BUTTON_INDEX = 0;
         private final static int CHILD_PROGRESS_INDEX = 1;
 
-        private final Button loadMoreButton;
-        private final ViewSwitcher loadMoreViewSwitcher;
+        private final ListLoadmoreBinding binding;
 
         LoadMoreViewHolder(View itemView) {
             super(itemView);
-            loadMoreButton = (Button) itemView.findViewById(R.id.buttonLoadMore);
-            loadMoreViewSwitcher = (ViewSwitcher) itemView.findViewById(R.id.loadMoreViewSwitcher);
 
-            loadMoreButton.setOnClickListener(new View.OnClickListener() {
+            binding = ListLoadmoreBinding.bind(itemView);
+
+            binding.buttonLoadMore.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     showProgress(true);
@@ -104,9 +104,9 @@ public class LoadMoreAdapter extends ItemsAdapter {
 
         void showProgress(boolean loading) {
             if(loading)
-                loadMoreViewSwitcher.setDisplayedChild(CHILD_PROGRESS_INDEX);
+                binding.loadMoreViewSwitcher.setDisplayedChild(CHILD_PROGRESS_INDEX);
             else
-                loadMoreViewSwitcher.setDisplayedChild(CHILD_BUTTON_INDEX);
+                binding.loadMoreViewSwitcher.setDisplayedChild(CHILD_BUTTON_INDEX);
         }
     }
 }
