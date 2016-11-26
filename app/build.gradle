@@ -57,7 +57,7 @@ android {
 
 ext {
     versions = [
-            supportLib: '25.0.0',
+            supportLib: '25.0.1',
             okhttp: '3.4.2',
             retrofit: '2.1.0'
     ]
