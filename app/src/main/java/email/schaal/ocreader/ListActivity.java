@@ -321,23 +321,29 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             private void onCompletion(View view) {
                 adapter.updateItems(false);
                 view.setEnabled(true);
+                binding.fabMarkAllAsRead.toggleSync();
             }
 
             @Override
-            public void onClick(final View v) {
-                Queries.markTemporaryFeedAsRead(getRealm(),
-                        new Realm.Transaction.OnSuccess() {
-                            @Override
-                            public void onSuccess() {
-                                onCompletion(v);
-                            }
-                        }, new Realm.Transaction.OnError() {
-                            @Override
-                            public void onError(Throwable error) {
-                                error.printStackTrace();
-                                onCompletion(v);
-                            }
-                        });
+            public void onClick(final View view) {
+                if(binding.fabMarkAllAsRead.isSync()) {
+                    SyncService.startSync(ListActivity.this);
+                    binding.fabMarkAllAsRead.toggleSync();
+                } else {
+                    Queries.markTemporaryFeedAsRead(getRealm(),
+                            new Realm.Transaction.OnSuccess() {
+                                @Override
+                                public void onSuccess() {
+                                    onCompletion(view);
+                                }
+                            }, new Realm.Transaction.OnError() {
+                                @Override
+                                public void onError(Throwable error) {
+                                    error.printStackTrace();
+                                    onCompletion(view);
+                                }
+                            });
+                }
             }
         });
 
@@ -394,6 +400,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         getSupportActionBar().setTitle(drawerManager.getState().getTreeItem().getName());
         adapter.updateItems(true);
         binding.itemsRecyclerview.scrollToPosition(0);
+        binding.fabMarkAllAsRead.setSync(false);
     }
 
     @Override
