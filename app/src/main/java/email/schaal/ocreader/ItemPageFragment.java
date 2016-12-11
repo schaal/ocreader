@@ -27,7 +27,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import email.schaal.ocreader.databinding.FragmentItemPagerBinding;
-import email.schaal.ocreader.view.ArticleWebView;
 
 /**
  * Fragment to display a single feed item using a WebView.
