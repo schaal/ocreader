@@ -43,20 +43,20 @@ import io.realm.Sort;
  */
 public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private OrderedRealmCollection<Item> items;
-    protected final DrawerManager.State state;
+    final DrawerManager.State state;
     private final Realm realm;
     private final ItemViewHolder.OnClickListener clickListener;
 
-    public final static int VIEW_TYPE_ITEM = 0;
-    public final static int VIEW_TYPE_LAST_ITEM = 1;
-    public final static int VIEW_TYPE_EMPTY = 2;
-    public final static int VIEW_TYPE_LOADMORE = 3;
-    public final static int VIEW_TYPE_ERROR = 4;
+    final static int VIEW_TYPE_ITEM = 0;
+    final static int VIEW_TYPE_LAST_ITEM = 1;
+    final static int VIEW_TYPE_EMPTY = 2;
+    final static int VIEW_TYPE_LOADMORE = 3;
+    final static int VIEW_TYPE_ERROR = 4;
 
     private Sort order;
     private String sortField;
 
-    public ItemsAdapter(Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, String sortField) {
+    ItemsAdapter(Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, String sortField) {
         this.realm = realm;
         this.state = state;
         this.clickListener = clickListener;
@@ -170,7 +170,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private class EmptyStateViewHolder extends RecyclerView.ViewHolder {
-        public EmptyStateViewHolder(View itemView) {
+        EmptyStateViewHolder(View itemView) {
             super(itemView);
         }
     }
