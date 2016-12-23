@@ -1,3 +1,8 @@
+## 0.25 (2016-12-23)
+
+* The Floating Action Button to mark all items as read now temporarily turns into a reload button
+  after marking all items as read
+
 ## 0.24 (2016-11-12)
 
 * Fix crash when favicon failed to load
