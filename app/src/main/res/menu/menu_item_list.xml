@@ -1,31 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:context="email.schaal.ocreader.ListActivity">
-
-    <item
-        android:id="@+id/menu_sort"
-        android:title="@string/article_order"
-        android:icon="@drawable/ic_sort"
-        app:showAsAction="ifRoom" />
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="email.schaal.ocreader.ListActivity">
 
     <item
         android:id="@+id/menu_manage_feeds"
-        android:title="@string/title_activity_managefeeds"
         android:icon="@drawable/ic_feed_icon"
-        app:showAsAction="never"
-        />
-
-    <item
-        android:id="@+id/menu_change_theme"
-        android:title="@string/switch_app_theme"
-        app:showAsAction="never"
-        />
+        android:title="@string/title_activity_managefeeds"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_about"
         android:title="@string/about"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 
 </menu>

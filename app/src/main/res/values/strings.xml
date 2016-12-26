@@ -64,7 +64,7 @@
     <string name="no_articles">There are no articles here</string>
     <string name="load_more">Load more</string>
     <string name="starred">Starred</string>
-    <string name="only_unread">Only unread</string>
+    <string name="only_unread">Show only unread articles</string>
     <string name="share_article">Share Article</string>
     <string name="account_settings">Account Settings</string>
     <string name="updater_improperly_configured">News App updater is improperly configured</string>
@@ -101,12 +101,18 @@
     <string name="error_not_compatible">The installed version of Nextcloud News is not compatible with this app.</string>
     <string name="publication_date">Publication Date</string>
     <string name="updated_date">Updated Date</string>
-    <string name="descending">Descending</string>
+    <string name="ascending">Oldest to newest</string>
+    <string name="ascending_value" translatable="false">ASCENDING</string>
+    <string name="descending">Newest to oldest</string>
+    <string name="descending_value" translatable="false">DESCENDING</string>
     <string name="could_not_connect">Could not connect to host</string>
     <string name="failed_detect_nc_version">Couldn\'t detect Nextcloud News version</string>
-    <string name="switch_app_theme">Switch app theme</string>
     <string name="crash_text">An unexpected error occurred forcing the application to stop. Clicking OK lets you review and send information about this issue using your mail app.\n\nYou can add relevant information in the text field below.</string>
     <string name="additional_information">Additional information</string>
     <string name="report_issue">Report issue</string>
+    <string name="settings">Settings</string>
+    <string name="appearance">Appearance</string>
+    <string name="dark_theme">Dark theme</string>
+    <string name="reading">Reading</string>
 
 </resources>

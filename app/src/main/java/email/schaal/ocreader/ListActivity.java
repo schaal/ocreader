@@ -38,7 +38,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.Html;
 import android.util.Base64;
@@ -50,7 +49,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -78,14 +76,12 @@ import email.schaal.ocreader.databinding.ActivityListBinding;
 import email.schaal.ocreader.databinding.DialogAboutBinding;
 import email.schaal.ocreader.service.SyncService;
 import email.schaal.ocreader.service.SyncType;
-import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.view.DividerItemDecoration;
 import email.schaal.ocreader.view.ItemViewHolder;
 import email.schaal.ocreader.view.ItemsAdapter;
 import email.schaal.ocreader.view.SelectableItemsAdapter;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
-import io.realm.Sort;
 
 public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ItemsAdapter.OnLoadMoreListener, OnCheckedChangeListener, ActionMode.Callback {
     private static final String TAG = ListActivity.class.getName();
@@ -245,10 +241,24 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                     }
                 });
 
+        IDrawerItem settingsDrawerItem = new PrimaryDrawerItem()
+                .withName(R.string.settings)
+                .withIcon(R.drawable.ic_settings)
+                .withIconTintingEnabled(true)
+                .withSelectable(false)
+                .withTag(new Runnable() {
+                    @Override
+                    public void run() {
+                        startDrawer.closeDrawer();
+                        Intent settingsIntent = new Intent(ListActivity.this, SettingsActivity.class);
+                        startActivity(settingsIntent);
+                    }
+                });
+
         DrawerBuilder startDrawerBuilder = new DrawerBuilder()
                 .withActivity(this)
                 .withAccountHeader(accountHeader)
-                .addStickyDrawerItems(refreshDrawerItem)
+                .addStickyDrawerItems(settingsDrawerItem, refreshDrawerItem)
                 .withOnDrawerListener(new Drawer.OnDrawerListener() {
                     @Override
                     public void onDrawerOpened(View drawerView) {
@@ -315,7 +325,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         startDrawerBuilder.withToolbar(binding.toolbarLayout.toolbar);
         startDrawer = startDrawerBuilder.build();
 
-        drawerManager = new DrawerManager(this, startDrawer, endDrawerBuilder.append(startDrawer), isShowOnlyUnread(), this);
+        drawerManager = new DrawerManager(this, startDrawer, endDrawerBuilder.append(startDrawer));
 
         layoutManager = new LinearLayoutManager(this);
 
@@ -463,77 +473,14 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.menu_sort:
-                showSortPopup(findViewById(R.id.menu_sort));
-
-                return true;
             case R.id.menu_about:
                 showAboutDialog();
-                return true;
-            case R.id.menu_change_theme:
-                final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                final int daynightmode = Preferences.DAY_NIGHT_MODE.getInt(sharedPreferences) == AppCompatDelegate.MODE_NIGHT_NO ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO;
-                sharedPreferences.edit().putInt(Preferences.DAY_NIGHT_MODE.getKey(), daynightmode).apply();
-                AppCompatDelegate.setDefaultNightMode(daynightmode);
-                FaviconLoader.clearCache();
-                recreate();
                 return true;
             case R.id.menu_manage_feeds:
                 startActivityForResult(new Intent(this, ManageFeedsActivity.class), ManageFeedsActivity.REQUEST_CODE);
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void showSortPopup(View view) {
-        PopupMenu popupMenu = new PopupMenu(this, view);
-        popupMenu.inflate(R.menu.menu_sort);
-
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        Sort order = Preferences.ORDER.getOrder(sharedPreferences);
-        String field = Preferences.SORT_FIELD.getString(sharedPreferences);
-
-        final MenuItem orderMenuItem = popupMenu.getMenu().findItem(R.id.action_sort_order);
-        orderMenuItem.setChecked(order == Sort.ASCENDING);
-
-        final MenuItem selectedField;
-
-        if(field.equals(Item.PUB_DATE)) {
-            selectedField = popupMenu.getMenu().findItem(R.id.action_sort_pubdate);
-        } else {
-            selectedField = popupMenu.getMenu().findItem(R.id.action_sort_updatedate);
-        }
-        selectedField.setChecked(true);
-
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                boolean updateSort = false;
-
-                switch (item.getItemId()) {
-                    case R.id.action_sort_order:
-                        item.setChecked(!item.isChecked());
-                        sharedPreferences.edit().putBoolean(Preferences.ORDER.getKey(), item.isChecked()).apply();
-                        updateSort = true;
-                        break;
-                    case R.id.action_sort_pubdate:
-                        sharedPreferences.edit().putString(Preferences.SORT_FIELD.getKey(), Item.PUB_DATE).apply();
-                        updateSort = true;
-                        break;
-                    case R.id.action_sort_updatedate:
-                        sharedPreferences.edit().putString(Preferences.SORT_FIELD.getKey(), Item.UPDATED_AT).apply();
-                        updateSort = true;
-                        break;
-                }
-
-                if(updateSort) {
-                    adapter.setOrder(Preferences.ORDER.getOrder(sharedPreferences), Preferences.SORT_FIELD.getString(sharedPreferences));
-                }
-                return updateSort;
-            }
-        });
-
-        popupMenu.show();
     }
 
     private void showAboutDialog() {

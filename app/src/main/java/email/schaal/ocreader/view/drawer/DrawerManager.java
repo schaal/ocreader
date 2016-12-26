@@ -25,9 +25,8 @@ import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 
 import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.SecondarySwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Badgeable;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
@@ -36,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import email.schaal.ocreader.Preferences;
-import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.database.model.AllUnreadFolder;
 import email.schaal.ocreader.database.model.Feed;
@@ -60,14 +58,14 @@ public class DrawerManager {
     private final StarredFolder starredFolder;
     private final FreshFolder freshFolder;
 
-    public DrawerManager(Context context, Drawer startDrawer, Drawer endDrawer, boolean onlyUnread, OnCheckedChangeListener onlyUnreadChangeListener) {
+    public DrawerManager(Context context, Drawer startDrawer, Drawer endDrawer) {
         allUnreadFolder = new AllUnreadFolder(context);
         starredFolder = new StarredFolder(context);
         freshFolder = new FreshFolder(context);
 
         state = new State();
 
-        startAdapter = new SubscriptionDrawerManager(startDrawer, onlyUnread, onlyUnreadChangeListener);
+        startAdapter = new SubscriptionDrawerManager(startDrawer);
         endAdapter = new FolderDrawerManager(endDrawer);
     }
 
@@ -110,19 +108,14 @@ public class DrawerManager {
     public class SubscriptionDrawerManager extends BaseDrawerManager {
         private final List<IDrawerItem> topDrawerItems = new ArrayList<>(3);
 
-        public SubscriptionDrawerManager(Drawer drawer, boolean onlyUnread, OnCheckedChangeListener onlyUnreadChangeListener) {
+        public SubscriptionDrawerManager(Drawer drawer) {
             super(drawer);
 
             topDrawerItems.add(new TreeItemDrawerItem(allUnreadFolder));
             topDrawerItems.add(new TreeItemDrawerItem(starredFolder));
             topDrawerItems.add(new TreeItemDrawerItem(freshFolder));
 
-            topDrawerItems.add(new SecondarySwitchDrawerItem()
-                    .withName(R.string.only_unread)
-                    .withSelectable(false)
-                    .withOnCheckedChangeListener(onlyUnreadChangeListener)
-                    .withChecked(onlyUnread)
-            );
+            topDrawerItems.add(new DividerDrawerItem());
         }
 
         @Override

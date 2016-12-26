@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/reading">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="show_only_unread"
+            android:title="@string/only_unread" />
+
+        <ListPreference
+            android:defaultValue="@string/ascending_value"
+            android:entries="@array/order"
+            android:entryValues="@array/order_values"
+            android:key="order"
+            android:summary="%s"
+            android:title="@string/article_order" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/appearance">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="dark_theme"
+            android:title="@string/dark_theme" />
+    </PreferenceCategory>
+</PreferenceScreen>

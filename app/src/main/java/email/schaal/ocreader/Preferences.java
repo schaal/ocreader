@@ -21,7 +21,6 @@
 package email.schaal.ocreader;
 
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatDelegate;
 
 import email.schaal.ocreader.database.model.AllUnreadFolder;
 import email.schaal.ocreader.database.model.Item;
@@ -36,9 +35,9 @@ public enum Preferences {
     USERNAME("username",null),
     PASSWORD("password", null),
     URL("url", null),
-    ORDER("order", Sort.ASCENDING),
+    ORDER("order", Sort.ASCENDING.name()),
     SORT_FIELD("sort_field", Item.PUB_DATE),
-    DAY_NIGHT_MODE("day_night_mode", AppCompatDelegate.MODE_NIGHT_NO),
+    DARK_THEME("dark_theme", false),
 
     /** System preferences **/
     SYS_NEEDS_UPDATE_AFTER_SYNC("needs_update_after_sync", false),
@@ -82,7 +81,12 @@ public enum Preferences {
     }
 
     public Sort getOrder(SharedPreferences preferences) {
-        return preferences.getBoolean(key, Sort.ASCENDING.getValue()) == Sort.ASCENDING.getValue() ? Sort.ASCENDING : Sort.DESCENDING;
+        try {
+            return Sort.valueOf(preferences.getString(key, (String) defaultValue));
+        } catch (ClassCastException e) {
+            preferences.edit().remove(key).apply();
+        }
+        return Sort.valueOf((String) defaultValue);
     }
 
     public static boolean hasCredentials(SharedPreferences preferences) {

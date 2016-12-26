@@ -66,6 +66,10 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".SettingsActivity"
+            android:label="Settings"
+            android:parentActivityName=".ListActivity" />
+
         <activity
             android:name=".CustomCrashReportDialog"
             android:excludeFromRecents="true"

@@ -13,7 +13,7 @@
     <string name="load_more">Weitere laden</string>
     <string name="no_articles">Keine Artikel vorhanden</string>
     <string name="now">jetzt</string>
-    <string name="only_unread">Nur ungelesene</string>
+    <string name="only_unread">Nur ungelesene Artikel anzeigen</string>
     <string name="prompt_password">Passwort</string>
     <string name="prompt_url">Server Adresse</string>
     <string name="prompt_username">Benutzername</string>
@@ -44,7 +44,7 @@
     <string name="mark_previous_articles_read">Vorherige Artikel als gelesen markieren</string>
     <string name="mark_all_as_read">Alles als gelesen markieren</string>
     <string name="play_media">Mediendatei abspielen</string>
-    <string name="article_order">Sortierung</string>
+    <string name="article_order">Sortierung der Artikel</string>
     <string name="feed_url">Feed URL</string>
     <string name="title_activity_managefeeds">Feeds verwalten</string>
     <string name="add_new_feed">Feed hinzufügen</string>
@@ -65,10 +65,14 @@
     <string name="edit_feed">Feed bearbeiten</string>
     <string name="folder">Ordner</string>
     <string name="error_not_compatible">Diese Version von Nextcloud News ist nicht kompatibel mit dieser App</string>
-    <string name="descending">Absteigend</string>
+    <string name="descending">Neueste zuerst</string>
     <string name="publication_date">Veröffentlichungsdatum</string>
     <string name="updated_date">Aktualisierungsdatum</string>
     <string name="failed_detect_nc_version">Version von Nextcloud News konnte nicht ermittelt werden</string>
     <string name="could_not_connect">Verbindung mit dem Host fehlgeschlagen</string>
-    <string name="switch_app_theme">Wechsle App Thema</string>
+    <string name="appearance">Erscheinungsbild</string>
+    <string name="dark_theme">Dunkles Thema</string>
+    <string name="settings">Einstellungen</string>
+    <string name="ascending">Älteste zuerst</string>
+    <string name="reading">Lesen</string>
 </resources>
