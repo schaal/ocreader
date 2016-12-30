@@ -1,6 +1,6 @@
 ## 0.26 (2016-12-30)
 
-* Downgrad support libraries to 25.0.1 to fix FloatingActionButton behavior (Fixes #34)
+* Downgrade support libraries to 25.0.1 to fix FloatingActionButton behavior (Fixes #34)
 
 ## 0.25 (2016-12-23)
 
