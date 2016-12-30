@@ -1,3 +1,7 @@
+## 0.26 (2016-12-30)
+
+* Downgrad support libraries to 25.0.1 to fix FloatingActionButton behavior (Fixes #34)
+
 ## 0.25 (2016-12-23)
 
 * The Floating Action Button to mark all items as read now temporarily turns into a reload button
