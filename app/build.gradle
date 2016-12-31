@@ -101,6 +101,6 @@ dependencies {
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile "com.squareup.okhttp3:mockwebserver:${versions.okhttp}"
 
-    testCompile 'org.robolectric:robolectric:3.1.4'
+    testCompile 'org.robolectric:robolectric:3.2.2'
     testCompile 'junit:junit:4.12'
 }
