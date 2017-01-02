@@ -108,12 +108,6 @@ public class SyncService extends Service {
 
     @Override
     public int onStartCommand(final Intent intent, int flags, final int startId) {
-        // Don't start sync when not logged in yet
-        if(!Preferences.hasCredentials(sharedPreferences)) {
-            stopSelf(startId);
-            return START_NOT_STICKY;
-        }
-
         final String action = intent.getAction();
 
         final SyncType syncType = SyncType.get(action);
