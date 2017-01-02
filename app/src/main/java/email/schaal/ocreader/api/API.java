@@ -219,7 +219,7 @@ public abstract class API {
         return message;
     }
 
-    public static void init(Context context) throws NotLoggedInException {
+    private static void init(Context context) throws NotLoggedInException {
         APILevels.Level apiLevel = APILevels.Level.get(Preferences.SYS_DETECTED_API_LEVEL.getString(PreferenceManager.getDefaultSharedPreferences(context)));
         if (apiLevel != null) {
             switch (apiLevel) {

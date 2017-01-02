@@ -122,10 +122,6 @@ public class SyncService extends Service {
             notifySyncStatus(SYNC_STARTED, action);
 
             try {
-                if (!API.isLoggedIn()) {
-                    API.init(this);
-                }
-
                 API.getInstance(this).sync(sharedPreferences, realm, syncType, intent, new API.APICallback<Void, String>() {
                     @Override
                     public void onSuccess(Void n) {
