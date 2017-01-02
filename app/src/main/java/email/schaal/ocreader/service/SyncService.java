@@ -142,7 +142,6 @@ public class SyncService extends Service {
                     }
                 });
             } catch (API.NotLoggedInException e) {
-                e.printStackTrace();
                 stopSelf(startId);
             }
         } else {
