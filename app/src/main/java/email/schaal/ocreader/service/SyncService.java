@@ -121,29 +121,34 @@ public class SyncService extends Service {
         if(syncType != null) {
             notifySyncStatus(SYNC_STARTED, action);
 
-            if(!API.isLoggedIn()) {
-                API.init(this);
+            try {
+                if (!API.isLoggedIn()) {
+                    API.init(this);
+                }
+
+                API.getInstance(this).sync(sharedPreferences, realm, syncType, intent, new API.APICallback<Void, String>() {
+                    @Override
+                    public void onSuccess(Void n) {
+                        Queries.removeExcessItems(realm, Queries.MAX_ITEMS);
+                        realm.executeTransaction(postProcessFeedTransaction);
+                        onFinished();
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        Toast.makeText(SyncService.this, errorMessage, Toast.LENGTH_SHORT).show();
+                        onFinished();
+                    }
+
+                    private void onFinished() {
+                        notifySyncStatus(SYNC_FINISHED, action);
+                        stopSelf(startId);
+                    }
+                });
+            } catch (API.NotLoggedInException e) {
+                e.printStackTrace();
+                stopSelf(startId);
             }
-
-            API.getInstance().sync(sharedPreferences, realm, syncType, intent, new API.APICallback<Void, String>() {
-                @Override
-                public void onSuccess(Void n) {
-                    Queries.removeExcessItems(realm, Queries.MAX_ITEMS);
-                    realm.executeTransaction(postProcessFeedTransaction);
-                    onFinished();
-                }
-
-                @Override
-                public void onFailure(String errorMessage) {
-                    Toast.makeText(SyncService.this, errorMessage, Toast.LENGTH_SHORT).show();
-                    onFinished();
-                }
-
-                private void onFinished() {
-                    notifySyncStatus(SYNC_FINISHED, action);
-                    stopSelf(startId);
-                }
-            });
         } else {
             Log.w(TAG, "unknown Intent received: " + action);
         }

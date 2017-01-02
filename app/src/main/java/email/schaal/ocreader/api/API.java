@@ -54,7 +54,9 @@ public abstract class API {
     final static String API_ROOT = "./index.php/apps/news/api/";
     private final JsonAdapter<NewsError> errorJsonAdapter;
 
-    public static API getInstance() {
+    public static API getInstance(Context context) throws NotLoggedInException {
+        if(instance == null)
+            init(context);
         return instance;
     }
 
@@ -217,7 +219,7 @@ public abstract class API {
         return message;
     }
 
-    public static void init(Context context) {
+    public static void init(Context context) throws NotLoggedInException {
         APILevels.Level apiLevel = APILevels.Level.get(Preferences.SYS_DETECTED_API_LEVEL.getString(PreferenceManager.getDefaultSharedPreferences(context)));
         if (apiLevel != null) {
             switch (apiLevel) {
@@ -229,13 +231,16 @@ public abstract class API {
                     break;
             }
         } else {
-            throw new IllegalStateException("Not logged in");
+            throw new NotLoggedInException();
         }
     }
 
     public interface APICallback<S,F> {
         void onSuccess(S success);
         void onFailure(F failure);
+    }
+
+    public static class NotLoggedInException extends Exception {
     }
 
     abstract class BaseRetrofitCallback<T> implements Callback<T> {
