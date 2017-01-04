@@ -81,7 +81,7 @@ dependencies {
 
     compile 'io.realm:android-adapters:1.4.1'
 
-    compile 'org.jsoup:jsoup:1.10.1'
+    compile 'org.jsoup:jsoup:1.10.2'
 
     compile 'com.github.schaal:ico4a:2257dfe'
 
