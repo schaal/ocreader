@@ -190,7 +190,8 @@ public class FaviconLoader {
         }
 
         @Override
-        public void onBitmapFailed(Drawable errorDrawable) {
+        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+            e.printStackTrace();
             listener.onGenerated(new FeedColors((Integer)null));
         }
 
@@ -206,8 +207,8 @@ public class FaviconLoader {
         }
 
         @Override
-        public void onError() {
-            onBitmapFailed(null);
+        public void onError(Exception e) {
+            onBitmapFailed(e, null);
         }
     }
 }
