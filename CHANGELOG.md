@@ -1,3 +1,7 @@
+## 0.27 (2017-01-12)
+
+* Allow user-added CAs on Android >= 7
+
 ## 0.26 (2016-12-30)
 
 * Downgrade support libraries to 25.0.1 to fix FloatingActionButton behavior (Fixes #34)
