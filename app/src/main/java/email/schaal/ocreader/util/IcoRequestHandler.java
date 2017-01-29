@@ -44,7 +44,7 @@ import divstar.ico4a.codec.ico.ICODecoder;
  * Convert ico files containing multiple sizes to multiple images
  */
 public class IcoRequestHandler extends RequestHandler {
-    private final static String TAG = IcoRequestHandler.class.getSimpleName();
+    private final static String TAG = IcoRequestHandler.class.getName();
 
     private final Downloader downloader;
 
