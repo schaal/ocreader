@@ -41,6 +41,7 @@ import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.database.model.AllUnreadFolder;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.database.model.Folder;
+import email.schaal.ocreader.database.model.FreshFolder;
 import email.schaal.ocreader.database.model.StarredFolder;
 import email.schaal.ocreader.database.model.TreeItem;
 import io.realm.Realm;
@@ -57,10 +58,12 @@ public class DrawerManager {
 
     private final AllUnreadFolder allUnreadFolder;
     private final StarredFolder starredFolder;
+    private final FreshFolder freshFolder;
 
     public DrawerManager(Context context, Drawer startDrawer, Drawer endDrawer, boolean onlyUnread, OnCheckedChangeListener onlyUnreadChangeListener) {
         allUnreadFolder = new AllUnreadFolder(context);
         starredFolder = new StarredFolder(context);
+        freshFolder = new FreshFolder(context);
 
         state = new State();
 
@@ -112,6 +115,7 @@ public class DrawerManager {
 
             topDrawerItems.add(new TreeItemDrawerItem(allUnreadFolder));
             topDrawerItems.add(new TreeItemDrawerItem(starredFolder));
+            topDrawerItems.add(new TreeItemDrawerItem(freshFolder));
 
             topDrawerItems.add(new SecondarySwitchDrawerItem()
                     .withName(R.string.only_unread)
@@ -244,6 +248,8 @@ public class DrawerManager {
                 startDrawerItem = allUnreadFolder;
             } else if(startDrawerItemId == StarredFolder.ID) {
                 startDrawerItem = starredFolder;
+            } else if (startDrawerItemId == FreshFolder.ID) {
+                startDrawerItem = freshFolder;
             } else {
                 if (isFeed) {
                     startDrawerItem = Feed.get(realm, startDrawerItemId);
