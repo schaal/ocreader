@@ -28,13 +28,14 @@ import java.util.List;
 
 import email.schaal.ocreader.R;
 import io.realm.Realm;
-import io.realm.RealmResults;
 
 /**
  * TreeItem representing the folder with fresh items (< 24h old).
  */
 public class FreshFolder implements TreeItem, TreeIconable {
     public final static long ID = -12;
+
+    private static final int MAX_ARTICLE_AGE = 24 * 60 * 60 * 1000;
 
     private final String name;
 
@@ -81,6 +82,6 @@ public class FreshFolder implements TreeItem, TreeIconable {
     }
 
     private Date getDate() {
-        return new Date(System.currentTimeMillis() - (24 * 60 * 60 * 1000));
+        return new Date(System.currentTimeMillis() - MAX_ARTICLE_AGE);
     }
 }
