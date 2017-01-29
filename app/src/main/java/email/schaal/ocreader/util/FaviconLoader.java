@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v7.graphics.Palette;
+import android.util.Log;
 import android.util.LruCache;
 import android.widget.ImageView;
 
@@ -30,6 +31,7 @@ import email.schaal.ocreader.database.model.Feed;
  * Load favicons
  */
 public class FaviconLoader {
+    private final static String TAG = FaviconLoader.class.getName();
 
     private final static LruCache<Long, FeedColors> feedColorsCache = new LruCache<>(32);
     private final static LruCache<Long, Drawable> faviconCache = new LruCache<>(32);
@@ -191,7 +193,7 @@ public class FaviconLoader {
 
         @Override
         public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-            e.printStackTrace();
+            Log.e(TAG, "stacktrace", e);
             listener.onGenerated(new FeedColors((Integer)null));
         }
 

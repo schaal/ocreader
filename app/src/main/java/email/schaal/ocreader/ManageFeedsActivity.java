@@ -9,6 +9,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ import email.schaal.ocreader.view.FeedsAdapter;
 import email.schaal.ocreader.view.FolderSpinnerAdapter;
 
 public class ManageFeedsActivity extends RealmActivity implements FeedManageListener {
+    private static final String TAG = ManageFeedsActivity.class.getName();
 
     public static final int REQUEST_CODE = 3;
 
@@ -114,7 +116,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
                                 }
                             });
                         } catch (API.NotLoggedInException e) {
-                            e.printStackTrace();
+                            Log.e(TAG, "stacktrace", e);
                             progressDialog.cancel();
                         }
 
@@ -150,7 +152,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
             });
         } catch (API.NotLoggedInException e) {
             progressDialog.cancel();
-            e.printStackTrace();
+            Log.e(TAG, "stacktrace", e);
         }
     }
 

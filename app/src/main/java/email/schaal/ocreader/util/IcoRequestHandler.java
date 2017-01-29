@@ -95,7 +95,7 @@ public class IcoRequestHandler extends RequestHandler {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "stacktrace", e);
                 }
             }
         }

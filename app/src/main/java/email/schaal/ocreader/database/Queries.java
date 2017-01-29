@@ -86,7 +86,7 @@ public class Queries {
             if(realm.isEmpty())
                 realm.executeTransaction(initialData);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.e(TAG, "stacktrace", ex);
             closeRealm(realm);
             Realm.deleteRealm(realmConfiguration);
         } finally {
@@ -242,7 +242,7 @@ public class Queries {
                         }
                     }
                 } catch (RealmException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "stacktrace", e);
                 } finally {
                     checkAlarm(realm);
                 }
@@ -259,7 +259,7 @@ public class Queries {
                         item.setStarred(newStarred);
                     }
                 } catch (RealmException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "stacktrace", e);
                 } finally {
                     checkAlarm(realm);
                 }

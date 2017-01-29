@@ -46,6 +46,7 @@ import android.support.v7.widget.PopupMenu;
 import android.text.Html;
 import android.util.Base64;
 import android.util.Base64InputStream;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
@@ -88,6 +89,7 @@ import io.realm.Realm;
 import io.realm.Sort;
 
 public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ItemsAdapter.OnLoadMoreListener, OnCheckedChangeListener, ActionMode.Callback {
+    private static final String TAG = ListActivity.class.getName();
 
     private static final int REFRESH_DRAWER_ITEM_ID = 999;
     public static final String LAYOUT_MANAGER_STATE = "LAYOUT_MANAGER_STATE";
@@ -339,7 +341,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                             }, new Realm.Transaction.OnError() {
                                 @Override
                                 public void onError(Throwable error) {
-                                    error.printStackTrace();
+                                    Log.e(TAG, "stacktrace", error);
                                     onCompletion(view);
                                 }
                             });

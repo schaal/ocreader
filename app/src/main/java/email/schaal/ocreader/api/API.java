@@ -182,7 +182,7 @@ public abstract class API {
 
                             @Override
                             public void onFailure(Call<Status> call, Throwable t) {
-                                t.printStackTrace();
+                                Log.e(TAG, "stacktrace", t);
                                 loginCallback.onFailure(LoginError.getError(context, t));
                             }
                         });
@@ -196,7 +196,7 @@ public abstract class API {
 
             @Override
             public void onFailure(Call<APILevels> call, Throwable t) {
-                t.printStackTrace();
+                Log.e(TAG, "stacktrace", t);
                 loginCallback.onFailure(LoginError.getError(context, t));
             }
         });
@@ -213,7 +213,7 @@ public abstract class API {
             NewsError error = adapter.fromJson(response.errorBody().source());
             message = error.message;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "stacktrace", e);
         }
 
         return message;
@@ -276,7 +276,7 @@ public abstract class API {
 
         @Override
         public void onFailure(Call<T> call, Throwable t) {
-            t.printStackTrace();
+            Log.e(TAG, "stacktrace", t);
             if(callback != null)
                 callback.onFailure(t.getLocalizedMessage());
         }

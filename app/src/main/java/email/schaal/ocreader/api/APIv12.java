@@ -27,6 +27,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -78,6 +79,7 @@ import static email.schaal.ocreader.service.SyncService.EXTRA_OFFSET;
  * This class encapsulates the Nextcloud News API v1-2
  */
 class APIv12 extends API {
+    private static final String TAG = APIv12.class.getName();
 
     private static final int BATCH_SIZE = 100;
 
@@ -139,7 +141,7 @@ class APIv12 extends API {
                         result = result && markItems(action, realm);
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "stacktrace", e);
                 } finally {
                     Queries.closeRealm(realm);
                     handler.post(new ResultRunnable(result) {
@@ -374,7 +376,7 @@ class APIv12 extends API {
                                     }
                                 });
                             } catch (InterruptedException | ExecutionException e) {
-                                e.printStackTrace();
+                                Log.e(TAG, "stacktrace", e);
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {

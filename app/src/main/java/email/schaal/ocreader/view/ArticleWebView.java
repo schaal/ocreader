@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 
@@ -37,6 +38,8 @@ import email.schaal.ocreader.util.StringUtils;
  * WebView to display a Item
  */
 public class ArticleWebView extends NestedScrollWebView {
+    private final static String TAG = ArticleWebView.class.getName();
+
     @ColorInt
     private int defaultTitleColor;
 
@@ -142,7 +145,7 @@ public class ArticleWebView extends NestedScrollWebView {
                 }
                 css = cssBuilder.toString();
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(TAG, "stacktrace", e);
             }
 
         Feed feed = item.getFeed();

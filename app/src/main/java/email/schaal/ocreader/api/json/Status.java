@@ -22,6 +22,7 @@ package email.schaal.ocreader.api.json;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.github.zafarkhaja.semver.UnexpectedCharacterException;
 import com.github.zafarkhaja.semver.Version;
@@ -32,6 +33,8 @@ import email.schaal.ocreader.database.model.User;
  * Encapsulates the JSON response for the status api call
  */
 public class Status {
+    private final static String TAG = Status.class.getName();
+
     @Nullable
     private Version version;
     private boolean improperlyConfiguredCron;
@@ -59,7 +62,7 @@ public class Status {
             this.version = Version.valueOf(version);
         } catch (UnexpectedCharacterException e) {
             this.version = null;
-            e.printStackTrace();
+            Log.e(TAG, "stacktrace", e);
         }
     }
 
