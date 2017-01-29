@@ -385,6 +385,12 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         drawerManager.getState().saveInstanceState(PreferenceManager.getDefaultSharedPreferences(this));
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        drawerManager.getState().saveInstanceState(PreferenceManager.getDefaultSharedPreferences(this));
+    }
+
     private void onStartDrawerItemClicked(TreeItem item) {
         drawerManager.setSelectedTreeItem(getRealm(), item, isShowOnlyUnread());
         reloadListFragment();
