@@ -47,6 +47,7 @@
 
     <string name="unread_items">Unread articles</string>
     <string name="starred_items">Starred articles</string>
+    <string name="fresh_items">Fresh articles</string>
 
     <string name="article_by_from">By %1$s from %2$s</string>
     <string name="article_from">From %1$s</string>
