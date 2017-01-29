@@ -59,13 +59,10 @@ public class FreshFolder implements TreeItem, TreeIconable {
 
     @Override
     public List<Feed> getFeeds(Realm realm, boolean onlyUnread) {
-        RealmResults<Item> result = realm.where(Item.class).equalTo(Item.UNREAD, true)
-                                                           .lessThan(Item.PUB_DATE, getDate()).findAll();
-
         List<Feed> freshFeeds = new ArrayList<>();
 
-        for (Item item: result) {
-            if (item.getPubDate().before(getDate()) && !freshFeeds.contains(item.getFeed())){
+        for (Item item: getItems(realm, false)) {
+            if (!freshFeeds.contains(item.getFeed())){
                 freshFeeds.add(item.getFeed());
             }
         }
