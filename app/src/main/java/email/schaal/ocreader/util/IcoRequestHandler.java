@@ -54,7 +54,7 @@ public class IcoRequestHandler extends RequestHandler {
 
     @Override
     public boolean canHandleRequest(Request data) {
-        return data.uri.getLastPathSegment().endsWith(".ico");
+        return data.uri.getLastPathSegment() != null && data.uri.getLastPathSegment().endsWith(".ico");
     }
 
     @Nullable
