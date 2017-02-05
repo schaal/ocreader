@@ -1,8 +1,11 @@
 package email.schaal.ocreader.view;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
@@ -71,6 +74,8 @@ public class ArticleWebView extends NestedScrollWebView {
     @ColorInt private int fontColor;
     @ColorInt private int backgroundColor;
 
+    private int savedScrollPosition;
+
     public ArticleWebView(Context context) {
         super(context);
 
@@ -113,6 +118,21 @@ public class ArticleWebView extends NestedScrollWebView {
         addJavascriptInterface(new JsCallback(), "JsCallback");
     }
 
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        SavedState savedState = (SavedState) state;
+        savedScrollPosition = savedState.scrollPosition;
+        super.onRestoreInstanceState(state);
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        SavedState savedState = new SavedState(super.onSaveInstanceState());
+        savedState.scrollPosition = getScrollY();
+
+        return savedState;
+    }
+
     public void setItem(Item item) {
         this.item = item;
         loadDataWithBaseURL(null, getHtml(), "text/html", "UTF-8", null);
@@ -128,6 +148,7 @@ public class ArticleWebView extends NestedScrollWebView {
                     new FaviconLoader.Builder(item.getFeed())
                             .build()
                             .load(ArticleWebView.this.getContext(), feedColorsListener);
+                    setScrollY(savedScrollPosition);
                 }
             });
         }
@@ -227,5 +248,41 @@ public class ArticleWebView extends NestedScrollWebView {
                 iframe.remove();
             }
         }
+    }
+
+    private static class SavedState extends BaseSavedState {
+        private int scrollPosition;
+
+        private SavedState(Parcel source) {
+            super(source);
+            scrollPosition = source.readInt();
+        }
+
+        @TargetApi(24)
+        public SavedState(Parcel source, ClassLoader loader) {
+            super(source, loader);
+        }
+
+        public SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeInt(scrollPosition);
+        }
+
+        public static final Parcelable.Creator<SavedState> CREATOR = new Creator<SavedState>() {
+            @Override
+            public SavedState createFromParcel(Parcel source) {
+                return new SavedState(source);
+            }
+
+            @Override
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
     }
 }
