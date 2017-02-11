@@ -130,6 +130,12 @@ public class LoginActivity extends AppCompatActivity {
         String username = binding.username.getText().toString();
         String password = binding.password.getText().toString();
         String urlString = binding.url.getText().toString();
+
+        if(!urlString.startsWith("https://") && !urlString.startsWith("http://")) {
+            urlString = "https://" + urlString;
+            binding.url.setText(urlString);
+        }
+
         HttpUrl url = HttpUrl.parse(urlString);
 
         // Check for a valid username
