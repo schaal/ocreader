@@ -1,3 +1,11 @@
+## 0.28 (2017-02-11)
+
+* Prepend https:// to server url if user didn't enter url scheme
+* Save and restore webview's scroll position
+* Fix crash when favicon uri doesn't have a path segment, Closes #42
+* Save currently selected folder when pressing the back button, Fixes #40
+* Support fresh articles (< 24h old) (#39), Thanks to @tobiasKaminsky
+
 ## 0.27 (2017-01-12)
 
 * Allow user-added CAs on Android >= 7
