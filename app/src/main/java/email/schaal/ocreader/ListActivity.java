@@ -366,7 +366,11 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         binding.itemsRecyclerview.addItemDecoration(new DividerItemDecoration(this, 40));
         binding.itemsRecyclerview.setItemAnimator(new DefaultItemAnimator());
 
-        drawerManager.getState().restoreInstanceState(getRealm(), PreferenceManager.getDefaultSharedPreferences(this));
+        if(getIntent().hasExtra(SyncService.EXTRA_ID)) {
+            drawerManager.getState().restore(getRealm(), getIntent().getIntExtra(SyncService.EXTRA_ID, -10), null, false);
+        } else {
+            drawerManager.getState().restoreInstanceState(getRealm(), PreferenceManager.getDefaultSharedPreferences(this));
+        }
 
         adapter.updateItems(false);
 

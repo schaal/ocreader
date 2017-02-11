@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_app_shortcut_feed"
+        android:shortcutId="unread_items"
+        android:shortcutShortLabel="@string/unread_items">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="email.schaal.ocreader.ListActivity"
+            android:targetPackage="email.schaal.ocreader.debug">
+            <extra
+                android:name="email.schaal.ocreader.action.extra.ID"
+                android:value="-10" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_app_shortcut_star"
+        android:shortcutId="starred_items"
+        android:shortcutShortLabel="@string/starred_items">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="email.schaal.ocreader.ListActivity"
+            android:targetPackage="email.schaal.ocreader.debug">
+            <extra
+                android:name="email.schaal.ocreader.action.extra.ID"
+                android:value="-11" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_app_shortcut_fresh"
+        android:shortcutId="fresh_items"
+        android:shortcutShortLabel="@string/fresh_items">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="email.schaal.ocreader.ListActivity"
+            android:targetPackage="email.schaal.ocreader.debug">
+            <extra
+                android:name="email.schaal.ocreader.action.extra.ID"
+                android:value="-12" />
+        </intent>
+    </shortcut>
+</shortcuts>

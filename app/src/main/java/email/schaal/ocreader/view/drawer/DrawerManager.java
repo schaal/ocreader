@@ -244,6 +244,13 @@ public class DrawerManager {
 
             boolean isFeed = Preferences.SYS_ISFEED.getBoolean(preferences);
 
+            restore(realm, startDrawerItemId, endDrawerItemId, isFeed);
+        }
+
+        public void restore(Realm realm, long startDrawerItemId, @Nullable Long endDrawerItemId, boolean isFeed) {
+            this.startDrawerItemId = startDrawerItemId;
+            this.endDrawerItemId = endDrawerItemId;
+
             if(startDrawerItemId == AllUnreadFolder.ID) {
                 startDrawerItem = allUnreadFolder;
             } else if(startDrawerItemId == StarredFolder.ID) {
@@ -262,8 +269,7 @@ public class DrawerManager {
             }
 
             if(startDrawerItem == null) {
-                startDrawerItem = allUnreadFolder;
-                startDrawerItemId = AllUnreadFolder.ID;
+                setStartDrawerItem(allUnreadFolder);
             }
         }
 
