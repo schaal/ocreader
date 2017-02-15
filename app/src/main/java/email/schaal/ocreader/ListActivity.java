@@ -552,7 +552,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     public void onItemClick(Item item, int position) {
         if(actionMode == null) {
             Intent itemActivityIntent = new Intent(this, ItemPagerActivity.class);
-            itemActivityIntent.putExtra(ItemPagerActivity.POSITION, position);
+            itemActivityIntent.putExtra(ItemPagerActivity.EXTRA_CURRENT_POSITION, position);
             startActivityForResult(itemActivityIntent, ItemPagerActivity.REQUEST_CODE);
         } else {
             adapter.toggleSelection(item, position);

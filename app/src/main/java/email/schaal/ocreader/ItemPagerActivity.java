@@ -55,7 +55,6 @@ import io.realm.Sort;
 
 public class ItemPagerActivity extends RealmActivity {
 
-    public static final String POSITION = "position";
     public static final int REQUEST_CODE = 2;
     public static final String EXTRA_CURRENT_POSITION = "email.schaal.ocreader.extra.CURRENT_POSIION";
 
@@ -92,7 +91,7 @@ public class ItemPagerActivity extends RealmActivity {
             typedArray.recycle();
         }
 
-        int position = getIntent().getIntExtra(POSITION, 0);
+        int position = getIntent().getIntExtra(EXTRA_CURRENT_POSITION, 0);
 
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
