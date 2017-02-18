@@ -119,7 +119,8 @@ public class SyncService extends Service {
                 API.getInstance(this).sync(sharedPreferences, realm, syncType, intent, new API.APICallback<Void, String>() {
                     @Override
                     public void onSuccess(Void n) {
-                        Queries.removeExcessItems(realm, Queries.MAX_ITEMS);
+                        if(syncType != SyncType.LOAD_MORE)
+                            Queries.removeExcessItems(realm, Queries.MAX_ITEMS);
                         realm.executeTransaction(postProcessFeedTransaction);
                         onFinished();
                     }

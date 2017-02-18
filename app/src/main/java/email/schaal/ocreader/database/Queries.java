@@ -166,10 +166,21 @@ public class Queries {
     }
 
     public static void removeExcessItems(Realm realm, final int maxItems) {
-        final RealmResults<Item> expendableItems = realm.where(Item.class)
+
+        final RealmQuery<Item> realmQuery = realm.where(Item.class)
                 .equalTo(Item.UNREAD, false)
-                .equalTo(Item.STARRED, false)
-                .findAllSorted(Item.LAST_MODIFIED, Sort.ASCENDING);
+                .equalTo(Item.STARRED, false);
+
+        final List<Item> temporaryFeedItems = realm.where(TemporaryFeed.class).findFirst().getItems().sort(Item.ID);
+        if(!temporaryFeedItems.isEmpty()) {
+            final Long[] temporaryFeedItemsIds = new Long[temporaryFeedItems.size()];
+            for (int i = 0; i < temporaryFeedItems.size(); i++)
+                temporaryFeedItemsIds[i] = temporaryFeedItems.get(i).getId();
+            realmQuery.not().in(Item.ID, temporaryFeedItemsIds);
+        }
+
+        final RealmResults<Item> expendableItems = realmQuery.findAllSorted(Item.LAST_MODIFIED, Sort.ASCENDING);
+
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
