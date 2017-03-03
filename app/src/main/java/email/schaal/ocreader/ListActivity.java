@@ -542,7 +542,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         //noinspection deprecation
         textView.setText(Html.fromHtml(getString(R.string.about_app, getString(R.string.app_year_author), getString(R.string.app_url))));
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setIcon(R.drawable.ic_launcher);
+        builder.setIcon(R.mipmap.ic_launcher);
         builder.setTitle(String.format("%s %s", getString(R.string.app_name), BuildConfig.VERSION_NAME));
         builder.setView(aboutView);
         builder.show();
@@ -592,15 +592,15 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                     Bitmap avatarBitmap = BitmapFactory.decodeStream(new Base64InputStream(new ByteArrayInputStream(encodedImage.getBytes()), Base64.DEFAULT));
                     profileDrawerItem.withIcon(avatarBitmap);
                 } else {
-                    profileDrawerItem.withIcon(R.drawable.ic_launcher);
+                    profileDrawerItem.withIcon(R.mipmap.ic_launcher);
                 }
                 if (accountHeader != null)
                     accountHeader.updateProfile(profileDrawerItem);
             } else {
-                profileDrawerItem.withIcon(R.drawable.ic_launcher);
+                profileDrawerItem.withIcon(R.mipmap.ic_launcher);
             }
         } else {
-            profileDrawerItem.withIcon(R.drawable.ic_launcher);
+            profileDrawerItem.withIcon(R.mipmap.ic_launcher);
         }
     }
 

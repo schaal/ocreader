@@ -101,7 +101,7 @@ public class OCReaderApplication extends Application {
                 if(tag != null) {
                     switch (DrawerImageLoader.Tags.valueOf(tag)) {
                         case PROFILE:
-                            drawableRes = R.drawable.ic_launcher;
+                            drawableRes = R.mipmap.ic_launcher;
                             break;
                         default:
                             drawableRes = R.drawable.ic_feed_icon;
