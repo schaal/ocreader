@@ -33,7 +33,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -82,7 +81,6 @@ import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.view.DividerItemDecoration;
 import email.schaal.ocreader.view.ItemViewHolder;
 import email.schaal.ocreader.view.ItemsAdapter;
-import email.schaal.ocreader.view.ScrollAwareFABBehavior;
 import email.schaal.ocreader.view.SelectableItemsAdapter;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
@@ -629,7 +627,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         startDrawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         binding.swipeRefreshLayout.setEnabled(false);
         binding.fabMarkAllAsRead.setVisibility(View.GONE);
-        ((CoordinatorLayout.LayoutParams)binding.fabMarkAllAsRead.getLayoutParams()).setBehavior(null);
         return true;
     }
 
@@ -688,7 +685,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         startDrawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         binding.swipeRefreshLayout.setEnabled(true);
         binding.fabMarkAllAsRead.setVisibility(View.VISIBLE);
-        ((CoordinatorLayout.LayoutParams)binding.fabMarkAllAsRead.getLayoutParams()).setBehavior(new ScrollAwareFABBehavior());
         adapter.clearSelection();
     }
 }
