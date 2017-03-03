@@ -47,6 +47,7 @@ public class ProgressFloatingActionButton extends FloatingActionButton {
         invalidate();
     }
 
+    @Keep
     @Override
     public void setBackgroundColor(int color) {
         if(Build.VERSION.SDK_INT >= 21) {

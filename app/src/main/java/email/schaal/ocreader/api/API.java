@@ -202,10 +202,6 @@ public abstract class API {
         });
     }
 
-    public static boolean isLoggedIn() {
-        return instance != null;
-    }
-
     private static String getErrorMessage(JsonAdapter<NewsError> adapter, Response<?> response) {
         String message = response.message();
 
