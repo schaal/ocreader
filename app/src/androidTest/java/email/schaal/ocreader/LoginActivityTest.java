@@ -20,6 +20,7 @@ import okhttp3.mockwebserver.MockWebServer;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.hasErrorText;
@@ -61,9 +62,9 @@ public class LoginActivityTest {
         onView(withId(R.id.url)).perform(clearText(), typeText(baseUrl.toString()));
         onView(withId(R.id.username)).perform(clearText(), typeText("admin"));
         onView(withId(R.id.password)).perform(clearText(), typeText("admin"));
-        onView(withId(R.id.sign_in_button)).perform(click());
+        onView(withId(R.id.sign_in_button)).perform(scrollTo(), click());
         onView(withId(R.id.url)).check(matches(hasErrorText(activityTestRule.getActivity().getString(R.string.error_insecure_connection))));
-        onView(withId(R.id.sign_in_button)).perform(click());
+        onView(withId(R.id.sign_in_button)).perform(scrollTo(), click());
     }
 
     @Test
@@ -71,7 +72,7 @@ public class LoginActivityTest {
         onView(withId(R.id.url)).perform(clearText(), typeText("https://unknown-host"));
         onView(withId(R.id.username)).perform(clearText(), typeText("admin"));
         onView(withId(R.id.password)).perform(clearText(), typeText("admin"));
-        onView(withId(R.id.sign_in_button)).perform(click());
+        onView(withId(R.id.sign_in_button)).perform(scrollTo(), click());
         onView(withId(R.id.url)).check(matches(hasErrorText(activityTestRule.getActivity().getString(R.string.error_unknown_host))));
     }
 
@@ -85,9 +86,9 @@ public class LoginActivityTest {
         onView(withId(R.id.url)).perform(clearText(), typeText(baseUrl.toString()));
         onView(withId(R.id.username)).perform(clearText(), typeText("admin"));
         onView(withId(R.id.password)).perform(clearText(), typeText("admin"));
-        onView(withId(R.id.sign_in_button)).perform(click());
+        onView(withId(R.id.sign_in_button)).perform(scrollTo(), click());
         onView(withId(R.id.url)).check(matches(hasErrorText(activityTestRule.getActivity().getString(R.string.error_insecure_connection))));
-        onView(withId(R.id.sign_in_button)).perform(click());
+        onView(withId(R.id.sign_in_button)).perform(scrollTo(), click());
 
         onView(withId(R.id.status)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
 
