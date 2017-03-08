@@ -1,6 +1,5 @@
 package email.schaal.ocreader;
 
-import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -13,6 +12,7 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
+import email.schaal.ocreader.api.API;
 import email.schaal.ocreader.database.Queries;
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.MockWebServer;
@@ -24,8 +24,8 @@ import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.hasErrorText;
-import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 /**
  * Created by daniel on 13.10.16.
@@ -90,7 +90,7 @@ public class LoginActivityTest {
         onView(withId(R.id.url)).check(matches(hasErrorText(activityTestRule.getActivity().getString(R.string.error_insecure_connection))));
         onView(withId(R.id.sign_in_button)).perform(scrollTo(), click());
 
-        onView(withId(R.id.status)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
+        onView(withId(R.id.status)).check(matches(withText(activityTestRule.getActivity().getString(R.string.ncnews_too_old, API.MIN_VERSION.toString()))));
 
         dispatcher.version = originalVersion;
     }

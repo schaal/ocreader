@@ -45,7 +45,7 @@ import retrofit2.http.GET;
  */
 public abstract class API {
     private static final String TAG = API.class.getName();
-    private static final Version MIN_VERSION = Version.forIntegers(8, 8, 2);
+    public static final Version MIN_VERSION = Version.forIntegers(8, 8, 2);
 
     private static API instance;
 
