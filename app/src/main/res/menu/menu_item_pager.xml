@@ -24,20 +24,6 @@
       tools:context="email.schaal.ocreader.ItemPagerActivity">
 
     <item
-        android:id="@+id/action_mark_read"
-        android:checkable="true"
-        android:icon="@drawable/ic_check_box_outline_blank"
-        android:title="@string/action_mark_read"
-        app:showAsAction="ifRoom"/>
-
-    <item
-        android:id="@+id/action_mark_starred"
-        android:checkable="true"
-        android:icon="@drawable/ic_star_outline"
-        android:title="@string/action_mark_starred"
-        app:showAsAction="ifRoom"/>
-
-    <item
         android:id="@+id/action_share_article"
         android:title="@string/share_article"
         android:icon="@drawable/ic_share"

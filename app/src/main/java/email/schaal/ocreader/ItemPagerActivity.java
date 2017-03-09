@@ -64,8 +64,6 @@ public class ItemPagerActivity extends RealmActivity {
     @ColorInt private int defaultAccent;
     private Item item;
 
-    private MenuItem menuItemMarkRead;
-    private MenuItem menuItemMarkStarred;
     private RealmResults<Item> items;
 
     @Override
@@ -109,6 +107,20 @@ public class ItemPagerActivity extends RealmActivity {
             }
         });
 
+        binding.fabMarkStarred.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setItemStarred(!item.isStarred());
+            }
+        });
+
+        binding.fabMarkAsRead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setItemUnread(!item.isUnread());
+            }
+        });
+
         binding.container.setAdapter(mSectionsPagerAdapter);
 
         ViewPager.OnPageChangeListener pageChangeListener = new MyOnPageChangeListener(mSectionsPagerAdapter);
@@ -136,34 +148,23 @@ public class ItemPagerActivity extends RealmActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_item_pager, menu);
-
-        menuItemMarkRead = menu.findItem(R.id.action_mark_read);
-        menuItemMarkStarred = menu.findItem(R.id.action_mark_starred);
-
         return true;
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        menuItemMarkRead.setChecked(!item.isUnread());
-        menuItemMarkRead.setIcon(menuItemMarkRead.isChecked() ? R.drawable.ic_check_box : R.drawable.ic_check_box_outline_blank);
-
-        menuItemMarkStarred.setChecked(item.isStarred());
-        menuItemMarkStarred.setIcon(menuItemMarkStarred.isChecked() ? R.drawable.ic_star : R.drawable.ic_star_outline);
-
-        return super.onPrepareOptionsMenu(menu);
+    private void prepareFabBar() {
+        binding.fabMarkAsRead.setImageResource(!item.isUnread() ? R.drawable.ic_check_box : R.drawable.ic_check_box_outline_blank);
+        binding.fabMarkStarred.setImageResource(item.isStarred() ? R.drawable.ic_star : R.drawable.ic_star_outline);
     }
 
     private void setItemUnread(boolean unread) {
         Queries.setItemsUnread(getRealm(), unread, this.item);
-        invalidateOptionsMenu();
+        prepareFabBar();
     }
 
     private void setItemStarred(boolean starred) {
         Queries.setItemsStarred(getRealm(), starred, this.item);
-        invalidateOptionsMenu();
+        prepareFabBar();
     }
 
     public void updateResult() {
@@ -184,12 +185,6 @@ public class ItemPagerActivity extends RealmActivity {
             case android.R.id.home:
                 updateResult();
                 return super.onOptionsItemSelected(item);
-            case R.id.action_mark_read:
-                setItemUnread(!this.item.isUnread());
-                return true;
-            case R.id.action_mark_starred:
-                setItemStarred(!this.item.isStarred());
-                return true;
             case R.id.action_share_article:
                 shareArticle();
                 return true;
@@ -324,7 +319,8 @@ public class ItemPagerActivity extends RealmActivity {
 
             progressFrom = progressTo;
             progressTo = (float) (position + 1) / (float) mSectionsPagerAdapter.getCount();
-            binding.fabOpenInBrowser.show();
+            prepareFabBar();
+            binding.fabLayout.show();
 
             ObjectAnimator progressAnimator = ObjectAnimator
                     .ofFloat(binding.fabOpenInBrowser, "progress", progressFrom, progressTo)

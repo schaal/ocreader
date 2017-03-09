@@ -39,15 +39,43 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-        <email.schaal.ocreader.view.ProgressFloatingActionButton
-            android:id="@+id/fab_open_in_browser"
-            android:layout_width="wrap_content"
+        <email.schaal.ocreader.view.FABLayout
+            android:id="@+id/fab_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/materialize_screen_edge"
-            android:clickable="true"
-            android:src="@drawable/ic_open_in_browser"
-            app:layout_behavior="email.schaal.ocreader.view.ScrollAwareFABBehavior"
-            app:progressColor="@color/progress"/>
+            android:layout_gravity="bottom"
+            android:padding="@dimen/materialize_baseline_grid"
+            android:gravity="center"
+            app:layout_behavior="email.schaal.ocreader.view.ScrollAwareFABLayoutBehavior">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_mark_as_read"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:text="@string/action_mark_read"
+                app:fabSize="mini"
+                android:src="@drawable/ic_check_box" />
+
+            <email.schaal.ocreader.view.ProgressFloatingActionButton
+                android:id="@+id/fab_open_in_browser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="@dimen/materialize_screen_edge"
+                android:layout_marginStart="@dimen/materialize_screen_edge"
+                android:clickable="true"
+                app:progressColor="@color/progress"
+                android:src="@drawable/ic_open_in_browser" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_mark_starred"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:text="@string/action_mark_starred"
+                app:fabSize="mini"
+                android:src="@drawable/ic_star" />
+        </email.schaal.ocreader.view.FABLayout>
     </android.support.design.widget.CoordinatorLayout>
 </layout>
