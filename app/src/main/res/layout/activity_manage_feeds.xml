@@ -46,7 +46,7 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/materialize_screen_edge"
             android:clickable="true"
-            android:src="@drawable/ic_add"
+            app:srcCompat="@drawable/ic_add"
             android:tint="@color/md_white_1000"
             app:layout_behavior="email.schaal.ocreader.view.ScrollAwareFABBehavior"/>
     </android.support.design.widget.CoordinatorLayout>

@@ -54,7 +54,7 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/materialize_screen_edge"
             android:clickable="true"
-            android:src="@drawable/donesynctransition"
+            app:srcCompat="@drawable/donesynctransition"
             android:tint="@color/md_white_1000"
             app:layout_behavior="email.schaal.ocreader.view.ScrollAwareFABBehavior"/>
     </android.support.design.widget.CoordinatorLayout>

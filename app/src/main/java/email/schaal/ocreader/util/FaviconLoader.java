@@ -97,7 +97,7 @@ public class FaviconLoader {
             MyTarget myTarget = new MyTarget(feed, listener, colorBackground);
 
             if(imageView != null) {
-                requestCreator.placeholder(placeholder).into(imageView, myTarget);
+                requestCreator.placeholder(ContextCompat.getDrawable(context, placeholder)).into(imageView, myTarget);
             } else {
                 requestCreator.into(myTarget);
             }

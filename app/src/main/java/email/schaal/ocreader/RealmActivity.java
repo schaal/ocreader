@@ -22,6 +22,7 @@ package email.schaal.ocreader;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 
 import io.realm.Realm;
 
@@ -30,6 +31,10 @@ import io.realm.Realm;
  */
 public abstract class RealmActivity extends AppCompatActivity {
     private Realm realm;
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
