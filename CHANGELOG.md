@@ -1,3 +1,8 @@
+## 0.29 (2017-03-10)
+
+* Add app shortcuts for Android 7.1
+* Move buttons to mark as read and to star to the bottom in the article pager (Fixes #43)
+
 ## 0.28 (2017-02-11)
 
 * Prepend https:// to server url if user didn't enter url scheme
