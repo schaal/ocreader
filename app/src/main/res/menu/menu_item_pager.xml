@@ -24,6 +24,13 @@
       tools:context="email.schaal.ocreader.ItemPagerActivity">
 
     <item
+        android:id="@+id/action_play_enclosure_media"
+        android:title="@string/play_media"
+        android:icon="@drawable/ic_play_arrow"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_share_article"
         android:title="@string/share_article"
         android:icon="@drawable/ic_share"

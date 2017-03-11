@@ -20,9 +20,7 @@
 
 package email.schaal.ocreader.view;
 
-import android.content.Intent;
 import android.content.res.TypedArray;
-import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
@@ -111,9 +109,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
             binding.play.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent playIntent = new Intent(Intent.ACTION_VIEW);
-                    playIntent.setData(Uri.parse(item.getEnclosureLink()));
-                    itemView.getContext().startActivity(playIntent);
+                    item.play(itemView.getContext());
                 }
             });
         } else {

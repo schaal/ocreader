@@ -152,6 +152,12 @@ public class ItemPagerActivity extends RealmActivity {
         return true;
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_play_enclosure_media).setVisible(item.getEnclosureLink() != null);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     private void prepareFabBar() {
         binding.fabMarkAsRead.setImageResource(!item.isUnread() ? R.drawable.ic_check_box : R.drawable.ic_check_box_outline_blank);
         binding.fabMarkStarred.setImageResource(item.isStarred() ? R.drawable.ic_star : R.drawable.ic_star_outline);
@@ -185,6 +191,9 @@ public class ItemPagerActivity extends RealmActivity {
             case android.R.id.home:
                 updateResult();
                 return super.onOptionsItemSelected(item);
+            case R.id.action_play_enclosure_media:
+                this.item.play(this);
+                return true;
             case R.id.action_share_article:
                 shareArticle();
                 return true;

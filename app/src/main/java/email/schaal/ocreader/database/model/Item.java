@@ -20,6 +20,9 @@
 
 package email.schaal.ocreader.database.model;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -274,6 +277,14 @@ public class Item extends RealmObject implements Insertable {
 
     public void setFingerprint(String fingerprint) {
         this.fingerprint = fingerprint;
+    }
+
+    public void play(Context context) {
+        if(getEnclosureLink() != null) {
+            Intent playIntent = new Intent(Intent.ACTION_VIEW);
+            playIntent.setData(Uri.parse(getEnclosureLink()));
+            context.startActivity(playIntent);
+        }
     }
 
     @Override
