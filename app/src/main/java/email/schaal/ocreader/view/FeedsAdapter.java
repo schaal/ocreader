@@ -1,6 +1,5 @@
 package email.schaal.ocreader.view;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,8 +22,8 @@ import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_LAST_ITEM;
 public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.ViewHolder> {
     private final FeedManageListener listener;
 
-    public FeedsAdapter(Context context, Realm realm, FeedManageListener listener) {
-        super(context, realm.where(Feed.class).findAllSorted(Feed.NAME), true);
+    public FeedsAdapter(Realm realm, FeedManageListener listener) {
+        super(realm.where(Feed.class).findAllSorted(Feed.NAME), true);
         this.listener = listener;
     }
 

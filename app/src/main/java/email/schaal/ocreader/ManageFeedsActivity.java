@@ -42,7 +42,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
 
         folderSpinnerAdapter = new FolderSpinnerAdapter(this, getRealm().where(Folder.class).findAllSorted(Folder.NAME));
 
-        FeedsAdapter adapter = new FeedsAdapter(this, getRealm(), this);
+        FeedsAdapter adapter = new FeedsAdapter(getRealm(), this);
 
         binding.feedsRecyclerview.setAdapter(adapter);
         binding.feedsRecyclerview.setLayoutManager(new LinearLayoutManager(this));
