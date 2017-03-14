@@ -35,6 +35,10 @@ import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
+import org.acra.ACRA;
+import org.acra.ReportingInteractionMode;
+import org.acra.annotation.ReportsCrashes;
+
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.util.AlarmUtils;
@@ -43,11 +47,20 @@ import email.schaal.ocreader.util.IcoRequestHandler;
 /**
  * Application class to setup the singletons
  */
+@ReportsCrashes(
+        mailTo = "ocreader+reports@schaal.email",
+        mode = ReportingInteractionMode.DIALOG,
+        resDialogText = R.string.app_name,
+        reportDialogClass = email.schaal.ocreader.CustomCrashReportDialog.class
+)
 public class OCReaderApplication extends Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        if(ACRA.isACRASenderServiceProcess())
+            return;
 
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -114,5 +127,11 @@ public class OCReaderApplication extends Application {
                 return AppCompatResources.getDrawable(ctx, drawableRes);
             }
         });
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        ACRA.init(this);
     }
 }

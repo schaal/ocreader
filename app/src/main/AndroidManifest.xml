@@ -66,6 +66,12 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".CustomCrashReportDialog"
+            android:excludeFromRecents="true"
+            android:finishOnTaskLaunch="true"
+            android:launchMode="singleInstance" />
+
         <service
             android:name="email.schaal.ocreader.service.SyncService"
             android:enabled="true"

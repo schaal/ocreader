@@ -42,6 +42,7 @@ class Decoder {
         CountingInputStream countingInputStream = new CountingInputStream(markable);
         LittleEndianDataInputStream in = new LittleEndianDataInputStream(countingInputStream);
 
+        //noinspection TryFinallyCanBeTryWithResources
         try {
             in.mark(16);
             if (in.readShort() != RESERVED | in.readShort() != TYPE) {

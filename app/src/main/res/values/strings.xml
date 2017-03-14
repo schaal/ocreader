@@ -105,5 +105,8 @@
     <string name="could_not_connect">Could not connect to host</string>
     <string name="failed_detect_nc_version">Couldn\'t detect Nextcloud News version</string>
     <string name="switch_app_theme">Switch app theme</string>
+    <string name="crash_text">An unexpected error occurred forcing the application to stop. Clicking OK lets you review and send information about this issue using your mail app.\n\nYou can add relevant information in the text field below.</string>
+    <string name="additional_information">Additional information</string>
+    <string name="report_issue">Report issue</string>
 
 </resources>
