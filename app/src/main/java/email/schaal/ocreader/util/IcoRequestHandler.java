@@ -21,7 +21,6 @@
 package email.schaal.ocreader.util;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -30,13 +29,8 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
 import com.squareup.picasso.RequestHandler;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-
-import divstar.ico4a.codec.ico.ICODecoder;
 
 /**
  * Handle requests for Picasso for ico files
@@ -64,33 +58,12 @@ public class IcoRequestHandler extends RequestHandler {
 
         if(response != null && response.getInputStream() != null) {
             final InputStream inputStream = response.getInputStream();
-            final byte[] buf;
-
-            {
-                byte[] b = new byte[1024];
-                int bytesRead;
-                final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                while ((bytesRead = inputStream.read(b)) != -1) {
-                    bos.write(b, 0, bytesRead);
-                }
-                buf = bos.toByteArray();
-            }
-
             try {
-                List<Bitmap> bitmaps = ICODecoder.read(new ByteArrayInputStream(buf));
-
-                Bitmap biggest = bitmaps.remove(0);
-
-                for (Bitmap bitmap : bitmaps) {
-                    if (bitmap.getHeight() > biggest.getHeight())
-                        biggest = bitmap;
-                }
-
-                return new Result(biggest, Picasso.LoadedFrom.NETWORK);
+                final Bitmap bitmap = Decoder.decode(inputStream);
+                if(bitmap != null)
+                    return new Result(bitmap, Picasso.LoadedFrom.NETWORK);
             } catch (IOException e) {
-                Log.i(TAG, ".ico decoding failed, trying again using BitmapFactory: " + e.getLocalizedMessage());
-                // Failed to decode ico file, try again using BitmapFactory
-                return new Result(BitmapFactory.decodeByteArray(buf, 0, buf.length), Picasso.LoadedFrom.NETWORK);
+                Log.e(TAG, "stacktrace", e);
             } finally {
                 try {
                     inputStream.close();

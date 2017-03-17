@@ -78,6 +78,8 @@ dependencies {
 
     compile "com.android.support:support-v13:${versions.supportLib}"
 
+    compile 'com.google.guava:guava:20.0'
+
     compile('com.mikepenz:materialdrawer:5.8.2@aar') {
         transitive = true
     }
@@ -85,8 +87,6 @@ dependencies {
     compile 'io.realm:android-adapters:2.0.0'
 
     compile 'org.jsoup:jsoup:1.10.2'
-
-    compile 'com.github.schaal:ico4a:2257dfe'
 
     // Explicitly set okhttp3 version
     compile "com.squareup.okhttp3:okhttp:${versions.okhttp}"
