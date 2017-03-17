@@ -193,7 +193,7 @@ public class FaviconLoader {
 
         @Override
         public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-            Log.e(TAG, "stacktrace", e);
+            Log.e(TAG, "Loading favicon for feed " + (feed != null ? feed.getName() : "*null*") + " failed", e);
             listener.onGenerated(new FeedColors((Integer)null));
         }
 
