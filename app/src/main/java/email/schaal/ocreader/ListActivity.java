@@ -41,7 +41,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
 import android.text.Html;
 import android.util.Base64;
 import android.util.Base64InputStream;
@@ -52,6 +51,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.mikepenz.materialdrawer.AccountHeader;
