@@ -63,7 +63,7 @@ class Decoder {
 
             IconEntry biggest = entries[entries.length - 1];
 
-            IconEntry biggestAdjustedOffest = new IconEntry(biggest, HEADER_SIZE + ICONENTRY_SIZE);
+            IconEntry biggestAdjustedOffset = new IconEntry(biggest, HEADER_SIZE + ICONENTRY_SIZE);
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(biggest.size + HEADER_SIZE + ICONENTRY_SIZE);
             LittleEndianDataOutputStream iconOutputStream = new LittleEndianDataOutputStream(byteArrayOutputStream);
@@ -71,7 +71,7 @@ class Decoder {
             iconOutputStream.writeShort(TYPE);
             iconOutputStream.writeShort(1); // number of IconEntries
 
-            biggestAdjustedOffest.write(iconOutputStream);
+            biggestAdjustedOffset.write(iconOutputStream);
 
             int bytesToSkip = biggest.offset - (int)countingInputStream.getCount();
             while(bytesToSkip > 0) {
