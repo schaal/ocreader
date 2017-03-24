@@ -52,7 +52,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -76,6 +75,7 @@ import email.schaal.ocreader.database.model.TemporaryFeed;
 import email.schaal.ocreader.database.model.TreeItem;
 import email.schaal.ocreader.database.model.User;
 import email.schaal.ocreader.databinding.ActivityListBinding;
+import email.schaal.ocreader.databinding.DialogAboutBinding;
 import email.schaal.ocreader.service.SyncService;
 import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.view.DividerItemDecoration;
@@ -534,16 +534,16 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     }
 
     private void showAboutDialog() {
-        View aboutView = getLayoutInflater().inflate(R.layout.dialog_about, binding.coordinatorLayout, false);
+        DialogAboutBinding dialogAboutBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.dialog_about, binding.coordinatorLayout, false);
 
-        TextView textView = (TextView) aboutView.findViewById(R.id.textViewCopyright);
         //noinspection deprecation
-        textView.setText(Html.fromHtml(getString(R.string.about_app, getString(R.string.app_year_author), getString(R.string.app_url))));
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setIcon(R.mipmap.ic_launcher);
-        builder.setTitle(String.format("%s %s", getString(R.string.app_name), BuildConfig.VERSION_NAME));
-        builder.setView(aboutView);
-        builder.show();
+        dialogAboutBinding.textViewCopyright.setText(Html.fromHtml(getString(R.string.about_app, getString(R.string.app_year_author), getString(R.string.app_url))));
+
+        new AlertDialog.Builder(this)
+                .setIcon(R.mipmap.ic_launcher)
+                .setTitle(String.format("%s %s", getString(R.string.app_name), BuildConfig.VERSION_NAME))
+                .setView(dialogAboutBinding.getRoot())
+                .show();
     }
 
     @Override
