@@ -75,7 +75,7 @@ class Decoder {
 
             int bytesToSkip = biggest.offset - (int)countingInputStream.getCount();
             while(bytesToSkip > 0) {
-                final int bytesSkipped = in.skipBytes(bytesToSkip > 100 ? 100 : 1);
+                final int bytesSkipped = in.skipBytes(bytesToSkip);
                 if(bytesSkipped == 0)
                     throw new EOFException("Unexpected EOF");
                 bytesToSkip -= bytesSkipped;
