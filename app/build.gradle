@@ -23,15 +23,15 @@ apply plugin: 'realm-android'
 apply plugin: 'com.jakewharton.hugo'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.0"
 
     dataBinding.enabled = true
 
     defaultConfig {
         applicationId "email.schaal.ocreader"
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 39
         versionName "0.36"
 
@@ -58,7 +58,7 @@ android {
 
 ext {
     versions = [
-            supportLib: '25.4.0',
+            supportLib: '26.0.0-beta2',
             okhttp: '3.8.1',
             retrofit: '2.3.0'
     ]

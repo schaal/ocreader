@@ -2,17 +2,12 @@ language: android
 android:
   components:
    - tools
-   - build-tools-25.0.3
-   - android-25
-   - extra-android-m2repository
+   - build-tools-26.0.0
+   - android-26
 
 jdk:
    - oraclejdk8
 
 sudo: false
 
-cache:
-  directories:
-   - $HOME/.m2
-
-script: ./gradlew check -x lint
+script: ./gradlew check assembleRelease
