@@ -80,6 +80,8 @@ public class IcoRequestHandler extends RequestHandler {
     @Nullable
     @Override
     public Result load(Request request, int networkPolicy) throws IOException {
+        // Set networkPolicy back to 0, for some reason picasso changes it to NetworkPolicy.OFFLINE
+        networkPolicy = 0;
         Response response = downloader.load(createRequest(request, networkPolicy));
 
         final ResponseBody responseBody = response.body();
