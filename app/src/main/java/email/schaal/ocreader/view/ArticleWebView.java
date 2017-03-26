@@ -142,7 +142,7 @@ public class ArticleWebView extends NestedScrollWebView {
     private class JsCallback {
         @JavascriptInterface
         public void startLoading() {
-            getHandler().post(new Runnable() {
+            post(new Runnable() {
                 @Override
                 public void run() {
                     new FaviconLoader.Builder(item.getFeed())
