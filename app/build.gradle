@@ -35,8 +35,6 @@ android {
         versionCode 32
         versionName "0.29"
 
-        vectorDrawables.useSupportLibrary = true
-
         archivesBaseName="${getApplicationId()}_${getVersionCode()}"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

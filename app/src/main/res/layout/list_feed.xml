@@ -19,8 +19,7 @@
   -->
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -71,7 +70,7 @@
             android:layout_centerVertical="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/delete_feed"
-            app:srcCompat="@drawable/ic_delete"
+            android:src="@drawable/ic_delete"
             android:tint="@color/delete"/>
 
         <TextView

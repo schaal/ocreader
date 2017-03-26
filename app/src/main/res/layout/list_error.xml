@@ -42,7 +42,7 @@
             android:layout_marginEnd="@dimen/materialize_baseline_grid"
             android:layout_marginRight="@dimen/materialize_baseline_grid"
             android:contentDescription="@string/warning"
-            app:srcCompat="@drawable/ic_warning" />
+            android:src="@drawable/ic_warning" />
 
         <TextView
             android:id="@+id/textView"

@@ -20,8 +20,7 @@
   -->
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -83,7 +82,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/play_media"
-                app:srcCompat="@drawable/ic_play_circle_outline"
+                android:src="@drawable/ic_play_circle_outline"
                 android:visibility="gone"
                 tools:visibility="visible"/>
 
@@ -92,7 +91,7 @@
                 android:layout_width="@dimen/materialize_icon"
                 android:layout_height="@dimen/materialize_icon"
                 android:contentDescription="@string/starred"
-                app:srcCompat="@drawable/ic_star"
+                android:src="@drawable/ic_star"
                 android:tint="@color/star"
                 android:visibility="gone"
                 tools:visibility="visible"/>

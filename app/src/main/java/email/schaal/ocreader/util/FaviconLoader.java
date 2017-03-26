@@ -98,9 +98,7 @@ public class FaviconLoader {
             MyTarget myTarget = new MyTarget(feed, listener, colorBackground);
 
             if(imageView != null) {
-                // placeholder method argument is annotated with @NonNull contrary to documentation
-                //noinspection ConstantConditions
-                requestCreator.placeholder(AppCompatResources.getDrawable(context, placeholder)).into(imageView, myTarget);
+                requestCreator.placeholder(placeholder).into(imageView, myTarget);
             } else {
                 requestCreator.into(myTarget);
             }
