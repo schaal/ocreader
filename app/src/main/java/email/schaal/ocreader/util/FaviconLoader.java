@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.ColorUtils;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.graphics.Palette;
 import android.util.Log;
 import android.util.LruCache;
@@ -68,7 +69,7 @@ public class FaviconLoader {
                 faviconCache.put(feed.getId(), drawable);
             }
         } else {
-            drawable = ContextCompat.getDrawable(context, R.drawable.ic_feed_icon);
+            drawable = AppCompatResources.getDrawable(context, R.drawable.ic_feed_icon);
         }
         return drawable;
     }
@@ -97,7 +98,9 @@ public class FaviconLoader {
             MyTarget myTarget = new MyTarget(feed, listener, colorBackground);
 
             if(imageView != null) {
-                requestCreator.placeholder(ContextCompat.getDrawable(context, placeholder)).into(imageView, myTarget);
+                // placeholder method argument is annotated with @NonNull contrary to documentation
+                //noinspection ConstantConditions
+                requestCreator.placeholder(AppCompatResources.getDrawable(context, placeholder)).into(imageView, myTarget);
             } else {
                 requestCreator.into(myTarget);
             }

@@ -1,7 +1,7 @@
 package email.schaal.ocreader;
 
 import android.graphics.Color;
-import android.support.v4.content.ContextCompat;
+import android.support.v7.content.res.AppCompatResources;
 import android.util.Pair;
 
 import org.junit.Test;
@@ -45,7 +45,7 @@ public class FaviconLoaderTest {
         feed.setFaviconLink(null);
 
         assertTrue(FaviconLoader.getDrawable(RuntimeEnvironment.application, feed) instanceof TextDrawable);
-        assertEquals(ContextCompat.getDrawable(RuntimeEnvironment.application, R.drawable.ic_feed_icon), FaviconLoader.getDrawable(RuntimeEnvironment.application, null));
+        assertEquals(AppCompatResources.getDrawable(RuntimeEnvironment.application, R.drawable.ic_feed_icon), FaviconLoader.getDrawable(RuntimeEnvironment.application, null));
 
         // TODO: 01.08.16 Test feed with favicon
     }

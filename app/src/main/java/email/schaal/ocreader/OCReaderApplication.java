@@ -27,8 +27,8 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.content.res.AppCompatResources;
 import android.widget.ImageView;
 
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
@@ -91,7 +91,7 @@ public class OCReaderApplication extends Application {
 
             @Override
             public Drawable placeholder(Context ctx) {
-                return ContextCompat.getDrawable(ctx, R.drawable.ic_feed_icon);
+                return AppCompatResources.getDrawable(ctx, R.drawable.ic_feed_icon);
             }
 
             @Override
@@ -111,7 +111,7 @@ public class OCReaderApplication extends Application {
                     drawableRes = R.drawable.ic_feed_icon;
                 }
 
-                return ContextCompat.getDrawable(ctx, drawableRes);
+                return AppCompatResources.getDrawable(ctx, drawableRes);
             }
         });
     }
