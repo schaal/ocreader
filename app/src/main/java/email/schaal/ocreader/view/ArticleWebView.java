@@ -1,7 +1,6 @@
 package email.schaal.ocreader.view;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
@@ -258,12 +257,7 @@ public class ArticleWebView extends NestedScrollWebView {
             scrollPosition = source.readInt();
         }
 
-        @TargetApi(24)
-        public SavedState(Parcel source, ClassLoader loader) {
-            super(source, loader);
-        }
-
-        public SavedState(Parcelable superState) {
+        private SavedState(Parcelable superState) {
             super(superState);
         }
 
