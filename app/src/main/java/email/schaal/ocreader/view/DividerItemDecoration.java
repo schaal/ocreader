@@ -30,11 +30,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
 
-import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_EMPTY;
-import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_ERROR;
-import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_ITEM;
-import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_LAST_ITEM;
-import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_LOADMORE;
+import email.schaal.ocreader.R;
 
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
@@ -95,15 +91,15 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
             final View child = parent.getChildAt(i);
 
             switch (layoutManager.getItemViewType(child)) {
-                case VIEW_TYPE_ITEM:
+                case R.id.viewtype_item:
                     dividerRect.left = paddingLeftInset;
                     break;
-                case VIEW_TYPE_LAST_ITEM:
-                case VIEW_TYPE_EMPTY:
-                case VIEW_TYPE_LOADMORE:
+                case R.id.viewtype_lastitem:
+                case R.id.viewtype_empty:
+                case R.id.viewtype_loadmore:
                     dividerRect.left = paddingLeft;
                     break;
-                case VIEW_TYPE_ERROR:
+                case R.id.viewtype_error:
                     continue;
             }
 

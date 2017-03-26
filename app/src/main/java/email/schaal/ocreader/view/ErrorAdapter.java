@@ -22,7 +22,7 @@ public class ErrorAdapter extends LoadMoreAdapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if(viewType == VIEW_TYPE_ERROR) {
+        if(viewType == R.id.viewtype_error) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_error, parent, false);
             return new ErrorViewHolder(view);
         } else {
@@ -55,7 +55,7 @@ public class ErrorAdapter extends LoadMoreAdapter {
     @Override
     public int getItemViewType(int position) {
         if (position == 0 && hasError())
-            return VIEW_TYPE_ERROR;
+            return R.id.viewtype_error;
         return super.getItemViewType(position - headerCount());
     }
 

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="viewtype_item" type="id" />
+    <item name="viewtype_lastitem" type="id" />
+    <item name="viewtype_empty" type="id" />
+    <item name="viewtype_loadmore" type="id" />
+    <item name="viewtype_error" type="id" />
+</resources>

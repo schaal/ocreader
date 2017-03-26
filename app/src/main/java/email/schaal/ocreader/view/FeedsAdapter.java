@@ -6,15 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.databinding.ListFeedBinding;
 import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.util.FeedColors;
 import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
-
-import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_ITEM;
-import static email.schaal.ocreader.view.ItemsAdapter.VIEW_TYPE_LAST_ITEM;
 
 /**
  * RecyclerView Adapter for Feeds
@@ -30,8 +28,8 @@ public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.Vi
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
-            case VIEW_TYPE_ITEM:
-            case VIEW_TYPE_LAST_ITEM:
+            case R.id.viewtype_item:
+            case R.id.viewtype_lastitem:
                 ListFeedBinding binding = ListFeedBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
                 return new FeedViewHolder(binding, listener);
         }
@@ -48,7 +46,7 @@ public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.Vi
 
     @Override
     public int getItemViewType(int position) {
-        return VIEW_TYPE_ITEM;
+        return R.id.viewtype_item;
     }
 
     /**

@@ -28,7 +28,7 @@ public class LoadMoreAdapter extends ItemsAdapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if(viewType == VIEW_TYPE_LOADMORE) {
+        if(viewType == R.id.viewtype_loadmore) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_loadmore, parent, false);
             return new LoadMoreViewHolder(view);
         } else {
@@ -67,7 +67,7 @@ public class LoadMoreAdapter extends ItemsAdapter {
     @Override
     public int getItemViewType(int position) {
         if(hasLoadMore() && position == super.getItemCount())
-            return VIEW_TYPE_LOADMORE;
+            return R.id.viewtype_loadmore;
         return super.getItemViewType(position);
     }
 

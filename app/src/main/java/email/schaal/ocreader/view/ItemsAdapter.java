@@ -47,12 +47,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final Realm realm;
     private final ItemViewHolder.OnClickListener clickListener;
 
-    final static int VIEW_TYPE_ITEM = 0;
-    final static int VIEW_TYPE_LAST_ITEM = 1;
-    final static int VIEW_TYPE_EMPTY = 2;
-    final static int VIEW_TYPE_LOADMORE = 3;
-    final static int VIEW_TYPE_ERROR = 4;
-
     private Sort order;
     private String sortField;
 
@@ -104,11 +98,11 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public int getItemViewType(int position) {
         if(hasItems()) {
             if(position == getActualItemCount() - 1)
-                return VIEW_TYPE_LAST_ITEM;
+                return R.id.viewtype_lastitem;
             else
-                return VIEW_TYPE_ITEM;
+                return R.id.viewtype_item;
         } else
-            return VIEW_TYPE_EMPTY;
+            return R.id.viewtype_empty;
     }
 
     private boolean hasItems() {
@@ -120,12 +114,12 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         View view;
         RecyclerView.ViewHolder holder = null;
         switch (viewType) {
-            case VIEW_TYPE_ITEM:
-            case VIEW_TYPE_LAST_ITEM:
+            case R.id.viewtype_item:
+            case R.id.viewtype_lastitem:
                 ListItemBinding binding = ListItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
                 holder = new ItemViewHolder(binding, clickListener);
                 break;
-            case VIEW_TYPE_EMPTY:
+            case R.id.viewtype_empty:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_empty, parent, false);
                 holder = new EmptyStateViewHolder(view);
                 break;
