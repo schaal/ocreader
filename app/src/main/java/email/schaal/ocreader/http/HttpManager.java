@@ -41,8 +41,8 @@ public class HttpManager {
 
     public HttpManager(String username, String password, HttpUrl url) {
         client = new OkHttpClient.Builder()
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(20, TimeUnit.SECONDS)
+                .readTimeout(1, TimeUnit.HOURS)
                 .addInterceptor(new AuthorizationInterceptor())
                 .build();
 
