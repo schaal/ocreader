@@ -368,7 +368,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         }
 
         binding.itemsRecyclerview.addItemDecoration(new DividerItemDecoration(this, 40));
-        binding.itemsRecyclerview.setItemAnimator(new DefaultItemAnimator());
 
         adapter.updateItems(false);
 
