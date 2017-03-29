@@ -320,7 +320,7 @@ class APIv12 extends API {
             @Override
             public void onCompleted(boolean result) {
                 if(result) {
-                    final Set<Callable<Runnable>> callables = new HashSet<>(6);
+                    final Set<Callable<Void>> callables = new HashSet<>(6);
 
                     switch (syncType) {
                         case SYNC_CHANGES_ONLY:
@@ -353,19 +353,16 @@ class APIv12 extends API {
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
-                            final ExecutorCompletionService<Runnable> completionService = new ExecutorCompletionService<>(threadPool);
+                            final ExecutorCompletionService<Void> completionService = new ExecutorCompletionService<>(threadPool);
                             // Start API Calls
-                            for (Callable<Runnable> callable : callables) {
+                            for (Callable<Void> callable : callables) {
                                 completionService.submit(callable);
                             }
 
                             try {
                                 // Get API Call results
                                 for (int i = 0, size = callables.size(); i < size; i++) {
-                                    final Runnable runnable = completionService.take().get();
-
-                                    // Run the Runnable on the main thread (e.g. insert result into db)
-                                    handler.post(runnable);
+                                    completionService.take().get();
                                 }
 
                                 // Run callback on main thread
@@ -409,7 +406,7 @@ class APIv12 extends API {
         });
     }
 
-    private abstract class RealmCallable<T> implements Callable<Runnable> {
+    private abstract class RealmCallable<T> implements Callable<Void> {
         protected final Realm realm;
 
         RealmCallable(Realm realm) {
@@ -420,10 +417,10 @@ class APIv12 extends API {
         protected abstract Response<T> getResponse() throws IOException;
 
         @Override
-        public Runnable call() throws Exception {
+        public Void call() throws Exception {
             final Response<T> response = getResponse();
             if(response.isSuccessful())
-                return getRunnable(response);
+                handler.post(getRunnable(response));
             return null;
         }
     }
