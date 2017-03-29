@@ -39,7 +39,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.Html;
 import android.util.Base64;
@@ -367,7 +366,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             drawerManager.getState().restoreInstanceState(getRealm(), PreferenceManager.getDefaultSharedPreferences(this));
         }
 
-        binding.itemsRecyclerview.addItemDecoration(new DividerItemDecoration(this, 40));
+        binding.itemsRecyclerview.addItemDecoration(new DividerItemDecoration(this, R.dimen.divider_inset));
 
         adapter.updateItems(false);
 

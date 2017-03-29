@@ -25,9 +25,9 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.DimenRes;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.View;
 
 import email.schaal.ocreader.R;
@@ -39,12 +39,8 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
     private int size = 0;
 
-    public DividerItemDecoration(Context context) {
-        this(context, 0);
-    }
-
-    public DividerItemDecoration(Context context, int dpinset) {
-        inset = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpinset, context.getResources().getDisplayMetrics());
+    public DividerItemDecoration(Context context, @DimenRes int insetRes) {
+        inset = context.getResources().getDimensionPixelSize(insetRes);
 
         final TypedArray a = context
                 .obtainStyledAttributes(new int[]{android.R.attr.listDivider});

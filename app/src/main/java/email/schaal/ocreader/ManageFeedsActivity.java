@@ -46,7 +46,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
 
         binding.feedsRecyclerview.setAdapter(adapter);
         binding.feedsRecyclerview.setLayoutManager(new LinearLayoutManager(this));
-        binding.feedsRecyclerview.addItemDecoration(new DividerItemDecoration(this));
+        binding.feedsRecyclerview.addItemDecoration(new DividerItemDecoration(this, R.dimen.divider_inset));
 
         binding.fabAddFeed.setOnClickListener(new View.OnClickListener() {
             @Override
