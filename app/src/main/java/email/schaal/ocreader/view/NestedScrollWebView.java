@@ -12,7 +12,7 @@ import android.webkit.WebView;
 
 /**
  * Workaround until WebView supports nested scrolling (according to
- * https://code.google.com/p/android/issues/detail?id=201385#c3 probably not any time soon)
+ * http://b.android.com/201385#c3 probably not any time soon)
  */
 public class NestedScrollWebView extends WebView implements NestedScrollingChild, GestureDetector.OnGestureListener {
     private final NestedScrollingChildHelper helper = new NestedScrollingChildHelper(this);

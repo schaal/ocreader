@@ -59,7 +59,7 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
                 @Override
                 public void onHidden(FloatingActionButton fab) {
                     // Workaround bug in android support library
-                    // see https://b.android.com/230298
+                    // see http://b.android.com/230298
                     fab.setVisibility(View.INVISIBLE);
                 }
             });
