@@ -165,7 +165,7 @@ public class ArticleWebView extends NestedScrollWebView {
                 }
                 css = cssBuilder.toString();
             } catch (IOException e) {
-                Log.e(TAG, "stacktrace", e);
+                Log.e(TAG, "Failed to read css from file", e);
             }
 
         Feed feed = item.getFeed();

@@ -97,12 +97,12 @@ public class IcoRequestHandler extends RequestHandler {
                     return new Result(bitmap, loadedFrom);
                 }
             } catch (IOException e) {
-                Log.e(TAG, "stacktrace", e);
+                Log.e(TAG, "Failed to decode favicon", e);
             } finally {
                 try {
                     byteStream.close();
                 } catch (IOException e) {
-                    Log.e(TAG, "stacktrace", e);
+                    Log.e(TAG, "Failed to close favicon byteStream", e);
                 }
             }
         }

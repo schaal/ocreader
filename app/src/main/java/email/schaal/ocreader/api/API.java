@@ -182,7 +182,7 @@ public abstract class API {
 
                             @Override
                             public void onFailure(Call<Status> call, Throwable t) {
-                                Log.e(TAG, "stacktrace", t);
+                                Log.e(TAG, "Failed to log in", t);
                                 loginCallback.onFailure(LoginError.getError(context, t));
                             }
                         });
@@ -196,7 +196,7 @@ public abstract class API {
 
             @Override
             public void onFailure(Call<APILevels> call, Throwable t) {
-                Log.e(TAG, "stacktrace", t);
+                Log.e(TAG, "Failed to log in", t);
                 loginCallback.onFailure(LoginError.getError(context, t));
             }
         });
@@ -209,7 +209,7 @@ public abstract class API {
             NewsError error = adapter.fromJson(response.errorBody().source());
             message = error.message;
         } catch (IOException e) {
-            Log.e(TAG, "stacktrace", e);
+            Log.e(TAG, "Failed to get error message", e);
         }
 
         return message;
@@ -272,7 +272,7 @@ public abstract class API {
 
         @Override
         public void onFailure(Call<T> call, Throwable t) {
-            Log.e(TAG, "stacktrace", t);
+            Log.e(TAG, "Retrofit call failed", t);
             if(callback != null)
                 callback.onFailure(t.getLocalizedMessage());
         }

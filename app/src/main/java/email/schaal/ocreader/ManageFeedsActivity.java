@@ -116,7 +116,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
                                 }
                             });
                         } catch (API.NotLoggedInException e) {
-                            Log.e(TAG, "stacktrace", e);
+                            Log.e(TAG, "Failed to delete feed, not logged in", e);
                             progressDialog.cancel();
                         }
 
@@ -152,7 +152,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
             });
         } catch (API.NotLoggedInException e) {
             progressDialog.cancel();
-            Log.e(TAG, "stacktrace", e);
+            Log.e(TAG, "Failed to modify feed, not logged in", e);
         }
     }
 

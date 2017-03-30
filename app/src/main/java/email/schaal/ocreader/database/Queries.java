@@ -86,7 +86,7 @@ public class Queries {
             if(realm.isEmpty())
                 realm.executeTransaction(initialData);
         } catch (Exception ex) {
-            Log.e(TAG, "stacktrace", ex);
+            Log.e(TAG, "Failed to open realm db", ex);
             closeRealm(realm);
             Realm.deleteRealm(realmConfiguration);
         } finally {
@@ -253,7 +253,7 @@ public class Queries {
                         }
                     }
                 } catch (RealmException e) {
-                    Log.e(TAG, "stacktrace", e);
+                    Log.e(TAG, "Failed to set item as unread", e);
                 } finally {
                     checkAlarm(realm);
                 }
@@ -270,7 +270,7 @@ public class Queries {
                         item.setStarred(newStarred);
                     }
                 } catch (RealmException e) {
-                    Log.e(TAG, "stacktrace", e);
+                    Log.e(TAG, "Failed to set item as starred", e);
                 } finally {
                     checkAlarm(realm);
                 }

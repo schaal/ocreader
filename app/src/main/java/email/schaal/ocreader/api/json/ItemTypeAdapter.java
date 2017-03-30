@@ -180,7 +180,7 @@ public class ItemTypeAdapter extends JsonAdapter<Item> {
         try {
             return iso8601Format.parse(source);
         } catch (ParseException e) {
-            Log.e(TAG, "stacktrace", e);
+            Log.e(TAG, "Failed to parse date: " + source, e);
             return null;
         }
     }

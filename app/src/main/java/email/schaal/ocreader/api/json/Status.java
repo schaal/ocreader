@@ -62,7 +62,7 @@ public class Status {
             this.version = Version.valueOf(version);
         } catch (UnexpectedCharacterException e) {
             this.version = null;
-            Log.e(TAG, "stacktrace", e);
+            Log.e(TAG, "Failed to parse version: " + version, e);
         }
     }
 

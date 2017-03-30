@@ -141,7 +141,7 @@ class APIv12 extends API {
                         result = result && markItems(action, realm);
                     }
                 } catch (IOException e) {
-                    Log.e(TAG, "stacktrace", e);
+                    Log.e(TAG, "Failed to sync changes", e);
                 } finally {
                     Queries.closeRealm(realm);
                     handler.post(new ResultRunnable(result) {
@@ -373,7 +373,7 @@ class APIv12 extends API {
                                     }
                                 });
                             } catch (InterruptedException | ExecutionException e) {
-                                Log.e(TAG, "stacktrace", e);
+                                Log.e(TAG, "Failed to execute sync callables", e);
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
