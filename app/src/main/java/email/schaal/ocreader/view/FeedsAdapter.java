@@ -45,6 +45,14 @@ public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.Vi
     }
 
     @Override
+    public long getItemId(int index) {
+        final Feed feed = getItem(index);
+        if(feed != null)
+            return feed.getId();
+        return RecyclerView.NO_ID;
+    }
+
+    @Override
     public int getItemViewType(int position) {
         return R.id.viewtype_item;
     }
