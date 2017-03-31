@@ -30,6 +30,7 @@ import java.util.List;
 import email.schaal.ocreader.R;
 import io.realm.Realm;
 import io.realm.RealmObject;
+import io.realm.RealmQuery;
 import io.realm.annotations.PrimaryKey;
 
 /**
@@ -142,7 +143,10 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
 
     @Override
     public List<Item> getItems(Realm realm, boolean onlyUnread) {
-        return realm.where(Item.class).equalTo(Item.FEED_ID, id).findAll();
+        final RealmQuery<Item> query = realm.where(Item.class).equalTo(Item.FEED_ID, id);
+        if(onlyUnread)
+            query.equalTo(Item.UNREAD, true);
+        return query.findAll();
     }
 
     public void setName(String name) {

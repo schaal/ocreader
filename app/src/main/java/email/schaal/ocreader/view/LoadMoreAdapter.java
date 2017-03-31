@@ -1,5 +1,6 @@
 package email.schaal.ocreader.view;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +22,8 @@ public class LoadMoreAdapter extends ItemsAdapter {
     private final ItemsAdapter.OnLoadMoreListener loadMoreListener;
     private TreeItem loadingMoreTreeItem;
 
-    public LoadMoreAdapter(Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, String sortField, OnLoadMoreListener loadMoreListener) {
-        super(realm, state, clickListener, order, sortField);
+    public LoadMoreAdapter(Context context, Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, String sortField, OnLoadMoreListener loadMoreListener) {
+        super(context, realm, state, clickListener, order, sortField);
         this.loadMoreListener = loadMoreListener;
     }
 

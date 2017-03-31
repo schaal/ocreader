@@ -20,6 +20,9 @@
 
 package email.schaal.ocreader.view;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +30,7 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.model.AllUnreadFolder;
 import email.schaal.ocreader.database.model.Item;
@@ -42,6 +46,7 @@ import io.realm.Sort;
  * Adapter for the RecyclerView to manage Items belonging to a certain TreeItem.
  */
 public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private final SharedPreferences preferences;
     private OrderedRealmCollection<Item> items;
     final DrawerManager.State state;
     private final Realm realm;
@@ -50,7 +55,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private Sort order;
     private String sortField;
 
-    ItemsAdapter(Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, String sortField) {
+    ItemsAdapter(Context context, Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, String sortField) {
         this.realm = realm;
         this.state = state;
         this.clickListener = clickListener;
@@ -58,6 +63,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.order = order;
         this.sortField = sortField;
 
+        this.preferences = PreferenceManager.getDefaultSharedPreferences(context);
         setHasStableIds(true);
     }
 
@@ -156,7 +162,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private boolean isOnlyUnread() {
-        return state.getStartDrawerItem() instanceof AllUnreadFolder;
+        return state.getStartDrawerItem() instanceof AllUnreadFolder || Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences);
     }
 
     public OrderedRealmCollection<Item> getItems() {

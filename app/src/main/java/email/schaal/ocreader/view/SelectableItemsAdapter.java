@@ -1,5 +1,6 @@
 package email.schaal.ocreader.view;
 
+import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
@@ -15,8 +16,8 @@ import io.realm.Sort;
 public class SelectableItemsAdapter extends ErrorAdapter {
     private final SparseArray<Item> selectedItems = new SparseArray<>();
 
-    public SelectableItemsAdapter(Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, String sortField, OnLoadMoreListener loadMoreListener) {
-        super(realm, state, clickListener, order, sortField, loadMoreListener);
+    public SelectableItemsAdapter(Context context, Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, String sortField, OnLoadMoreListener loadMoreListener) {
+        super(context, realm, state, clickListener, order, sortField, loadMoreListener);
     }
 
     @Override

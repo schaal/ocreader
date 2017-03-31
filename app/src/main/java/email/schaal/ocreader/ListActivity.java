@@ -314,7 +314,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         layoutManager = new LinearLayoutManager(this);
 
-        adapter = new SelectableItemsAdapter(getRealm(), drawerManager.getState(), this, Preferences.ORDER.getOrder(preferences), Preferences.SORT_FIELD.getString(preferences), this);
+        adapter = new SelectableItemsAdapter(this, getRealm(), drawerManager.getState(), this, Preferences.ORDER.getOrder(preferences), Preferences.SORT_FIELD.getString(preferences), this);
 
         binding.fabMarkAllAsRead.setOnClickListener(new View.OnClickListener() {
             private void onCompletion(View view) {
