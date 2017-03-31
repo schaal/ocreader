@@ -13,7 +13,6 @@ import email.schaal.ocreader.database.model.TreeItem;
 import email.schaal.ocreader.databinding.ListLoadmoreBinding;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
-import io.realm.Sort;
 
 /**
  * Add a Load More item to ItemsAdapter
@@ -22,8 +21,8 @@ public class LoadMoreAdapter extends ItemsAdapter {
     private final ItemsAdapter.OnLoadMoreListener loadMoreListener;
     private TreeItem loadingMoreTreeItem;
 
-    public LoadMoreAdapter(Context context, Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, String sortField, OnLoadMoreListener loadMoreListener) {
-        super(context, realm, state, clickListener, order, sortField);
+    public LoadMoreAdapter(Context context, Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, OnLoadMoreListener loadMoreListener) {
+        super(context, realm, state, clickListener);
         this.loadMoreListener = loadMoreListener;
     }
 

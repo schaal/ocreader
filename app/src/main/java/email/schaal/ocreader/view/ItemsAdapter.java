@@ -55,15 +55,16 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private Sort order;
     private String sortField;
 
-    ItemsAdapter(Context context, Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, String sortField) {
+    ItemsAdapter(Context context, Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener) {
         this.realm = realm;
         this.state = state;
         this.clickListener = clickListener;
 
-        this.order = order;
-        this.sortField = sortField;
-
         this.preferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        this.order = Preferences.ORDER.getOrder(preferences);
+        this.sortField = Preferences.SORT_FIELD.getString(preferences);
+
         setHasStableIds(true);
     }
 

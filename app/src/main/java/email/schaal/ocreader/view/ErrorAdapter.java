@@ -11,14 +11,13 @@ import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
-import io.realm.Sort;
 
 /**
  * Show a error viewholder for Feeds with too many update failures
  */
 public class ErrorAdapter extends LoadMoreAdapter {
-    public ErrorAdapter(Context context, Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, String sortField, OnLoadMoreListener loadMoreListener) {
-        super(context, realm, state, clickListener, order, sortField, loadMoreListener);
+    public ErrorAdapter(Context context, Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, OnLoadMoreListener loadMoreListener) {
+        super(context, realm, state, clickListener, loadMoreListener);
     }
 
     @Override

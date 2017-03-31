@@ -17,7 +17,7 @@ public class SelectableItemsAdapter extends ErrorAdapter {
     private final SparseArray<Item> selectedItems = new SparseArray<>();
 
     public SelectableItemsAdapter(Context context, Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, String sortField, OnLoadMoreListener loadMoreListener) {
-        super(context, realm, state, clickListener, order, sortField, loadMoreListener);
+        super(context, realm, state, clickListener, loadMoreListener);
     }
 
     @Override
