@@ -68,6 +68,7 @@ import com.mikepenz.materialdrawer.model.interfaces.Tagable;
 import java.io.ByteArrayInputStream;
 
 import email.schaal.ocreader.database.Queries;
+import email.schaal.ocreader.database.model.AllUnreadFolder;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.database.model.TemporaryFeed;
@@ -616,6 +617,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
         PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(Preferences.SHOW_ONLY_UNREAD.getKey(), isChecked).apply();
         drawerManager.reloadAdapters(getRealm(), isChecked);
+        if(!(drawerManager.getState().getTreeItem() instanceof AllUnreadFolder))
+            adapter.updateItems(true);
     }
 
     @Override
