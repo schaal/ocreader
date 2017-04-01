@@ -32,7 +32,6 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.model.Feed;
-import email.schaal.ocreader.database.model.Folder;
 import email.schaal.ocreader.database.model.TreeIconable;
 import email.schaal.ocreader.database.model.TreeItem;
 import email.schaal.ocreader.util.FaviconLoader;
@@ -52,8 +51,6 @@ public class TreeItemDrawerItem extends PrimaryDrawerItem {
                 withIcon(feed.getFaviconLink());
             else
                 withIcon(feed);
-        } else if(item instanceof Folder) {
-            withIcon(R.drawable.ic_folder);
         }
         withName(item.getName());
         withTag(item);

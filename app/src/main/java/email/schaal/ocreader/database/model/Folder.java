@@ -25,6 +25,7 @@ import android.support.annotation.Nullable;
 import java.util.Iterator;
 import java.util.List;
 
+import email.schaal.ocreader.R;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
@@ -35,7 +36,7 @@ import io.realm.annotations.PrimaryKey;
 /**
  * RealmObject representing a Folder.
  */
-public class Folder extends RealmObject implements TreeItem, Insertable {
+public class Folder extends RealmObject implements TreeItem, Insertable, TreeIconable {
     @PrimaryKey
     private long id;
 
@@ -165,5 +166,10 @@ public class Folder extends RealmObject implements TreeItem, Insertable {
         }
 
         return query != null ? query.findAllSorted(Folder.NAME, Sort.ASCENDING) : null;
+    }
+
+    @Override
+    public int getIcon() {
+        return R.drawable.ic_folder;
     }
 }
