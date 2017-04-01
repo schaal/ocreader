@@ -56,8 +56,6 @@ public class SyncService extends Service {
     public static final String EXTRA_TYPE = "email.schaal.ocreader.action.extra.TYPE";
     public static final String EXTRA_INITIAL_SYNC = "email.schaal.ocreader.action.extra.INITIAL_SYNC";
 
-    private SharedPreferences sharedPreferences;
-
     public enum SyncType {
         FULL_SYNC(ACTION_FULL_SYNC),
         SYNC_CHANGES_ONLY(ACTION_SYNC_CHANGES_ONLY),
@@ -96,7 +94,6 @@ public class SyncService extends Service {
     @Override
     public void onCreate() {
         realm = Realm.getDefaultInstance();
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         super.onCreate();
     }
 
@@ -116,7 +113,7 @@ public class SyncService extends Service {
             notifySyncStatus(SYNC_STARTED, action);
 
             try {
-                API.getInstance(this).sync(sharedPreferences, realm, syncType, intent, new API.APICallback<Void, String>() {
+                API.getInstance(this).sync(PreferenceManager.getDefaultSharedPreferences(this), realm, syncType, intent, new API.APICallback<Void, String>() {
                     @Override
                     public void onSuccess(Void n) {
                         if(syncType != SyncType.LOAD_MORE)
@@ -165,7 +162,7 @@ public class SyncService extends Service {
     private void notifySyncStatus(@NonNull String action, String type) {
         final boolean syncStarted = action.equals(SYNC_STARTED);
 
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 
         // no need to update after ACTION_SYNC_CHANGES_ONLY
         if(!syncStarted && !ACTION_SYNC_CHANGES_ONLY.equals(type))
