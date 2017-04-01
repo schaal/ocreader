@@ -1,3 +1,12 @@
+## 0.30 (2017-04-01)
+
+The "This is no joke" release
+
+* Only show unread articles when onlyUnread is selected (Fixes #49)
+* Increase read timeout (Fixes #44)
+* Add ACRA to report crashes (only with user's permission).
+* Add play menu item in item pager when enclosure link is available
+
 ## 0.29 (2017-03-10)
 
 * Add app shortcuts for Android 7.1
