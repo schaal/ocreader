@@ -603,8 +603,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
     @Override
     public void onLoadMore(@NonNull TreeItem treeItem) {
-        final Number minId = getRealm().where(TemporaryFeed.class)
-                .findFirst()
+        final Number minId = TemporaryFeed.getListTemporaryFeed(getRealm())
                 .getItems()
                 .where()
                 .min(Item.ID);

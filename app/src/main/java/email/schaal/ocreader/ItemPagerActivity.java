@@ -76,7 +76,7 @@ public class ItemPagerActivity extends RealmActivity {
         final Sort order = Preferences.ORDER.getOrder(PreferenceManager.getDefaultSharedPreferences(this));
         final String sortField = Preferences.SORT_FIELD.getString(PreferenceManager.getDefaultSharedPreferences(this));
 
-        final TemporaryFeed temporaryFeed = getRealm().where(TemporaryFeed.class).findFirst();
+        final TemporaryFeed temporaryFeed = TemporaryFeed.getPagerTemporaryFeed(getRealm());
 
         items = temporaryFeed.getItems().sort(sortField, order);
 

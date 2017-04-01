@@ -50,13 +50,14 @@ import io.realm.exceptions.RealmException;
 public class Queries {
     private final static String TAG = Queries.class.getName();
 
-    public final static int SCHEMA_VERSION = 9;
+    public final static int SCHEMA_VERSION = 10;
 
     private final static Realm.Transaction initialData = new Realm.Transaction() {
         @Override
         public void execute(Realm realm) {
             realm.deleteAll();
-            realm.createObject(TemporaryFeed.class);
+            realm.createObject(TemporaryFeed.class, TemporaryFeed.LIST_ID);
+            realm.createObject(TemporaryFeed.class, TemporaryFeed.PAGER_ID);
         }
     };
 
@@ -171,7 +172,7 @@ public class Queries {
                 .equalTo(Item.UNREAD, false)
                 .equalTo(Item.STARRED, false);
 
-        final List<Item> temporaryFeedItems = realm.where(TemporaryFeed.class).findFirst().getItems().sort(Item.ID);
+        final List<Item> temporaryFeedItems = TemporaryFeed.getPagerTemporaryFeed(realm).getItems().sort(Item.ID);
         if(!temporaryFeedItems.isEmpty()) {
             final Long[] temporaryFeedItemsIds = new Long[temporaryFeedItems.size()];
             for (int i = 0; i < temporaryFeedItems.size(); i++)
@@ -215,9 +216,7 @@ public class Queries {
             @Override
             public void execute(Realm realm) {
                 try {
-                    TemporaryFeed temporaryFeed = realm.where(TemporaryFeed.class).findFirst();
-
-                    RealmResults<Item> unreadItems = temporaryFeed.getItems()
+                    RealmResults<Item> unreadItems = TemporaryFeed.getListTemporaryFeed(realm).getItems()
                             .where()
                             .equalTo(Item.UNREAD, true).findAll();
 

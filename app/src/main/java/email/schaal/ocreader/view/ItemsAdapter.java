@@ -79,14 +79,14 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if(state.getTreeItem() == null)
             return;
 
-        final TemporaryFeed temporaryFeed = realm.where(TemporaryFeed.class).findFirst();
+        final TemporaryFeed temporaryFeed = TemporaryFeed.getListTemporaryFeed(realm);
 
-        if (updateTemporaryFeed || temporaryFeed.getId() != state.getTreeItem().getId()) {
+        if (updateTemporaryFeed || temporaryFeed.getTreeItemId() != state.getTreeItem().getId()) {
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
                     List<Item> tempItems = state.getTreeItem().getItems(realm, isOnlyUnread());
-                    temporaryFeed.setId(state.getTreeItem().getId());
+                    temporaryFeed.setTreeItemId(state.getTreeItem().getId());
                     temporaryFeed.setName(state.getTreeItem().getName());
                     temporaryFeed.getItems().clear();
                     if (tempItems != null) {
