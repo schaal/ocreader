@@ -25,3 +25,10 @@
 #project
 -keep class email.schaal.ocreader.database.model.Item
 -keep class email.schaal.ocreader.view.ArticleWebView$1
+
+#Guava
+-dontwarn com.google.errorprone.annotations.**
+-dontwarn sun.misc.Unsafe
+-dontwarn com.google.j2objc.annotations.*
+-dontwarn java.lang.ClassValue
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
