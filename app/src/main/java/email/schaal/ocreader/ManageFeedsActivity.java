@@ -9,7 +9,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -67,29 +66,35 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
     }
 
     @Override
-    public void addNewFeed(String url, long folderId, final boolean finishAfterAdd) {
+    public void addNewFeed(final String url, final long folderId, final boolean finishAfterAdd) {
         final ProgressDialog progressDialog = showProgress(this, getString(R.string.adding_feed));
 
-        try {
-            API.getInstance(this).createFeed(getRealm(), url, folderId, new API.APICallback<Void, Throwable>() {
-                @Override
-                public void onSuccess(Void n) {
-                    progressDialog.dismiss();
-                    setResult(RESULT_OK);
+        API.get(this, new API.InstanceReadyCallback() {
+            @Override
+            public void onInstanceReady(API api) {
+                    api.createFeed(getRealm(), url, folderId, new API.APICallback<Void, Throwable>() {
+                        @Override
+                        public void onSuccess(Void success) {
+                            progressDialog.dismiss();
+                            setResult(RESULT_OK);
 
-                    if(finishAfterAdd)
-                        finish();
-                }
+                            if (finishAfterAdd)
+                                finish();
+                        }
 
-                @Override
-                public void onFailure(Throwable throwable) {
-                    progressDialog.cancel();
-                    showErrorMessage(getString(R.string.feed_add_failed), throwable.getLocalizedMessage());
-                }
-            });
-        } catch (API.NotLoggedInException e) {
-            progressDialog.cancel();
-        }
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            progressDialog.cancel();
+                            showErrorMessage(getString(R.string.feed_add_failed), throwable.getLocalizedMessage());
+                        }
+                    });
+            }
+
+            @Override
+            public void onLoginFailure(API.NotLoggedInException e) {
+                progressDialog.cancel();
+            }
+        });
     }
 
     @Override
@@ -101,25 +106,29 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
                     public void onClick(DialogInterface dialog, int which) {
                         final ProgressDialog progressDialog = showProgress(ManageFeedsActivity.this, getString(R.string.deleting_feed, feed.getName()));
 
-                        try {
-                            API.getInstance(ManageFeedsActivity.this).deleteFeed(getRealm(), feed, new API.APICallback<Void, Throwable>() {
-                                @Override
-                                public void onSuccess(Void n) {
-                                    progressDialog.dismiss();
-                                    setResult(RESULT_OK);
-                                }
+                        API.get(ManageFeedsActivity.this, new API.InstanceReadyCallback() {
+                            @Override
+                            public void onInstanceReady(API api) {
+                                api.deleteFeed(getRealm(), feed, new API.APICallback<Void, Throwable>() {
+                                    @Override
+                                    public void onSuccess(Void n) {
+                                        progressDialog.dismiss();
+                                        setResult(RESULT_OK);
+                                    }
 
-                                @Override
-                                public void onFailure(Throwable throwable) {
-                                    progressDialog.cancel();
-                                    showErrorMessage(getString(R.string.delete_feed_failed), throwable.getLocalizedMessage());
-                                }
-                            });
-                        } catch (API.NotLoggedInException e) {
-                            Log.e(TAG, "Failed to delete feed, not logged in", e);
-                            progressDialog.cancel();
-                        }
+                                    @Override
+                                    public void onFailure(Throwable throwable) {
+                                        progressDialog.cancel();
+                                        showErrorMessage(getString(R.string.delete_feed_failed), throwable.getLocalizedMessage());
+                                    }
+                                });
+                            }
 
+                            @Override
+                            public void onLoginFailure(API.NotLoggedInException e) {
+                                progressDialog.cancel();
+                            }
+                        });
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null)
@@ -132,28 +141,33 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
     }
 
     @Override
-    public void changeFeed(long feedId, long folderId) {
+    public void changeFeed(final long feedId, final long folderId) {
         final Feed feed = Feed.get(getRealm(), feedId);
         final ProgressDialog progressDialog = showProgress(this, getString(R.string.moving_feed));
 
-        try {
-            API.getInstance(this).moveFeed(getRealm(), feed, folderId, new API.APICallback<Void, Throwable>() {
-                @Override
-                public void onSuccess(Void v) {
-                    progressDialog.dismiss();
-                    setResult(RESULT_OK);
-                }
+        API.get(this, new API.InstanceReadyCallback() {
+            @Override
+            public void onInstanceReady(API api) {
+                api.moveFeed(getRealm(), feed, folderId, new API.APICallback<Void, Throwable>() {
+                    @Override
+                    public void onSuccess(Void v) {
+                        progressDialog.dismiss();
+                        setResult(RESULT_OK);
+                    }
 
-                @Override
-                public void onFailure(Throwable throwable) {
-                    progressDialog.cancel();
-                    showErrorMessage(getString(R.string.feed_move_failed), throwable.getLocalizedMessage());
-                }
-            });
-        } catch (API.NotLoggedInException e) {
-            progressDialog.cancel();
-            Log.e(TAG, "Failed to modify feed, not logged in", e);
-        }
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        progressDialog.cancel();
+                        showErrorMessage(getString(R.string.feed_move_failed), throwable.getLocalizedMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void onLoginFailure(API.NotLoggedInException e) {
+                progressDialog.cancel();
+            }
+        });
     }
 
     private void showErrorMessage(String title, String message) {

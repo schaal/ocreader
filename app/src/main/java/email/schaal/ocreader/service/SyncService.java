@@ -90,30 +90,36 @@ public class SyncService extends Service {
         if(syncType != null) {
             notifySyncStatus(SYNC_STARTED, syncType);
 
-            try {
-                API.getInstance(this).sync(PreferenceManager.getDefaultSharedPreferences(this), realm, syncType, intent, new API.APICallback<Void, Throwable>() {
-                    @Override
-                    public void onSuccess(Void n) {
-                        if(syncType != SyncType.LOAD_MORE)
-                            Queries.removeExcessItems(realm, Queries.MAX_ITEMS);
-                        realm.executeTransaction(postProcessFeedTransaction);
-                        onFinished();
-                    }
+            API.get(this, new API.InstanceReadyCallback() {
+                @Override
+                public void onInstanceReady(API api) {
+                    api.sync(PreferenceManager.getDefaultSharedPreferences(SyncService.this), realm, syncType, intent, new API.APICallback<Void, Throwable>() {
+                        @Override
+                        public void onSuccess(Void n) {
+                            if(syncType != SyncType.LOAD_MORE)
+                                Queries.removeExcessItems(realm, Queries.MAX_ITEMS);
+                            realm.executeTransaction(postProcessFeedTransaction);
+                            onFinished();
+                        }
 
-                    @Override
-                    public void onFailure(Throwable errorMessage) {
-                        Toast.makeText(SyncService.this, errorMessage.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                        onFinished();
-                    }
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            Toast.makeText(SyncService.this, throwable.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                            onFinished();
+                        }
 
-                    private void onFinished() {
-                        notifySyncStatus(SYNC_FINISHED, syncType);
-                        stopSelf(startId);
-                    }
-                });
-            } catch (API.NotLoggedInException e) {
-                stopSelf(startId);
-            }
+                        private void onFinished() {
+                            notifySyncStatus(SYNC_FINISHED, syncType);
+                            stopSelf(startId);
+                        }
+                    });
+                }
+
+                @Override
+                public void onLoginFailure(API.NotLoggedInException e) {
+                    stopSelf(startId);
+                }
+            });
         } else {
             Log.w(TAG, "unknown Intent received: " + action);
         }

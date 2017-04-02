@@ -54,10 +54,22 @@ public abstract class API {
     final static String API_ROOT = "./index.php/apps/news/api/";
     private final JsonAdapter<NewsError> errorJsonAdapter;
 
-    public static API getInstance(Context context) throws NotLoggedInException {
-        if(instance == null)
-            init(context);
-        return instance;
+    public static void get(Context context, InstanceReadyCallback callback) {
+        if(instance == null) {
+            try {
+                init(context);
+                callback.onInstanceReady(instance);
+            } catch (NotLoggedInException e) {
+                callback.onLoginFailure(e);
+            }
+        } else {
+            callback.onInstanceReady(instance);
+        }
+    }
+
+    public interface InstanceReadyCallback {
+        void onInstanceReady(API api);
+        void onLoginFailure(NotLoggedInException e);
     }
 
     final MoshiConverterFactory converterFactory;
