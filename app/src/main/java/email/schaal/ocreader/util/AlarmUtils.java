@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.os.SystemClock;
 
 import email.schaal.ocreader.service.SyncService;
+import email.schaal.ocreader.service.SyncType;
 
 /**
  * Collection of methods to set or cancel the Alarm used to handle synchronizing changed items with
@@ -46,7 +47,7 @@ public class AlarmUtils {
         this.alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         Intent syncChangesIntent = new Intent(SyncService.ACTION_SYNC, null, context, SyncService.class);
-        syncChangesIntent.putExtra(SyncService.EXTRA_TYPE, SyncService.SyncType.SYNC_CHANGES_ONLY.action);
+        syncChangesIntent.putExtra(SyncService.EXTRA_TYPE, SyncType.SYNC_CHANGES_ONLY.action);
         pendingIntent = PendingIntent.getService(context, 0, syncChangesIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 

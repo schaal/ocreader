@@ -55,7 +55,7 @@ import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.database.model.StarredFolder;
 import email.schaal.ocreader.database.model.User;
 import email.schaal.ocreader.http.HttpManager;
-import email.schaal.ocreader.service.SyncService;
+import email.schaal.ocreader.service.SyncType;
 import email.schaal.ocreader.util.AlarmUtils;
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -315,7 +315,7 @@ class APIv12 extends API {
     private final ExecutorService threadPool = Executors.newCachedThreadPool();
 
     @Override
-    public void sync(SharedPreferences sharedPreferences, final Realm realm, final SyncService.SyncType syncType, final Intent intent, final APICallback<Void, String> callback) {
+    public void sync(SharedPreferences sharedPreferences, final Realm realm, final SyncType syncType, final Intent intent, final APICallback<Void, String> callback) {
         syncChanges(new OnCompletionListener() {
             @Override
             public void onCompleted(boolean result) {

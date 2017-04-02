@@ -29,7 +29,7 @@ import email.schaal.ocreader.database.model.Folder;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.database.model.User;
 import email.schaal.ocreader.http.HttpManager;
-import email.schaal.ocreader.service.SyncService;
+import email.schaal.ocreader.service.SyncType;
 import email.schaal.ocreader.util.LoginError;
 import io.realm.Realm;
 import okhttp3.HttpUrl;
@@ -96,7 +96,7 @@ public abstract class API {
 
     public abstract void user(final Realm realm, final APICallback<Void, String> apiCallback);
 
-    public abstract void sync(SharedPreferences sharedPreferences, final Realm realm, SyncService.SyncType syncType, Intent intent, final APICallback<Void, String> apiCallback);
+    public abstract void sync(SharedPreferences sharedPreferences, final Realm realm, SyncType syncType, Intent intent, final APICallback<Void, String> apiCallback);
 
     public abstract void createFeed(final Realm realm, final String url, final long folderId, final APICallback<Void, String> apiCallback);
 

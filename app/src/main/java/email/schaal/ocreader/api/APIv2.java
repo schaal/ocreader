@@ -18,6 +18,7 @@ import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.database.model.Folder;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.service.SyncService;
+import email.schaal.ocreader.service.SyncType;
 import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -88,7 +89,7 @@ class APIv2 extends API {
     }
 
     @Override
-    public void sync(final SharedPreferences sharedPreferences, final Realm realm, SyncService.SyncType syncType, Intent intent, APICallback<Void, String> apiCallback) {
+    public void sync(final SharedPreferences sharedPreferences, final Realm realm, SyncType syncType, Intent intent, APICallback<Void, String> apiCallback) {
         // TODO: 02.10.16 sync user
         final BaseRetrofitCallback<SyncResponse> retrofitCallback = new BaseRetrofitCallback<SyncResponse>(apiCallback) {
             @Override

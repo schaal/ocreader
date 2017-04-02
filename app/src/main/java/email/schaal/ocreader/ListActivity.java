@@ -77,6 +77,7 @@ import email.schaal.ocreader.database.model.User;
 import email.schaal.ocreader.databinding.ActivityListBinding;
 import email.schaal.ocreader.databinding.DialogAboutBinding;
 import email.schaal.ocreader.service.SyncService;
+import email.schaal.ocreader.service.SyncType;
 import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.view.DividerItemDecoration;
 import email.schaal.ocreader.view.ItemViewHolder;
@@ -101,7 +102,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             final String action = intent.getAction();
 
             if(action.equals(SyncService.SYNC_STARTED) || action.equals(SyncService.SYNC_FINISHED)) {
-                final SyncService.SyncType syncType = SyncService.SyncType.get(intent.getStringExtra(SyncService.EXTRA_TYPE));
+                final SyncType syncType = SyncType.get(intent.getStringExtra(SyncService.EXTRA_TYPE));
                 if(syncType != null) {
                     switch (syncType) {
                         case LOAD_MORE:

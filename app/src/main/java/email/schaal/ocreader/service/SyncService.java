@@ -54,26 +54,6 @@ public class SyncService extends Service {
     public static final String EXTRA_TYPE = "email.schaal.ocreader.action.extra.TYPE";
     public static final String EXTRA_INITIAL_SYNC = "email.schaal.ocreader.action.extra.INITIAL_SYNC";
 
-    public enum SyncType {
-        FULL_SYNC("email.schaal.ocreader.action.FULL_SYNC"),
-        SYNC_CHANGES_ONLY("email.schaal.ocreader.action.SYNC_CHANGES_ONLY"),
-        LOAD_MORE("email.schaal.ocreader.action.LOAD_MORE");
-
-        public final String action;
-
-        SyncType(String action) {
-            this.action = action;
-        }
-
-        @Nullable
-        public static SyncType get(String action) {
-            for(SyncType syncType: values())
-                if(syncType.action.equals(action))
-                    return syncType;
-            return null;
-        }
-    }
-
     public static final IntentFilter syncFilter;
     static {
         syncFilter = new IntentFilter();
