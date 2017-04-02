@@ -101,16 +101,19 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             final String action = intent.getAction();
 
             if(action.equals(SyncService.SYNC_STARTED) || action.equals(SyncService.SYNC_FINISHED)) {
-                switch (intent.getStringExtra(SyncService.EXTRA_TYPE)) {
-                    case SyncService.ACTION_LOAD_MORE:
-                        if (action.equals(SyncService.SYNC_FINISHED)) {
-                            adapter.updateItems(true);
-                            adapter.resetLoadMore();
-                        }
-                        break;
-                    case SyncService.ACTION_FULL_SYNC:
-                        updateSyncStatus();
-                        break;
+                final SyncService.SyncType syncType = SyncService.SyncType.get(intent.getStringExtra(SyncService.EXTRA_TYPE));
+                if(syncType != null) {
+                    switch (syncType) {
+                        case LOAD_MORE:
+                            if (action.equals(SyncService.SYNC_FINISHED)) {
+                                adapter.updateItems(true);
+                                adapter.resetLoadMore();
+                            }
+                            break;
+                        case FULL_SYNC:
+                            updateSyncStatus();
+                            break;
+                    }
                 }
             }
         }

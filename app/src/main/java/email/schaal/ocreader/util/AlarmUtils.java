@@ -45,7 +45,8 @@ public class AlarmUtils {
     private AlarmUtils(Context context) {
         this.alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        Intent syncChangesIntent = new Intent(SyncService.ACTION_SYNC_CHANGES_ONLY, null, context, SyncService.class);
+        Intent syncChangesIntent = new Intent(SyncService.ACTION_SYNC, null, context, SyncService.class);
+        syncChangesIntent.putExtra(SyncService.EXTRA_TYPE, SyncService.SyncType.SYNC_CHANGES_ONLY.action);
         pendingIntent = PendingIntent.getService(context, 0, syncChangesIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 

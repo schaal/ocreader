@@ -46,9 +46,7 @@ public class SyncService extends Service {
     public static final String SYNC_FINISHED = "email.schaal.ocreader.action.SYNC_FINISHED";
     public static final String SYNC_STARTED = "email.schaal.ocreader.action.SYNC_STARTED";
 
-    public static final String ACTION_SYNC_CHANGES_ONLY = "email.schaal.ocreader.action.SYNC_CHANGES_ONLY";
-    public static final String ACTION_FULL_SYNC = "email.schaal.ocreader.action.FULL_SYNC";
-    public static final String ACTION_LOAD_MORE = "email.schaal.ocreader.action.LOAD_MORE";
+    public static final String ACTION_SYNC = "email.schaal.ocreader.action.SYNC";
 
     public static final String EXTRA_ID = "email.schaal.ocreader.action.extra.ID";
     public static final String EXTRA_IS_FEED = "email.schaal.ocreader.action.extra.IS_FEED";
@@ -57,11 +55,11 @@ public class SyncService extends Service {
     public static final String EXTRA_INITIAL_SYNC = "email.schaal.ocreader.action.extra.INITIAL_SYNC";
 
     public enum SyncType {
-        FULL_SYNC(ACTION_FULL_SYNC),
-        SYNC_CHANGES_ONLY(ACTION_SYNC_CHANGES_ONLY),
-        LOAD_MORE(ACTION_LOAD_MORE);
+        FULL_SYNC("email.schaal.ocreader.action.FULL_SYNC"),
+        SYNC_CHANGES_ONLY("email.schaal.ocreader.action.SYNC_CHANGES_ONLY"),
+        LOAD_MORE("email.schaal.ocreader.action.LOAD_MORE");
 
-        private final String action;
+        public final String action;
 
         SyncType(String action) {
             this.action = action;
@@ -105,7 +103,7 @@ public class SyncService extends Service {
 
     @Override
     public int onStartCommand(final Intent intent, int flags, final int startId) {
-        final String action = intent.getAction();
+        final String action = intent.getStringExtra(EXTRA_TYPE);
 
         final SyncType syncType = SyncType.get(action);
 
@@ -165,7 +163,7 @@ public class SyncService extends Service {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 
         // no need to update after ACTION_SYNC_CHANGES_ONLY
-        if(!syncStarted && !ACTION_SYNC_CHANGES_ONLY.equals(type))
+        if(!syncStarted && !SyncType.SYNC_CHANGES_ONLY.action.equals(type))
             editor.putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), true);
 
         final Intent intent = new Intent(action);
@@ -183,13 +181,15 @@ public class SyncService extends Service {
         startSync(activity, false);
     }
     public static void startSync(Activity activity, boolean initialSync) {
-        Intent syncIntent = new Intent(ACTION_FULL_SYNC, null, activity, SyncService.class);
+        Intent syncIntent = new Intent(ACTION_SYNC, null, activity, SyncService.class);
+        syncIntent.putExtra(EXTRA_TYPE, SyncType.FULL_SYNC.action);
         syncIntent.putExtra(EXTRA_INITIAL_SYNC, initialSync);
         activity.startService(syncIntent);
     }
 
     public static void startLoadMore(Activity activity, long id, long offset, boolean isFeed) {
-        Intent loadMoreIntent = new Intent(ACTION_LOAD_MORE, null, activity, SyncService.class);
+        Intent loadMoreIntent = new Intent(ACTION_SYNC, null, activity, SyncService.class);
+        loadMoreIntent.putExtra(EXTRA_TYPE, SyncType.LOAD_MORE.action);
         loadMoreIntent.putExtra(EXTRA_ID, id);
         loadMoreIntent.putExtra(EXTRA_OFFSET, offset);
         loadMoreIntent.putExtra(EXTRA_IS_FEED, isFeed);
