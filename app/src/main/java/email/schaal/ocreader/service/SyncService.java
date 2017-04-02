@@ -108,7 +108,7 @@ public class SyncService extends Service {
         final SyncType syncType = SyncType.get(action);
 
         if(syncType != null) {
-            notifySyncStatus(SYNC_STARTED, action);
+            notifySyncStatus(SYNC_STARTED, syncType);
 
             try {
                 API.getInstance(this).sync(PreferenceManager.getDefaultSharedPreferences(this), realm, syncType, intent, new API.APICallback<Void, String>() {
@@ -127,7 +127,7 @@ public class SyncService extends Service {
                     }
 
                     private void onFinished() {
-                        notifySyncStatus(SYNC_FINISHED, action);
+                        notifySyncStatus(SYNC_FINISHED, syncType);
                         stopSelf(startId);
                     }
                 });
@@ -157,17 +157,17 @@ public class SyncService extends Service {
         }
     };
 
-    private void notifySyncStatus(@NonNull String action, String type) {
+    private void notifySyncStatus(@NonNull String action, SyncType type) {
         final boolean syncStarted = action.equals(SYNC_STARTED);
 
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 
         // no need to update after ACTION_SYNC_CHANGES_ONLY
-        if(!syncStarted && !SyncType.SYNC_CHANGES_ONLY.action.equals(type))
+        if(!syncStarted && SyncType.SYNC_CHANGES_ONLY != type)
             editor.putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), true);
 
         final Intent intent = new Intent(action);
-        intent.putExtra(EXTRA_TYPE, type);
+        intent.putExtra(EXTRA_TYPE, type.action);
 
         editor.putBoolean(Preferences.SYS_SYNC_RUNNING.getKey(), syncStarted);
         editor.apply();
