@@ -238,8 +238,9 @@ public class ItemPagerActivity extends RealmActivity {
     }
 
     private class StatusBarChangerLollipop extends StatusBarChanger {
+        private final float[] hsl = new float[3];
+
         private int changeLightness(int backgroundColor, float lightnessChange) {
-            float[] hsl = new float[3];
             ColorUtils.colorToHSL(backgroundColor, hsl);
             hsl[2] *= lightnessChange;
             return ColorUtils.HSLToColor(hsl);
