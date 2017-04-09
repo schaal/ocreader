@@ -20,9 +20,10 @@
 
 package email.schaal.ocreader;
 
+import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
+import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
@@ -34,6 +35,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorInt;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.graphics.ColorUtils;
@@ -228,38 +230,37 @@ public class ItemPagerActivity extends RealmActivity {
         }
     }
 
-    private class MyOnPageChangeListener implements ViewPager.OnPageChangeListener {
-        static final int DURATION = 250;
-        private final SectionsPagerAdapter mSectionsPagerAdapter;
-
-        private final int currentNightMode;
-
-        private final ValueAnimator.AnimatorUpdateListener animatorUpdateListener = new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                int backgroundColor = (int) animation.getAnimatedValue();
-
-                setStatusbarColor(backgroundColor);
-            }
-        };
-
-        private void setStatusbarColor(final int backgroundColor) {
-            // Don't set the toolbar color when in night mode (white text and icon tint doesn't work with feed color in night mode)
-            if (currentNightMode == Configuration.UI_MODE_NIGHT_NO) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    int statusbarColor = changeLightness(backgroundColor, 0.7f);
-                    getWindow().setStatusBarColor(statusbarColor);
-                }
-                binding.toolbarLayout.toolbar.setBackgroundColor(backgroundColor);
-            }
+    private class StatusBarChanger {
+        @Keep
+        void setStatusBarColor(final int backgroundColor) {
+            binding.toolbarLayout.toolbar.setBackgroundColor(backgroundColor);
         }
+    }
 
+    private class StatusBarChangerLollipop extends StatusBarChanger {
         private int changeLightness(int backgroundColor, float lightnessChange) {
             float[] hsl = new float[3];
             ColorUtils.colorToHSL(backgroundColor, hsl);
             hsl[2] *= lightnessChange;
             return ColorUtils.HSLToColor(hsl);
         }
+
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+        @Keep
+        @Override
+        void setStatusBarColor(int backgroundColor) {
+            int statusbarColor = changeLightness(backgroundColor, 0.7f);
+            getWindow().setStatusBarColor(statusbarColor);
+            super.setStatusBarColor(backgroundColor);
+        }
+    }
+
+    private class MyOnPageChangeListener implements ViewPager.OnPageChangeListener {
+        static final int DURATION = 250;
+        private final SectionsPagerAdapter mSectionsPagerAdapter;
+
+        private final int currentNightMode;
+        private final StatusBarChanger statusBarChanger;
 
         private int fabColorFrom;
         private int fabColorTo;
@@ -282,18 +283,27 @@ public class ItemPagerActivity extends RealmActivity {
                 if(firstRun) {
                     firstRun = false;
 
-                    setStatusbarColor(colorTo);
+                    if(currentNightMode == Configuration.UI_MODE_NIGHT_NO)
+                        statusBarChanger.setStatusBarColor(colorTo);
 
-                    binding.fabOpenInBrowser.setBackgroundColor(fabColorTo);
+                    binding.fabLayout.setFabBackgroundColor(fabColorTo);
                 } else {
-                    ValueAnimator animator = ValueAnimator.ofInt(colorFrom, colorTo).setDuration(DURATION);
-                    animator.setEvaluator(argbEvaluator);
-                    animator.addUpdateListener(animatorUpdateListener);
-                    animator.start();
-
-                    ObjectAnimator fabAnimator = ObjectAnimator.ofInt(binding.fabOpenInBrowser, "backgroundColor", fabColorFrom, fabColorTo).setDuration(DURATION);
+                    ObjectAnimator fabAnimator =
+                            ObjectAnimator
+                                    .ofInt(binding.fabLayout, "fabBackgroundColor", fabColorFrom, fabColorTo);
                     fabAnimator.setEvaluator(argbEvaluator);
-                    fabAnimator.start();
+
+                    final AnimatorSet animatorSet = new AnimatorSet();
+                    final AnimatorSet.Builder animatorSetBuilder = animatorSet.play(fabAnimator);
+
+                    if(currentNightMode == Configuration.UI_MODE_NIGHT_NO) {
+                        ObjectAnimator statusBarAnimator = ObjectAnimator.ofInt(statusBarChanger, "statusBarColor", colorFrom, colorTo);
+                        statusBarAnimator.setEvaluator(argbEvaluator);
+                        animatorSetBuilder.with(statusBarAnimator);
+                    }
+
+                    animatorSet.setDuration(DURATION);
+                    animatorSet.start();
                 }
             }
 
@@ -309,6 +319,12 @@ public class ItemPagerActivity extends RealmActivity {
             colorTo = defaultToolbarColor;
             fabColorTo = defaultAccent;
             currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                statusBarChanger = new StatusBarChangerLollipop();
+            } else {
+                statusBarChanger = new StatusBarChanger();
+            }
         }
 
         @Override

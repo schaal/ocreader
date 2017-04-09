@@ -2,9 +2,13 @@ package email.schaal.ocreader.view;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.os.Build;
+import android.support.annotation.Keep;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
@@ -78,6 +82,18 @@ public class FABLayout extends LinearLayout {
 
             }
         });
+    }
+
+    @Keep
+    public void setFabBackgroundColor(int color) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ColorStateList colorStateList = ColorStateList.valueOf(color);
+            for (int i = 0; i < getChildCount(); i++) {
+                View view = getChildAt(i);
+                if (view instanceof FloatingActionButton)
+                    view.setBackgroundTintList(colorStateList);
+            }
+        }
     }
 
     public void show() {
