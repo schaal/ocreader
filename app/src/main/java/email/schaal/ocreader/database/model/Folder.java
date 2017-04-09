@@ -83,11 +83,12 @@ public class Folder extends RealmObject implements TreeItem, Insertable, TreeIco
         if(feeds != null && feeds.size() > 0) {
             // Find all items belonging to any feed from this folder
             Iterator<Feed> feedIterator = feeds.iterator();
-            query = realm.where(Item.class)
+            query = realm.where(Item.class).beginGroup()
                     .equalTo(Item.FEED_ID, feedIterator.next().getId());
             while (feedIterator.hasNext()) {
                 query.or().equalTo(Item.FEED_ID, feedIterator.next().getId());
             }
+            query.endGroup();
             if(onlyUnread)
                 query.equalTo(Item.UNREAD, true);
         }
