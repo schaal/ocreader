@@ -176,7 +176,4 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    public interface OnLoadMoreListener {
-        void onLoadMore(TreeItem treeItem);
-    }
 }

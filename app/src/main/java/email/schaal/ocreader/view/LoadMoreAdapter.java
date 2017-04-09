@@ -18,7 +18,7 @@ import io.realm.Realm;
  * Add a Load More item to ItemsAdapter
  */
 public class LoadMoreAdapter extends ItemsAdapter {
-    private final ItemsAdapter.OnLoadMoreListener loadMoreListener;
+    private final OnLoadMoreListener loadMoreListener;
     private TreeItem loadingMoreTreeItem;
 
     public LoadMoreAdapter(Context context, Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, OnLoadMoreListener loadMoreListener) {
@@ -77,6 +77,10 @@ public class LoadMoreAdapter extends ItemsAdapter {
 
     public void resetLoadMore() {
         loadingMoreTreeItem = null;
+    }
+
+    public interface OnLoadMoreListener {
+        void onLoadMore(TreeItem treeItem);
     }
 
     private class LoadMoreViewHolder extends RecyclerView.ViewHolder {

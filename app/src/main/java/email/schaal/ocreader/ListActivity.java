@@ -78,12 +78,12 @@ import email.schaal.ocreader.service.SyncService;
 import email.schaal.ocreader.service.SyncType;
 import email.schaal.ocreader.view.DividerItemDecoration;
 import email.schaal.ocreader.view.ItemViewHolder;
-import email.schaal.ocreader.view.ItemsAdapter;
+import email.schaal.ocreader.view.LoadMoreAdapter;
 import email.schaal.ocreader.view.SelectableItemsAdapter;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
 
-public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ItemsAdapter.OnLoadMoreListener, OnCheckedChangeListener, ActionMode.Callback {
+public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, LoadMoreAdapter.OnLoadMoreListener, OnCheckedChangeListener, ActionMode.Callback {
     private static final String TAG = ListActivity.class.getName();
 
     private static final int REFRESH_DRAWER_ITEM_ID = 999;
