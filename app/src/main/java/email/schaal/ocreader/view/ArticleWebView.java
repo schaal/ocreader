@@ -9,7 +9,6 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
@@ -91,14 +90,16 @@ public class ArticleWebView extends NestedScrollWebView {
     // All js from external sites gets stripped using jsoup
     @SuppressLint({"AddJavascriptInterface","SetJavaScriptEnabled"})
     private void init(Context context, AttributeSet attrs) {
-        final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ArticleWebView);
+        TypedArray typedArray = null;
         try {
+            typedArray = context.obtainStyledAttributes(attrs, R.styleable.ArticleWebView);
             defaultLinkColor = typedArray.getColor(R.styleable.ArticleWebView_linkColor, 0);
             fontColor = typedArray.getColor(R.styleable.ArticleWebView_fontColor, 0);
             backgroundColor = typedArray.getColor(R.styleable.ArticleWebView_backgroundColor, 0);
             setBackgroundColor(backgroundColor);
         } finally {
-            typedArray.recycle();
+            if(typedArray != null)
+                typedArray.recycle();
         }
 
         WebSettings webSettings = getSettings();
