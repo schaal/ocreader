@@ -91,7 +91,6 @@ public class ArticleWebView extends NestedScrollWebView {
     // All js from external sites gets stripped using jsoup
     @SuppressLint({"AddJavascriptInterface","SetJavaScriptEnabled"})
     private void init(Context context, AttributeSet attrs) {
-        ViewCompat.setNestedScrollingEnabled(this, true);
         final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ArticleWebView);
         try {
             defaultLinkColor = typedArray.getColor(R.styleable.ArticleWebView_linkColor, 0);
