@@ -48,6 +48,10 @@
     margin-right: 16px;
   }
 
+  body, .byline, .title, a {
+    transition: color 0.5s, background-color 0.5s;
+  }
+
   blockquote {
     padding: 5px;
   }
