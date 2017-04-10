@@ -40,14 +40,14 @@ public class ArticleWebView extends NestedScrollWebView {
     private final static String TAG = ArticleWebView.class.getName();
 
     @ColorInt
-    private int defaultTitleColor;
+    private int defaultLinkColor;
 
     private Item item;
 
     private final FaviconLoader.FeedColorsListener feedColorsListener = new FaviconLoader.FeedColorsListener() {
         @Override
         public void onGenerated(@NonNull FeedColors feedColors) {
-            int titleColor = feedColors.getColor(FeedColors.Type.TEXT, defaultTitleColor);
+            int titleColor = feedColors.getColor(FeedColors.Type.TEXT, defaultLinkColor);
             String cssColor = FaviconLoader.getCssColor(titleColor);
             String javascript = String.format("javascript:(function(){document.styleSheets[0].cssRules[0].style.color=\"%s\";})()", cssColor);
             loadUrl(javascript);
@@ -94,7 +94,7 @@ public class ArticleWebView extends NestedScrollWebView {
         ViewCompat.setNestedScrollingEnabled(this, true);
         final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ArticleWebView);
         try {
-            defaultTitleColor = typedArray.getColor(R.styleable.ArticleWebView_titleColor, 0);
+            defaultLinkColor = typedArray.getColor(R.styleable.ArticleWebView_linkColor, 0);
             fontColor = typedArray.getColor(R.styleable.ArticleWebView_fontColor, 0);
             backgroundColor = typedArray.getColor(R.styleable.ArticleWebView_backgroundColor, 0);
             setBackgroundColor(backgroundColor);
@@ -158,7 +158,7 @@ public class ArticleWebView extends NestedScrollWebView {
         document.outputSettings().prettyPrint(false);
 
         String html = context.getString(R.string.article_html_template,
-                FaviconLoader.getCssColor(ContextCompat.getColor(context, R.color.accent)),
+                FaviconLoader.getCssColor(defaultLinkColor),
                 FaviconLoader.getCssColor(fontColor),
                 FaviconLoader.getCssColor(backgroundColor),
                 FaviconLoader.getCssColor(ContextCompat.getColor(context, R.color.selected_background)),
