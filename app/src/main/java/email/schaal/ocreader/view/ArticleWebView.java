@@ -11,9 +11,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
+
+import com.google.common.base.Strings;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,15 +23,11 @@ import org.jsoup.safety.Cleaner;
 import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import email.schaal.ocreader.R;
-import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.util.FeedColors;
@@ -64,8 +61,6 @@ public class ArticleWebView extends NestedScrollWebView {
 
     // iframes are replaced in prepareDocument()
     private final static Cleaner cleaner = new Cleaner(Whitelist.relaxed().addTags("video","iframe").addAttributes("iframe", "src"));
-
-    private static String css = null;
 
     private final static String videoThumbLink = "<div style=\"position:relative\"><a href=\"%s\"><img src=\"%s\" class=\"videothumb\"></img><span class=\"play\">▶</span></a></div>";
     private final static String videoLink = "<a href=\"%s\">%s</a>";
@@ -155,50 +150,25 @@ public class ArticleWebView extends NestedScrollWebView {
 
     private String getHtml() {
         Context context = getContext();
-        if (css == null)
-            try {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(context.getAssets().open("item_page.css")));
-                String line;
-                StringBuilder cssBuilder = new StringBuilder();
-                while ((line = bufferedReader.readLine()) != null) {
-                    cssBuilder.append(line);
-                }
-                css = cssBuilder.toString();
-            } catch (IOException e) {
-                Log.e(TAG, "Failed to read css from file", e);
-            }
-
-        Feed feed = item.getFeed();
 
         Document document = Jsoup.parse(item.getBody());
         document = cleaner.clean(document);
         prepareDocument(document);
 
-        StringBuilder pageBuilder = new StringBuilder(
-                "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">");
+        document.outputSettings().prettyPrint(false);
 
-        pageBuilder.append(String.format(
-                "<style type=\"text/css\">a:link, a:active,a:hover { color: %s } body { color: %s; background-color: %s } blockquote { background-color: %s } %s</style>",
-                FaviconLoader.getCssColor(fontColor), FaviconLoader.getCssColor(defaultTitleColor), FaviconLoader.getCssColor(backgroundColor), FaviconLoader.getCssColor(ContextCompat.getColor(context, R.color.selected_background)), css));
-
-        pageBuilder.append("</head><body>");
-
-        pageBuilder.append(String.format(
-                "<a href=\"%s\" class=\"title\">%s</a><p class=\"byline\">%s</p>",
-                item.getUrl() != null ? item.getUrl() : "",
+        String html = context.getString(R.string.article_html_template,
+                FaviconLoader.getCssColor(ContextCompat.getColor(context, R.color.accent)),
+                FaviconLoader.getCssColor(fontColor),
+                FaviconLoader.getCssColor(backgroundColor),
+                FaviconLoader.getCssColor(ContextCompat.getColor(context, R.color.selected_background)),
+                Strings.nullToEmpty(item.getUrl()),
                 item.getTitle(),
-                StringUtils.getByLine(context, String.format("<a href=\"%s\">%s</a>", feed.getLink(), feed.getName()), item.getAuthor())
-                )
+                String.format("<p class=\"byline\">%s</p>", StringUtils.getByLine(context, item.getFeed().getName(), item.getAuthor())),
+                document.body().html()
         );
 
-        document.outputSettings().prettyPrint(false);
-        pageBuilder.append(document.body().html());
-
-        pageBuilder.append("<script>(function() { JsCallback.startLoading(); })();</script>");
-
-        pageBuilder.append("</body></html>");
-
-        return pageBuilder.toString();
+        return html;
     }
 
     /**

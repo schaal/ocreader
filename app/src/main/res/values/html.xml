@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright © 2017. Daniel Schaal <daniel@schaal.email>
+  ~
+  ~ This file is part of ocreader.
+  ~
+  ~ ocreader is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ocreader is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="article_html_template" translatable="false"><![CDATA[
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style type="text/css">
+  a:link, a:active, a:hover { color: %1$s }
+  body { color: %2$s; background-color: %3$s }
+  blockquote { background-color: %4$s }
+
+  body, blockquote, img, iframe, video, div, table, tbody, tr, td, pre, code, blockquote, p, em, b, span {
+    max-width: 100%% !important;
+  }
+
+  * {
+    word-wrap: break-word !important;
+  }
+
+  pre {
+    white-space: pre-wrap !important;
+  }
+
+  body {
+    font-size: 1em;
+    font-weight: normal;
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  blockquote {
+    padding: 5px;
+  }
+
+  blockquote > p {
+    margin: 0;
+    padding: 0;
+  }
+
+  .title {
+    font-size: 1.1em;
+    font-weight: normal;
+    text-decoration: none;
+  }
+
+  .byline {
+    font-size: 0.8em;
+    margin-top: 4px;
+    margin-bottom: 8px;
+  }
+
+  .byline + p {
+    margin-top: 0px;
+  }
+
+  span.play {
+    font-size: 3em;
+    position: absolute;
+    left: 50%%;
+    top: 50%%;
+    transform: translate(-50%%, -50%%);
+    text-shadow: black 0.1em 0.1em 0.2em
+  }
+
+  img.videothumb {
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
+    width:75%%;
+  }
+  </style>
+</head>
+<body>
+  <a href="%5$s" class="title">%6$s</a> %7$s
+  %8$s
+  <script>
+    (function() { JsCallback.startLoading(); })();
+  </script>
+</body>
+</html>
+    ]]></string>
+</resources>
