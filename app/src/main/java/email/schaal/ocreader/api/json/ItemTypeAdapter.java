@@ -23,6 +23,7 @@ package email.schaal.ocreader.api.json;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.common.base.Strings;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonReader;
 import com.squareup.moshi.JsonWriter;
@@ -91,7 +92,7 @@ public class ItemTypeAdapter extends JsonAdapter<Item> {
                     item.setTitle(StringUtils.cleanString(in.nextString()));
                     break;
                 case "author":
-                    item.setAuthor(StringUtils.nullIfEmpty(in.nextString()));
+                    item.setAuthor(Strings.emptyToNull(in.nextString()));
                     break;
                 case "pubDate":
                     item.setPubDate(new Date(in.nextLong() * 1000));
@@ -101,13 +102,13 @@ public class ItemTypeAdapter extends JsonAdapter<Item> {
                     break;
                 case "enclosureMime":
                     if(in.peek() != JsonReader.Token.NULL)
-                        item.setEnclosureMime(StringUtils.nullIfEmpty(in.nextString()));
+                        item.setEnclosureMime(Strings.emptyToNull(in.nextString()));
                     else
                         in.skipValue();
                     break;
                 case "enclosureLink":
                     if(in.peek() != JsonReader.Token.NULL)
-                        item.setEnclosureLink(StringUtils.nullIfEmpty(in.nextString()));
+                        item.setEnclosureLink(Strings.emptyToNull(in.nextString()));
                     else
                         in.skipValue();
                     break;

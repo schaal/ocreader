@@ -10,29 +10,12 @@ import java.util.Date;
 import email.schaal.ocreader.util.StringUtils;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 /**
  * Test class for StringUtils
  */
 @RunWith(RobolectricTestRunner.class)
 public class StringUtilsTest {
-
-    @Test
-    public void testNullIfEmpty() throws Exception {
-        String empty = "";
-        String notEmpty = "Hello";
-
-        String emptyWithSpaces = " ";
-        String notEmptyWithSpaces = " Hello ";
-
-        assertNull(StringUtils.nullIfEmpty(empty));
-        assertNull(StringUtils.nullIfEmpty(emptyWithSpaces));
-
-        assertEquals(notEmpty, StringUtils.nullIfEmpty(notEmpty));
-        assertEquals("Hello", StringUtils.nullIfEmpty(notEmptyWithSpaces));
-    }
-
     @Test
     public void testGetByLine() throws Exception {
         assertEquals("From testFeed", StringUtils.getByLine(RuntimeEnvironment.application, "testFeed", null));

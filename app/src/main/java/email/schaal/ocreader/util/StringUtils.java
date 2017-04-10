@@ -34,16 +34,6 @@ import email.schaal.ocreader.R;
  * Utility class to handle Strings.
  */
 public class StringUtils {
-    @Nullable
-    public static String nullIfEmpty(String source) {
-        if(source != null) {
-            source = source.trim();
-            if (source.length() == 0)
-                source = null;
-        }
-        return source;
-    }
-
     @NonNull
     public static String getByLine(@NonNull Context context, @NonNull String feedTitle, @Nullable String author) {
         if(author == null) {
