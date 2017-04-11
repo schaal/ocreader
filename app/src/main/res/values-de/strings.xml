@@ -74,4 +74,5 @@
     <string name="settings">Einstellungen</string>
     <string name="ascending">Älteste zuerst</string>
     <string name="reading">Lesen</string>
+    <string name="fresh_items">Neue Artikel</string>
 </resources>
