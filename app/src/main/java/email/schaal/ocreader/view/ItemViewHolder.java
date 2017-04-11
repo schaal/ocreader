@@ -119,10 +119,10 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
 
         setUnreadState(item.isUnread());
         setStarredState(item.isStarred());
-
+        setSelected(item.isSelected());
     }
 
-    public void setSelected(boolean selected) {
+    private void setSelected(boolean selected) {
         int backgroundResource = R.drawable.item_background;
         if (!selected) {
             int[] attrs = new int[]{R.attr.selectableItemBackground};

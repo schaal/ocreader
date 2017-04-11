@@ -77,9 +77,9 @@ import email.schaal.ocreader.databinding.DialogAboutBinding;
 import email.schaal.ocreader.service.SyncService;
 import email.schaal.ocreader.service.SyncType;
 import email.schaal.ocreader.view.DividerItemDecoration;
+import email.schaal.ocreader.view.ErrorAdapter;
 import email.schaal.ocreader.view.ItemViewHolder;
 import email.schaal.ocreader.view.LoadMoreAdapter;
-import email.schaal.ocreader.view.SelectableItemsAdapter;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
 
@@ -152,7 +152,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private PrimaryDrawerItem refreshDrawerItem;
     private AccountHeader accountHeader;
 
-    private SelectableItemsAdapter adapter;
+    private ErrorAdapter adapter;
     private LinearLayoutManager layoutManager;
 
     @Override
@@ -329,7 +329,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         layoutManager = new LinearLayoutManager(this);
 
-        adapter = new SelectableItemsAdapter(this, getRealm(), drawerManager.getState(), this, this);
+        adapter = new ErrorAdapter(this, getRealm(), drawerManager.getState(), this, this);
 
         binding.fabMarkAllAsRead.setOnClickListener(new View.OnClickListener() {
             private void onCompletion(View view) {
@@ -503,7 +503,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             itemActivityIntent.putExtra(ItemPagerActivity.EXTRA_CURRENT_POSITION, position);
             startActivityForResult(itemActivityIntent, ItemPagerActivity.REQUEST_CODE);
         } else {
-            adapter.toggleSelection(item, position);
+            adapter.toggleSelection(position);
             if(adapter.getSelectedItemsCount() == 0)
                 actionMode.finish();
             else {
@@ -513,12 +513,15 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         }
     }
 
+    private Item firstSelectedItem;
+
     @Override
     public void onItemLongClick(Item item, int position) {
         if(actionMode != null || Preferences.SYS_SYNC_RUNNING.getBoolean(PreferenceManager.getDefaultSharedPreferences(this)))
             return;
 
-        adapter.toggleSelection(item, position);
+        adapter.toggleSelection(position);
+        firstSelectedItem = item;
         actionMode = startActionMode(this);
     }
 
@@ -583,24 +586,23 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-        Boolean firstSelectedUnread = adapter.firstSelectedUnread();
-        if(firstSelectedUnread != null) {
-            menu.findItem(R.id.action_mark_read).setVisible(firstSelectedUnread);
-            menu.findItem(R.id.action_mark_unread).setVisible(!firstSelectedUnread);
-        }
-
-        Boolean firstSelectedStarred = adapter.firstSelectedStarred();
-        if(firstSelectedStarred != null) {
-            menu.findItem(R.id.action_mark_starred).setVisible(!firstSelectedStarred);
-            menu.findItem(R.id.action_mark_unstarred).setVisible(firstSelectedStarred);
-        }
-
         int selectedItemsCount = adapter.getSelectedItemsCount();
+
+        // the menu only changes on the first and second selection
+        if(selectedItemsCount > 2)
+            return false;
+
+        boolean firstSelectedUnread = firstSelectedItem.isUnread();
+        menu.findItem(R.id.action_mark_read).setVisible(firstSelectedUnread);
+        menu.findItem(R.id.action_mark_unread).setVisible(!firstSelectedUnread);
+
+        boolean firstSelectedStarred = firstSelectedItem.isStarred();
+        menu.findItem(R.id.action_mark_starred).setVisible(!firstSelectedStarred);
+        menu.findItem(R.id.action_mark_unstarred).setVisible(firstSelectedStarred);
 
         menu.findItem(R.id.action_mark_above_read).setVisible(selectedItemsCount == 1);
 
-        // the menu only changes on the first and second selection
-        return selectedItemsCount <= 2;
+        return true;
     }
 
     @Override

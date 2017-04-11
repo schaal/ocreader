@@ -23,12 +23,14 @@ package email.schaal.ocreader.view;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.util.ArraySet;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.List;
+import java.util.Set;
 
 import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.R;
@@ -49,6 +51,8 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     final DrawerManager.State state;
     private final Realm realm;
     private final ItemViewHolder.OnClickListener clickListener;
+
+    private Set<Integer> selections = new ArraySet<>();
 
     ItemsAdapter(Context context, Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener) {
         this.realm = realm;
@@ -123,6 +127,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof ItemViewHolder) {
             Item item = items.get(position);
+            item.setSelected(selections.contains(position));
             ((ItemViewHolder) holder).bindItem(item, position);
         }
     }
@@ -145,6 +150,43 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             return items.get(position).getId();
         else
             return -1;
+    }
+
+    public void select(int position) {
+        selections.add(position);
+        notifyItemChanged(position);
+    }
+
+    public void deselect(int position) {
+        selections.remove(position);
+        notifyItemChanged(position);
+    }
+
+    public void toggleSelection(int position) {
+        if(selections.contains(position))
+            selections.remove(position);
+        else
+            selections.add(position);
+
+        notifyItemChanged(position);
+    }
+
+    public void clearSelection() {
+        selections.clear();
+        notifyDataSetChanged();
+    }
+
+    public int getSelectedItemsCount() {
+        return selections.size();
+    }
+
+    public Item[] getSelectedItems() {
+        Item[] itemsArray = new Item[selections.size()];
+        int i = 0;
+        for(Integer position: selections) {
+            itemsArray[i++] = items.get(position);
+        }
+        return itemsArray;
     }
 
     private boolean isOnlyUnread() {
