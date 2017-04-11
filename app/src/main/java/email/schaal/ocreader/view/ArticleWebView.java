@@ -153,11 +153,14 @@ public class ArticleWebView extends NestedScrollWebView {
 
         Document document = Jsoup.parse(item.getBody());
         document = cleaner.clean(document);
+
+        String firstImgString = extractFirstImg(document);
+
         prepareDocument(document);
 
         document.outputSettings().prettyPrint(false);
 
-        String html = context.getString(R.string.article_html_template,
+        return context.getString(R.string.article_html_template,
                 FaviconLoader.getCssColor(defaultLinkColor),
                 FaviconLoader.getCssColor(fontColor),
                 FaviconLoader.getCssColor(backgroundColor),
@@ -165,10 +168,32 @@ public class ArticleWebView extends NestedScrollWebView {
                 Strings.nullToEmpty(item.getUrl()),
                 item.getTitle(),
                 StringUtils.getByLine(context, "<p class=\"byline\">%s</p>", item.getAuthor()),
-                document.body().html()
+                document.body().html(),
+                firstImgString
         );
+    }
 
-        return html;
+    private String extractFirstImg(Document document) {
+        Element child = document.body().child(0);
+
+        // if document starts with <br>, remove it
+        if(child.tagName().equals("br")) {
+            Element brChild = child;
+            child = child.nextElementSibling();
+            brChild.remove();
+        }
+
+        while(child != null && !child.tagName().equals("img")) {
+            child = child.children().first();
+        }
+
+        String firstImgString = "";
+        if(child != null) {
+            child.remove();
+            child.addClass("headerimg");
+            firstImgString = child.toString();
+        }
+        return firstImgString;
     }
 
     /**

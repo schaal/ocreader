@@ -44,8 +44,17 @@
   body {
     font-size: 1em;
     font-weight: normal;
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+
+  .content, .header {
     margin-left: 16px;
     margin-right: 16px;
+  }
+
+  .header {
+    margin-bottom: 8px;
   }
 
   body, .byline, .title, a {
@@ -70,11 +79,11 @@
   .byline {
     font-size: 0.8em;
     margin-top: 4px;
-    margin-bottom: 8px;
+    margin-bottom: 0px;
   }
 
-  .byline + p {
-    margin-top: 0px;
+  .content > p {
+    margin-top: 0;
   }
 
   span.play {
@@ -92,6 +101,14 @@
     margin-right:auto;
     width:75%%;
   }
+  img.headerimg {
+    max-width: 100%%;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 8px;
+    display:block;
+  }
   </style>
   <script>
     document.addEventListener(\"DOMContentLoaded\", function(event) {
@@ -101,8 +118,13 @@
 
 </head>
 <body>
-  <a href=\"%5$s\" class=\"title\">%6$s</a> %7$s
-  %8$s
+  <div class=\"header\">
+    <a href=\"%5$s\" class=\"title\">%6$s</a> %7$s
+  </div>
+  %9$s
+  <div class=\"content\">
+    %8$s
+  </div>
 </body>
 </html>
     ]]></string>
