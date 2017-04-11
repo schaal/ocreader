@@ -2,7 +2,6 @@ package email.schaal.ocreader;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -21,7 +20,7 @@ public class CustomCrashReportDialog extends BaseCrashReportDialog implements Di
 
     @Override
     protected void init(@Nullable Bundle savedInstanceState) {
-        binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.crash_dialog, null, false);
+        binding = CrashDialogBinding.inflate(LayoutInflater.from(this), null, false);
 
         final AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.report_issue)

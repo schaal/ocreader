@@ -484,7 +484,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     }
 
     private void showAboutDialog() {
-        DialogAboutBinding dialogAboutBinding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.dialog_about, binding.coordinatorLayout, false);
+        DialogAboutBinding dialogAboutBinding = DialogAboutBinding.inflate(getLayoutInflater(), binding.coordinatorLayout, false);
 
         //noinspection deprecation
         dialogAboutBinding.textViewCopyright.setText(Html.fromHtml(getString(R.string.about_app, getString(R.string.app_year_author), getString(R.string.app_url))));
