@@ -164,7 +164,7 @@ public class ArticleWebView extends NestedScrollWebView {
                 FaviconLoader.getCssColor(ContextCompat.getColor(context, R.color.selected_background)),
                 Strings.nullToEmpty(item.getUrl()),
                 item.getTitle(),
-                String.format("<p class=\"byline\">%s</p>", StringUtils.getByLine(context, item.getFeed().getName(), item.getAuthor())),
+                StringUtils.getByLine(context, "<p class=\"byline\">%s</p>", item.getAuthor()),
                 document.body().html()
         );
 

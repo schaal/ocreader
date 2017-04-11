@@ -35,11 +35,11 @@ import email.schaal.ocreader.R;
  */
 public class StringUtils {
     @NonNull
-    public static String getByLine(@NonNull Context context, @NonNull String feedTitle, @Nullable String author) {
-        if(author == null) {
-            return context.getString(R.string.article_from, feedTitle);
+    public static String getByLine(@NonNull Context context, String template, @Nullable String author) {
+        if(author != null) {
+            return String.format(template, context.getString(R.string.by_author, author));
         } else {
-            return context.getString(R.string.article_by_from, author, feedTitle);
+            return "";
         }
     }
 

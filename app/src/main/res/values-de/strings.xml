@@ -5,7 +5,6 @@
     <string name="action_sign_in">Anmelden</string>
     <string name="action_sign_in_short">Anmelden</string>
     <string name="action_sync">Synchronisieren</string>
-    <string name="article_by_from">von %1$s von %2$s</string>
     <string name="error_field_required">Pflichtfeld</string>
     <string name="error_incorrect_url">Diese URL ist ungültig</string>
     <string name="error_incorrect_username_or_password">Benutzername oder Password sind falsch</string>
@@ -21,7 +20,7 @@
     <string name="starred_items">Favorisierte Artikel</string>
     <string name="title_activity_login">Anmelden</string>
     <string name="unread_items">Ungelesene Artikel</string>
-    <string name="article_from">von %1$s</string>
+    <string name="by_author">von %1$s</string>
     <string name="days">%dd</string>
     <string name="hours">%dh</string>
     <string name="minutes">%dm</string>

@@ -18,8 +18,8 @@ import static org.junit.Assert.assertEquals;
 public class StringUtilsTest {
     @Test
     public void testGetByLine() throws Exception {
-        assertEquals("From testFeed", StringUtils.getByLine(RuntimeEnvironment.application, "testFeed", null));
-        assertEquals("By testAuthor from testFeed", StringUtils.getByLine(RuntimeEnvironment.application, "testFeed", "testAuthor"));
+        assertEquals("", StringUtils.getByLine(RuntimeEnvironment.application, "<p class=\"byline\">%s</p>", null));
+        assertEquals("<p class=\"byline\">by testAuthor</p>", StringUtils.getByLine(RuntimeEnvironment.application, "<p class=\"byline\">%s</p>", "testAuthor"));
     }
 
     @Test
