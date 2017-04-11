@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        tools:showIn="@layout/activity_item_pager">
+        tools:showIn="@layout/activity_list">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
