@@ -52,12 +52,12 @@ public class LoadMoreAdapter extends ItemsAdapter {
     }
 
     protected int footerCount() {
-        return hasLoadMore() ? 1 : 0;
+        return canLoadMore() ? 1 : 0;
     }
 
     @Override
     public long getItemId(int position) {
-        if(position == getItemCount() && hasLoadMore())
+        if(position == getItemCount() && canLoadMore())
             return -1;
         else {
             return super.getItemId(position);
@@ -66,12 +66,12 @@ public class LoadMoreAdapter extends ItemsAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        if(hasLoadMore() && position == super.getItemCount())
+        if(canLoadMore() && position == super.getItemCount())
             return R.id.viewtype_loadmore;
         return super.getItemViewType(position);
     }
 
-    private boolean hasLoadMore() {
+    private boolean canLoadMore() {
         return state.getTreeItem() instanceof Feed || state.getTreeItem() instanceof Folder;
     }
 
