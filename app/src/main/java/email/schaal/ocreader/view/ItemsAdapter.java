@@ -35,12 +35,10 @@ import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.model.AllUnreadFolder;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.database.model.TemporaryFeed;
-import email.schaal.ocreader.database.model.TreeItem;
 import email.schaal.ocreader.databinding.ListItemBinding;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
-import io.realm.Sort;
 
 /**
  * Adapter for the RecyclerView to manage Items belonging to a certain TreeItem.
@@ -52,9 +50,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final Realm realm;
     private final ItemViewHolder.OnClickListener clickListener;
 
-    private Sort order;
-    private String sortField;
-
     ItemsAdapter(Context context, Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener) {
         this.realm = realm;
         this.state = state;
@@ -62,17 +57,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         this.preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-        this.order = Preferences.ORDER.getOrder(preferences);
-        this.sortField = Preferences.SORT_FIELD.getString(preferences);
-
         setHasStableIds(true);
-    }
-
-    public void setOrder(Sort order, String sortField) {
-        this.order = order;
-        this.sortField = sortField;
-
-        updateItems(false);
     }
 
     public void updateItems(boolean updateTemporaryFeed) {
@@ -96,7 +81,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             });
         }
 
-        items = temporaryFeed.getItems().sort(sortField, order);
+        items = temporaryFeed.getItems().sort(Preferences.SORT_FIELD.getString(preferences), Preferences.ORDER.getOrder(preferences));
 
         notifyDataSetChanged();
     }

@@ -8,7 +8,6 @@ import android.util.SparseArray;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
-import io.realm.Sort;
 
 /**
  * Make item viewholders selectable
@@ -16,7 +15,7 @@ import io.realm.Sort;
 public class SelectableItemsAdapter extends ErrorAdapter {
     private final SparseArray<Item> selectedItems = new SparseArray<>();
 
-    public SelectableItemsAdapter(Context context, Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, Sort order, String sortField, OnLoadMoreListener loadMoreListener) {
+    public SelectableItemsAdapter(Context context, Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener, OnLoadMoreListener loadMoreListener) {
         super(context, realm, state, clickListener, loadMoreListener);
     }
 
