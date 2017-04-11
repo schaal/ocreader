@@ -21,6 +21,7 @@
 package email.schaal.ocreader;
 
 import android.content.SharedPreferences;
+import android.support.v7.app.AppCompatDelegate;
 
 import email.schaal.ocreader.database.model.AllUnreadFolder;
 import email.schaal.ocreader.database.model.Item;
@@ -87,6 +88,11 @@ public enum Preferences {
             preferences.edit().remove(key).apply();
         }
         return Sort.valueOf((String) defaultValue);
+    }
+
+    @AppCompatDelegate.NightMode
+    public static int getNightMode(SharedPreferences preferences) {
+        return preferences.getBoolean(DARK_THEME.getKey(), false) ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO;
     }
 
     public static boolean hasCredentials(SharedPreferences preferences) {

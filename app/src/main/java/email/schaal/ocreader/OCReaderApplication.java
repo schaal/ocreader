@@ -64,7 +64,7 @@ public class OCReaderApplication extends Application {
 
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        AppCompatDelegate.setDefaultNightMode(Preferences.DARK_THEME.getBoolean(preferences) ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+        AppCompatDelegate.setDefaultNightMode(Preferences.getNightMode(preferences));
 
         preferences.edit()
                 .putBoolean(Preferences.SYS_SYNC_RUNNING.getKey(), false)

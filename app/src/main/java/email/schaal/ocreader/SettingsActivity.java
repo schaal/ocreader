@@ -66,7 +66,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
         if(key.equals(Preferences.DARK_THEME.getKey())) {
             recreateActivity = true;
             FaviconLoader.clearCache();
-            AppCompatDelegate.setDefaultNightMode(Preferences.DARK_THEME.getBoolean(PreferenceManager.getDefaultSharedPreferences(this)) ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+            AppCompatDelegate.setDefaultNightMode(Preferences.getNightMode(sharedPreferences));
             Intent intent = getIntent();
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra("recreateActivity", recreateActivity);
