@@ -48,7 +48,7 @@ public class ArticleWebView extends NestedScrollWebView {
         public void onGenerated(@NonNull FeedColors feedColors) {
             int titleColor = feedColors.getColor(FeedColors.Type.TEXT, defaultLinkColor);
             String cssColor = FaviconLoader.getCssColor(titleColor);
-            String javascript = String.format("javascript:(function(){document.styleSheets[0].cssRules[0].style.color=\"%s\";})()", cssColor);
+            String javascript = getResources().getString(R.string.style_change_js, cssColor);
             loadUrl(javascript);
         }
 

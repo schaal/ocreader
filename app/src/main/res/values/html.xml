@@ -23,8 +23,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <style type="text/css">
+  <meta charset=\"UTF-8\">
+  <style type=\"text/css\">
   a:link, a:active, a:hover { color: %1$s }
   body { color: %2$s; background-color: %3$s }
   blockquote { background-color: %4$s }
@@ -93,14 +93,22 @@
     width:75%%;
   }
   </style>
+  <script>
+    document.addEventListener(\"DOMContentLoaded\", function(event) {
+        JsCallback.startLoading();
+    });
+  </script>
+
 </head>
 <body>
-  <a href="%5$s" class="title">%6$s</a> %7$s
+  <a href=\"%5$s\" class=\"title\">%6$s</a> %7$s
   %8$s
-  <script>
-    (function() { JsCallback.startLoading(); })();
-  </script>
 </body>
 </html>
+    ]]></string>
+    <string name="style_change_js" translatable="false"><![CDATA[
+javascript:(function() {
+    document.styleSheets[0].cssRules[0].style.color=\"%1$s\";
+})();
     ]]></string>
 </resources>
