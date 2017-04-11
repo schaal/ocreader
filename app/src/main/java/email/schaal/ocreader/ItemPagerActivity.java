@@ -95,7 +95,8 @@ public class ItemPagerActivity extends RealmActivity {
 
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(temporaryFeed.getName());
+        binding.toolbarLayout.textViewTitle.setText(temporaryFeed.getName());
+        binding.toolbarLayout.textViewSubtitle.setText("");
 
         final SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
 
@@ -336,6 +337,8 @@ public class ItemPagerActivity extends RealmActivity {
         public void onPageSelected(int position) {
             item = getItemForPosition(position);
             setItemUnread(false);
+
+            binding.toolbarLayout.textViewSubtitle.setText(item.getFeed().getName());
 
             new FaviconLoader.Builder(binding.fabOpenInBrowser, item.getFeed())
                     .withGenerateFallbackImage(false)

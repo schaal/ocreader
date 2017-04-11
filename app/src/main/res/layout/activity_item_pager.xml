@@ -31,7 +31,7 @@
         tools:context="email.schaal.ocreader.ItemPagerActivity">
 
         <include android:id="@+id/toolbar_layout"
-                 layout="@layout/toolbar"/>
+                 layout="@layout/toolbar_pager"/>
 
         <android.support.v4.view.ViewPager
             android:id="@+id/container"
