@@ -59,6 +59,11 @@ public class FreshFolder implements TreeItem, TreeIconable {
     }
 
     @Override
+    public boolean canLoadMore() {
+        return false;
+    }
+
+    @Override
     public List<Feed> getFeeds(Realm realm, boolean onlyUnread) {
         List<Feed> freshFeeds = new ArrayList<>();
 

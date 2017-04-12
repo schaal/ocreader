@@ -137,6 +137,11 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
     }
 
     @Override
+    public boolean canLoadMore() {
+        return true;
+    }
+
+    @Override
     public List<Feed> getFeeds(Realm realm, boolean onlyUnread) {
         return Collections.singletonList(this);
     }

@@ -56,6 +56,11 @@ public class StarredFolder implements TreeItem, TreeIconable {
     }
 
     @Override
+    public boolean canLoadMore() {
+        return false;
+    }
+
+    @Override
     public List<Feed> getFeeds(Realm realm, boolean onlyUnread) {
         return realm.where(Feed.class).greaterThan(Feed.STARRED_COUNT, 0).findAllSorted(Feed.NAME, Sort.ASCENDING);
     }

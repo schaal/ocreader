@@ -68,6 +68,11 @@ public class Folder extends RealmObject implements TreeItem, Insertable, TreeIco
     }
 
     @Override
+    public boolean canLoadMore() {
+        return true;
+    }
+
+    @Override
     public List<Feed> getFeeds(Realm realm, boolean onlyUnread) {
         final RealmQuery<Feed> query = realm.where(Feed.class).equalTo(Feed.FOLDER_ID, getId());
         if(onlyUnread)

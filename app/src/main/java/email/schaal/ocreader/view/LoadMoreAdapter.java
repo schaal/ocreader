@@ -7,8 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import email.schaal.ocreader.R;
-import email.schaal.ocreader.database.model.Feed;
-import email.schaal.ocreader.database.model.Folder;
 import email.schaal.ocreader.database.model.TreeItem;
 import email.schaal.ocreader.databinding.ListLoadmoreBinding;
 import email.schaal.ocreader.view.drawer.DrawerManager;
@@ -52,12 +50,12 @@ public class LoadMoreAdapter extends ItemsAdapter {
     }
 
     protected int footerCount() {
-        return canLoadMore() ? 1 : 0;
+        return state.getTreeItem().canLoadMore() ? 1 : 0;
     }
 
     @Override
     public long getItemId(int position) {
-        if(position == getItemCount() && canLoadMore())
+        if(position == getItemCount() && state.getTreeItem().canLoadMore())
             return -1;
         else {
             return super.getItemId(position);
@@ -66,13 +64,9 @@ public class LoadMoreAdapter extends ItemsAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        if(canLoadMore() && position == super.getItemCount())
+        if(state.getTreeItem().canLoadMore() && position == super.getItemCount())
             return R.id.viewtype_loadmore;
         return super.getItemViewType(position);
-    }
-
-    private boolean canLoadMore() {
-        return state.getTreeItem() instanceof Feed || state.getTreeItem() instanceof Folder;
     }
 
     public void resetLoadMore() {
