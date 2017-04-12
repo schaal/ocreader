@@ -78,7 +78,7 @@ dependencies {
 
     compile 'com.google.guava:guava:20.0'
 
-    compile('com.mikepenz:materialdrawer:5.8.2@aar') {
+    compile('com.mikepenz:materialdrawer:5.9.0@aar') {
         transitive = true
     }
 
