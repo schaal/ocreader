@@ -124,7 +124,7 @@ public class TextDrawable extends ShapeDrawable {
 
         private String text;
 
-        private int color;
+        @ColorInt private int color;
 
         private int borderThickness;
 
@@ -134,7 +134,7 @@ public class TextDrawable extends ShapeDrawable {
 
         private Shape shape;
 
-        public int textColor;
+        @ColorInt public int textColor;
 
         private int fontSize;
 
@@ -142,7 +142,7 @@ public class TextDrawable extends ShapeDrawable {
 
         private boolean toUpperCase;
 
-        public Builder() {
+        public Builder(String text, @ColorInt int color) {
             textColor = Color.WHITE;
             borderThickness = 0;
             width = -1;
@@ -151,10 +151,17 @@ public class TextDrawable extends ShapeDrawable {
             fontSize = -1;
             isBold = false;
             toUpperCase = true;
+            this.text = text;
+            this.color = color;
         }
 
         public Builder textColor(@ColorInt int textColor) {
             this.textColor = textColor;
+            return this;
+        }
+
+        public Builder color(@ColorInt int color) {
+            this.color = color;
             return this;
         }
 
@@ -168,9 +175,7 @@ public class TextDrawable extends ShapeDrawable {
             return this;
         }
 
-        public TextDrawable build(String text, int color) {
-            this.color = color;
-            this.text = text;
+        public TextDrawable build() {
             return new TextDrawable(this);
         }
     }

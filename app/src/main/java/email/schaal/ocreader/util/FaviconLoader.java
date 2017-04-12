@@ -65,7 +65,9 @@ public class FaviconLoader {
             drawable = faviconCache.get(feed.getId());
 
             if(drawable == null) {
-                drawable = new TextDrawable.Builder().textColor(ContextCompat.getColor(context, R.color.textdrawable_text)).build(feed.getName().substring(0, 1), getFeedColor(context, feed));
+                drawable = new TextDrawable.Builder(feed.getName().substring(0, 1), getFeedColor(context, feed))
+                        .textColor(ContextCompat.getColor(context, R.color.textdrawable_text))
+                        .build();
                 faviconCache.put(feed.getId(), drawable);
             }
         } else {
