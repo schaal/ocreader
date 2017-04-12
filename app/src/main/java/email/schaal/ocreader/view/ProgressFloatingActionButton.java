@@ -1,11 +1,9 @@
 package email.schaal.ocreader.view;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.os.Build;
 import android.support.annotation.Keep;
 import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
@@ -45,14 +43,6 @@ public class ProgressFloatingActionButton extends FloatingActionButton {
     public void setProgress(float progress) {
         this.progress = progress;
         invalidate();
-    }
-
-    @Keep
-    @Override
-    public void setBackgroundColor(int color) {
-        if(Build.VERSION.SDK_INT >= 21) {
-            setBackgroundTintList(ColorStateList.valueOf(color));
-        }
     }
 
     @Override
