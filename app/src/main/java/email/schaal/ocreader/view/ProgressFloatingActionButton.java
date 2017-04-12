@@ -59,13 +59,13 @@ public class ProgressFloatingActionButton extends FloatingActionButton {
     protected void onDraw(Canvas canvas) {
         float radius = diameter / 2 ;
 
-        canvas.save();
+        final int count = canvas.save();
 
         // draw progress circle fraction
         canvas.clipRect(0, diameter * (1 - progress), diameter, diameter);
         canvas.drawCircle(radius, radius, radius, circlePaint);
 
-        canvas.restore();
+        canvas.restoreToCount(count);
 
         super.onDraw(canvas);
     }
