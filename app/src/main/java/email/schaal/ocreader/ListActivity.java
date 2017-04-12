@@ -21,7 +21,6 @@
 package email.schaal.ocreader;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -39,7 +38,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.text.Html;
 import android.util.Base64;
 import android.util.Base64InputStream;
 import android.util.Log;
@@ -51,6 +49,8 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
+import com.mikepenz.aboutlibraries.Libs;
+import com.mikepenz.aboutlibraries.LibsBuilder;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -74,7 +74,6 @@ import email.schaal.ocreader.database.model.TemporaryFeed;
 import email.schaal.ocreader.database.model.TreeItem;
 import email.schaal.ocreader.database.model.User;
 import email.schaal.ocreader.databinding.ActivityListBinding;
-import email.schaal.ocreader.databinding.DialogAboutBinding;
 import email.schaal.ocreader.service.SyncService;
 import email.schaal.ocreader.service.SyncType;
 import email.schaal.ocreader.view.DividerItemDecoration;
@@ -511,16 +510,16 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     }
 
     private void showAboutDialog() {
-        DialogAboutBinding dialogAboutBinding = DialogAboutBinding.inflate(getLayoutInflater(), binding.coordinatorLayout, false);
-
-        //noinspection deprecation
-        dialogAboutBinding.textViewCopyright.setText(Html.fromHtml(getString(R.string.about_app, getString(R.string.app_year_author), getString(R.string.app_url))));
-
-        new AlertDialog.Builder(this)
-                .setIcon(R.mipmap.ic_launcher)
-                .setTitle(String.format("%s %s", getString(R.string.app_name), BuildConfig.VERSION_NAME))
-                .setView(dialogAboutBinding.getRoot())
-                .show();
+        new LibsBuilder()
+                .withAboutIconShown(true)
+                .withAboutVersionShown(true)
+                .withAboutDescription(getString(R.string.about_app, getString(R.string.app_year_author), getString(R.string.app_url)))
+                .withAboutAppName(getString(R.string.app_name))
+                .withLicenseShown(true)
+                .withActivityStyle(Preferences.DARK_THEME.getBoolean(PreferenceManager.getDefaultSharedPreferences(this)) ? Libs.ActivityStyle.DARK : Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
+                .withActivityTitle(getString(R.string.about))
+                .withFields(R.string.class.getFields())
+                .start(this);
     }
 
     @Override
