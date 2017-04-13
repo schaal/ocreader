@@ -1,21 +1,20 @@
 /*
- * Copyright (C) 2015-2016 Daniel Schaal <daniel@schaal.email>
+ * Copyright © 2017. Daniel Schaal <daniel@schaal.email>
  *
- * This file is part of OCReader.
+ * This file is part of ocreader.
  *
- * OCReader is free software: you can redistribute it and/or modify
+ * ocreader is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * OCReader is distributed in the hope that it will be useful,
+ * ocreader is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with OCReader.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package email.schaal.ocreader;
@@ -35,31 +34,21 @@ import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
-import org.acra.ACRA;
-import org.acra.ReportingInteractionMode;
-import org.acra.annotation.ReportsCrashes;
-
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.util.AlarmUtils;
 import email.schaal.ocreader.util.IcoRequestHandler;
 
 /**
- * Application class to setup the singletons
+ * Application base class to setup the singletons
  */
-@ReportsCrashes(
-        mailTo = "ocreader+reports@schaal.email",
-        mode = ReportingInteractionMode.DIALOG,
-        resDialogText = R.string.app_name,
-        reportDialogClass = email.schaal.ocreader.CustomCrashReportDialog.class
-)
-public class OCReaderApplication extends Application {
+public abstract class OCReaderBaseApplication extends Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        if(ACRA.isACRASenderServiceProcess())
+        if(shouldExit())
             return;
 
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -128,10 +117,11 @@ public class OCReaderApplication extends Application {
         });
     }
 
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
-        if(!BuildConfig.DEBUG)
-            ACRA.init(this);
+    /**
+     *
+     * @return true if app specific initialization should be skipped, e.g. for ACRA process
+     */
+    protected boolean shouldExit() {
+        return false;
     }
 }
