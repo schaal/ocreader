@@ -14,10 +14,12 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 
 import com.google.common.base.Strings;
+import com.vdurmont.emoji.EmojiManager;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.TextNode;
 import org.jsoup.safety.Cleaner;
 import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
@@ -215,6 +217,17 @@ public class ArticleWebView extends NestedScrollWebView {
     }
 
     private void prepareDocument(Document document) {
+        // Some blog engines replace emojis with an image and place the emoji in the image tag.
+        // Find images with the tag being a single character and check if they are emoji. Then
+        // replace the img with the actual emoji in unicode.
+        Elements imgs = document.select("img[alt~=^.$]");
+        for(Element img: imgs) {
+            final String possibleEmoji = img.attr("alt");
+
+            if(EmojiManager.isEmoji(possibleEmoji))
+                img.replaceWith(new TextNode(possibleEmoji, ""));
+        }
+
         Elements iframes = document.getElementsByTag("iframe");
         for(Element iframe: iframes) {
             if(iframe.hasAttr("src")) {
