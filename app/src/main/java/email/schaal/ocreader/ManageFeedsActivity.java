@@ -71,7 +71,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
         final ProgressDialog progressDialog = showProgress(this, getString(R.string.adding_feed));
 
         try {
-            API.getInstance(this).createFeed(getRealm(), url, folderId, new API.APICallback<Void, String>() {
+            API.getInstance(this).createFeed(getRealm(), url, folderId, new API.APICallback<Void, Throwable>() {
                 @Override
                 public void onSuccess(Void n) {
                     progressDialog.dismiss();
@@ -82,9 +82,9 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
                 }
 
                 @Override
-                public void onFailure(String errorMessage) {
+                public void onFailure(Throwable throwable) {
                     progressDialog.cancel();
-                    showErrorMessage(getString(R.string.feed_add_failed), errorMessage);
+                    showErrorMessage(getString(R.string.feed_add_failed), throwable.getLocalizedMessage());
                 }
             });
         } catch (API.NotLoggedInException e) {
@@ -102,7 +102,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
                         final ProgressDialog progressDialog = showProgress(ManageFeedsActivity.this, getString(R.string.deleting_feed, feed.getName()));
 
                         try {
-                            API.getInstance(ManageFeedsActivity.this).deleteFeed(getRealm(), feed, new API.APICallback<Void, String>() {
+                            API.getInstance(ManageFeedsActivity.this).deleteFeed(getRealm(), feed, new API.APICallback<Void, Throwable>() {
                                 @Override
                                 public void onSuccess(Void n) {
                                     progressDialog.dismiss();
@@ -110,9 +110,9 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
                                 }
 
                                 @Override
-                                public void onFailure(String errorMessage) {
+                                public void onFailure(Throwable throwable) {
                                     progressDialog.cancel();
-                                    showErrorMessage(getString(R.string.delete_feed_failed), errorMessage);
+                                    showErrorMessage(getString(R.string.delete_feed_failed), throwable.getLocalizedMessage());
                                 }
                             });
                         } catch (API.NotLoggedInException e) {
@@ -137,7 +137,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
         final ProgressDialog progressDialog = showProgress(this, getString(R.string.moving_feed));
 
         try {
-            API.getInstance(this).moveFeed(getRealm(), feed, folderId, new API.APICallback<Void, String>() {
+            API.getInstance(this).moveFeed(getRealm(), feed, folderId, new API.APICallback<Void, Throwable>() {
                 @Override
                 public void onSuccess(Void v) {
                     progressDialog.dismiss();
@@ -145,9 +145,9 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
                 }
 
                 @Override
-                public void onFailure(String errorMessage) {
+                public void onFailure(Throwable throwable) {
                     progressDialog.cancel();
-                    showErrorMessage(getString(R.string.feed_move_failed), errorMessage);
+                    showErrorMessage(getString(R.string.feed_move_failed), throwable.getLocalizedMessage());
                 }
             });
         } catch (API.NotLoggedInException e) {

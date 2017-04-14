@@ -91,7 +91,7 @@ public class SyncService extends Service {
             notifySyncStatus(SYNC_STARTED, syncType);
 
             try {
-                API.getInstance(this).sync(PreferenceManager.getDefaultSharedPreferences(this), realm, syncType, intent, new API.APICallback<Void, String>() {
+                API.getInstance(this).sync(PreferenceManager.getDefaultSharedPreferences(this), realm, syncType, intent, new API.APICallback<Void, Throwable>() {
                     @Override
                     public void onSuccess(Void n) {
                         if(syncType != SyncType.LOAD_MORE)
@@ -101,8 +101,8 @@ public class SyncService extends Service {
                     }
 
                     @Override
-                    public void onFailure(String errorMessage) {
-                        Toast.makeText(SyncService.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    public void onFailure(Throwable errorMessage) {
+                        Toast.makeText(SyncService.this, errorMessage.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                         onFinished();
                     }
 

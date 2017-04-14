@@ -94,15 +94,15 @@ public abstract class API {
 
     protected abstract void metaData(Callback<Status> callback);
 
-    public abstract void user(final Realm realm, final APICallback<Void, String> apiCallback);
+    public abstract void user(final Realm realm, final APICallback<Void, Throwable> apiCallback);
 
-    public abstract void sync(SharedPreferences sharedPreferences, final Realm realm, SyncType syncType, Intent intent, final APICallback<Void, String> apiCallback);
+    public abstract void sync(SharedPreferences sharedPreferences, final Realm realm, SyncType syncType, Intent intent, final APICallback<Void, Throwable> apiCallback);
 
-    public abstract void createFeed(final Realm realm, final String url, final long folderId, final APICallback<Void, String> apiCallback);
+    public abstract void createFeed(final Realm realm, final String url, final long folderId, final APICallback<Void, Throwable> apiCallback);
 
-    public abstract void moveFeed(final Realm realm, final Feed feed, final long folderId, APICallback<Void, String> apiCallback);
+    public abstract void moveFeed(final Realm realm, final Feed feed, final long folderId, APICallback<Void, Throwable> apiCallback);
 
-    public abstract void deleteFeed(final Realm realm, final Feed feed, APICallback<Void, String> apiCallback);
+    public abstract void deleteFeed(final Realm realm, final Feed feed, APICallback<Void, Throwable> apiCallback);
 
     // Temporary API instance used to get the metaData when logging in
     private static API loginInstance = null;
@@ -241,9 +241,9 @@ public abstract class API {
 
     abstract class BaseRetrofitCallback<T> implements Callback<T> {
         @Nullable
-        final APICallback<Void, String> callback;
+        final APICallback<Void, Throwable> callback;
 
-        BaseRetrofitCallback(@Nullable APICallback<Void, String> callback) {
+        BaseRetrofitCallback(@Nullable APICallback<Void, Throwable> callback) {
             this.callback = callback;
         }
 
@@ -258,7 +258,8 @@ public abstract class API {
             } else {
                 String message = getErrorMessage(errorJsonAdapter, response);
                 if (callback != null) {
-                    callback.onFailure(String.format(Locale.US, "%d: %s", response.code(), message));
+                    //TODO: better exception type
+                    callback.onFailure(new Exception(String.format(Locale.US, "%d: %s", response.code(), message)));
                 }
             }
         }
@@ -274,7 +275,7 @@ public abstract class API {
         public void onFailure(Call<T> call, Throwable t) {
             Log.e(TAG, "Retrofit call failed", t);
             if(callback != null)
-                callback.onFailure(t.getLocalizedMessage());
+                callback.onFailure(t);
         }
     }
 }

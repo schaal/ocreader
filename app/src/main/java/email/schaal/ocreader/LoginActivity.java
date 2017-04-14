@@ -196,7 +196,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showError(@Nullable LoginError error) {
         if(error != null) {
-            TextView errorView = null;
+            final TextView errorView;
 
             switch (error.getSection()) {
                 case URL:
@@ -209,6 +209,7 @@ public class LoginActivity extends AppCompatActivity {
                     errorView = binding.password;
                     break;
                 case NONE:
+                default:
                     errorView = null;
                     break;
             }

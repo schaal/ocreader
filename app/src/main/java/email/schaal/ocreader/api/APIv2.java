@@ -79,7 +79,7 @@ class APIv2 extends API {
     }
 
     @Override
-    public void user(final Realm realm, APICallback<Void, String> apiCallback) {
+    public void user(final Realm realm, APICallback<Void, Throwable> apiCallback) {
         api.metaData().enqueue(new BaseRetrofitCallback<Status>(apiCallback) {
             @Override
             protected void onResponseReal(Response<Status> response) {
@@ -89,7 +89,7 @@ class APIv2 extends API {
     }
 
     @Override
-    public void sync(final SharedPreferences sharedPreferences, final Realm realm, SyncType syncType, Intent intent, APICallback<Void, String> apiCallback) {
+    public void sync(final SharedPreferences sharedPreferences, final Realm realm, SyncType syncType, Intent intent, APICallback<Void, Throwable> apiCallback) {
         // TODO: 02.10.16 sync user
         final BaseRetrofitCallback<SyncResponse> retrofitCallback = new BaseRetrofitCallback<SyncResponse>(apiCallback) {
             @Override
@@ -121,13 +121,13 @@ class APIv2 extends API {
                 break;
             case LOAD_MORE:
                 // TODO: 06.09.16
-                apiCallback.onFailure("not implemented");
+                apiCallback.onFailure(new UnsupportedOperationException("not implemented in APIv2"));
                 break;
         }
     }
 
     @Override
-    public void createFeed(final Realm realm, String url, long folderId, APICallback<Void, String> apiCallback) {
+    public void createFeed(final Realm realm, String url, long folderId, APICallback<Void, Throwable> apiCallback) {
         final Feed feed = new Feed();
 
         feed.setUrl(url);
@@ -146,7 +146,7 @@ class APIv2 extends API {
     }
 
     @Override
-    public void moveFeed(final Realm realm, final Feed feed, final long folderId, APICallback<Void, String> apiCallback) {
+    public void moveFeed(final Realm realm, final Feed feed, final long folderId, APICallback<Void, Throwable> apiCallback) {
         final Feed changedFeed = new Feed();
         changedFeed.setUrl(feed.getUrl());
         changedFeed.setFolderId(feed.getFolderId());
@@ -160,7 +160,7 @@ class APIv2 extends API {
     }
 
     @Override
-    public void deleteFeed(final Realm realm, final Feed feed, APICallback<Void, String> apiCallback) {
+    public void deleteFeed(final Realm realm, final Feed feed, APICallback<Void, Throwable> apiCallback) {
         api.deleteFeed(feed.getId()).enqueue(new BaseRetrofitCallback<Void>(apiCallback) {
             @Override
             protected void onResponseReal(Response<Void> response) {

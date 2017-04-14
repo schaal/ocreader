@@ -315,7 +315,7 @@ class APIv12 extends API {
     private final ExecutorService threadPool = Executors.newCachedThreadPool();
 
     @Override
-    public void sync(SharedPreferences sharedPreferences, final Realm realm, final SyncType syncType, final Intent intent, final APICallback<Void, String> callback) {
+    public void sync(SharedPreferences sharedPreferences, final Realm realm, final SyncType syncType, final Intent intent, final APICallback<Void, Throwable> callback) {
         syncChanges(new OnCompletionListener() {
             @Override
             public void onCompleted(boolean result) {
@@ -377,14 +377,14 @@ class APIv12 extends API {
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        callback.onFailure(e.getLocalizedMessage());
+                                        callback.onFailure(e);
                                     }
                                 });
                             }
                         }
                     });
                 } else {
-                    callback.onFailure("");
+                    callback.onFailure(null);
                 }
             }
         });
@@ -397,7 +397,7 @@ class APIv12 extends API {
     }
 
     @Override
-    public void user(final Realm realm, final APICallback<Void, String> callback) {
+    public void user(final Realm realm, final APICallback<Void, Throwable> callback) {
         api.user().enqueue(new BaseRetrofitCallback<User>(callback) {
             @Override
             protected void onResponseReal(Response<User> response) {
@@ -588,7 +588,7 @@ class APIv12 extends API {
     }
 
     @Override
-    public void createFeed(final Realm realm, final String url, final long folderId, APICallback<Void, String> apiCallback) {
+    public void createFeed(final Realm realm, final String url, final long folderId, APICallback<Void, Throwable> apiCallback) {
         final Map<String, Object> feedMap = new HashMap<>(2);
 
         feedMap.put("url", url);
@@ -607,7 +607,7 @@ class APIv12 extends API {
     }
 
     @Override
-    public void moveFeed(final Realm realm, final Feed feed, final long folderId, APICallback<Void, String> apiCallback) {
+    public void moveFeed(final Realm realm, final Feed feed, final long folderId, APICallback<Void, Throwable> apiCallback) {
         final Map<String, Long> folderIdMap = new HashMap<>(1);
         folderIdMap.put("folderId", folderId);
 
@@ -625,7 +625,7 @@ class APIv12 extends API {
     }
 
     @Override
-    public void deleteFeed(final Realm realm, final Feed feed, APICallback<Void, String> apiCallback) {
+    public void deleteFeed(final Realm realm, final Feed feed, APICallback<Void, Throwable> apiCallback) {
         api.deleteFeed(feed.getId()).enqueue(new BaseRetrofitCallback<Void>(apiCallback) {
             @Override
             protected void onResponseReal(Response<Void> response) {

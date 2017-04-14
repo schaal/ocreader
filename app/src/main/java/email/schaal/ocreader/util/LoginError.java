@@ -20,18 +20,29 @@ public class LoginError {
         USER,
         PASSWORD,
         NONE,
+        UNKNOWN
     }
 
     private final Section section;
     private final String message;
+    private final Throwable throwable;
 
     public LoginError(String message) {
-        this(Section.NONE, message);
+        this(Section.NONE, message, null);
     }
 
     public LoginError(Section section, String message) {
+        this(section, message, null);
+    }
+
+    private LoginError(Section section, String message, Throwable throwable) {
         this.section = section;
         this.message = message;
+        this.throwable = throwable;
+    }
+
+    private LoginError(Throwable throwable) {
+        this(Section.UNKNOWN, throwable.getMessage(), throwable);
     }
 
     public Section getSection() {
@@ -40,6 +51,10 @@ public class LoginError {
 
     public String getMessage() {
         return message;
+    }
+
+    public Throwable getThrowable() {
+        return throwable;
     }
 
     public static LoginError getError(Context context, int code, String defaultMessage) {
@@ -68,6 +83,6 @@ public class LoginError {
         } else if(t instanceof IOException) {
             return new LoginError(Section.NONE, context.getString(R.string.ncnews_too_old));
         }
-        return new LoginError(t.getLocalizedMessage());
+        return new LoginError(t);
     }
 }
