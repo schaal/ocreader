@@ -372,9 +372,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         binding.itemsRecyclerview.setAdapter(adapter);
         binding.itemsRecyclerview.setLayoutManager(layoutManager);
 
-        if(savedInstanceState != null)
-            layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE));
-
         if(savedInstanceState == null && getIntent().hasExtra(SyncService.EXTRA_ID)) {
             drawerManager.getState().restore(getRealm(), getIntent().getIntExtra(SyncService.EXTRA_ID, -10), null, false);
         } else {
@@ -384,6 +381,14 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         binding.itemsRecyclerview.addItemDecoration(new DividerItemDecoration(this, R.dimen.divider_inset));
 
         adapter.updateItems(false);
+
+        if(savedInstanceState != null) {
+            layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE));
+            adapter.onRestoreInstanceState(savedInstanceState);
+            if(adapter.getSelectedItemsCount() > 0) {
+                actionMode = startActionMode(this);
+            }
+        }
 
         drawerManager.reloadAdapters(getRealm(), isShowOnlyUnread());
 
@@ -400,6 +405,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         super.onSaveInstanceState(outState);
         outState.putParcelable(LAYOUT_MANAGER_STATE, layoutManager.onSaveInstanceState());
         drawerManager.getState().saveInstanceState(PreferenceManager.getDefaultSharedPreferences(this));
+        adapter.onSaveInstanceState(outState);
     }
 
     @Override
@@ -513,15 +519,12 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         }
     }
 
-    private Item firstSelectedItem;
-
     @Override
     public void onItemLongClick(Item item, int position) {
         if(actionMode != null || Preferences.SYS_SYNC_RUNNING.getBoolean(PreferenceManager.getDefaultSharedPreferences(this)))
             return;
 
         adapter.toggleSelection(position);
-        firstSelectedItem = item;
         actionMode = startActionMode(this);
     }
 
@@ -592,11 +595,13 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         if(selectedItemsCount > 2)
             return false;
 
-        boolean firstSelectedUnread = firstSelectedItem.isUnread();
+        Item firstSelectedItem = adapter.getFirstSelectedItem();
+
+        boolean firstSelectedUnread = firstSelectedItem != null && firstSelectedItem.isUnread();
         menu.findItem(R.id.action_mark_read).setVisible(firstSelectedUnread);
         menu.findItem(R.id.action_mark_unread).setVisible(!firstSelectedUnread);
 
-        boolean firstSelectedStarred = firstSelectedItem.isStarred();
+        boolean firstSelectedStarred = firstSelectedItem != null && firstSelectedItem.isStarred();
         menu.findItem(R.id.action_mark_starred).setVisible(!firstSelectedStarred);
         menu.findItem(R.id.action_mark_unstarred).setVisible(firstSelectedStarred);
 

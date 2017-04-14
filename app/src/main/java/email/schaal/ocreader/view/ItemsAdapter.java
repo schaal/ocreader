@@ -22,13 +22,16 @@ package email.schaal.ocreader.view;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.util.ArraySet;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -52,7 +55,10 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final Realm realm;
     private final ItemViewHolder.OnClickListener clickListener;
 
-    private Set<Integer> selections = new ArraySet<>();
+    /**
+     * Selected item ids, LinkedHashSet to preserve insertion order for getFirstSelectedItem()
+     */
+    private Set<Integer> selections = new LinkedHashSet<>();
 
     ItemsAdapter(Context context, Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener) {
         this.realm = realm;
@@ -197,10 +203,28 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return items;
     }
 
+    @Nullable
+    public Item getFirstSelectedItem() {
+        if(selections.isEmpty())
+            return null;
+
+        return getItems().get(selections.iterator().next());
+    }
+
     private class EmptyStateViewHolder extends RecyclerView.ViewHolder {
         EmptyStateViewHolder(View itemView) {
             super(itemView);
         }
     }
 
+    public void onSaveInstanceState(Bundle bundle) {
+        bundle.putIntegerArrayList("adapter_selections", new ArrayList<Integer>(selections));
+    }
+
+    public void onRestoreInstanceState(Bundle bundle) {
+        final ArrayList<Integer> savedSelections = bundle.getIntegerArrayList("adapter_selections");
+        if(savedSelections != null) {
+            selections.addAll(savedSelections);
+        }
+    }
 }
