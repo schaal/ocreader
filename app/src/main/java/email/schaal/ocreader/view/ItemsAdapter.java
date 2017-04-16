@@ -132,9 +132,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof ItemViewHolder) {
-            Item item = items.get(position);
-            item.setSelected(selections.contains(position));
-            ((ItemViewHolder) holder).bindItem(item, position);
+            ((ItemViewHolder) holder).bindItem(items.get(position), position, selections.contains(position));
         }
     }
 
