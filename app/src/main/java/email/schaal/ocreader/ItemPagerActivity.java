@@ -78,9 +78,16 @@ public class ItemPagerActivity extends RealmActivity {
         final Sort order = Preferences.ORDER.getOrder(PreferenceManager.getDefaultSharedPreferences(this));
         final String sortField = Preferences.SORT_FIELD.getString(PreferenceManager.getDefaultSharedPreferences(this));
 
-        final TemporaryFeed temporaryFeed = TemporaryFeed.getPagerTemporaryFeed(getRealm());
+        final String title;
 
-        items = temporaryFeed.getItems().sort(sortField, order);
+        if(getIntent().hasExtra("ARG_ITEMS")) {
+            title = "Test";
+            items = getIntent().getParcelableArrayListExtra("ARG_ITEMS");
+        } else {
+            final TemporaryFeed temporaryFeed = TemporaryFeed.getPagerTemporaryFeed(getRealm());
+            items = temporaryFeed.getItems().sort(sortField, order);
+            title = temporaryFeed.getName();
+        }
 
         TypedArray typedArray = obtainStyledAttributes(new int[] { R.attr.colorPrimary, R.attr.colorAccent });
         try {
@@ -95,7 +102,7 @@ public class ItemPagerActivity extends RealmActivity {
 
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        binding.toolbarLayout.textViewTitle.setText(temporaryFeed.getName());
+        binding.toolbarLayout.textViewTitle.setText(title);
         binding.toolbarLayout.textViewSubtitle.setText("");
 
         final SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());

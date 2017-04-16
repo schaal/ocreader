@@ -14,7 +14,7 @@ class TestGenerator {
     static final String FOLDER_TITLE = "TestFolderTitle";
     static final String FEED_TITLE = "TestFeedTitle";
     static final String ITEM_TITLE = "TestItemTitle";
-    static final String BODY = "TestBody";
+    static final String BODY = "<p>TestBody</p>";
     static final String AUTHOR = "TestAuthor";
 
     static Folder getTestFolder() {
@@ -24,20 +24,27 @@ class TestGenerator {
     }
 
     static Feed getTestFeed() {
-        Feed feed = new Feed();
-        feed.setId(1);
+        return getTestFeed(1);
+    }
+
+    static Feed getTestFeed(long id) {
+        Feed feed = new Feed(id);
         feed.setFolderId(0L);
         feed.setName(FEED_TITLE);
         return feed;
     }
 
     static Item getTestItem() {
-        Item item = new Item();
-        item.setId(1);
+        return getTestItem(1);
+    }
+
+    static Item getTestItem(long id) {
+        Item item = new Item(id);
         item.setTitle(ITEM_TITLE);
         item.setBody(BODY);
         item.setAuthor(AUTHOR);
         item.setFeedId(1);
+        item.setFeed(getTestFeed());
         item.setLastModified(new Date().getTime() / 1000);
         return item;
     }
