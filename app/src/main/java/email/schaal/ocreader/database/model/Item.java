@@ -23,6 +23,8 @@ package email.schaal.ocreader.database.model;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -37,7 +39,7 @@ import io.realm.annotations.PrimaryKey;
  * RealmObject representing a feed Item.
  */
 @SuppressWarnings("unused")
-public class Item extends RealmObject implements Insertable {
+public class Item extends RealmObject implements Insertable, Parcelable {
     private static final String TAG = Item.class.getName();
 
     @PrimaryKey
@@ -310,4 +312,56 @@ public class Item extends RealmObject implements Insertable {
     public void delete(Realm realm) {
         deleteFromRealm();
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.id);
+        dest.writeString(this.url);
+        dest.writeString(this.title);
+        dest.writeString(this.author);
+        dest.writeLong(this.pubDate != null ? this.pubDate.getTime() : -1);
+        dest.writeLong(this.updatedAt != null ? this.updatedAt.getTime() : -1);
+        dest.writeString(this.body);
+        dest.writeString(this.enclosureLink);
+        dest.writeLong(this.feedId);
+        dest.writeParcelable(this.feed, flags);
+        dest.writeByte(this.unread ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.starred ? (byte) 1 : (byte) 0);
+        dest.writeLong(this.lastModified);
+    }
+
+    protected Item(Parcel in) {
+        this.id = in.readLong();
+        this.url = in.readString();
+        this.title = in.readString();
+        this.author = in.readString();
+        long tmpPubDate = in.readLong();
+        this.pubDate = tmpPubDate == -1 ? null : new Date(tmpPubDate);
+        long tmpUpdatedAt = in.readLong();
+        this.updatedAt = tmpUpdatedAt == -1 ? null : new Date(tmpUpdatedAt);
+        this.body = in.readString();
+        this.enclosureLink = in.readString();
+        this.feedId = in.readLong();
+        this.feed = in.readParcelable(Feed.class.getClassLoader());
+        this.unread = in.readByte() != 0;
+        this.starred = in.readByte() != 0;
+        this.lastModified = in.readLong();
+    }
+
+    public static final Parcelable.Creator<Item> CREATOR = new Parcelable.Creator<Item>() {
+        @Override
+        public Item createFromParcel(Parcel source) {
+            return new Item(source);
+        }
+
+        @Override
+        public Item[] newArray(int size) {
+            return new Item[size];
+        }
+    };
 }

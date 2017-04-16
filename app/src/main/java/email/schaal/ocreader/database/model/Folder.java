@@ -20,6 +20,8 @@
 
 package email.schaal.ocreader.database.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
 import java.util.Iterator;
@@ -36,7 +38,7 @@ import io.realm.annotations.PrimaryKey;
 /**
  * RealmObject representing a Folder.
  */
-public class Folder extends RealmObject implements TreeItem, Insertable, TreeIconable {
+public class Folder extends RealmObject implements TreeItem, Insertable, TreeIconable, Parcelable {
     @PrimaryKey
     private long id;
 
@@ -178,4 +180,32 @@ public class Folder extends RealmObject implements TreeItem, Insertable, TreeIco
     public int getIcon() {
         return R.drawable.ic_folder;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.id);
+        dest.writeString(this.name);
+    }
+
+    protected Folder(Parcel in) {
+        this.id = in.readLong();
+        this.name = in.readString();
+    }
+
+    public static final Parcelable.Creator<Folder> CREATOR = new Parcelable.Creator<Folder>() {
+        @Override
+        public Folder createFromParcel(Parcel source) {
+            return new Folder(source);
+        }
+
+        @Override
+        public Folder[] newArray(int size) {
+            return new Folder[size];
+        }
+    };
 }

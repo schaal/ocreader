@@ -21,6 +21,8 @@
 package email.schaal.ocreader.database.model;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
 import java.util.Collections;
@@ -37,7 +39,7 @@ import io.realm.annotations.PrimaryKey;
  * RealmObject representing a Feed
  */
 @SuppressWarnings("unused")
-public class Feed extends RealmObject implements TreeItem, Insertable {
+public class Feed extends RealmObject implements TreeItem, Insertable, Parcelable {
     @PrimaryKey
     private long id;
 
@@ -289,4 +291,57 @@ public class Feed extends RealmObject implements TreeItem, Insertable {
         }
         return feed;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.id);
+        dest.writeString(this.url);
+        dest.writeString(this.name);
+        dest.writeString(this.link);
+        dest.writeString(this.faviconLink);
+        dest.writeLong(this.added != null ? this.added.getTime() : -1);
+        dest.writeValue(this.folderId);
+        dest.writeParcelable(this.folder, flags);
+        dest.writeInt(this.unreadCount);
+        dest.writeInt(this.starredCount);
+        dest.writeInt(this.ordering);
+        dest.writeByte(this.pinned ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.updateErrorCount);
+        dest.writeString(this.lastUpdateError);
+    }
+
+    protected Feed(Parcel in) {
+        this.id = in.readLong();
+        this.url = in.readString();
+        this.name = in.readString();
+        this.link = in.readString();
+        this.faviconLink = in.readString();
+        long tmpAdded = in.readLong();
+        this.added = tmpAdded == -1 ? null : new Date(tmpAdded);
+        this.folderId = (Long) in.readValue(Long.class.getClassLoader());
+        this.folder = in.readParcelable(Folder.class.getClassLoader());
+        this.unreadCount = in.readInt();
+        this.starredCount = in.readInt();
+        this.ordering = in.readInt();
+        this.pinned = in.readByte() != 0;
+        this.updateErrorCount = in.readInt();
+        this.lastUpdateError = in.readString();
+    }
+
+    public static final Parcelable.Creator<Feed> CREATOR = new Parcelable.Creator<Feed>() {
+        @Override
+        public Feed createFromParcel(Parcel source) {
+            return new Feed(source);
+        }
+
+        @Override
+        public Feed[] newArray(int size) {
+            return new Feed[size];
+        }
+    };
 }
