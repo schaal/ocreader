@@ -44,6 +44,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.List;
 import java.util.WeakHashMap;
 
 import email.schaal.ocreader.database.Queries;
@@ -52,7 +53,6 @@ import email.schaal.ocreader.database.model.TemporaryFeed;
 import email.schaal.ocreader.databinding.ActivityItemPagerBinding;
 import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.util.FeedColors;
-import io.realm.RealmResults;
 import io.realm.Sort;
 
 public class ItemPagerActivity extends RealmActivity {
@@ -66,7 +66,7 @@ public class ItemPagerActivity extends RealmActivity {
     @ColorInt private int defaultAccent;
     private Item item;
 
-    private RealmResults<Item> items;
+    private List<Item> items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
