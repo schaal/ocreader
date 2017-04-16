@@ -10,9 +10,13 @@ OCReader is a client for a [Nextcloud News][0] instance (needs at least version 
 
 ## Screenshots
 
-![Drawer](https://raw.githubusercontent.com/schaal/screenshots/master/ocreader/drawer.png)
-![List View](https://raw.githubusercontent.com/schaal/screenshots/master/ocreader/listview.png)
-![Item page](https://raw.githubusercontent.com/schaal/screenshots/master/ocreader/itempage.png)
+![Drawer](metadata/en-US/images/phoneScreenshots/drawer.png)
+![List View](metadata/en-US/images/phoneScreenshots/list.png)
+![Item page](metadata/en-US/images/phoneScreenshots/itempager.png)
+
+### Dark theme
+
+![Item page with dark theme](metadata/en-US/images/phoneScreenshots/itempager-dark.png)
 
 ## License
 OCReader is released under the [GNU General Public License version 3](https://www.gnu.org/licenses/gpl-3.0) (or later versions).
