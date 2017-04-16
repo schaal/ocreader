@@ -26,22 +26,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.databinding.FragmentItemPagerBinding;
 
 /**
  * Fragment to display a single feed item using a WebView.
  */
 public class ItemPageFragment extends Fragment {
-    public static final String ARG_POSITION = "ARG_POSITION";
+    private static final String ARG_ITEM = "ARG_ITEM";
 
     private FragmentItemPagerBinding binding;
 
     public ItemPageFragment() {
     }
 
-    public static ItemPageFragment newInstance(int position) {
+    public static ItemPageFragment newInstance(Item item) {
         Bundle bundle = new Bundle();
-        bundle.putInt(ARG_POSITION, position);
+        bundle.putParcelable(ARG_ITEM, item);
 
         ItemPageFragment fragment = new ItemPageFragment();
         fragment.setArguments(bundle);
@@ -53,7 +54,8 @@ public class ItemPageFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        binding.webView.setItem(((ItemPagerActivity) getActivity()).getItemForPosition(getArguments().getInt(ARG_POSITION)));
+        Item item = getArguments().getParcelable(ARG_ITEM);
+        binding.webView.setItem(item);
     }
 
     @Override
