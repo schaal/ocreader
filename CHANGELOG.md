@@ -1,3 +1,11 @@
+## 0.31 (2017-04-16)
+
+* Add settings activity
+* Layout improvements for article view
+  * improve emoji display in articles
+  * remove margin from first image in article
+
+
 ## 0.30 (2017-04-01)
 
 The "This is no joke" release
