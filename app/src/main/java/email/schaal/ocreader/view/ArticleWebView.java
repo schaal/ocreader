@@ -10,6 +10,7 @@ import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 
@@ -176,25 +177,31 @@ public class ArticleWebView extends NestedScrollWebView {
     }
 
     private String extractFirstImg(Document document) {
-        Element child = document.body().child(0);
-
-        // if document starts with <br>, remove it
-        if(child.tagName().equals("br")) {
-            Element brChild = child;
-            child = child.nextElementSibling();
-            brChild.remove();
-        }
-
-        while(child != null && !child.tagName().equals("img")) {
-            child = child.children().first();
-        }
-
         String firstImgString = "";
-        if(child != null) {
-            child.remove();
-            child.addClass("headerimg");
-            firstImgString = child.toString();
+
+        try {
+            Element child = document.body().child(0);
+
+            // if document starts with <br>, remove it
+            if (child.tagName().equals("br")) {
+                Element brChild = child;
+                child = child.nextElementSibling();
+                brChild.remove();
+            }
+
+            while (child != null && !child.tagName().equals("img")) {
+                child = child.children().first();
+            }
+
+            if (child != null) {
+                child.remove();
+                child.addClass("headerimg");
+                firstImgString = child.toString();
+            }
+        } catch (IndexOutOfBoundsException e) {
+            Log.e(TAG, "Body has no children", e);
         }
+
         return firstImgString;
     }
 
