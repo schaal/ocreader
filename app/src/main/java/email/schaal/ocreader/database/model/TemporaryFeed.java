@@ -22,14 +22,16 @@ package email.schaal.ocreader.database.model;
 
 import io.realm.Realm;
 import io.realm.RealmList;
-import io.realm.RealmObject;
+import io.realm.RealmModel;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.RealmClass;
 
 /**
  * TemporaryFeed allows to store the currently displayed Items.
  */
 @SuppressWarnings("unused")
-public class TemporaryFeed extends RealmObject {
+@RealmClass
+public class TemporaryFeed implements RealmModel {
     public static final int LIST_ID = 0;
     public static final int PAGER_ID = 1;
 

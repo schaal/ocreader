@@ -38,7 +38,7 @@ import email.schaal.ocreader.util.AlarmUtils;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmMigration;
-import io.realm.RealmObject;
+import io.realm.RealmModel;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
@@ -128,7 +128,7 @@ public class Queries {
         });
     }
 
-    public static <T extends RealmObject & TreeItem & Insertable> void deleteAndInsert(Realm realm, final Class<T> clazz, final List<T> elements) {
+    public static <T extends RealmModel & TreeItem & Insertable> void deleteAndInsert(Realm realm, final Class<T> clazz, final List<T> elements) {
         Collections.sort(elements, TreeItem.COMPARATOR);
 
         realm.executeTransaction(new Realm.Transaction() {

@@ -31,15 +31,18 @@ import android.util.Log;
 import java.util.Date;
 
 import io.realm.Realm;
+import io.realm.RealmModel;
 import io.realm.RealmObject;
 import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.RealmClass;
 
 /**
  * RealmObject representing a feed Item.
  */
 @SuppressWarnings("unused")
-public class Item extends RealmObject implements Insertable, Parcelable {
+@RealmClass
+public class Item implements RealmModel, Insertable, Parcelable {
     private static final String TAG = Item.class.getName();
 
     @PrimaryKey
@@ -222,7 +225,7 @@ public class Item extends RealmObject implements Insertable, Parcelable {
     }
 
     public void setUnread(boolean unread) {
-        if(isManaged() && this.unread != unread) {
+        if(RealmObject.isManaged(this) && this.unread != unread) {
             unreadChanged = !unreadChanged;
             feed.incrementUnreadCount(unread ? 1 : -1);
         }
@@ -234,7 +237,7 @@ public class Item extends RealmObject implements Insertable, Parcelable {
     }
 
     public void setStarred(boolean starred) {
-        if(isManaged() && this.starred != starred) {
+        if(RealmObject.isManaged(this) && this.starred != starred) {
             starredChanged = !starredChanged;
             feed.incrementStarredCount(starred ? 1 : -1);
         }
@@ -310,7 +313,7 @@ public class Item extends RealmObject implements Insertable, Parcelable {
 
     @Override
     public void delete(Realm realm) {
-        deleteFromRealm();
+        RealmObject.deleteFromRealm(this);
     }
 
     @Override

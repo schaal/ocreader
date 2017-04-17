@@ -23,15 +23,18 @@ package email.schaal.ocreader.database.model;
 import java.util.Date;
 
 import io.realm.Realm;
+import io.realm.RealmModel;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.RealmClass;
 import io.realm.annotations.Required;
 
 /**
  * RealmObject representing User information.
  */
 @SuppressWarnings("unused")
-public class User extends RealmObject implements Insertable {
+@RealmClass
+public class User implements RealmModel, Insertable {
     @PrimaryKey
     @Required
     private String userId;
@@ -89,6 +92,6 @@ public class User extends RealmObject implements Insertable {
 
     @Override
     public void delete(Realm realm) {
-        deleteFromRealm();
+        RealmObject.deleteFromRealm(this);
     }
 }

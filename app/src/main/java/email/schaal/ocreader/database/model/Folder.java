@@ -29,16 +29,19 @@ import java.util.List;
 
 import email.schaal.ocreader.R;
 import io.realm.Realm;
+import io.realm.RealmModel;
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.RealmClass;
 
 /**
  * RealmObject representing a Folder.
  */
-public class Folder extends RealmObject implements TreeItem, Insertable, TreeIconable, Parcelable {
+@RealmClass
+public class Folder implements RealmModel, TreeItem, Insertable, TreeIconable, Parcelable {
     @PrimaryKey
     private long id;
 
@@ -129,7 +132,7 @@ public class Folder extends RealmObject implements TreeItem, Insertable, TreeIco
         for(Feed feed: getFeeds(realm, false)) {
             feed.delete(realm);
         }
-        deleteFromRealm();
+        RealmObject.deleteFromRealm(this);
     }
 
     @Nullable

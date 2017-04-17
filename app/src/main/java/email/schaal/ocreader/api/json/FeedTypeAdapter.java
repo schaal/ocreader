@@ -31,6 +31,7 @@ import java.io.IOException;
 
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.util.StringUtils;
+import io.realm.RealmObject;
 
 /**
  * TypeAdapter to deserialize the JSON response for Feeds.
@@ -43,7 +44,7 @@ public class FeedTypeAdapter extends JsonAdapter<Feed> {
         out.beginObject();
 
         // Only write url for feeds that are not in the database
-        if(!feed.isManaged()) {
+        if(!RealmObject.isManaged(feed)) {
             out.name("url");
             out.value(feed.getUrl());
         }

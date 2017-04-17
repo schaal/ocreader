@@ -31,15 +31,18 @@ import java.util.List;
 
 import email.schaal.ocreader.R;
 import io.realm.Realm;
+import io.realm.RealmModel;
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.RealmClass;
 
 /**
  * RealmObject representing a Feed
  */
 @SuppressWarnings("unused")
-public class Feed extends RealmObject implements TreeItem, Insertable, Parcelable {
+@RealmClass
+public class Feed implements RealmModel, TreeItem, Insertable, Parcelable {
     @PrimaryKey
     private long id;
 
@@ -270,7 +273,7 @@ public class Feed extends RealmObject implements TreeItem, Insertable, Parcelabl
     @Override
     public void delete(Realm realm) {
         realm.where(Item.class).equalTo(Item.FEED_ID, getId()).findAll().deleteAllFromRealm();
-        deleteFromRealm();
+        RealmObject.deleteFromRealm(this);
     }
 
     @Nullable
