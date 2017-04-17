@@ -82,6 +82,7 @@
     font-size: 0.8em;
     margin-top: 4px;
     margin-bottom: 0px;
+    font-style: italic;
   }
 
   .content > p {
