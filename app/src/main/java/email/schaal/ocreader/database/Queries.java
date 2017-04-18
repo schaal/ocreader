@@ -50,7 +50,7 @@ import io.realm.exceptions.RealmException;
 public class Queries {
     private final static String TAG = Queries.class.getName();
 
-    public final static int SCHEMA_VERSION = 11;
+    public final static int SCHEMA_VERSION = 12;
 
     private final static Realm.Transaction initialData = new Realm.Transaction() {
         @Override
@@ -167,30 +167,24 @@ public class Queries {
     }
 
     public static void removeExcessItems(Realm realm, final int maxItems) {
-
-        final RealmQuery<Item> realmQuery = realm.where(Item.class)
+        final RealmResults<Item> expendableItems = realm.where(Item.class)
                 .equalTo(Item.UNREAD, false)
-                .equalTo(Item.STARRED, false);
+                .equalTo(Item.STARRED, false)
+                .equalTo(Item.ACTIVE, false)
+                .findAllSorted(Item.LAST_MODIFIED, Sort.ASCENDING);
 
-        final List<Item> temporaryFeedItems = TemporaryFeed.getPagerTemporaryFeed(realm).getItems().sort(Item.ID);
-        if(!temporaryFeedItems.isEmpty()) {
-            final Long[] temporaryFeedItemsIds = new Long[temporaryFeedItems.size()];
-            for (int i = 0; i < temporaryFeedItems.size(); i++)
-                temporaryFeedItemsIds[i] = temporaryFeedItems.get(i).getId();
-            realmQuery.not().in(Item.ID, temporaryFeedItemsIds);
-        }
+        final int itemsToDelete = expendableItems.size() - maxItems;
 
-        final RealmResults<Item> expendableItems = realmQuery.findAllSorted(Item.LAST_MODIFIED, Sort.ASCENDING);
-
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                int itemsToDelete = expendableItems.size() - maxItems;
-                for (int i = 0; i < itemsToDelete; i++) {
-                    expendableItems.deleteFirstFromRealm();
+        if(itemsToDelete > 0) {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    for (int i = 0; i < itemsToDelete; i++) {
+                        expendableItems.deleteFirstFromRealm();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public static void markAboveAsRead(Realm realm, final List<Item> items, final long lastItemId) {

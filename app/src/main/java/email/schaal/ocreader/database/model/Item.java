@@ -103,6 +103,10 @@ public class Item implements RealmModel, Insertable, Parcelable {
     private String contentHash;
     public static final String CONTENT_HASH = "contentHash";
 
+    @Index
+    private boolean active;
+    public static final String ACTIVE = "active";
+
     /**
      * Required by realm
      */
@@ -216,6 +220,14 @@ public class Item implements RealmModel, Insertable, Parcelable {
 
     public String getContentHash() {
         return contentHash;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public void play(Context context) {

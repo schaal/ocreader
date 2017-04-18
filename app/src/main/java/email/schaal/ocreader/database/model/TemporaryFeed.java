@@ -100,7 +100,17 @@ public class TemporaryFeed implements RealmModel {
                 final TemporaryFeed listTempFeed = getListTemporaryFeed(realm);
                 final TemporaryFeed pagerTempFeed = getPagerTemporaryFeed(realm);
 
-                pagerTempFeed.setItems(listTempFeed.getItems());
+                for(Item item: realm.where(Item.class).equalTo(Item.ACTIVE, true).findAll()) {
+                    item.setActive(false);
+                }
+
+                final RealmList<Item> listTempFeedItems = listTempFeed.getItems();
+
+                for(Item item: listTempFeedItems) {
+                    item.setActive(true);
+                }
+
+                pagerTempFeed.setItems(listTempFeedItems);
                 pagerTempFeed.setName(listTempFeed.getName());
                 pagerTempFeed.setTreeItemId(listTempFeed.getTreeItemId());
             }

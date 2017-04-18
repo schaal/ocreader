@@ -58,6 +58,18 @@ class DatabaseMigration implements RealmMigration {
                 object.setDate(Item.UPDATED_AT, object.getDate(Item.PUB_DATE));
             }
 
+            oldVersion++;
+        }
+
+        /**
+         * 11 -> 12
+         *
+         * - Add active property to Item
+         */
+        if(oldVersion == 11) {
+            schema.get("Item")
+                    .addField(Item.ACTIVE, boolean.class, FieldAttribute.INDEXED);
+
             //noinspection UnusedAssignment
             oldVersion++;
         }
