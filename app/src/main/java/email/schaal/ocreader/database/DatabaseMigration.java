@@ -8,7 +8,6 @@ import io.realm.DynamicRealm;
 import io.realm.DynamicRealmObject;
 import io.realm.FieldAttribute;
 import io.realm.RealmMigration;
-import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
 
 /**
@@ -55,15 +54,9 @@ class DatabaseMigration implements RealmMigration {
          *  - Make sure every item has updatedAt != null, set updatedAt = pubDate if not
          */
         if(oldVersion == 10) {
-            schema.get("Item")
-                    .transform(new RealmObjectSchema.Function() {
-                        @Override
-                        public void apply(DynamicRealmObject dynamicRealmObject) {
-                            if(dynamicRealmObject.get(Item.UPDATED_AT) == null) {
-                                dynamicRealmObject.setDate(Item.UPDATED_AT, dynamicRealmObject.getDate(Item.PUB_DATE));
-                            }
-                        }
-                    });
+            for(DynamicRealmObject object: realm.where("Item").isNull(Item.UPDATED_AT).findAll()) {
+                object.setDate(Item.UPDATED_AT, object.getDate(Item.PUB_DATE));
+            }
 
             //noinspection UnusedAssignment
             oldVersion++;
