@@ -1,3 +1,7 @@
+## 0.33 (2017-04-18)
+
+* Improve database migration performance
+
 ## 0.32 (2017-04-18)
 
 * Handle items with no updatedDate
