@@ -50,7 +50,7 @@ import io.realm.exceptions.RealmException;
 public class Queries {
     private final static String TAG = Queries.class.getName();
 
-    public final static int SCHEMA_VERSION = 10;
+    public final static int SCHEMA_VERSION = 11;
 
     private final static Realm.Transaction initialData = new Realm.Transaction() {
         @Override

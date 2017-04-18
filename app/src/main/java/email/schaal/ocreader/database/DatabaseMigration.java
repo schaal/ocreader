@@ -2,10 +2,13 @@ package email.schaal.ocreader.database;
 
 import android.util.Log;
 
+import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.database.model.TemporaryFeed;
 import io.realm.DynamicRealm;
+import io.realm.DynamicRealmObject;
 import io.realm.FieldAttribute;
 import io.realm.RealmMigration;
+import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
 
 /**
@@ -42,6 +45,25 @@ class DatabaseMigration implements RealmMigration {
 
             realm.createObject("TemporaryFeed", TemporaryFeed.LIST_ID);
             realm.createObject("TemporaryFeed", TemporaryFeed.PAGER_ID);
+
+            oldVersion++;
+        }
+
+        /**
+         * 10 -> 11
+         *
+         *  - Make sure every item has updatedAt != null, set updatedAt = pubDate if not
+         */
+        if(oldVersion == 10) {
+            schema.get("Item")
+                    .transform(new RealmObjectSchema.Function() {
+                        @Override
+                        public void apply(DynamicRealmObject dynamicRealmObject) {
+                            if(dynamicRealmObject.get(Item.UPDATED_AT) == null) {
+                                dynamicRealmObject.setDate(Item.UPDATED_AT, dynamicRealmObject.getDate(Item.PUB_DATE));
+                            }
+                        }
+                    });
 
             //noinspection UnusedAssignment
             oldVersion++;
