@@ -40,7 +40,6 @@ import io.realm.annotations.RealmClass;
 /**
  * RealmObject representing a feed Item.
  */
-@SuppressWarnings("unused")
 @RealmClass
 public class Item implements RealmModel, Insertable, Parcelable {
     private static final String TAG = Item.class.getName();
@@ -104,35 +103,22 @@ public class Item implements RealmModel, Insertable, Parcelable {
     private String contentHash;
     public static final String CONTENT_HASH = "contentHash";
 
+    /**
+     * Required by realm
+     */
     public Item() {
-    }
-
-    public Item(long id) {
-        this.id = id;
     }
 
     public long getId() {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public String getGuid() {
         return guid;
     }
 
-    public void setGuid(String guid) {
-        this.guid = guid;
-    }
-
     public String getGuidHash() {
         return guidHash;
-    }
-
-    public void setGuidHash(String guidHash) {
-        this.guidHash = guidHash;
     }
 
     @Nullable
@@ -140,83 +126,43 @@ public class Item implements RealmModel, Insertable, Parcelable {
         return url;
     }
 
-    public void setUrl(@Nullable String url) {
-        this.url = url;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
     public Date getPubDate() {
         return pubDate;
-    }
-
-    public void setPubDate(Date pubDate) {
-        this.pubDate = pubDate;
-        // Use pubDate for updatedAt, updatedAt only available on Nextcloud News >= 9.0.5
-        if(this.updatedAt == null) {
-            this.updatedAt = pubDate;
-        }
     }
 
     public Date getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     public String getBody() {
         return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
     }
 
     public String getEnclosureMime() {
         return enclosureMime;
     }
 
-    public void setEnclosureMime(String enclosureMime) {
-        this.enclosureMime = enclosureMime;
-    }
-
     public String getEnclosureLink() {
         return enclosureLink;
-    }
-
-    public void setEnclosureLink(String enclosureLink) {
-        this.enclosureLink = enclosureLink;
     }
 
     public long getFeedId() {
         return feedId;
     }
 
-    public void setFeedId(long feedId) {
-        this.feedId = feedId;
-    }
-
     public Feed getFeed() {
         return feed;
     }
 
-    public void setFeed(Feed feed) {
+    private void setFeed(Feed feed) {
         this.feed = feed;
     }
 
@@ -264,24 +210,12 @@ public class Item implements RealmModel, Insertable, Parcelable {
         return lastModified;
     }
 
-    public void setLastModified(long lastModified) {
-        this.lastModified = lastModified;
-    }
-
     public String getFingerprint() {
         return fingerprint;
     }
 
     public String getContentHash() {
         return contentHash;
-    }
-
-    public void setContentHash(String contentHash) {
-        this.contentHash = contentHash;
-    }
-
-    public void setFingerprint(String fingerprint) {
-        this.fingerprint = fingerprint;
     }
 
     public void play(Context context) {
@@ -367,4 +301,159 @@ public class Item implements RealmModel, Insertable, Parcelable {
             return new Item[size];
         }
     };
+
+    private Item(Builder builder) {
+        this.id = builder.id;
+        this.url = builder.url;
+        this.title = builder.title;
+        this.author = builder.author;
+        this.pubDate = builder.pubDate;
+
+        if(builder.updatedAt != null)
+            this.updatedAt = builder.updatedAt;
+        else
+            this.updatedAt = pubDate;
+
+        this.body = builder.body;
+        this.enclosureLink = builder.enclosureLink;
+        this.enclosureMime = builder.enclosureMime;
+        this.feedId = builder.feedId;
+        this.feed = builder.feed;
+        this.unread = builder.unread;
+        this.starred = builder.starred;
+        this.unreadChanged = builder.unreadChanged;
+        this.starredChanged = builder.starredChanged;
+        this.lastModified = builder.lastModified;
+        this.contentHash = builder.contentHash;
+        this.guid = builder.guid;
+        this.guidHash = builder.guidHash;
+        this.fingerprint = builder.fingerprint;
+    }
+
+    public static class Builder {
+        private long id = -1;
+        private String url;
+        private String title;
+        private String author;
+        private Date pubDate;
+        private Date updatedAt;
+        private String body;
+        private String enclosureLink;
+        private long feedId;
+        private Feed feed;
+        private boolean unread;
+        private boolean starred;
+        private boolean unreadChanged;
+        private boolean starredChanged;
+        private long lastModified;
+        private String contentHash;
+        private String enclosureMime;
+        private String fingerprint;
+        private String guid;
+        private String guidHash;
+
+        public Builder setId(long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder setUrl(String url) {
+            this.url = url;
+            return this;
+        }
+
+        public Builder setTitle(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder setAuthor(String author) {
+            this.author = author;
+            return this;
+        }
+
+        public Builder setPubDate(Date pubDate) {
+            this.pubDate = pubDate;
+            return this;
+        }
+
+        public Builder setUpdatedAt(Date updatedAt) {
+            this.updatedAt = updatedAt;
+            return this;
+        }
+
+        public Builder setBody(String body) {
+            this.body = body;
+            return this;
+        }
+
+        public Builder setEnclosureLink(String enclosureLink) {
+            this.enclosureLink = enclosureLink;
+            return this;
+        }
+
+        public Builder setFeedId(long feedId) {
+            this.feedId = feedId;
+            return this;
+        }
+
+        public Builder setFeed(Feed feed) {
+            this.feed = feed;
+            return this;
+        }
+
+        public Builder setUnread(boolean unread) {
+            this.unread = unread;
+            return this;
+        }
+
+        public Builder setStarred(boolean starred) {
+            this.starred = starred;
+            return this;
+        }
+
+        public Builder setUnreadChanged(boolean unreadChanged) {
+            this.unreadChanged = unreadChanged;
+            return this;
+        }
+
+        public Builder setStarredChanged(boolean starredChanged) {
+            this.starredChanged = starredChanged;
+            return this;
+        }
+
+        public Builder setLastModified(long lastModified) {
+            this.lastModified = lastModified;
+            return this;
+        }
+
+        public Builder setContentHash(String contentHash) {
+            this.contentHash = contentHash;
+            return this;
+        }
+
+        public Builder setEnclosureMime(String enclosureMime) {
+            this.enclosureMime = enclosureMime;
+            return this;
+        }
+
+        public Builder setFingerprint(String fingerprint) {
+            this.fingerprint = fingerprint;
+            return this;
+        }
+
+        public Builder setGuid(String guid) {
+            this.guid = guid;
+            return this;
+        }
+
+        public Builder setGuidHash(String guidHash) {
+            this.guidHash = guidHash;
+            return this;
+        }
+
+        public Item build() {
+            return new Item(this);
+        }
+    }
 }

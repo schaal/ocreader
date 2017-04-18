@@ -39,13 +39,14 @@ class TestGenerator {
     }
 
     static Item getTestItem(long id) {
-        Item item = new Item(id);
-        item.setTitle(ITEM_TITLE);
-        item.setBody(BODY);
-        item.setAuthor(AUTHOR);
-        item.setFeedId(1);
-        item.setFeed(getTestFeed());
-        item.setLastModified(new Date().getTime() / 1000);
-        return item;
+        return new Item.Builder()
+                .setId(id)
+                .setTitle(ITEM_TITLE)
+                .setBody(BODY)
+                .setAuthor(AUTHOR)
+                .setFeedId(1)
+                .setFeed(getTestFeed())
+                .setLastModified(new Date().getTime() / 1000)
+                .build();
     }
 }

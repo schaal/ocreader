@@ -69,7 +69,7 @@ public class ItemTypeAdapter extends JsonAdapter<Item> {
 
         final NullableJsonReader reader = new NullableJsonReader(in);
 
-        final Item item = new Item();
+        final Item.Builder item = new Item.Builder();
 
         in.beginObject();
 
@@ -159,10 +159,11 @@ public class ItemTypeAdapter extends JsonAdapter<Item> {
             }
         }
         in.endObject();
-        return item;
+
+        return item.build();
     }
 
-    private void parseEnclosure(NullableJsonReader reader, Item item) throws IOException {
+    private void parseEnclosure(NullableJsonReader reader, Item.Builder item) throws IOException {
         reader.in.beginObject();
         while(reader.in.hasNext()) {
             switch (reader.in.nextName()) {

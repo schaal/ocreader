@@ -45,10 +45,12 @@ public class JsonTest {
     @Test
     public void TestItemToJson() throws IOException {
         Moshi moshi = new Moshi.Builder().add(Item.class, new ItemTypeAdapter()).build();
-        Item item = new Item(1);
-        item.setContentHash("oijoijo");
-        item.setUnreadChanged(true);
-        item.setUnread(false);
+        Item item = new Item.Builder()
+                .setId(1)
+                .setContentHash("oijoijo")
+                .setUnreadChanged(true)
+                .setUnread(false)
+                .build();
 
         String itemJson = moshi.adapter(Item.class).toJson(item);
         ReducedItem reducedItem = moshi.adapter(ReducedItem.class).fromJson(itemJson);
