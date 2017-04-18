@@ -69,7 +69,7 @@ public class ItemTypeAdapter extends JsonAdapter<Item> {
 
         final NullableJsonReader reader = new NullableJsonReader(in);
 
-        final Item.Builder item = new Item.Builder();
+        final Item.Builder builder = new Item.Builder();
 
         in.beginObject();
 
@@ -77,69 +77,69 @@ public class ItemTypeAdapter extends JsonAdapter<Item> {
             String name = in.nextName();
             switch (name) {
                 case "id":
-                    item.setId(in.nextLong());
+                    builder.setId(in.nextLong());
                     break;
                 case "guid":
-                    item.setGuid(in.nextString());
+                    builder.setGuid(in.nextString());
                     break;
                 case "guidHash":
-                    item.setGuidHash(in.nextString());
+                    builder.setGuidHash(in.nextString());
                     break;
                 case "url":
-                    item.setUrl(reader.nextString());
+                    builder.setUrl(reader.nextString());
                     break;
                 case "title":
-                    item.setTitle(StringUtils.cleanString(in.nextString()));
+                    builder.setTitle(StringUtils.cleanString(in.nextString()));
                     break;
                 case "author":
-                    item.setAuthor(Strings.emptyToNull(in.nextString()));
+                    builder.setAuthor(Strings.emptyToNull(in.nextString()));
                     break;
                 case "pubDate":
-                    item.setPubDate(new Date(in.nextLong() * 1000));
+                    builder.setPubDate(new Date(in.nextLong() * 1000));
                     break;
                 case "body":
-                    item.setBody(in.nextString());
+                    builder.setBody(in.nextString());
                     break;
                 case "enclosureMime":
                     if(in.peek() != JsonReader.Token.NULL)
-                        item.setEnclosureMime(Strings.emptyToNull(in.nextString()));
+                        builder.setEnclosureMime(Strings.emptyToNull(in.nextString()));
                     else
                         in.skipValue();
                     break;
                 case "enclosureLink":
                     if(in.peek() != JsonReader.Token.NULL)
-                        item.setEnclosureLink(Strings.emptyToNull(in.nextString()));
+                        builder.setEnclosureLink(Strings.emptyToNull(in.nextString()));
                     else
                         in.skipValue();
                     break;
                 case "publishedAt":
-                    item.setPubDate(parseDate(in.nextString()));
+                    builder.setPubDate(parseDate(in.nextString()));
                     break;
                 case "updatedAt":
-                    item.setUpdatedAt(parseDate(in.nextString()));
+                    builder.setUpdatedAt(parseDate(in.nextString()));
                     break;
                 case "enclosure":
-                    parseEnclosure(reader, item);
+                    parseEnclosure(reader, builder);
                     break;
                 case "feedId":
-                    item.setFeedId(in.nextLong());
+                    builder.setFeedId(in.nextLong());
                     break;
                 case "isUnread":
                 case "unread":
-                    item.setUnread(in.nextBoolean());
+                    builder.setUnread(in.nextBoolean());
                     break;
                 case "starred":
                 case "isStarred":
-                    item.setStarred(in.nextBoolean());
+                    builder.setStarred(in.nextBoolean());
                     break;
                 case "lastModified":
-                    item.setLastModified(in.nextLong());
+                    builder.setLastModified(in.nextLong());
                     break;
                 case "rtl":
                     in.skipValue();
                     break;
                 case "fingerprint":
-                    item.setFingerprint(in.nextString());
+                    builder.setFingerprint(in.nextString());
                     break;
                 case "contentHash":
                     // ignore for now, old items don't have this set yet.
@@ -148,7 +148,7 @@ public class ItemTypeAdapter extends JsonAdapter<Item> {
                     break;
                 case "updatedDate":
                     if(in.peek() == JsonReader.Token.NUMBER)
-                        item.setUpdatedAt(new Date(in.nextLong() * 1000));
+                        builder.setUpdatedAt(new Date(in.nextLong() * 1000));
                     else
                         in.skipValue();
                     break;
@@ -160,18 +160,18 @@ public class ItemTypeAdapter extends JsonAdapter<Item> {
         }
         in.endObject();
 
-        return item.build();
+        return builder.build();
     }
 
-    private void parseEnclosure(NullableJsonReader reader, Item.Builder item) throws IOException {
+    private void parseEnclosure(NullableJsonReader reader, Item.Builder builder) throws IOException {
         reader.in.beginObject();
         while(reader.in.hasNext()) {
             switch (reader.in.nextName()) {
                 case "mimeType":
-                    item.setEnclosureMime(reader.nextString());
+                    builder.setEnclosureMime(reader.nextString());
                     break;
                 case "url":
-                    item.setEnclosureLink(reader.nextString());
+                    builder.setEnclosureLink(reader.nextString());
                     break;
             }
         }
