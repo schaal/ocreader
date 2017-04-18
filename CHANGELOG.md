@@ -1,3 +1,7 @@
+## 0.32 (2017-04-18)
+
+* Handle items with no updatedDate
+
 ## 0.31 (2017-04-16)
 
 * Add settings activity
