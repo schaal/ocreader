@@ -147,7 +147,10 @@ public class ItemTypeAdapter extends JsonAdapter<Item> {
                     in.skipValue();
                     break;
                 case "updatedDate":
-                    item.setUpdatedAt(new Date(in.nextLong() * 1000));
+                    if(in.peek() == JsonReader.Token.NUMBER)
+                        item.setUpdatedAt(new Date(in.nextLong() * 1000));
+                    else
+                        in.skipValue();
                     break;
                 default:
                     Log.w(TAG, "Unknown value in item json: " + name);
