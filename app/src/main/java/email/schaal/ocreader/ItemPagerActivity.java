@@ -84,6 +84,7 @@ public class ItemPagerActivity extends RealmActivity {
             title = "Test";
             items = getIntent().getParcelableArrayListExtra("ARG_ITEMS");
         } else {
+            TemporaryFeed.updatePagerTemporaryFeed(getRealm());
             final TemporaryFeed temporaryFeed = TemporaryFeed.getPagerTemporaryFeed(getRealm());
             items = temporaryFeed.getItems().sort(sortField, order);
             title = temporaryFeed.getName();

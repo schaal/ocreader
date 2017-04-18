@@ -90,16 +90,20 @@ public class TemporaryFeed implements RealmModel {
     }
 
     public static TemporaryFeed getPagerTemporaryFeed(Realm realm) {
-        final TemporaryFeed listTempFeed = getListTemporaryFeed(realm);
-        final TemporaryFeed pagerTempFeed = realm.where(TemporaryFeed.class).equalTo(ID, PAGER_ID).findFirst();
+        return realm.where(TemporaryFeed.class).equalTo(ID, PAGER_ID).findFirst();
+    }
+
+    public static void updatePagerTemporaryFeed(Realm realm) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
+                final TemporaryFeed listTempFeed = getListTemporaryFeed(realm);
+                final TemporaryFeed pagerTempFeed = getPagerTemporaryFeed(realm);
+
                 pagerTempFeed.setItems(listTempFeed.getItems());
                 pagerTempFeed.setName(listTempFeed.getName());
                 pagerTempFeed.setTreeItemId(listTempFeed.getTreeItemId());
             }
         });
-        return pagerTempFeed;
     }
 }
