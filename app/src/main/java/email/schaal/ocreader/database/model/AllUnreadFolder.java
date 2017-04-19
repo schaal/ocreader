@@ -21,11 +21,14 @@
 package email.schaal.ocreader.database.model;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 
 import java.util.List;
 
+import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.R;
 import io.realm.Realm;
+import io.realm.RealmQuery;
 import io.realm.Sort;
 
 /**
@@ -34,10 +37,10 @@ import io.realm.Sort;
 public class AllUnreadFolder implements TreeItem, TreeIconable {
     public final static long ID = -10;
 
-    private final String name;
+    private String name;
 
     public AllUnreadFolder(Context context) {
-        this.name = context.getString(R.string.unread_items);
+        updateName(context, Preferences.SHOW_ONLY_UNREAD.getBoolean(PreferenceManager.getDefaultSharedPreferences(context)));
     }
 
     @Override
@@ -48,6 +51,10 @@ public class AllUnreadFolder implements TreeItem, TreeIconable {
     @Override
     public String getName() {
         return name;
+    }
+
+    public void updateName(Context context, boolean onlyUnread) {
+        this.name = onlyUnread ? context.getString(R.string.unread_items) : context.getString(R.string.all_items);
     }
 
     @Override
@@ -62,12 +69,16 @@ public class AllUnreadFolder implements TreeItem, TreeIconable {
 
     @Override
     public List<Feed> getFeeds(Realm realm, boolean onlyUnread) {
+        // TODO: 19.04.17 Show all feeds
         return realm.where(Feed.class).greaterThan(Feed.UNREAD_COUNT, 0).findAllSorted(Feed.NAME, Sort.ASCENDING);
     }
 
     @Override
     public List<Item> getItems(Realm realm, boolean onlyUnread) {
-        return realm.where(Item.class).equalTo(Item.UNREAD, true).distinct(Item.FINGERPRINT);
+        final RealmQuery<Item> query = realm.where(Item.class);
+        if(onlyUnread)
+            query.equalTo(Item.UNREAD, true);
+        return query.distinct(Item.FINGERPRINT);
     }
 
     @Override

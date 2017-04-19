@@ -37,7 +37,6 @@ import java.util.Set;
 
 import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.R;
-import email.schaal.ocreader.database.model.AllUnreadFolder;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.database.model.TemporaryFeed;
 import email.schaal.ocreader.databinding.ListItemBinding;
@@ -194,7 +193,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private boolean isOnlyUnread() {
-        return state.getStartDrawerItem() instanceof AllUnreadFolder || Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences);
+        return Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences);
     }
 
     public OrderedRealmCollection<Item> getItems() {

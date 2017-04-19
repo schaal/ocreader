@@ -48,22 +48,26 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.mikepenz.materialdrawer.model.interfaces.Tagable;
 
 import java.io.ByteArrayInputStream;
 
 import email.schaal.ocreader.database.Queries;
+import email.schaal.ocreader.database.model.AllUnreadFolder;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.database.model.TemporaryFeed;
@@ -110,6 +114,26 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                     }
                 }
             }
+        }
+    };
+
+    private final OnCheckedChangeListener unreadSwitchListener = new OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
+            PreferenceManager.getDefaultSharedPreferences(ListActivity.this)
+                    .edit()
+                    .putBoolean(Preferences.SHOW_ONLY_UNREAD.getKey(), isChecked)
+                    .apply();
+
+            if(drawerItem instanceof Nameable && drawerItem.getTag() instanceof AllUnreadFolder) {
+                final AllUnreadFolder unreadFolder = (AllUnreadFolder) drawerItem.getTag();
+
+                unreadFolder.updateName(ListActivity.this, isShowOnlyUnread());
+                ((Nameable) drawerItem).withName(unreadFolder.getName());
+            }
+
+            drawerManager.reloadAdapters(getRealm(), isShowOnlyUnread());
+            reloadListFragment();
         }
     };
 
@@ -322,7 +346,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         startDrawerBuilder.withToolbar(binding.toolbarLayout.toolbar);
         startDrawer = startDrawerBuilder.build();
 
-        drawerManager = new DrawerManager(this, startDrawer, endDrawerBuilder.append(startDrawer));
+        drawerManager = new DrawerManager(this, startDrawer, endDrawerBuilder.append(startDrawer), unreadSwitchListener);
 
         layoutManager = new LinearLayoutManager(this);
 
@@ -422,9 +446,9 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     }
 
     private void reloadListFragment() {
+        adapter.updateItems(true);
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(drawerManager.getState().getTreeItem().getName());
-        adapter.updateItems(true);
         binding.itemsRecyclerview.scrollToPosition(0);
         binding.fabMarkAllAsRead.setSync(false);
     }
