@@ -113,5 +113,6 @@
     <string name="appearance">Appearance</string>
     <string name="dark_theme">Dark theme</string>
     <string name="reading">Reading</string>
+    <string name="all_items">All articles</string>
 
 </resources>

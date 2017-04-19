@@ -25,6 +25,8 @@ import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 
 import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
+import com.mikepenz.materialdrawer.model.AbstractSwitchableDrawerItem;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
@@ -58,14 +60,14 @@ public class DrawerManager {
     private final StarredFolder starredFolder;
     private final FreshFolder freshFolder;
 
-    public DrawerManager(Context context, Drawer startDrawer, Drawer endDrawer) {
+    public DrawerManager(Context context, Drawer startDrawer, Drawer endDrawer, OnCheckedChangeListener unreadSwitchListener) {
         allUnreadFolder = new AllUnreadFolder(context);
         starredFolder = new StarredFolder(context);
         freshFolder = new FreshFolder(context);
 
         state = new State();
 
-        startAdapter = new SubscriptionDrawerManager(startDrawer);
+        startAdapter = new SubscriptionDrawerManager(startDrawer, unreadSwitchListener);
         endAdapter = new FolderDrawerManager(endDrawer);
     }
 
@@ -108,10 +110,13 @@ public class DrawerManager {
     public class SubscriptionDrawerManager extends BaseDrawerManager {
         private final List<IDrawerItem> topDrawerItems = new ArrayList<>(3);
 
-        public SubscriptionDrawerManager(Drawer drawer) {
+        public SubscriptionDrawerManager(Drawer drawer, OnCheckedChangeListener unreadSwitchListener) {
             super(drawer);
 
-            topDrawerItems.add(new TreeItemDrawerItem(allUnreadFolder));
+            topDrawerItems.add(
+                    new TreeItemSwitchDrawerItem(allUnreadFolder)
+                            .withOnCheckedChangeListener(unreadSwitchListener)
+            );
             topDrawerItems.add(new TreeItemDrawerItem(starredFolder));
             topDrawerItems.add(new TreeItemDrawerItem(freshFolder));
 
@@ -122,6 +127,7 @@ public class DrawerManager {
         protected List<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread) {
             List<IDrawerItem> drawerItems = new ArrayList<>();
 
+            ((AbstractSwitchableDrawerItem)topDrawerItems.get(0)).withChecked(showOnlyUnread);
             drawerItems.addAll(topDrawerItems);
 
             for(IDrawerItem drawerItem: topDrawerItems) {
