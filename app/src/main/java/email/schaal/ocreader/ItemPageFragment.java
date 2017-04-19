@@ -34,6 +34,7 @@ import email.schaal.ocreader.databinding.FragmentItemPagerBinding;
  */
 public class ItemPageFragment extends Fragment {
     private static final String ARG_ITEM = "ARG_ITEM";
+    private static final String WEB_VIEW_SCROLL_POSITION = "webViewScrollPosition";
 
     private FragmentItemPagerBinding binding;
 
@@ -74,8 +75,16 @@ public class ItemPageFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(WEB_VIEW_SCROLL_POSITION, binding.webView.getScrollY());
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentItemPagerBinding.inflate(inflater, container, false);
+        if(savedInstanceState != null)
+            binding.webView.setScrollPosition(savedInstanceState.getInt(WEB_VIEW_SCROLL_POSITION, 0));
 
         return binding.getRoot();
     }
