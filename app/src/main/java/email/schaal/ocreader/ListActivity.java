@@ -48,14 +48,12 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
@@ -66,7 +64,6 @@ import com.mikepenz.materialdrawer.model.interfaces.Tagable;
 import java.io.ByteArrayInputStream;
 
 import email.schaal.ocreader.database.Queries;
-import email.schaal.ocreader.database.model.AllUnreadFolder;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.database.model.TemporaryFeed;
@@ -83,7 +80,7 @@ import email.schaal.ocreader.view.LoadMoreAdapter;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 import io.realm.Realm;
 
-public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, LoadMoreAdapter.OnLoadMoreListener, OnCheckedChangeListener, ActionMode.Callback {
+public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, LoadMoreAdapter.OnLoadMoreListener, ActionMode.Callback {
     private static final String TAG = ListActivity.class.getName();
 
     private static final int REFRESH_DRAWER_ITEM_ID = 999;
@@ -567,14 +564,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         // minId is null if there are no feed items in treeItem
         SyncService.startLoadMore(this, treeItem.getId(), minId != null ? minId.longValue() : 0, treeItem instanceof Feed);
-    }
-
-    @Override
-    public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
-        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(Preferences.SHOW_ONLY_UNREAD.getKey(), isChecked).apply();
-        drawerManager.reloadAdapters(getRealm(), isChecked);
-        if(!(drawerManager.getState().getTreeItem() instanceof AllUnreadFolder))
-            adapter.updateItems(true);
     }
 
     @Override
