@@ -1,3 +1,8 @@
+## 0.34 (2017-04-21)
+
+* Update network libraries
+* Save and restore webView's scrollPosition in Fragment (possible fix for #48)
+
 ## 0.33 (2017-04-18)
 
 * Improve database migration performance
