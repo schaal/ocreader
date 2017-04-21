@@ -91,7 +91,7 @@ dependencies {
     compile "com.squareup.retrofit2:retrofit:${versions.retrofit}"
     compile "com.squareup.retrofit2:converter-moshi:${versions.retrofit}"
 
-    compile('com.github.square.picasso:picasso:0b38d19', {
+    compile('com.github.square.picasso:picasso:5351f2f', {
         exclude group: 'com.squareup.okhttp3', module: 'okhttp'
     })
 
