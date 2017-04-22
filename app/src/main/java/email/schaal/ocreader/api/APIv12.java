@@ -384,7 +384,7 @@ class APIv12 extends API {
                         }
                     });
                 } else {
-                    callback.onFailure(null);
+                    callback.onFailure(new Exception("Failed to synchronize changes"));
                 }
             }
         });
