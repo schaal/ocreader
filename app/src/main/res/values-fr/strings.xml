@@ -20,9 +20,12 @@
 
 <resources>
 
+    <string name="about_app"><h3>Copyright</h3>%1$s<h3>Licence</h3>Application sous licence GPLv3 ou moins <h3>Source</h3>%2$s</string>
     <string name="about">A propos</string>
 
     <string name="action_mark_read">Marquer comme lu</string>
+    <string name="action_mark_starred">Marquer comme favoris</string>
+    <string name="action_mark_unstarred">Enlever des favoris</string>
     <string name="action_mark_unread">Marquer comme non lu</string>
     <string name="action_sync">Synchroniser</string>
 
@@ -35,10 +38,13 @@
     <string name="action_sign_in">Connexion</string>
     <string name="action_sign_in_short">Connexion</string>
     <string name="error_incorrect_username_or_password">Nom d\'utilisateur ou le mot de passe est incorrect</string>
+    <string name="error_oc_not_found">Impossible de trouver l\'instance ownCloud</string>
     <string name="error_incorrect_url">URL invalide</string>
     <string name="error_field_required">Ce champ est requis</string>
 
     <string name="unread_items">Articles non lus</string>
+    <string name="starred_items">Articles favoris</string>
+    <string name="fresh_items">Nouveaux articles</string>
 
     <string name="by_author">par %1$s</string>
 
@@ -46,11 +52,14 @@
 
     <string name="feed_icon_description">Icône de flux</string>
 
+    <string name="now">maintenant</string>
 
     <string name="minutes">%dm</string>
     <string name="hours">%dh</string>
     <string name="days">%dd</string>
+    <string name="no_articles">Aucun article ici</string>
     <string name="load_more">Charger plus</string>
+    <string name="starred">Favoris</string>
     <string name="only_unread">Afficher uniquement les articles non lus</string>
     <string name="share_article">Partager l\'article</string>
     <string name="account_settings">Paramètres du compte</string>
@@ -60,8 +69,12 @@
     <string name="ncnews_too_old">Nextcloud News n\'est pas installé ou la version n\'est pas supportée. Veuillez installer ou mettre à jour vers la version %s au minimum</string>
     <string name="error_unknown_host">Serveur inconnu</string>
     <string name="error_insecure_connection">Connexion non sécurisée, appuyez sur connexin pour continuer</string>
+    <string name="action_sign_in_insecurely">Connexion non sécurisée</string>
+    <string name="http_error">Erreur HTPP %1$d</string>
     <string name="mark_previous_articles_read">Marquer les articles précédents comme lus</string>
+    <string name="mark_all_as_read">Tout marquer comme lu</string>
     <string name="play_media">Afficher le média</string>
+    <string name="article_order">Changer l\'ordre</string>
     <string name="title_activity_managefeeds">Gérer les flux</string>
     <string name="feed_url">Adresse du flux</string>
     <string name="delete_feed">Supprimer le flux</string>
@@ -91,6 +104,7 @@
     <string name="crash_text">Une erreur est survenue. Appuyez sur OK pour contrôler et envoyer les informations concernant ce problème avec votre application mail.\n
   \n
   Vous pouvez ajouter des informations dans le champ ci-dessous.</string>
+    <string name="additional_information">Informations supplémentaires</string>
     <string name="report_issue">Reporter un problème</string>
     <string name="settings">Paramètres</string>
     <string name="appearance">Apparence</string>
