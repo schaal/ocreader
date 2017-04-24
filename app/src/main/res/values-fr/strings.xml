@@ -1,0 +1,114 @@
+<!--
+  ~ Copyright (C) 2015-2016 Daniel Schaal <daniel@schaal.email>
+  ~
+  ~ This file is part of OCReader.
+  ~
+  ~ OCReader is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ OCReader is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with OCReader.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  -->
+
+<resources>
+
+    <string name="about_app"><h3>Copyright</h3>%1$s<h3>Licence</h3>Application sous licence GPLv3 ou moins <h3>Source</h3>%2$s</string>
+    <string name="about">A propos</string>
+
+    <string name="action_mark_read">Marquer comme lu</string>
+    <string name="action_mark_starred">Marquer comme favoris</string>
+    <string name="action_mark_unstarred">Enlever des favoris</string>
+    <string name="action_mark_unread">Marquer comme non lu</string>
+    <string name="action_sync">Synchroniser</string>
+
+    <string name="title_activity_login">Connexion</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_username">Nom d\'utilisateur</string>
+    <string name="prompt_password">Mot de passe</string>
+    <string name="prompt_url">Adresse du serveur</string>
+    <string name="action_sign_in">Connexion</string>
+    <string name="action_sign_in_short">Connexion</string>
+    <string name="error_incorrect_username_or_password">Nom d\'utilisateur ou le mot de passe est incorrect</string>
+    <string name="error_oc_not_found">Impossible de trouver l\'instance ownCloud</string>
+    <string name="error_incorrect_url">URL invalide</string>
+    <string name="error_field_required">Ce champ est requis</string>
+
+    <string name="unread_items">Articles non lus</string>
+    <string name="starred_items">Articles favoris</string>
+    <string name="fresh_items">Nouveaux articles</string>
+
+    <string name="by_author">par %1$s</string>
+
+    <string name="title_activity_item_pager">Élément</string>
+
+    <string name="feed_icon_description">Icône de flux</string>
+
+    <string name="now">maintenant</string>
+
+    <string name="minutes">%dm</string>
+    <string name="hours">%dh</string>
+    <string name="days">%dd</string>
+    <string name="no_articles">Aucun article ici</string>
+    <string name="load_more">Charger plus</string>
+    <string name="starred">Favoris</string>
+    <string name="only_unread">Afficher uniquement les articles non lus</string>
+    <string name="share_article">Partager l\'article</string>
+    <string name="account_settings">Paramètres du compte</string>
+    <string name="updater_improperly_configured">News App updater est mal configuré</string>
+    <string name="more_info">Plus d\'informations</string>
+    <string name="untrusted_certificate">Impossible de vérifier le certificat, contrôlez votre configuration SSL</string>
+    <string name="ncnews_too_old">Nextcloud News n\'est pas installé ou la version n\'est pas supportée. Veuillez installer ou mettre à jour vers la version %s au minimum</string>
+    <string name="error_unknown_host">Serveur inconnu</string>
+    <string name="error_insecure_connection">Connexion non sécurisée, appuyez sur connexin pour continuer</string>
+    <string name="action_sign_in_insecurely">Connexion non sécurisée</string>
+    <string name="http_error">Erreur HTPP %1$d</string>
+    <string name="mark_previous_articles_read">Marquer les articles précédents comme lus</string>
+    <string name="mark_all_as_read">Tout marquer comme lu</string>
+    <string name="play_media">Afficher le média</string>
+    <string name="article_order">Changer l\'ordre</string>
+    <string name="title_activity_managefeeds">Gérer les flux</string>
+    <string name="feed_url">Adresse du flux</string>
+    <string name="delete_feed">Supprimer le flux</string>
+    <string name="add">Ajouter</string>
+    <string name="add_new_feed">Ajouter un nouveau flux</string>
+    <string name="adding_feed">Ajouter un flux</string>
+    <string name="feed_add_failed">Ajout du flux échoué</string>
+    <string name="confirm_feed_deletion">Voulez-vous supprimer le flux %s?</string>
+    <string name="moving_feed">Déplacement un flux</string>
+    <string name="feed_move_failed">Déplacement du flux échoué</string>
+    <string name="delete_feed_failed">Suppression du flux échouée</string>
+    <string name="deleting_feed">Supprimer %s</string>
+    <string name="delete">Supprimer</string>
+    <string name="root_folder">Pas de dossier</string>
+    <string name="warning">Attention</string>
+    <string name="feed_update_error">Mise à jour du flux échouée</string>
+    <string name="edit_feed">Editer le flux</string>
+    <string name="save">Sauvegarder</string>
+    <string name="folder">Dossier</string>
+    <string name="error_not_compatible">La version installée de Nextcloud News est non compatibile avec cette application.</string>
+    <string name="publication_date">Date de publication</string>
+    <string name="updated_date">Date de mise à jour</string>
+    <string name="ascending">Décroissant</string>
+    <string name="descending">Croissant</string>
+    <string name="could_not_connect">Connexion au serveur impossible</string>
+    <string name="failed_detect_nc_version">Impossible de détecter la version de Nextcloud News</string>
+    <string name="crash_text">Une erreur est survenue. Appuyez sur OK pour contrôler et envoyer les informations concernant ce problème avec votre application mail.\n
+  \n
+  Vous pouvez ajouter des informations dans le champ ci-dessous.</string>
+    <string name="additional_information">Informations supplémentaires</string>
+    <string name="report_issue">Reporter un problème</string>
+    <string name="settings">Paramètres</string>
+    <string name="appearance">Apparence</string>
+    <string name="dark_theme">Thème sombre</string>
+    <string name="reading">Lire</string>
+
+</resources>
