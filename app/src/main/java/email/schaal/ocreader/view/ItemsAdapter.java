@@ -216,7 +216,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public void onSaveInstanceState(Bundle bundle) {
-        bundle.putIntegerArrayList("adapter_selections", new ArrayList<Integer>(selections));
+        bundle.putIntegerArrayList("adapter_selections", new ArrayList<>(selections));
     }
 
     public void onRestoreInstanceState(Bundle bundle) {
