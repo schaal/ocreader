@@ -22,8 +22,10 @@ package email.schaal.ocreader.database.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -159,7 +161,7 @@ public class Folder implements RealmModel, TreeItem, Insertable, TreeIconable, P
         return folder;
     }
 
-    @Nullable
+    @NonNull
     public static List<Folder> getAll(Realm realm, boolean onlyUnread) {
         RealmQuery<Folder> query = null;
         if(onlyUnread) {
@@ -176,7 +178,7 @@ public class Folder implements RealmModel, TreeItem, Insertable, TreeIconable, P
             query = realm.where(Folder.class);
         }
 
-        return query != null ? query.findAllSorted(Folder.NAME, Sort.ASCENDING) : null;
+        return query != null ? query.findAllSorted(Folder.NAME, Sort.ASCENDING) : Collections.<Folder>emptyList();
     }
 
     @Override
