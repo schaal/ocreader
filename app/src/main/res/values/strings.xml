@@ -114,5 +114,6 @@
     <string name="dark_theme">Dark theme</string>
     <string name="reading">Reading</string>
     <string name="all_items">All articles</string>
+    <string name="no_folders_to_show">No folders/feeds to show</string>
 
 </resources>
