@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import email.schaal.ocreader.Preferences;
+import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.database.model.AllUnreadFolder;
 import email.schaal.ocreader.database.model.Feed;
@@ -143,15 +144,20 @@ public class DrawerManager {
                 }
             }
 
-            final List<Folder> folders = Folder.getAll(realm, showOnlyUnread);
-            if(folders != null) {
-                for (Folder folder : folders) {
-                    drawerItems.add(getDrawerItem(realm, folder));
-                }
-            }
+            final List<TreeItem> treeItems = new ArrayList<>();
+            treeItems.addAll(Folder.getAll(realm, showOnlyUnread));
+            treeItems.addAll(Queries.getFeedsWithoutFolder(realm, showOnlyUnread));
 
-            for (Feed feed : Queries.getFeedsWithoutFolder(realm, showOnlyUnread)) {
-                drawerItems.add(getDrawerItem(realm, feed));
+            if(treeItems.isEmpty()) {
+                drawerItems.add(
+                        new PrimaryDrawerItem()
+                            .withEnabled(false)
+                            .withName(R.string.no_folders_to_show)
+                );
+            } else {
+                for (TreeItem treeItem : treeItems) {
+                    drawerItems.add(getDrawerItem(realm, treeItem));
+                }
             }
 
             return drawerItems;
