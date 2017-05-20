@@ -76,4 +76,5 @@
     <string name="reading">Lesen</string>
     <string name="fresh_items">Neue Artikel</string>
     <string name="no_folders_to_show">Keine Ordner/Feeds gefunden</string>
+    <string name="all_items">Alle Artikel</string>
 </resources>
