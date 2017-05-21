@@ -1,3 +1,8 @@
+## 0.35 (2017-05-21)
+
+* Show all articles when only unread is disabled (Fixes #54)
+* Add french translation (Thanks to @loi219)
+
 ## 0.34 (2017-04-21)
 
 * Update network libraries
