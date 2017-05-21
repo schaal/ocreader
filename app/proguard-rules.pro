@@ -32,3 +32,7 @@
 -dontwarn com.google.j2objc.annotations.*
 -dontwarn java.lang.ClassValue
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-dontnote com.google.common.util.concurrent.MoreExecutors
+-dontnote com.google.common.cache.Striped64
+-dontnote com.google.common.cache.Striped64$Cell
+-dontnote com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
