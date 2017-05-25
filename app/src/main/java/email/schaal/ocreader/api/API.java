@@ -54,13 +54,34 @@ public abstract class API {
     final static String API_ROOT = "./index.php/apps/news/api/";
     private final JsonAdapter<NewsError> errorJsonAdapter;
 
-    public static void get(Context context, InstanceReadyCallback callback) {
+    public static void get(Context context, final InstanceReadyCallback callback) {
         if(instance == null) {
-            try {
-                init(context);
+            APILevels.Level apiLevel1 = APILevels.Level.get(Preferences.SYS_DETECTED_API_LEVEL.getString(PreferenceManager.getDefaultSharedPreferences(context)));
+            if (apiLevel1 != null) {
+                switch (apiLevel1) {
+                    case V2:
+                        instance = new APIv2(context);
+                        break;
+                    case V12:
+                        instance = new APIv12(context);
+                        break;
+                }
+
                 callback.onInstanceReady(instance);
-            } catch (NotLoggedInException e) {
-                callback.onLoginFailure(e);
+            } else {
+                final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+                API.login(context, HttpUrl.parse(Preferences.URL.getString(preferences)), Preferences.USERNAME.getString(preferences), Preferences.PASSWORD.getString(preferences), new APICallback<Status, LoginError>() {
+                    @Override
+                    public void onSuccess(Status success) {
+                        callback.onInstanceReady(instance);
+                    }
+
+                    @Override
+                    public void onFailure(LoginError failure) {
+                        callback.onLoginFailure(failure.getThrowable());
+                    }
+                });
             }
         } else {
             callback.onInstanceReady(instance);
@@ -69,7 +90,7 @@ public abstract class API {
 
     public interface InstanceReadyCallback {
         void onInstanceReady(API api);
-        void onLoginFailure(NotLoggedInException e);
+        void onLoginFailure(Throwable e);
     }
 
     final MoshiConverterFactory converterFactory;
@@ -225,22 +246,6 @@ public abstract class API {
         }
 
         return message;
-    }
-
-    private static void init(Context context) throws NotLoggedInException {
-        APILevels.Level apiLevel = APILevels.Level.get(Preferences.SYS_DETECTED_API_LEVEL.getString(PreferenceManager.getDefaultSharedPreferences(context)));
-        if (apiLevel != null) {
-            switch (apiLevel) {
-                case V2:
-                    instance = new APIv2(context);
-                    break;
-                case V12:
-                    instance = new APIv12(context);
-                    break;
-            }
-        } else {
-            throw new NotLoggedInException();
-        }
     }
 
     public interface APICallback<S,F> {

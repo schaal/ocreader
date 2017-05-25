@@ -116,7 +116,7 @@ public class SyncService extends Service {
                 }
 
                 @Override
-                public void onLoginFailure(API.NotLoggedInException e) {
+                public void onLoginFailure(Throwable e) {
                     stopSelf(startId);
                 }
             });

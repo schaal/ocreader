@@ -91,7 +91,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
             }
 
             @Override
-            public void onLoginFailure(API.NotLoggedInException e) {
+            public void onLoginFailure(Throwable e) {
                 progressDialog.cancel();
             }
         });
@@ -125,7 +125,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
                             }
 
                             @Override
-                            public void onLoginFailure(API.NotLoggedInException e) {
+                            public void onLoginFailure(Throwable e) {
                                 progressDialog.cancel();
                             }
                         });
@@ -164,7 +164,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
             }
 
             @Override
-            public void onLoginFailure(API.NotLoggedInException e) {
+            public void onLoginFailure(Throwable e) {
                 progressDialog.cancel();
             }
         });
