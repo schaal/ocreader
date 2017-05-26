@@ -56,9 +56,9 @@ public abstract class API {
 
     public static void get(Context context, final InstanceReadyCallback callback) {
         if(instance == null) {
-            APILevels.Level apiLevel1 = APILevels.Level.get(Preferences.SYS_DETECTED_API_LEVEL.getString(PreferenceManager.getDefaultSharedPreferences(context)));
-            if (apiLevel1 != null) {
-                switch (apiLevel1) {
+            APILevels.Level detectedApiLevel = APILevels.Level.get(Preferences.SYS_DETECTED_API_LEVEL.getString(PreferenceManager.getDefaultSharedPreferences(context)));
+            if (detectedApiLevel != null) {
+                switch (detectedApiLevel) {
                     case V2:
                         instance = new APIv2(context);
                         break;
