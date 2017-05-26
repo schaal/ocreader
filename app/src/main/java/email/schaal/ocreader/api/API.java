@@ -49,24 +49,16 @@ public abstract class API {
 
     private static API instance;
 
-    final APILevels.Level apiLevel;
+    final Level apiLevel;
 
     final static String API_ROOT = "./index.php/apps/news/api/";
     private final JsonAdapter<NewsError> errorJsonAdapter;
 
     public static void get(Context context, final InstanceReadyCallback callback) {
         if(instance == null) {
-            APILevels.Level detectedApiLevel = APILevels.Level.get(Preferences.SYS_DETECTED_API_LEVEL.getString(PreferenceManager.getDefaultSharedPreferences(context)));
+            Level detectedApiLevel = Level.get(Preferences.SYS_DETECTED_API_LEVEL.getString(PreferenceManager.getDefaultSharedPreferences(context)));
             if (detectedApiLevel != null) {
-                switch (detectedApiLevel) {
-                    case V2:
-                        instance = new APIv2(context);
-                        break;
-                    case V12:
-                        instance = new APIv12(context);
-                        break;
-                }
-
+                instance = Level.getAPI(context, detectedApiLevel);
                 callback.onInstanceReady(instance);
             } else {
                 final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -95,7 +87,7 @@ public abstract class API {
 
     final MoshiConverterFactory converterFactory;
 
-    API(Context context, APILevels.Level apiLevel) {
+    API(Context context, Level apiLevel) {
         this.apiLevel = apiLevel;
         final Moshi moshi = new Moshi.Builder()
                 .add(Folder.class, new FolderTypeAdapter())
@@ -162,18 +154,9 @@ public abstract class API {
                 if(response.isSuccessful()) {
                     loginInstance = null;
 
-                    final APILevels.Level apiLevel = response.body().highestSupportedApi();
+                    final Level apiLevel = response.body().highestSupportedApi();
 
-                    if (apiLevel != null) {
-                        switch (apiLevel) {
-                            case V2:
-                                loginInstance = new APIv2(context);
-                                break;
-                            case V12:
-                                loginInstance = new APIv12(context);
-                                break;
-                        }
-                    }
+                    loginInstance = Level.getAPI(context, apiLevel);
 
                     if(loginInstance == null || apiLevel == null) {
                         loginCallback.onFailure(new LoginError(context.getString(R.string.error_not_compatible)));

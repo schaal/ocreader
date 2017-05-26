@@ -41,7 +41,6 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import email.schaal.ocreader.api.json.APILevels;
 import email.schaal.ocreader.api.json.Feeds;
 import email.schaal.ocreader.api.json.Folders;
 import email.schaal.ocreader.api.json.Items;
@@ -234,7 +233,7 @@ class APIv12 extends API {
     private APIv12Interface api;
 
     APIv12(Context context) {
-        super(context, APILevels.Level.V12);
+        super(context, Level.V12);
     }
 
     @Override

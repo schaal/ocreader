@@ -4,42 +4,19 @@ import android.support.annotation.Nullable;
 
 import java.util.List;
 
+import email.schaal.ocreader.api.Level;
+
 /**
  * API response containing supported API levels
  */
 public class APILevels {
-    public enum Level {
-        V2("v2", false),
-        V12("v1-2", true);
-
-        private final String level;
-        private final boolean supported;
-
-        public String getLevel() {
-            return level;
-        }
-
-        Level(String level, boolean supported) {
-            this.level = level;
-            this.supported = supported;
-        }
-
-        @Nullable
-        public static Level get(String level) {
-            for(Level supportedLevel: values()) {
-                if(supportedLevel.level.equals(level))
-                    return supportedLevel;
-            }
-            return null;
-        }
-    }
 
     private List<String> apiLevels;
 
     @Nullable
     public Level highestSupportedApi() {
         for(Level level : Level.values())
-            if(level.supported && apiLevels.contains(level.getLevel()))
+            if(level.isSupported() && apiLevels.contains(level.getLevel()))
                 return level;
 
         return null;

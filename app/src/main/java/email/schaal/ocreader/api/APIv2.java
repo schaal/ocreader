@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import java.util.Map;
 
 import email.schaal.ocreader.Preferences;
-import email.schaal.ocreader.api.json.APILevels;
 import email.schaal.ocreader.api.json.Feeds;
 import email.schaal.ocreader.api.json.Items;
 import email.schaal.ocreader.api.json.Status;
@@ -37,7 +36,7 @@ import retrofit2.http.Path;
  */
 class APIv2 extends API {
     APIv2(Context context) {
-        super(context, APILevels.Level.V2);
+        super(context, Level.V2);
     }
 
     private interface APIv2Interface {
