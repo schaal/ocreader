@@ -34,6 +34,7 @@ import email.schaal.ocreader.service.SyncType;
 import email.schaal.ocreader.util.LoginError;
 import io.realm.Realm;
 import okhttp3.HttpUrl;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -155,7 +156,8 @@ public abstract class API {
                 if(response.isSuccessful()) {
                     loginInstance = null;
 
-                    final Level apiLevel = response.body().highestSupportedApi();
+                    final APILevels apiLevels = response.body();
+                    final Level apiLevel = apiLevels != null ? apiLevels.highestSupportedApi() : null;
 
                     loginInstance = Level.getAPI(context, apiLevel);
 
@@ -168,7 +170,8 @@ public abstract class API {
                             @Override
                             public void onResponse(@NonNull Call<Status> call, @NonNull Response<Status> response) {
                                 if(response.isSuccessful()) {
-                                    final Version version = response.body().getVersion();
+                                    final Status status = response.body();
+                                    final Version version = status != null ? status.getVersion() : null;
                                     if(version != null && MIN_VERSION.lessThanOrEqualTo(version)) {
                                         PreferenceManager.getDefaultSharedPreferences(context).edit()
                                                 .putString(Preferences.USERNAME.getKey(), username)
@@ -180,7 +183,7 @@ public abstract class API {
                                         instance = loginInstance;
                                         loginInstance = null;
 
-                                        loginCallback.onSuccess(response.body());
+                                        loginCallback.onSuccess(status);
                                     } else {
                                         if(version != null) {
                                             Log.d(TAG, String.format("Nextcloud News version is less than minimally supported version: %s < %s", version.toString(), MIN_VERSION.toString()));
@@ -223,8 +226,11 @@ public abstract class API {
         String message = response.message();
 
         try {
-            NewsError error = adapter.fromJson(response.errorBody().source());
-            message = error.message;
+            final ResponseBody errorBody = response.errorBody();
+            if(errorBody != null) {
+                NewsError error = adapter.fromJson(errorBody.source());
+                message = error.message;
+            }
         } catch (IOException e) {
             Log.e(TAG, "Failed to get error message", e);
         }
