@@ -20,6 +20,8 @@
 
 package email.schaal.ocreader.http;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -80,7 +82,7 @@ public class HttpManager {
         }
 
         @Override
-        public Response intercept(Chain chain) throws IOException {
+        public Response intercept(@NonNull Chain chain) throws IOException {
             Request request = chain.request();
 
             // only add Authorization header for urls on the configured owncloud host

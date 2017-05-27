@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -150,7 +151,7 @@ public abstract class API {
 
         commonAPI.apiLevels().enqueue(new Callback<APILevels>() {
             @Override
-            public void onResponse(Call<APILevels> call, Response<APILevels> response) {
+            public void onResponse(@NonNull Call<APILevels> call, @NonNull Response<APILevels> response) {
                 if(response.isSuccessful()) {
                     loginInstance = null;
 
@@ -165,7 +166,7 @@ public abstract class API {
 
                         loginInstance.metaData(new Callback<Status>() {
                             @Override
-                            public void onResponse(Call<Status> call, Response<Status> response) {
+                            public void onResponse(@NonNull Call<Status> call, @NonNull Response<Status> response) {
                                 if(response.isSuccessful()) {
                                     final Version version = response.body().getVersion();
                                     if(version != null && MIN_VERSION.lessThanOrEqualTo(version)) {
@@ -197,7 +198,7 @@ public abstract class API {
                             }
 
                             @Override
-                            public void onFailure(Call<Status> call, Throwable t) {
+                            public void onFailure(@NonNull Call<Status> call, @NonNull Throwable t) {
                                 Log.e(TAG, "Failed to log in", t);
                                 loginCallback.onFailure(LoginError.getError(context, t));
                             }
@@ -211,7 +212,7 @@ public abstract class API {
             }
 
             @Override
-            public void onFailure(Call<APILevels> call, Throwable t) {
+            public void onFailure(@NonNull Call<APILevels> call, @NonNull Throwable t) {
                 Log.e(TAG, "Failed to log in", t);
                 loginCallback.onFailure(LoginError.getError(context, t));
             }
@@ -248,7 +249,7 @@ public abstract class API {
         }
 
         @Override
-        public final void onResponse(Call<T> call, Response<T> response) {
+        public final void onResponse(@NonNull Call<T> call, @NonNull Response<T> response) {
             if (response.isSuccessful()) {
                 onResponseReal(response);
 
@@ -272,7 +273,7 @@ public abstract class API {
         protected abstract void onResponseReal(Response<T> response);
 
         @Override
-        public void onFailure(Call<T> call, Throwable t) {
+        public void onFailure(@NonNull Call<T> call, @NonNull Throwable t) {
             Log.e(TAG, "Retrofit call failed", t);
             if(callback != null)
                 callback.onFailure(t);
