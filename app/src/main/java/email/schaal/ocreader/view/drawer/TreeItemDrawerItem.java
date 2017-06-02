@@ -35,6 +35,7 @@ import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.database.model.TreeIconable;
 import email.schaal.ocreader.database.model.TreeItem;
 import email.schaal.ocreader.util.FaviconLoader;
+import io.realm.RealmObject;
 
 /**
  * Represents a TreeItem for display in a Drawer
@@ -64,7 +65,7 @@ public class TreeItemDrawerItem extends PrimaryDrawerItem {
         if (icon != null && icon.getUri() != null) {
             ImageView imageView = getImageView(viewHolder);
             ImageHolder.applyTo(icon, imageView);
-        } else if(feed != null) {
+        } else if(feed != null && RealmObject.isValid(feed)) {
             if(feed.isConsideredFailed()) {
                 withTextColor(ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.error));
             }

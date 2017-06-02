@@ -27,6 +27,7 @@ import java.util.Locale;
 
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.model.Feed;
+import io.realm.RealmObject;
 
 /**
  * Load favicons
@@ -179,6 +180,12 @@ public class FaviconLoader {
 
         @Override
         public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+            if(!RealmObject.isValid(feed)) {
+                Log.w(TAG, "Feed no longer valid");
+                listener.onGenerated(new FeedColors((Integer)null));
+                return;
+            }
+
             final FeedColors cachedFeedColors = feedColorsCache.get(feed.getId());
             if(cachedFeedColors == null) {
                 generatePalette(bitmap, contrastFilter, new Palette.PaletteAsyncListener() {
@@ -196,7 +203,10 @@ public class FaviconLoader {
 
         @Override
         public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-            Log.e(TAG, "Loading favicon for feed " + (feed != null ? feed.getName() : "*null*") + " failed", e);
+            if(RealmObject.isValid(feed))
+                Log.e(TAG, "Loading favicon for feed " + (feed != null ? feed.getName() : "*null*") + " failed", e);
+            else
+                Log.e(TAG, "Feed no longer valid", e);
             listener.onGenerated(new FeedColors((Integer)null));
         }
 
