@@ -17,7 +17,7 @@
 * Android version:
 
 ### Logcat
-(Read http://www.makeuseof.com/tag/get-logcat-reporting-bugs-android/ if you are not sure how to get the logcat output.)
+<!--- (Read http://www.makeuseof.com/tag/get-logcat-reporting-bugs-android/ if you are not sure how to get the logcat output.) -->
 
 ```
 Please paste the relevant logcat output here
