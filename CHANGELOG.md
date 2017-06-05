@@ -1,3 +1,8 @@
+## 0.36 (2017-06-05)
+
+* Check if feed title is empty, Fixes #67
+* Fix issues reported via email (realm objects no longer valid)
+
 ## 0.35 (2017-05-21)
 
 * Show all articles when only unread is disabled (Fixes #54)
