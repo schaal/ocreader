@@ -69,8 +69,8 @@ abstract class BaseDrawerManager {
     }
 
     private boolean compareBadges(@Nullable StringHolder lhs, @Nullable StringHolder rhs) {
-        String l = lhs != null ? lhs.getText() : null;
-        String r = rhs != null ? rhs.getText() : null;
+        CharSequence l = lhs != null ? lhs.getText() : null;
+        CharSequence r = rhs != null ? rhs.getText() : null;
 
         return l == null ? r == null : l.equals(r);
     }
