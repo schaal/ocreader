@@ -396,7 +396,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         if(savedInstanceState == null && getIntent().hasExtra(SyncService.EXTRA_ID)) {
             drawerManager.getState().restore(getRealm(), getIntent().getIntExtra(SyncService.EXTRA_ID, -10), null, false);
         } else {
-            drawerManager.getState().restoreInstanceState(getRealm(), PreferenceManager.getDefaultSharedPreferences(this));
+            drawerManager.getState().restoreInstanceState(getRealm(), getPreferences(MODE_PRIVATE));
         }
 
         binding.itemsRecyclerview.addItemDecoration(new DividerItemDecoration(this, R.dimen.divider_inset));
@@ -425,14 +425,14 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(LAYOUT_MANAGER_STATE, layoutManager.onSaveInstanceState());
-        drawerManager.getState().saveInstanceState(PreferenceManager.getDefaultSharedPreferences(this));
+        drawerManager.getState().saveInstanceState(getPreferences(MODE_PRIVATE));
         adapter.onSaveInstanceState(outState);
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        drawerManager.getState().saveInstanceState(PreferenceManager.getDefaultSharedPreferences(this));
+        drawerManager.getState().saveInstanceState(getPreferences(MODE_PRIVATE));
     }
 
     private void onStartDrawerItemClicked(TreeItem item) {
