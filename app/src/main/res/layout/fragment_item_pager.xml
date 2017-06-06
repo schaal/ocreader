@@ -27,5 +27,5 @@
         android:layout_height="match_parent"
         app:backgroundColor="?android:attr/colorBackground"
         app:fontColor="?android:attr/textColorPrimary"
-        app:linkColor="?attr/colorAccent" />
+        app:linkColor="?attr/colorPrimary" />
 </layout>
