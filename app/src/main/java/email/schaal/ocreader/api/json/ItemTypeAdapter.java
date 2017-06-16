@@ -139,7 +139,7 @@ public class ItemTypeAdapter extends JsonAdapter<Item> {
                     in.skipValue();
                     break;
                 case "fingerprint":
-                    builder.setFingerprint(in.nextString());
+                    builder.setFingerprint(reader.nextString());
                     break;
                 case "contentHash":
                     // ignore for now, old items don't have this set yet.
