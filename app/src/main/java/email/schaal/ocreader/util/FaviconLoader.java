@@ -180,24 +180,23 @@ public class FaviconLoader {
 
         @Override
         public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-            if(!RealmObject.isValid(feed)) {
+            try {
+                final FeedColors cachedFeedColors = feedColorsCache.get(feed.getId());
+                if (cachedFeedColors == null) {
+                    generatePalette(bitmap, contrastFilter, new Palette.PaletteAsyncListener() {
+                        @Override
+                        public void onGenerated(Palette palette) {
+                            FeedColors feedColors = new FeedColors(palette);
+                            feedColorsCache.put(feed.getId(), feedColors);
+                            listener.onGenerated(feedColors);
+                        }
+                    });
+                } else {
+                    listener.onGenerated(cachedFeedColors);
+                }
+            } catch (IllegalStateException e) {
                 Log.w(TAG, "Feed no longer valid");
                 listener.onGenerated(new FeedColors((Integer)null));
-                return;
-            }
-
-            final FeedColors cachedFeedColors = feedColorsCache.get(feed.getId());
-            if(cachedFeedColors == null) {
-                generatePalette(bitmap, contrastFilter, new Palette.PaletteAsyncListener() {
-                    @Override
-                    public void onGenerated(Palette palette) {
-                        FeedColors feedColors = new FeedColors(palette);
-                        feedColorsCache.put(feed.getId(), feedColors);
-                        listener.onGenerated(feedColors);
-                    }
-                });
-            } else {
-                listener.onGenerated(cachedFeedColors);
             }
         }
 
