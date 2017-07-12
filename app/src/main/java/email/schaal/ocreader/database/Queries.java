@@ -77,12 +77,12 @@ public class Queries {
                 .schemaVersion(SCHEMA_VERSION)
                 .migration(migration)
                 .initialData(initialData)
+                .compactOnLaunch()
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);
 
         Realm realm = null;
         try {
-            Realm.compactRealm(realmConfiguration);
             realm = Realm.getDefaultInstance();
             if(realm.isEmpty())
                 realm.executeTransaction(initialData);
