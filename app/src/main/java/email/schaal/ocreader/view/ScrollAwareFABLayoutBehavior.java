@@ -21,11 +21,14 @@
 package email.schaal.ocreader.view;
 
 import android.content.Context;
+import android.support.annotation.Keep;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
+@Keep
 public class ScrollAwareFABLayoutBehavior extends CoordinatorLayout.Behavior<FABLayout> {
     public ScrollAwareFABLayoutBehavior() {
         super();
@@ -36,22 +39,15 @@ public class ScrollAwareFABLayoutBehavior extends CoordinatorLayout.Behavior<FAB
     }
 
     @Override
-    public boolean onStartNestedScroll(final CoordinatorLayout coordinatorLayout,
-                                       final FABLayout child,
-                                       final View directTargetChild, final View target, final int nestedScrollAxes) {
-        // Ensure we react to vertical scrolling
-        return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL
-                || super.onStartNestedScroll(coordinatorLayout, child,
-                directTargetChild, target, nestedScrollAxes);
+    public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull FABLayout child, @NonNull View directTargetChild, @NonNull View target, int axes, int type) {
+        return axes == ViewCompat.SCROLL_AXIS_VERTICAL ||
+                super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, axes, type);
     }
 
     @Override
-    public void onNestedScroll(final CoordinatorLayout coordinatorLayout,
-                               final FABLayout child,
-                               final View target, final int dxConsumed, final int dyConsumed,
-                               final int dxUnconsumed, final int dyUnconsumed) {
-        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed,
-                dxUnconsumed, dyUnconsumed);
+    public void onNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull FABLayout child, @NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
+        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type);
+
         if (dyConsumed > 0) {
             child.hide();
         } else if (dyConsumed < 0) {
