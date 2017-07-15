@@ -170,7 +170,7 @@ public class FaviconLoader {
         private final FeedColorsListener listener;
         private final Palette.Filter contrastFilter;
 
-        public MyTarget(@NonNull Feed feed, @NonNull FeedColorsListener listener, final @ColorInt int backgroundColor) {
+        MyTarget(@NonNull Feed feed, @NonNull FeedColorsListener listener, final @ColorInt int backgroundColor) {
             this.feed = feed;
             this.listener = listener;
             contrastFilter = new Palette.Filter() {
