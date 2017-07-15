@@ -22,7 +22,6 @@ package email.schaal.ocreader;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.preference.PreferenceManager;
@@ -30,14 +29,12 @@ import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.content.res.AppCompatResources;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
-import com.squareup.picasso.OkHttp3Downloader;
-import com.squareup.picasso.Picasso;
 
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.util.AlarmUtils;
-import email.schaal.ocreader.util.IcoRequestHandler;
 
 /**
  * Application base class to setup the singletons
@@ -64,16 +61,6 @@ public abstract class OCReaderBaseApplication extends Application {
 
         AlarmUtils.init(this);
 
-        OkHttp3Downloader downloader = new OkHttp3Downloader(this);
-
-        Picasso picasso = new Picasso.Builder(this)
-                .downloader(downloader)
-                .defaultBitmapConfig(Bitmap.Config.ARGB_8888)
-                .addRequestHandler(new IcoRequestHandler(downloader))
-                .build();
-
-        Picasso.setSingletonInstance(picasso);
-
         DrawerImageLoader.init(new DrawerImageLoader.IDrawerImageLoader() {
             @Override
             public void set(ImageView imageView, Uri uri, Drawable placeholder) {
@@ -82,12 +69,12 @@ public abstract class OCReaderBaseApplication extends Application {
 
             @Override
             public void set(ImageView imageView, Uri uri, Drawable placeholder, String tag) {
-                Picasso.with(imageView.getContext()).load(uri).placeholder(placeholder).into(imageView);
+                Glide.with(imageView.getContext()).load(uri).into(imageView);
             }
 
             @Override
             public void cancel(ImageView imageView) {
-                Picasso.with(imageView.getContext()).cancelRequest(imageView);
+                Glide.with(imageView.getContext()).clear(imageView);
             }
 
             @Override

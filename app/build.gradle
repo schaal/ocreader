@@ -95,9 +95,9 @@ dependencies {
     compile "com.squareup.retrofit2:retrofit:${versions.retrofit}"
     compile "com.squareup.retrofit2:converter-moshi:${versions.retrofit}"
 
-    compile('com.github.square.picasso:picasso:5351f2f', {
-        exclude group: 'com.squareup.okhttp3', module: 'okhttp'
-    })
+    compile 'com.github.bumptech.glide:glide:4.0.0-RC1'
+    compile "com.github.bumptech.glide:okhttp3-integration:4.0.0-RC1"
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0-RC1'
 
     compile 'com.github.zafarkhaja:java-semver:0.9.0'
 

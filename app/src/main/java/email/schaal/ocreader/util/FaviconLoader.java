@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
@@ -18,10 +17,11 @@ import android.util.Log;
 import android.util.LruCache;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
-import com.squareup.picasso.Target;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.util.Locale;
 
@@ -97,13 +97,16 @@ public class FaviconLoader {
             final int colorBackground = typedArray.getColor(0, Color.WHITE);
             typedArray.recycle();
             // load favicon
-            RequestCreator requestCreator = Picasso.with(context).load(feed.getFaviconLink());
+            RequestBuilder<Bitmap> requestBuilder = GlideApp.with(context)
+                    .asBitmap()
+                    .placeholder(placeholder)
+                    .load(feed.getFaviconLink());
             MyTarget myTarget = new MyTarget(feed, listener, colorBackground);
 
             if(imageView != null) {
-                requestCreator.placeholder(placeholder).into(imageView, myTarget);
+                requestBuilder.listener(myTarget).into(imageView);
             } else {
-                requestCreator.into(myTarget);
+                requestBuilder.listener(myTarget).preload();
             }
         } else {
             // feed has no favicon
@@ -162,7 +165,7 @@ public class FaviconLoader {
         }
     }
 
-    private class MyTarget implements Target, Callback {
+    private class MyTarget implements RequestListener<Bitmap> {
         private final Feed feed;
         private final FeedColorsListener listener;
         private final Palette.Filter contrastFilter;
@@ -179,7 +182,17 @@ public class FaviconLoader {
         }
 
         @Override
-        public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+        public boolean onLoadFailed(@Nullable GlideException e, Object o, Target<Bitmap> target, boolean b) {
+            if(RealmObject.isValid(feed))
+                Log.e(TAG, "Loading favicon for feed " + (feed != null ? feed.getName() : "*null*") + " failed", e);
+            else
+                Log.e(TAG, "Feed no longer valid", e);
+            listener.onGenerated(new FeedColors((Integer)null));
+            return false;
+        }
+
+        @Override
+        public boolean onResourceReady(Bitmap bitmap, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
             try {
                 final FeedColors cachedFeedColors = feedColorsCache.get(feed.getId());
                 if (cachedFeedColors == null) {
@@ -198,31 +211,7 @@ public class FaviconLoader {
                 Log.w(TAG, "Feed no longer valid");
                 listener.onGenerated(new FeedColors((Integer)null));
             }
-        }
-
-        @Override
-        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-            if(RealmObject.isValid(feed))
-                Log.e(TAG, "Loading favicon for feed " + (feed != null ? feed.getName() : "*null*") + " failed", e);
-            else
-                Log.e(TAG, "Feed no longer valid", e);
-            listener.onGenerated(new FeedColors((Integer)null));
-        }
-
-        @Override
-        public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-        }
-
-        @Override
-        public void onSuccess() {
-            if(imageView != null)
-                onBitmapLoaded(((BitmapDrawable)(imageView).getDrawable()).getBitmap(), null);
-        }
-
-        @Override
-        public void onError(Exception e) {
-            onBitmapFailed(e, null);
+            return false;
         }
     }
 }
