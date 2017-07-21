@@ -63,18 +63,26 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(key.equals(Preferences.DARK_THEME.getKey())) {
-            recreateActivity = true;
-            FaviconLoader.clearCache();
-            AppCompatDelegate.setDefaultNightMode(Preferences.getNightMode(sharedPreferences));
-            Intent intent = getIntent();
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra("recreateActivity", recreateActivity);
-            startActivity(intent);
-            finish();
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        } else if(key.equals(Preferences.ORDER.getKey()) || key.equals(Preferences.SHOW_ONLY_UNREAD.getKey()) || key.equals(Preferences.SORT_FIELD.getKey())) {
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), true).apply();
+        Preferences preference = Preferences.getPreference(key);
+        if(preference != null) {
+            switch (preference.getChangeAction()) {
+                case NOTHING:
+                    break;
+                case RECREATE:
+                    recreateActivity = true;
+                    FaviconLoader.clearCache();
+                    AppCompatDelegate.setDefaultNightMode(Preferences.getNightMode(sharedPreferences));
+                    Intent intent = getIntent();
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("recreateActivity", recreateActivity);
+                    startActivity(intent);
+                    finish();
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    break;
+                case UPDATE:
+                    PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), true).apply();
+                    break;
+            }
         }
     }
 

@@ -21,6 +21,8 @@
 package email.schaal.ocreader;
 
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatDelegate;
 
 import email.schaal.ocreader.database.model.AllUnreadFolder;
@@ -33,32 +35,55 @@ import io.realm.Sort;
 public enum Preferences {
     /** User preferences **/
     SHOW_ONLY_UNREAD("show_only_unread", false),
-    USERNAME("username",null),
-    PASSWORD("password", null),
-    URL("url", null),
-    ORDER("order", Sort.ASCENDING.name()),
-    SORT_FIELD("sort_field", Item.PUB_DATE),
-    DARK_THEME("dark_theme", false),
+    USERNAME("username"),
+    PASSWORD("password"),
+    URL("url"),
+    ORDER("order", Sort.ASCENDING.name(), ChangeAction.UPDATE),
+    SORT_FIELD("sort_field", Item.ID, ChangeAction.UPDATE),
+    DARK_THEME("dark_theme", false, ChangeAction.RECREATE),
 
     /** System preferences **/
     SYS_NEEDS_UPDATE_AFTER_SYNC("needs_update_after_sync", false),
     SYS_SYNC_RUNNING("is_sync_running", false),
 
     SYS_STARTDRAWERITEMID("startdrawer_itemid", AllUnreadFolder.ID),
-    SYS_ENDRAWERITEM_ID("enddrawer_itemid", null),
+    SYS_ENDRAWERITEM_ID("enddrawer_itemid"),
     SYS_ISFEED("isfeed", false),
 
-    SYS_DETECTED_API_LEVEL("detected_api_level", null),
-    SYS_APIv2_ETAG("apiv2_etag", null);
+    SYS_DETECTED_API_LEVEL("detected_api_level"),
+    SYS_APIv2_ETAG("apiv2_etag");
 
-    private final String key;
-    private final Object defaultValue;
-
-    Preferences(String key, Object defaultValue) {
-        this.key = key;
-        this.defaultValue = defaultValue;
+    /**
+     * What to do after the preference changes
+     */
+    public enum ChangeAction {
+        NOTHING, // do nothing
+        RECREATE, // recreate activity
+        UPDATE // update item recyclerview
     }
 
+    @NonNull
+    private final String key;
+    @Nullable
+    private final Object defaultValue;
+    @NonNull
+    private final ChangeAction changeAction;
+
+    Preferences(@NonNull String key) {
+        this(key, null);
+    }
+
+    Preferences(@NonNull String key, @Nullable Object defaultValue) {
+        this(key, defaultValue, ChangeAction.NOTHING);
+    }
+
+    Preferences(@NonNull String key, @Nullable Object defaultValue, @NonNull ChangeAction changeAction) {
+        this.key = key;
+        this.defaultValue = defaultValue;
+        this.changeAction = changeAction;
+    }
+
+    @NonNull
     public String getKey() {
         return key;
     }
@@ -67,18 +92,18 @@ public enum Preferences {
         return preferences.getString(key, (String) defaultValue);
     }
 
+    @Nullable
     public Boolean getBoolean(SharedPreferences preferences) {
+        if(defaultValue == null)
+            return null;
         return preferences.getBoolean(key, (Boolean) defaultValue);
     }
 
+    @Nullable
     public Long getLong(SharedPreferences preferences) {
         if(defaultValue == null)
             return null;
         return preferences.getLong(key, (Long) defaultValue);
-    }
-
-    public int getInt(SharedPreferences preferences) {
-        return preferences.getInt(key, (int) defaultValue);
     }
 
     public Sort getOrder(SharedPreferences preferences) {
@@ -90,6 +115,11 @@ public enum Preferences {
         return Sort.valueOf((String) defaultValue);
     }
 
+    @NonNull
+    public ChangeAction getChangeAction() {
+        return changeAction;
+    }
+
     @AppCompatDelegate.NightMode
     public static int getNightMode(SharedPreferences preferences) {
         return preferences.getBoolean(DARK_THEME.getKey(), false) ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO;
@@ -97,5 +127,14 @@ public enum Preferences {
 
     public static boolean hasCredentials(SharedPreferences preferences) {
         return USERNAME.getString(preferences) != null && SYS_DETECTED_API_LEVEL.getString(preferences) != null;
+    }
+
+    @Nullable
+    public static Preferences getPreference(String key) {
+        for(Preferences preference: values()) {
+            if(preference.getKey().equals(key))
+                return preference;
+        }
+        return null;
     }
 }
