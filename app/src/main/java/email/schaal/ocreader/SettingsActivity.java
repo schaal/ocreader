@@ -73,7 +73,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
             startActivity(intent);
             finish();
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        } else if(key.equals(Preferences.ORDER.getKey()) || key.equals(Preferences.SHOW_ONLY_UNREAD.getKey())) {
+        } else if(key.equals(Preferences.ORDER.getKey()) || key.equals(Preferences.SHOW_ONLY_UNREAD.getKey()) || key.equals(Preferences.SORT_FIELD.getKey())) {
             PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), true).apply();
         }
     }

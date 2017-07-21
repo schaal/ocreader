@@ -8,4 +8,15 @@
         <item>@string/ascending_value</item>
         <item>@string/descending_value</item>
     </string-array>
+
+    <string-array name="sort_field">
+        <item>@string/default_sort_key</item>
+        <item>@string/publication_date</item>
+        <item>@string/updated_date</item>
+    </string-array>
+    <string-array name="sort_field_values">
+        <item>@string/default_sort_field_value</item>
+        <item>@string/publication_value</item>
+        <item>@string/update_value</item>
+    </string-array>
 </resources>

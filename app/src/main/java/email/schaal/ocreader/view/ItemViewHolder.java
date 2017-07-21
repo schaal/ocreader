@@ -20,14 +20,19 @@
 
 package email.schaal.ocreader.view;
 
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
+import java.util.Date;
+
+import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.database.model.Item;
@@ -83,7 +88,15 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
             binding.textViewFeedTitle.setText("");
         }
 
-        binding.textViewTime.setText(StringUtils.getTimeSpanString(itemView.getContext(), item.getPubDate()));
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(binding.getRoot().getContext());
+
+        final Date date;
+        if(Preferences.SORT_FIELD.getString(preferences).equals(Item.UPDATED_AT))
+            date = item.getUpdatedAt();
+        else
+            date = item.getPubDate();
+
+        binding.textViewTime.setText(StringUtils.getTimeSpanString(itemView.getContext(), date));
 
         binding.textViewFeedTitle.setTextColor(defaultFeedTextColor);
 

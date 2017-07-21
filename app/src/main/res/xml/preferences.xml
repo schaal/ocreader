@@ -14,6 +14,14 @@
             android:key="order"
             android:summary="%s"
             android:title="@string/article_order" />
+
+        <ListPreference
+            android:defaultValue="@string/default_sort_field_value"
+            android:entries="@array/sort_field"
+            android:entryValues="@array/sort_field_values"
+            android:key="sort_field"
+            android:summary="%s"
+            android:title="@string/sort_by" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/appearance">
