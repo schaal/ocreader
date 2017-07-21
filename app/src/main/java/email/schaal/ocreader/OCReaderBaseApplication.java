@@ -33,7 +33,6 @@ import com.bumptech.glide.Glide;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 
 import email.schaal.ocreader.database.Queries;
-import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.util.AlarmUtils;
 
 /**
@@ -54,7 +53,6 @@ public abstract class OCReaderBaseApplication extends Application {
 
         preferences.edit()
                 .putBoolean(Preferences.SYS_SYNC_RUNNING.getKey(), false)
-                .putString(Preferences.SORT_FIELD.getKey(), Item.ID)
                 .apply();
 
         Queries.init(this);
