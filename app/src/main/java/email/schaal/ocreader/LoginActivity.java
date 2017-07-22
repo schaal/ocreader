@@ -52,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public static final String EXTRA_IMPROPERLY_CONFIGURED_CRON = "email.schaal.ocreader.extra.improperlyConfiguredCron";
     private static final int WARNING_RECEIVED = 666;
+    private static final String SCHEME_ADDED = "SCHEME_ADDED";
 
     // UI references.
     private ActivityLoginBinding binding;
@@ -134,9 +135,10 @@ public class LoginActivity extends AppCompatActivity {
         if(!urlString.startsWith("https://") && !urlString.startsWith("http://")) {
             urlString = "https://" + urlString;
             binding.url.setText(urlString);
+            binding.url.setTag(SCHEME_ADDED);
         }
 
-        HttpUrl url = HttpUrl.parse(urlString);
+        final HttpUrl url = HttpUrl.parse(urlString);
 
         // Check for a valid username
         if (TextUtils.isEmpty(username)) {
@@ -164,9 +166,10 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            url = url.newBuilder().addPathSegment("").build();
 
-            API.login(this, url, username, password, new API.APICallback<Status, LoginError>() {
+            final HttpUrl fixedUrl = url.newBuilder().addPathSegment("").build();
+
+            API.login(this, fixedUrl, username, password, new API.APICallback<Status, LoginError>() {
                 @Override
                 public void onSuccess(Status status) {
                     Intent data = new Intent(Intent.ACTION_VIEW);
@@ -177,7 +180,13 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(LoginError loginError) {
-                    showError(loginError);
+                    if(SCHEME_ADDED.equals(binding.url.getTag())) {
+                        binding.url.setText(fixedUrl.newBuilder().scheme("http").toString());
+                        binding.url.setTag(null);
+                        attemptLogin();
+                    } else {
+                        showError(loginError);
+                    }
                     showProgress(false);
                 }
             });
