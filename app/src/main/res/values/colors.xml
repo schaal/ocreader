@@ -24,6 +24,9 @@
     <color name="primary_dark">@color/md_light_blue_900</color>
     <color name="accent">@color/md_light_blue_A200</color>
 
+    <!-- accent color for AboutLibraries-->
+    <color name="colorAccent">@color/accent</color>
+
     <color name="selected_background">@color/md_grey_300</color>
     <color name="star">@color/md_yellow_A700</color>
     <color name="progress">#66FFFFFF</color>
