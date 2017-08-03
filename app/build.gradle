@@ -106,7 +106,7 @@ dependencies {
 
     releaseCompile 'ch.acra:acra:4.9.2'
 
-    compile('com.vdurmont:emoji-java:3.2.0', {
+    compile('com.vdurmont:emoji-java:3.3.0', {
         exclude group: 'org.json', module: 'json'
     })
 
