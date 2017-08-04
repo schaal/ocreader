@@ -1,3 +1,12 @@
+## 0.37 (2017-08-04)
+
+* Fallback to http when scheme is not entered and https fails when entering server details
+* Add preference to change sort field
+* Replace picasso with glide, which leads to better caching of favicons
+* Use AboutLibraries to display libraries used
+* Allow the fingerprint to be null, Fixes #69
+* Use primary color as default link color in webview
+
 ## 0.36 (2017-06-05)
 
 * Check if feed title is empty, Fixes #67
