@@ -30,7 +30,6 @@ public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.Vi
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case R.id.viewtype_item:
-            case R.id.viewtype_lastitem:
                 ListFeedBinding binding = ListFeedBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
                 return new FeedViewHolder(binding, listener);
         }

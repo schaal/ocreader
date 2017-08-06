@@ -98,10 +98,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public int getItemViewType(int position) {
         if(hasItems()) {
-            if(position == getActualItemCount() - 1)
-                return R.id.viewtype_lastitem;
-            else
-                return R.id.viewtype_item;
+            return R.id.viewtype_item;
         } else
             return R.id.viewtype_empty;
     }
@@ -116,7 +113,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         RecyclerView.ViewHolder holder = null;
         switch (viewType) {
             case R.id.viewtype_item:
-            case R.id.viewtype_lastitem:
                 ListItemBinding binding = ListItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
                 holder = new ItemViewHolder(binding, clickListener);
                 break;

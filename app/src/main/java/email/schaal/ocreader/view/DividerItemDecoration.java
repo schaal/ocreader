@@ -90,7 +90,6 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
                 case R.id.viewtype_item:
                     dividerRect.left = paddingLeftInset;
                     break;
-                case R.id.viewtype_lastitem:
                 case R.id.viewtype_empty:
                 case R.id.viewtype_loadmore:
                     dividerRect.left = paddingLeft;
