@@ -88,7 +88,10 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
             switch (layoutManager.getItemViewType(child)) {
                 case R.id.viewtype_item:
-                    dividerRect.left = paddingLeftInset;
+                    if(i == childCount -1 || (i == childCount -2 && layoutManager.getItemViewType(parent.getChildAt(i+1)) != R.id.viewtype_item))
+                        dividerRect.left = paddingLeft;
+                    else
+                        dividerRect.left = paddingLeftInset;
                     break;
                 case R.id.viewtype_empty:
                 case R.id.viewtype_loadmore:
