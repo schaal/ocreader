@@ -109,17 +109,18 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view;
         RecyclerView.ViewHolder holder = null;
         switch (viewType) {
-            case R.id.viewtype_item:
+            case R.id.viewtype_item: {
                 ListItemBinding binding = ListItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
                 holder = new ItemViewHolder(binding, clickListener);
-                break;
-            case R.id.viewtype_empty:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_empty, parent, false);
+            }
+            break;
+            case R.id.viewtype_empty: {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_empty, parent, false);
                 holder = new EmptyStateViewHolder(view);
-                break;
+            }
+            break;
         }
         return holder;
     }
