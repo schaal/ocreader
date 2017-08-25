@@ -76,7 +76,7 @@ public class TreeItemDrawerItem extends PrimaryDrawerItem {
 
     @NonNull
     private ImageView getImageView(BaseViewHolder viewHolder) {
-        ImageView imageView = (ImageView) viewHolder.itemView.findViewById(com.mikepenz.materialdrawer.R.id.material_drawer_icon);
+        ImageView imageView = viewHolder.itemView.findViewById(com.mikepenz.materialdrawer.R.id.material_drawer_icon);
         imageView.setVisibility(View.VISIBLE);
         return imageView;
     }

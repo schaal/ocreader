@@ -72,7 +72,7 @@ public class ErrorAdapter extends LoadMoreAdapter {
 
         ErrorViewHolder(View itemView) {
             super(itemView);
-            errorTextView = (TextView) itemView.findViewById(R.id.textViewError);
+            errorTextView = itemView.findViewById(R.id.textViewError);
         }
 
         void bindError(String error) {
