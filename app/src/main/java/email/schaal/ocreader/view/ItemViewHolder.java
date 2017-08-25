@@ -100,7 +100,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
 
         binding.textViewFeedTitle.setTextColor(defaultFeedTextColor);
 
-        new FaviconLoader.Builder(binding.imageviewFavicon, feed).build().load(binding.imageviewFavicon.getContext(), this);
+        new FaviconLoader.Builder(binding.imageviewFavicon).build().load(binding.imageviewFavicon.getContext(), feed, this);
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override

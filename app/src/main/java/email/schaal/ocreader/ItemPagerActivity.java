@@ -348,11 +348,11 @@ public class ItemPagerActivity extends RealmActivity {
 
             binding.toolbarLayout.textViewSubtitle.setText(item.getFeed().getName());
 
-            new FaviconLoader.Builder(binding.fabOpenInBrowser, item.getFeed())
+            new FaviconLoader.Builder(binding.fabOpenInBrowser)
                     .withGenerateFallbackImage(false)
                     .withPlaceholder(R.drawable.ic_open_in_browser)
                     .build()
-                    .load(ItemPagerActivity.this, toListener);
+                    .load(ItemPagerActivity.this, item.getFeed(), toListener);
 
             progressFrom = progressTo;
             progressTo = (float) (position + 1) / (float) mSectionsPagerAdapter.getCount();

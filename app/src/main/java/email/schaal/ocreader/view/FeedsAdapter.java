@@ -96,7 +96,7 @@ public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.Vi
                     listener.showFeedDialog(feed);
                 }
             });
-            new FaviconLoader.Builder(binding.imageviewFavicon, feed).build().load(itemView.getContext(), this);
+            new FaviconLoader.Builder(binding.imageviewFavicon).build().load(itemView.getContext(), feed, this);
         }
 
         @Override

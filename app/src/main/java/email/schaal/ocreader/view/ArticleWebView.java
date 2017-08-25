@@ -129,9 +129,9 @@ public class ArticleWebView extends NestedScrollWebView {
             post(new Runnable() {
                 @Override
                 public void run() {
-                    new FaviconLoader.Builder(item.getFeed())
+                    new FaviconLoader.Builder()
                             .build()
-                            .load(ArticleWebView.this.getContext(), feedColorsListener);
+                            .load(ArticleWebView.this.getContext(), item.getFeed(), feedColorsListener);
                     setScrollY(savedScrollPosition);
                 }
             });
