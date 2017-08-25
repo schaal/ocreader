@@ -27,7 +27,6 @@ import java.util.Locale;
 
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.model.Feed;
-import io.realm.RealmObject;
 
 /**
  * Load favicons
@@ -166,12 +165,12 @@ public class FaviconLoader {
     }
 
     private class MyTarget implements RequestListener<Bitmap> {
-        private final Feed feed;
+        private final long feedId;
         private final FeedColorsListener listener;
         private final Palette.Filter contrastFilter;
 
         MyTarget(@NonNull Feed feed, @NonNull FeedColorsListener listener, final @ColorInt int backgroundColor) {
-            this.feed = feed;
+            this.feedId = feed.getId();
             this.listener = listener;
             contrastFilter = new Palette.Filter() {
                 @Override
@@ -183,33 +182,25 @@ public class FaviconLoader {
 
         @Override
         public boolean onLoadFailed(@Nullable GlideException e, Object o, Target<Bitmap> target, boolean b) {
-            if(RealmObject.isValid(feed))
-                Log.e(TAG, "Loading favicon for feed " + (feed != null ? feed.getName() : "*null*") + " failed", e);
-            else
-                Log.e(TAG, "Feed no longer valid", e);
+            Log.e(TAG, "Loading favicon for feed with id " + feedId + " failed", e);
             listener.onGenerated(new FeedColors((Integer)null));
             return false;
         }
 
         @Override
         public boolean onResourceReady(Bitmap bitmap, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
-            try {
-                final FeedColors cachedFeedColors = feedColorsCache.get(feed.getId());
-                if (cachedFeedColors == null) {
-                    generatePalette(bitmap, contrastFilter, new Palette.PaletteAsyncListener() {
-                        @Override
-                        public void onGenerated(Palette palette) {
-                            FeedColors feedColors = new FeedColors(palette);
-                            feedColorsCache.put(feed.getId(), feedColors);
-                            listener.onGenerated(feedColors);
-                        }
-                    });
-                } else {
-                    listener.onGenerated(cachedFeedColors);
-                }
-            } catch (IllegalStateException e) {
-                Log.w(TAG, "Feed no longer valid");
-                listener.onGenerated(new FeedColors((Integer)null));
+            final FeedColors cachedFeedColors = feedColorsCache.get(feedId);
+            if (cachedFeedColors == null) {
+                generatePalette(bitmap, contrastFilter, new Palette.PaletteAsyncListener() {
+                    @Override
+                    public void onGenerated(Palette palette) {
+                        FeedColors feedColors = new FeedColors(palette);
+                        feedColorsCache.put(feedId, feedColors);
+                        listener.onGenerated(feedColors);
+                    }
+                });
+            } else {
+                listener.onGenerated(cachedFeedColors);
             }
             return false;
         }
