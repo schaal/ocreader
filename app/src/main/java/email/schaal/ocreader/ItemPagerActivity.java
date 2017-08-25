@@ -343,6 +343,8 @@ public class ItemPagerActivity extends RealmActivity {
 
         @Override
         public void onPageSelected(int position) {
+            invalidateOptionsMenu();
+
             item = getItemForPosition(position);
             setItemUnread(false);
 
