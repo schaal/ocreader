@@ -30,7 +30,7 @@ android {
 
     defaultConfig {
         applicationId "email.schaal.ocreader"
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 26
         versionCode 40
         versionName "0.37"
