@@ -32,14 +32,16 @@ import email.schaal.ocreader.databinding.ActivitySettingsBinding;
 import email.schaal.ocreader.util.FaviconLoader;
 
 public class SettingsActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+    private static final String EXTRA_RECREATE_ACTIVITY = "recreateActivity";
+
     private boolean recreateActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(getIntent().hasExtra("recreateActivity"))
-            recreateActivity = getIntent().getBooleanExtra("recreateActivity", false);
+        if(getIntent().hasExtra(EXTRA_RECREATE_ACTIVITY))
+            recreateActivity = getIntent().getBooleanExtra(EXTRA_RECREATE_ACTIVITY, false);
 
         ActivitySettingsBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_settings);
         setSupportActionBar(binding.toolbarLayout.toolbar);
@@ -52,13 +54,13 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean("recreateActivity", recreateActivity);
+        outState.putBoolean(EXTRA_RECREATE_ACTIVITY, recreateActivity);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        recreateActivity = savedInstanceState.getBoolean("recreateActivity");
+        recreateActivity = savedInstanceState.getBoolean(EXTRA_RECREATE_ACTIVITY);
     }
 
     @Override
@@ -74,7 +76,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
                     AppCompatDelegate.setDefaultNightMode(Preferences.getNightMode(sharedPreferences));
                     Intent intent = getIntent();
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra("recreateActivity", recreateActivity);
+                    intent.putExtra(EXTRA_RECREATE_ACTIVITY, recreateActivity);
                     startActivity(intent);
                     finish();
                     overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
