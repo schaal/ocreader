@@ -139,6 +139,11 @@ public abstract class API {
 
         final HttpUrl resolvedBaseUrl = baseUrl.resolve("");
 
+        if(resolvedBaseUrl == null) {
+            loginCallback.onFailure(new LoginError("Couldn't parse URL"));
+            return;
+        }
+
         final Moshi moshi = new Moshi.Builder().build();
         final JsonAdapter<NewsError> errorJsonAdapter = moshi.adapter(NewsError.class);
 
