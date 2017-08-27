@@ -244,7 +244,7 @@ public class DrawerManager {
             startDrawerItemId = Preferences.SYS_STARTDRAWERITEMID.getLong(preferences);
             endDrawerItemId = Preferences.SYS_ENDRAWERITEM_ID.getLong(preferences);
 
-            if(endDrawerItemId != null && endDrawerItemId < 0)
+            if(endDrawerItemId < 0)
                 endDrawerItemId = null;
 
             boolean isFeed = Preferences.SYS_ISFEED.getBoolean(preferences);
