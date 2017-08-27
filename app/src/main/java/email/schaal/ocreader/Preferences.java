@@ -92,17 +92,17 @@ public enum Preferences {
         return preferences.getString(key, (String) defaultValue);
     }
 
-    @Nullable
+    @NonNull
     public Boolean getBoolean(SharedPreferences preferences) {
         if(defaultValue == null)
-            return null;
+            return false;
         return preferences.getBoolean(key, (Boolean) defaultValue);
     }
 
-    @Nullable
+    @NonNull
     public Long getLong(SharedPreferences preferences) {
         if(defaultValue == null)
-            return null;
+            return 0L;
         return preferences.getLong(key, (Long) defaultValue);
     }
 
