@@ -1,5 +1,6 @@
 package email.schaal.ocreader.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -83,6 +84,10 @@ public class FaviconLoader {
         faviconCache.evictAll();
     }
     public void load(Context context, Feed feed, @NonNull FeedColorsListener listener) {
+        if(context instanceof Activity && ((Activity) context).isDestroyed()) {
+             return;
+        }
+
         listener.onStart();
         if(feed == null) {
             listener.onGenerated(new FeedColors((Integer)null));
