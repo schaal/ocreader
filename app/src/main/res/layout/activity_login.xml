@@ -115,7 +115,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/materialize_spacing"
-                        android:drawableLeft="@drawable/ic_warning"
                         android:drawablePadding="@dimen/materialize_spacing"
                         android:drawableStart="@drawable/ic_warning"
                         android:gravity="center_vertical"

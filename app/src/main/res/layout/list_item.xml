@@ -34,10 +34,8 @@
             android:id="@+id/textViewFeedTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/buttons"
             android:layout_alignStart="@id/buttons"
             android:layout_below="@+id/buttons"
-            android:layout_toLeftOf="@+id/textViewTime"
             android:layout_toStartOf="@+id/textViewTime"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             tools:text="Feed title"/>
@@ -46,12 +44,10 @@
             android:id="@+id/imageview_favicon"
             android:layout_width="@dimen/materialize_icon"
             android:layout_height="@dimen/materialize_icon"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/materialize_spacing"
-            android:layout_marginRight="@dimen/materialize_spacing"
             android:contentDescription="@string/feed_icon_description"
             tools:src="@drawable/ic_feed_icon"/>
 
@@ -60,10 +56,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_toEndOf="@id/imageview_favicon"
-            android:layout_toRightOf="@id/imageview_favicon">
+            android:layout_toEndOf="@id/imageview_favicon">
 
             <TextView
                 android:id="@+id/textViewTitle"
@@ -102,7 +96,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:layout_below="@+id/buttons"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textStyle="italic"
