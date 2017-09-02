@@ -86,6 +86,12 @@ public class ItemPageFragment extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        webView.getSettings().setJavaScriptEnabled(false);
+        super.onDestroyView();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(WEB_VIEW_SCROLL_POSITION, binding.webView.getScrollY());
