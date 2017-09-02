@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.databinding.FragmentItemPagerBinding;
+import email.schaal.ocreader.view.ArticleWebView;
 
 /**
  * Fragment to display a single feed item using a WebView.
@@ -37,6 +38,7 @@ public class ItemPageFragment extends Fragment {
     private static final String WEB_VIEW_SCROLL_POSITION = "webViewScrollPosition";
 
     private FragmentItemPagerBinding binding;
+    private ArticleWebView webView;
 
     public ItemPageFragment() {
     }
@@ -56,22 +58,31 @@ public class ItemPageFragment extends Fragment {
         super.onStart();
 
         Item item = getArguments().getParcelable(ARG_ITEM);
-        binding.webView.setItem(item);
+        webView.setItem(item);
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        if(binding != null && binding.webView != null)
-            binding.webView.onPause();
+        if(webView != null)
+            webView.onPause();
     }
 
     @Override
     public void onResume() {
+        if(webView != null)
+            webView.onResume();
         super.onResume();
-        if(binding != null && binding.webView != null)
-            binding.webView.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        if(webView != null) {
+            webView.destroy();
+            webView = null;
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -83,8 +94,10 @@ public class ItemPageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentItemPagerBinding.inflate(inflater, container, false);
+        webView = binding.webView;
+
         if(savedInstanceState != null)
-            binding.webView.setScrollPosition(savedInstanceState.getInt(WEB_VIEW_SCROLL_POSITION, 0));
+            webView.setScrollPosition(savedInstanceState.getInt(WEB_VIEW_SCROLL_POSITION, 0));
 
         return binding.getRoot();
     }
