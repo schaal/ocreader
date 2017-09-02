@@ -34,7 +34,7 @@
             android:id="@+id/textViewFeedTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@id/buttons"
+            android:layout_alignStart="@+id/buttons"
             android:layout_below="@+id/buttons"
             android:layout_toStartOf="@+id/textViewTime"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
