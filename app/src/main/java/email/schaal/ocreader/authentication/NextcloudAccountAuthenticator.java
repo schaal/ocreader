@@ -12,6 +12,8 @@ import android.os.Bundle;
  */
 
 public class NextcloudAccountAuthenticator extends AbstractAccountAuthenticator {
+    public final static String ACCOUNT_NAME = "email.schaal.ocreader.ACCOUNT";
+
     public NextcloudAccountAuthenticator(Context context) {
         super(context);
     }
