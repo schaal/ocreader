@@ -1,5 +1,6 @@
 package email.schaal.ocreader.database;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import email.schaal.ocreader.database.model.Item;
@@ -17,7 +18,7 @@ class DatabaseMigration implements RealmMigration {
     private static final String TAG = DatabaseMigration.class.getName();
 
     @Override
-    public void migrate(final DynamicRealm realm, long oldVersion, long newVersion) {
+    public void migrate(@NonNull final DynamicRealm realm, long oldVersion, long newVersion) {
         Log.d(TAG, "Starting migration from " + oldVersion + " to " + newVersion);
 
         // Migration from versions < 9 not supported, versions prior 9 were missing the

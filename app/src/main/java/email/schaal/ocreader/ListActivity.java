@@ -372,7 +372,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                                 }
                             }, new Realm.Transaction.OnError() {
                                 @Override
-                                public void onError(Throwable error) {
+                                public void onError(@NonNull Throwable error) {
                                     Log.e(TAG, "Failed to mark temporary feed as read", error);
                                     onCompletion(view);
                                 }

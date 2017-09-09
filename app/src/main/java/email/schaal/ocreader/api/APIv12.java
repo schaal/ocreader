@@ -196,7 +196,7 @@ class APIv12 extends API {
         if (response.isSuccessful()) {
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
-                public void execute(Realm realm) {
+                public void execute(@NonNull Realm realm) {
                     if (action == MarkAction.MARK_READ || action == MarkAction.MARK_UNREAD) {
                         for (Item item : results) {
                             item.setUnreadChanged(false);
@@ -615,7 +615,7 @@ class APIv12 extends API {
             protected void onResponseReal(Response<Void> response) {
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
-                    public void execute(Realm realm) {
+                    public void execute(@NonNull Realm realm) {
                         feed.setFolder(Folder.getOrCreate(realm, folderId));
                     }
                 });
@@ -630,7 +630,7 @@ class APIv12 extends API {
             protected void onResponseReal(Response<Void> response) {
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
-                    public void execute(Realm realm) {
+                    public void execute(@NonNull Realm realm) {
                         feed.delete(realm);
                     }
                 });

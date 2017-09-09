@@ -20,6 +20,8 @@
 
 package email.schaal.ocreader.database.model;
 
+import android.support.annotation.NonNull;
+
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmModel;
@@ -96,7 +98,7 @@ public class TemporaryFeed implements RealmModel {
     public static void updatePagerTemporaryFeed(Realm realm) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
-            public void execute(Realm realm) {
+            public void execute(@NonNull Realm realm) {
                 final TemporaryFeed listTempFeed = getListTemporaryFeed(realm);
                 final TemporaryFeed pagerTempFeed = getPagerTemporaryFeed(realm);
 

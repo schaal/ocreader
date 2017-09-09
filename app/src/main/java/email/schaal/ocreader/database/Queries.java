@@ -54,7 +54,7 @@ public class Queries {
 
     private final static Realm.Transaction initialData = new Realm.Transaction() {
         @Override
-        public void execute(Realm realm) {
+        public void execute(@NonNull Realm realm) {
             realm.deleteAll();
             realm.createObject(TemporaryFeed.class, TemporaryFeed.LIST_ID);
             realm.createObject(TemporaryFeed.class, TemporaryFeed.PAGER_ID);
@@ -110,7 +110,7 @@ public class Queries {
     public static void insert(Realm realm, @Nullable final Insertable element) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
-            public void execute(Realm realm) {
+            public void execute(@NonNull Realm realm) {
                 if(element != null)
                     element.insert(realm);
             }
@@ -120,7 +120,7 @@ public class Queries {
     public static void insert(Realm realm, final Iterable<? extends Insertable> elements) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
-            public void execute(Realm realm) {
+            public void execute(@NonNull Realm realm) {
                 for(final Insertable element: elements) {
                     element.insert(realm);
                 }
@@ -133,7 +133,7 @@ public class Queries {
 
         realm.executeTransaction(new Realm.Transaction() {
             @Override
-            public void execute(Realm realm) {
+            public void execute(@NonNull Realm realm) {
                 final RealmResults<T> databaseItems = realm.where(clazz).findAllSorted(TreeItem.ID, Sort.ASCENDING);
 
                 final Iterator<T> databaseIterator = databaseItems.iterator();
@@ -178,7 +178,7 @@ public class Queries {
         if(itemsToDelete > 0) {
             realm.executeTransaction(new Realm.Transaction() {
                 @Override
-                public void execute(Realm realm) {
+                public void execute(@NonNull Realm realm) {
                     for (int i = 0; i < itemsToDelete; i++) {
                         expendableItems.deleteFirstFromRealm();
                     }
@@ -190,7 +190,7 @@ public class Queries {
     public static void markAboveAsRead(Realm realm, final List<Item> items, final long lastItemId) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
-            public void execute(Realm realm) {
+            public void execute(@NonNull Realm realm) {
                 try {
                     for(Item item: items) {
                         item.setUnread(false);
@@ -208,7 +208,7 @@ public class Queries {
     public static void markTemporaryFeedAsRead(Realm realm, Realm.Transaction.OnSuccess onSuccess, Realm.Transaction.OnError onError) {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
-            public void execute(Realm realm) {
+            public void execute(@NonNull Realm realm) {
                 try {
                     RealmResults<Item> unreadItems = TemporaryFeed.getListTemporaryFeed(realm).getItems()
                             .where()
@@ -227,7 +227,7 @@ public class Queries {
     public static void setItemsUnread(Realm realm, final boolean newUnread, final Item... items) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
-            public void execute(Realm realm) {
+            public void execute(@NonNull Realm realm) {
                 try {
                     for (Item item : items) {
                         /** If the item has a fingerprint, mark all items with the same fingerprint
@@ -257,7 +257,7 @@ public class Queries {
     public static void setItemsStarred(Realm realm, final boolean newStarred, final Item... items) {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
-            public void execute(Realm realm) {
+            public void execute(@NonNull Realm realm) {
                 try {
                     for (Item item : items) {
                         item.setStarred(newStarred);

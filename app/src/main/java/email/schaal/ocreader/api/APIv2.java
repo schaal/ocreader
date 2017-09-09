@@ -3,6 +3,7 @@ package email.schaal.ocreader.api;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 
 import java.util.Map;
 
@@ -165,7 +166,7 @@ class APIv2 extends API {
             protected void onResponseReal(Response<Void> response) {
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
-                    public void execute(Realm realm) {
+                    public void execute(@NonNull Realm realm) {
                         feed.delete(realm);
                     }
                 });

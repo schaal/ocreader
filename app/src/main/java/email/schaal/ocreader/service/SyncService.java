@@ -129,7 +129,7 @@ public class SyncService extends Service {
 
     private final Realm.Transaction postProcessFeedTransaction = new Realm.Transaction() {
         @Override
-        public void execute(Realm realm) {
+        public void execute(@NonNull Realm realm) {
             for (Feed feed: realm.where(Feed.class).findAll()) {
                 feed.setStarredCount((int) realm.where(Item.class)
                         .equalTo(Item.FEED_ID, feed.getId())
