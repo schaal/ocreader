@@ -61,7 +61,7 @@ ext {
             supportLib: '26.0.1',
             okhttp: '3.9.0',
             retrofit: '2.3.0',
-            glide: '4.1.0'
+            glide: '4.1.1'
     ]
 }
 
