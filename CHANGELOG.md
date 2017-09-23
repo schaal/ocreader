@@ -1,3 +1,8 @@
+## 0.38 (2017-09-23)
+
+* Possible fix for "You cannot start a load for a destroyed activity" crash
+* Minimum SDK level raised to 17
+
 ## 0.37 (2017-08-04)
 
 * Fallback to http when scheme is not entered and https fails when entering server details
@@ -36,7 +41,6 @@
 * Layout improvements for article view
   * improve emoji display in articles
   * remove margin from first image in article
-
 
 ## 0.30 (2017-04-01)
 
