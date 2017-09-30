@@ -4,4 +4,5 @@
     <item name="viewtype_empty" type="id" />
     <item name="viewtype_loadmore" type="id" />
     <item name="viewtype_error" type="id" />
+    <item name="ime_login_id" type="integer" />
 </resources>
