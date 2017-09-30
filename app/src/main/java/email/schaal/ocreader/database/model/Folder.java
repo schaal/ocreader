@@ -178,7 +178,7 @@ public class Folder implements RealmModel, TreeItem, Insertable, TreeIconable, P
             query = realm.where(Folder.class);
         }
 
-        return query != null ? query.findAllSorted(Folder.NAME, Sort.ASCENDING) : Collections.<Folder>emptyList();
+        return query != null ? query.findAllSorted(Folder.NAME, Sort.ASCENDING) : Collections.emptyList();
     }
 
     @Override
