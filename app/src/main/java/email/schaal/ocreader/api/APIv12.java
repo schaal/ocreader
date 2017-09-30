@@ -569,7 +569,7 @@ class APIv12 extends API {
         api.deleteFeed(feed.getId()).enqueue(new BaseRetrofitCallback<Void>(apiCallback) {
             @Override
             protected void onResponseReal(Response<Void> response) {
-                realm.executeTransaction(realm1 -> feed.delete(realm1));
+                realm.executeTransaction(feed::delete);
             }
         });
     }
