@@ -166,7 +166,7 @@ public abstract class API {
 
                     loginInstance = Level.getAPI(context, apiLevel);
 
-                    if(loginInstance == null || apiLevel == null) {
+                    if(apiLevel == null) {
                         loginCallback.onFailure(new LoginError(context.getString(R.string.error_not_compatible)));
                     } else {
                         loginInstance.setupApi(httpManager);
