@@ -82,7 +82,9 @@ class APIv2 extends API {
         api.metaData().enqueue(new BaseRetrofitCallback<Status>(apiCallback) {
             @Override
             protected void onResponseReal(Response<Status> response) {
-                Queries.insert(realm, response.body().getUser());
+                final Status status = response.body();
+                if(status != null)
+                    Queries.insert(realm, status.getUser());
             }
         });
     }
@@ -93,11 +95,15 @@ class APIv2 extends API {
         final BaseRetrofitCallback<SyncResponse> retrofitCallback = new BaseRetrofitCallback<SyncResponse>(apiCallback) {
             @Override
             protected void onResponseReal(Response<SyncResponse> response) {
-                sharedPreferences.edit().putString(Preferences.SYS_APIv2_ETAG.getKey(), response.headers().get("Etag")).apply();
+                final SyncResponse syncResponse = response.body();
 
-                Queries.deleteAndInsert(realm, Folder.class, response.body().getFolders());
-                Queries.deleteAndInsert(realm, Feed.class, response.body().getFeeds());
-                Queries.insert(realm, response.body().getItems());
+                if(syncResponse != null) {
+                    sharedPreferences.edit().putString(Preferences.SYS_APIv2_ETAG.getKey(), response.headers().get("Etag")).apply();
+
+                    Queries.deleteAndInsert(realm, Folder.class, syncResponse.getFolders());
+                    Queries.deleteAndInsert(realm, Feed.class, syncResponse.getFeeds());
+                    Queries.insert(realm, syncResponse.getItems());
+                }
             }
         };
 
@@ -135,11 +141,15 @@ class APIv2 extends API {
         api.createFeed(feed).enqueue(new BaseRetrofitCallback<Feeds>(apiCallback) {
             @Override
             protected void onResponseReal(final Response<Feeds> response) {
-                // Set unreadCount to 0, items have not been fetched yet for this feed
-                Feed feed = response.body().getFeeds().get(0);
-                feed.setUnreadCount(0);
+                final Feeds feeds = response.body();
 
-                Queries.insert(realm, feed);
+                if(feeds != null) {
+                    // Set unreadCount to 0, items have not been fetched yet for this feed
+                    Feed feed = feeds.getFeeds().get(0);
+                    feed.setUnreadCount(0);
+
+                    Queries.insert(realm, feed);
+                }
             }
         });
     }
@@ -153,7 +163,10 @@ class APIv2 extends API {
         api.changeFeed(feed.getId(), changedFeed).enqueue(new BaseRetrofitCallback<Map<String,Feed>>(apiCallback) {
             @Override
             protected void onResponseReal(Response<Map<String,Feed>> response) {
-                Queries.insert(realm, response.body().get("feed"));
+                final Map<String, Feed> feedMap = response.body();
+
+                if(feedMap != null)
+                    Queries.insert(realm, feedMap.get("feed"));
             }
         });
     }

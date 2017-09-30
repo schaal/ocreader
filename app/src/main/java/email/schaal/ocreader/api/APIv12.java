@@ -433,7 +433,12 @@ class APIv12 extends API {
 
         @Override
         protected Runnable getRunnable(final Response<Items> response) {
-            return () -> Queries.insert(realm, response.body().getItems());
+            return () -> {
+                final Items items = response.body();
+
+                if(items != null)
+                    Queries.insert(realm, items.getItems());
+            };
         }
     }
 
@@ -452,7 +457,12 @@ class APIv12 extends API {
 
         @Override
         protected Runnable getRunnable(final Response<Items> response) {
-            return () -> Queries.insert(realm, response.body().getItems());
+            return () -> {
+                final Items items = response.body();
+
+                if(items != null)
+                    Queries.insert(realm, items.getItems());
+            };
         }
     }
 
@@ -468,7 +478,12 @@ class APIv12 extends API {
 
         @Override
         protected Runnable getRunnable(final Response<Items> response) {
-            return () -> Queries.insert(realm, response.body().getItems());
+            return () -> {
+                final Items items = response.body();
+
+                if(items != null)
+                    Queries.insert(realm, items.getItems());
+            };
         }
     }
 
@@ -496,7 +511,12 @@ class APIv12 extends API {
 
         @Override
         protected Runnable getRunnable(final Response<Items> response) {
-            return () -> Queries.insert(realm, response.body().getItems());
+            return () -> {
+                final Items items = response.body();
+
+                if(items != null)
+                    Queries.insert(realm, items.getItems());
+            };
         }
     }
 
@@ -507,7 +527,12 @@ class APIv12 extends API {
 
         @Override
         protected Runnable getRunnable(final Response<Folders> response) {
-            return () -> Queries.deleteAndInsert(realm, Folder.class, response.body().getFolders());
+            return () -> {
+                final Folders folders = response.body();
+
+                if(folders != null)
+                    Queries.deleteAndInsert(realm, Folder.class, folders.getFolders());
+            };
         }
 
         @Override
@@ -523,7 +548,12 @@ class APIv12 extends API {
 
         @Override
         protected Runnable getRunnable(final Response<Feeds> response) {
-            return () -> Queries.deleteAndInsert(realm, Feed.class, response.body().getFeeds());
+            return () -> {
+                final Feeds feeds = response.body();
+
+                if(feeds != null)
+                    Queries.deleteAndInsert(realm, Feed.class, feeds.getFeeds());
+            };
         }
 
         @Override
@@ -542,11 +572,15 @@ class APIv12 extends API {
         api.createFeed(feedMap).enqueue(new BaseRetrofitCallback<Feeds>(apiCallback) {
             @Override
             protected void onResponseReal(final Response<Feeds> response) {
-                // Set unreadCount to 0, items have not been fetched yet for this feed
-                Feed feed = response.body().getFeeds().get(0);
-                feed.setUnreadCount(0);
+                final Feeds feeds = response.body();
 
-                Queries.insert(realm, feed);
+                if(feeds != null) {
+                    // Set unreadCount to 0, items have not been fetched yet for this feed
+                    Feed feed = feeds.getFeeds().get(0);
+                    feed.setUnreadCount(0);
+
+                    Queries.insert(realm, feed);
+                }
             }
         });
     }
