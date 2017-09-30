@@ -81,7 +81,6 @@ import email.schaal.ocreader.view.ErrorAdapter;
 import email.schaal.ocreader.view.ItemViewHolder;
 import email.schaal.ocreader.view.LoadMoreAdapter;
 import email.schaal.ocreader.view.drawer.DrawerManager;
-import io.realm.Realm;
 
 public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, LoadMoreAdapter.OnLoadMoreListener, ActionMode.Callback {
     private static final String TAG = ListActivity.class.getName();

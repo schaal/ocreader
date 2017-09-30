@@ -20,8 +20,6 @@
 
 package email.schaal.ocreader.database.model;
 
-import android.support.annotation.NonNull;
-
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmModel;

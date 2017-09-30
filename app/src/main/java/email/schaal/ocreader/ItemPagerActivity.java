@@ -42,7 +42,6 @@ import android.support.v4.graphics.ColorUtils;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import java.util.List;
 import java.util.WeakHashMap;
