@@ -77,7 +77,7 @@ dependencies {
 
     compile "com.android.support:support-v13:${versions.supportLib}"
 
-    compile 'com.google.guava:guava:20.0'
+    compile 'com.google.guava:guava:23.1-android'
 
     compile('com.mikepenz:materialdrawer:5.9.5@aar') {
         transitive = true
