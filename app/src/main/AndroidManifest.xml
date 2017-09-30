@@ -20,8 +20,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="email.schaal.ocreader">
 
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
+    <uses-permission
+        android:name="android.permission.MANAGE_ACCOUNTS"
+        android:maxSdkVersion="22" />
+    <uses-permission
+        android:name="android.permission.USE_CREDENTIALS"
+        android:maxSdkVersion="22" />
 
     <application
         android:name=".OCReaderApplication"
@@ -45,10 +53,6 @@
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
-        <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login"
-            android:parentActivityName=".ListActivity" />
         <activity
             android:name=".ItemPagerActivity"
             android:label="@string/title_activity_item_pager"
@@ -82,7 +86,6 @@
             android:name=".service.SyncService"
             android:enabled="true"
             android:exported="false" />
-
         <service
             android:name=".authentication.AccountSyncService"
             android:enabled="true"
@@ -90,9 +93,20 @@
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
-            <meta-data android:name="android.accounts.AccountAuthenticator"
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
+
+        <activity android:name=".authentication.LoginActivity"
+            android:label="@string/title_activity_login">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </activity>
     </application>
 
 </manifest>

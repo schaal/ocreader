@@ -9,7 +9,7 @@ import java.util.Map;
 import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.api.json.Feeds;
 import email.schaal.ocreader.api.json.Items;
-import email.schaal.ocreader.api.json.Status;
+import email.schaal.ocreader.api.json.NewsStatus;
 import email.schaal.ocreader.api.json.v2.SyncResponse;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.database.model.Feed;
@@ -56,7 +56,7 @@ class APIv2 extends API {
         Call<Void> deleteFeed(@Path("feedId") long feedId);
 
         @GET("./")
-        Call<Status> metaData();
+        Call<NewsStatus> metaData();
     }
 
     private APIv2Interface api;
@@ -73,16 +73,16 @@ class APIv2 extends API {
     }
 
     @Override
-    protected void metaData(Callback<Status> callback) {
+    protected void metaData(Callback<NewsStatus> callback) {
         api.metaData().enqueue(callback);
     }
 
     @Override
     public void user(final Realm realm, APICallback<Void, Throwable> apiCallback) {
-        api.metaData().enqueue(new BaseRetrofitCallback<Status>(apiCallback) {
+        api.metaData().enqueue(new BaseRetrofitCallback<NewsStatus>(apiCallback) {
             @Override
-            protected void onResponseReal(Response<Status> response) {
-                final Status status = response.body();
+            protected void onResponseReal(Response<NewsStatus> response) {
+                final NewsStatus status = response.body();
                 if(status != null)
                     Queries.insert(realm, status.getUser());
             }

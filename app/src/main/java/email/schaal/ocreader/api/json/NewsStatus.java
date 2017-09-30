@@ -32,8 +32,8 @@ import email.schaal.ocreader.database.model.User;
 /**
  * Encapsulates the JSON response for the status api call
  */
-public class Status {
-    private final static String TAG = Status.class.getName();
+public class NewsStatus {
+    private final static String TAG = NewsStatus.class.getName();
 
     @Nullable
     private Version version;

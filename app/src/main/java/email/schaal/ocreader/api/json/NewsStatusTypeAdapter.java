@@ -31,22 +31,22 @@ import java.io.IOException;
 /**
  * TypeAdapter to deserialize the JSON response for the status api call.
  */
-public class StatusTypeAdapter extends JsonAdapter<Status> {
-    private final static String TAG = StatusTypeAdapter.class.getName();
+public class NewsStatusTypeAdapter extends JsonAdapter<NewsStatus> {
+    private final static String TAG = NewsStatusTypeAdapter.class.getName();
 
     @Override
-    public void toJson(JsonWriter out, Status value) throws IOException {
+    public void toJson(JsonWriter out, NewsStatus value) throws IOException {
     }
 
     @Override
-    public Status fromJson(JsonReader in) throws IOException {
+    public NewsStatus fromJson(JsonReader in) throws IOException {
         if (in.peek() == JsonReader.Token.NULL) {
             in.nextNull();
             return null;
         }
 
         final NullableJsonReader reader = new NullableJsonReader(in);
-        final Status status = new Status();
+        final NewsStatus status = new NewsStatus();
 
         in.beginObject();
 
@@ -75,7 +75,7 @@ public class StatusTypeAdapter extends JsonAdapter<Status> {
         return status;
     }
 
-    private void readWarnings(JsonReader in, Status status) throws IOException {
+    private void readWarnings(JsonReader in, NewsStatus status) throws IOException {
         in.beginObject();
         while(in.hasNext()) {
             String name = in.nextName();

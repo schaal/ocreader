@@ -36,8 +36,6 @@ public enum Preferences {
     /** User preferences **/
     SHOW_ONLY_UNREAD("show_only_unread", false),
     USERNAME("username"),
-    PASSWORD("password"),
-    URL("url"),
     ORDER("order", Sort.ASCENDING.name(), ChangeAction.UPDATE),
     SORT_FIELD("sort_field", Item.ID, ChangeAction.UPDATE),
     DARK_THEME("dark_theme", false, ChangeAction.RECREATE),

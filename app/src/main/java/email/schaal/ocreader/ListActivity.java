@@ -20,6 +20,10 @@
 
 package email.schaal.ocreader;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -29,6 +33,7 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -58,14 +63,13 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
-import com.mikepenz.materialdrawer.model.interfaces.Tagable;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
+import email.schaal.ocreader.authentication.LoginActivity;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.database.model.AllUnreadFolder;
 import email.schaal.ocreader.database.model.Feed;
@@ -81,15 +85,22 @@ import email.schaal.ocreader.view.ErrorAdapter;
 import email.schaal.ocreader.view.ItemViewHolder;
 import email.schaal.ocreader.view.LoadMoreAdapter;
 import email.schaal.ocreader.view.drawer.DrawerManager;
+import hugo.weaving.DebugLog;
 
 public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, LoadMoreAdapter.OnLoadMoreListener, ActionMode.Callback {
     private static final String TAG = ListActivity.class.getName();
 
     private static final int REFRESH_DRAWER_ITEM_ID = 999;
+    private static final int PROFILE_DRAWER_ID = 456;
+
     public static final String LAYOUT_MANAGER_STATE = "LAYOUT_MANAGER_STATE";
+    private static final String ACCOUNT_STATE = "ACCOUNT_STATE";
 
     private ActionMode actionMode;
     private ActivityListBinding binding;
+
+    private AccountManager accountManager;
+    @Nullable private Account account;
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -188,12 +199,55 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, SyncService.syncFilter);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if(!Preferences.hasCredentials(PreferenceManager.getDefaultSharedPreferences(this))) {
-            startActivityForResult(new Intent(this, LoginActivity.class), LoginActivity.REQUEST_CODE);
+    private void addAccount(final SharedPreferences preferences) {
+        accountManager.addAccount(
+                "email.schaal.ocreader",
+                "clientflow",
+                null,
+                null,
+                this,
+                future -> {
+                    try {
+                        final Bundle result = future.getResult();
+                        Log.d(TAG, "Account bundle: " + result);
+
+                        final String accountName = result.getString(AccountManager.KEY_ACCOUNT_NAME);
+
+                        preferences
+                                .edit()
+                                .putString(
+                                        Preferences.USERNAME.getKey(),
+                                        accountName)
+                                .apply();
+
+                        profileDrawerItem.withName(accountName);
+
+                        drawerManager.reset();
+                        reloadListFragment();
+                        Queries.resetDatabase();
+                        SyncService.startSync(this, true);
+                    } catch (OperationCanceledException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (AuthenticatorException e) {
+                        e.printStackTrace();
+                    }
+                }, null);
+    }
+
+    @Nullable
+    private Account getAccount() {
+        final String accountName = Preferences.USERNAME.getString(PreferenceManager.getDefaultSharedPreferences(this));
+        final Account[] accounts = accountManager.getAccountsByType("email.schaal.ocreader");
+
+        for(final Account account: accounts) {
+            if(account.name.equals(accountName)) {
+                return account;
+            }
         }
+
+        return null;
     }
 
     @Override
@@ -202,43 +256,57 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         binding = DataBindingUtil.setContentView(this, R.layout.activity_list);
         setSupportActionBar(binding.toolbarLayout.toolbar);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        accountManager = AccountManager.get(this);
+
+        account = getAccount();
+
+        accountManager.addOnAccountsUpdatedListener(
+                accounts -> {
+                    final String selectedAccountName = Preferences.USERNAME.getString(preferences);
+                    if(selectedAccountName != null) {
+                        for (final Account account : accounts) {
+                            if ("email.schaal.ocreader".equals(account.type)) {
+                                if (account.name.equals(selectedAccountName)) {
+                                    this.account = account;
+                                    updateUserProfile();
+                                }
+                            }
+                        }
+                    }
+                },
+                new Handler(getMainLooper()),
+                true);
+
+        if(account == null) {
+            final Intent chooseAccountIntent = AccountManager.newChooseAccountIntent(
+                    null,
+                    null,
+                    new String[]{"email.schaal.ocreader"},
+                    false,
+                    null,
+                    null,
+                    null,
+                    null);
+            startActivityForResult(chooseAccountIntent, LoginActivity.REQUEST_CODE);
+            //addAccount(preferences);
+        }
 
         binding.swipeRefreshLayout.setColorSchemeResources(R.color.primary);
         binding.swipeRefreshLayout.setOnRefreshListener(this);
 
         profileDrawerItem = new ProfileDrawerItem()
-                .withName(preferences.getString(Preferences.USERNAME.getKey(), getString(R.string.app_name)))
-                .withEmail(Preferences.URL.getString(preferences));
-
-        updateUserProfile();
-
-        IProfile profileSettingsItem = new ProfileSettingDrawerItem()
-                .withName(getString(R.string.account_settings))
-                .withIconTinted(true)
-                .withIcon(R.drawable.ic_settings)
-                .withTag((Runnable) () -> {
-                    Intent loginIntent = new Intent(ListActivity.this, LoginActivity.class);
-                    startActivityForResult(loginIntent, LoginActivity.REQUEST_CODE);
-                });
+                .withName(account != null ? account.name : getString(R.string.app_name))
+                .withIdentifier(PROFILE_DRAWER_ID);
 
         accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header_background)
-                .addProfiles(profileDrawerItem, profileSettingsItem)
+                .addProfiles(profileDrawerItem)
                 .withCurrentProfileHiddenInList(true)
                 .withProfileImagesClickable(false)
                 .withSavedInstance(savedInstanceState)
-                .withOnAccountHeaderListener((view, profile, current) -> {
-                    if (profile instanceof Tagable) {
-                        Tagable tagable = (Tagable) profile;
-                        if (tagable.getTag() instanceof Runnable) {
-                            ((Runnable) tagable.getTag()).run();
-                            return false;
-                        }
-                    }
-                    return true;
-                })
                 .build();
 
         refreshDrawerItem = new PrimaryDrawerItem()
@@ -392,6 +460,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(LAYOUT_MANAGER_STATE, layoutManager.onSaveInstanceState());
+        outState.putParcelable(ACCOUNT_STATE, account);
         drawerManager.getState().saveInstanceState(getPreferences(MODE_PRIVATE));
         adapter.onSaveInstanceState(outState);
     }
@@ -420,26 +489,11 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         binding.fabMarkAllAsRead.setSync(false);
     }
 
+    @DebugLog
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable final Intent data) {
         if(resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
-                case LoginActivity.REQUEST_CODE:
-                    if (data != null && data.getBooleanExtra(LoginActivity.EXTRA_IMPROPERLY_CONFIGURED_CRON, false)) {
-                        Snackbar.make(binding.coordinatorLayout, R.string.updater_improperly_configured, Snackbar.LENGTH_INDEFINITE)
-                                .setAction(R.string.more_info, v -> startActivity(data))
-                                .setActionTextColor(ContextCompat.getColor(this, R.color.warning))
-                                .show();
-                    }
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-                    profileDrawerItem.withName(Preferences.USERNAME.getString(preferences));
-                    profileDrawerItem.withEmail(Preferences.URL.getString(preferences));
-
-                    drawerManager.reset();
-                    reloadListFragment();
-                    Queries.resetDatabase();
-                    SyncService.startSync(this, true);
-                    break;
                 case ItemPagerActivity.REQUEST_CODE:
                     if(data != null)
                         binding.itemsRecyclerview.smoothScrollToPosition(data.getIntExtra(ItemPagerActivity.EXTRA_CURRENT_POSITION, -1));
@@ -448,6 +502,33 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                     drawerManager.reset();
                     reloadListFragment();
                     drawerManager.reloadAdapters(getRealm(), isShowOnlyUnread());
+                    break;
+                case LoginActivity.REQUEST_CODE:
+                    if(data != null) {
+                        final String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+
+                        PreferenceManager.getDefaultSharedPreferences(this)
+                                .edit()
+                                .putString(Preferences.USERNAME.getKey(), accountName)
+                                .apply();
+
+                        this.account = getAccount();
+
+                        if (data.getBooleanExtra(LoginActivity.EXTRA_IMPROPERLY_CONFIGURED_CRON, false)) {
+                            Snackbar.make(binding.coordinatorLayout, R.string.updater_improperly_configured, Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(R.string.more_info, v -> startActivity(data))
+                                    .setActionTextColor(ContextCompat.getColor(this, R.color.warning))
+                                    .show();
+                        }
+
+                        profileDrawerItem.withName(accountName);
+                        profileDrawerItem.withEmail("");
+
+                        drawerManager.reset();
+                        reloadListFragment();
+                        Queries.resetDatabase();
+                        SyncService.startSync(this, true);
+                    }
                     break;
             }
         }
@@ -517,13 +598,14 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     }
 
     private void updateUserProfile() {
-        final String username = Preferences.USERNAME.getString(PreferenceManager.getDefaultSharedPreferences(this));
+        final String username = account != null ? accountManager.getUserData(account, LoginActivity.KEY_USER) : getString(R.string.app_name);
 
         if(username != null) {
             final User user = getRealm().where(User.class).equalTo(User.USER_ID, username).findFirst();
 
             if (user != null) {
                 profileDrawerItem.withName(user.getDisplayName());
+                profileDrawerItem.withEmail(account != null ? account.name : "");
                 final String encodedImage = user.getAvatar();
                 if (encodedImage != null) {
                     Bitmap avatarBitmap = BitmapFactory.decodeStream(new Base64InputStream(new ByteArrayInputStream(encodedImage.getBytes()), Base64.DEFAULT));

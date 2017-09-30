@@ -2,6 +2,8 @@ package email.schaal.ocreader.util;
 
 import android.content.Context;
 
+import com.github.zafarkhaja.semver.ParseException;
+
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
@@ -82,6 +84,8 @@ public class LoginError {
             return new LoginError(Section.URL, context.getString(R.string.could_not_connect));
         } else if(t instanceof IOException) {
             return new LoginError(Section.NONE, context.getString(R.string.ncnews_too_old));
+        } else if(t instanceof ParseException) {
+            return new LoginError(Section.NONE, context.getString(R.string.failed_detect_nc_version));
         }
         return new LoginError(t);
     }

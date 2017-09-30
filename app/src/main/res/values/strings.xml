@@ -120,4 +120,5 @@
     <string name="update_value" translatable="false">updatedAt</string>
     <string name="default_sort_key">Default</string>
     <string name="sort_by">Sort by</string>
+    <string name="action_continue">Continue</string>
 </resources>

@@ -44,7 +44,7 @@ import java.util.concurrent.Executors;
 import email.schaal.ocreader.api.json.Feeds;
 import email.schaal.ocreader.api.json.Folders;
 import email.schaal.ocreader.api.json.Items;
-import email.schaal.ocreader.api.json.Status;
+import email.schaal.ocreader.api.json.NewsStatus;
 import email.schaal.ocreader.api.json.v12.ItemIds;
 import email.schaal.ocreader.api.json.v12.ItemMap;
 import email.schaal.ocreader.database.Queries;
@@ -253,7 +253,7 @@ class APIv12 extends API {
         Call<User> user();
 
         @GET("status")
-        Call<Status> status();
+        Call<NewsStatus> status();
 
         /** FOLDERS **/
         @GET("folders")
@@ -304,7 +304,7 @@ class APIv12 extends API {
     }
 
     @Override
-    protected void metaData(Callback<Status> callback) {
+    protected void metaData(Callback<NewsStatus> callback) {
         api.status().enqueue(callback);
     }
 

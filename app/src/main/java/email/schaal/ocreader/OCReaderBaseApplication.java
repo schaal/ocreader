@@ -53,6 +53,8 @@ public abstract class OCReaderBaseApplication extends Application {
 
         preferences.edit()
                 .putBoolean(Preferences.SYS_SYNC_RUNNING.getKey(), false)
+                .remove("password")
+                .remove("url")
                 .apply();
 
         Queries.init(this);
