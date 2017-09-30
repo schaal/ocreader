@@ -24,7 +24,7 @@ apply plugin: 'com.jakewharton.hugo'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion "26.0.2"
 
     dataBinding.enabled = true
 
