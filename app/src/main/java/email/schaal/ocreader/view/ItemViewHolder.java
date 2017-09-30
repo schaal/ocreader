@@ -102,29 +102,16 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
 
         new FaviconLoader.Builder(binding.imageviewFavicon).build().load(binding.imageviewFavicon.getContext(), feed, this);
 
-        itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clickListener.onItemClick(item, position);
-            }
-        });
+        itemView.setOnClickListener(view -> clickListener.onItemClick(item, position));
 
-        itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                clickListener.onItemLongClick(item, position);
-                return true;
-            }
+        itemView.setOnLongClickListener(v -> {
+            clickListener.onItemLongClick(item, position);
+            return true;
         });
 
         if(item.getEnclosureLink() != null) {
             binding.play.setVisibility(View.VISIBLE);
-            binding.play.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    item.play(itemView.getContext());
-                }
-            });
+            binding.play.setOnClickListener(view -> item.play(itemView.getContext()));
         } else {
             binding.play.setVisibility(View.GONE);
             binding.play.setOnClickListener(null);

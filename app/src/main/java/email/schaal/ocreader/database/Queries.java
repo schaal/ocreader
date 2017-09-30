@@ -52,13 +52,10 @@ public class Queries {
 
     public final static int SCHEMA_VERSION = 12;
 
-    private final static Realm.Transaction initialData = new Realm.Transaction() {
-        @Override
-        public void execute(@NonNull Realm realm) {
-            realm.deleteAll();
-            realm.createObject(TemporaryFeed.class, TemporaryFeed.LIST_ID);
-            realm.createObject(TemporaryFeed.class, TemporaryFeed.PAGER_ID);
-        }
+    private final static Realm.Transaction initialData = realm -> {
+        realm.deleteAll();
+        realm.createObject(TemporaryFeed.class, TemporaryFeed.LIST_ID);
+        realm.createObject(TemporaryFeed.class, TemporaryFeed.PAGER_ID);
     };
 
     private final static RealmMigration migration = new DatabaseMigration();
@@ -108,22 +105,16 @@ public class Queries {
     }
 
     public static void insert(Realm realm, @Nullable final Insertable element) {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(@NonNull Realm realm) {
-                if(element != null)
-                    element.insert(realm);
-            }
+        realm.executeTransaction(realm1 -> {
+            if(element != null)
+                element.insert(realm1);
         });
     }
 
     public static void insert(Realm realm, final Iterable<? extends Insertable> elements) {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(@NonNull Realm realm) {
-                for(final Insertable element: elements) {
-                    element.insert(realm);
-                }
+        realm.executeTransaction(realm1 -> {
+            for(final Insertable element: elements) {
+                element.insert(realm1);
             }
         });
     }
@@ -131,28 +122,25 @@ public class Queries {
     public static <T extends RealmModel & TreeItem & Insertable> void deleteAndInsert(Realm realm, final Class<T> clazz, final List<T> elements) {
         Collections.sort(elements, TreeItem.COMPARATOR);
 
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(@NonNull Realm realm) {
-                final RealmResults<T> databaseItems = realm.where(clazz).findAllSorted(TreeItem.ID, Sort.ASCENDING);
+        realm.executeTransaction(realm1 -> {
+            final RealmResults<T> databaseItems = realm1.where(clazz).findAllSorted(TreeItem.ID, Sort.ASCENDING);
 
-                final Iterator<T> databaseIterator = databaseItems.iterator();
+            final Iterator<T> databaseIterator = databaseItems.iterator();
 
-                for (T element : elements) {
-                    T currentDatabaseItem;
+            for (T element : elements) {
+                T currentDatabaseItem;
 
-                    // The lists are sorted by id, so if currentDatabaseItem.getId() < element.getId() we can remove it from the database
-                    while (databaseIterator.hasNext() && (currentDatabaseItem = databaseIterator.next()).getId() < element.getId()) {
-                        currentDatabaseItem.delete(realm);
-                    }
-
-                    element.insert(realm);
+                // The lists are sorted by id, so if currentDatabaseItem.getId() < element.getId() we can remove it from the database
+                while (databaseIterator.hasNext() && (currentDatabaseItem = databaseIterator.next()).getId() < element.getId()) {
+                    currentDatabaseItem.delete(realm1);
                 }
 
-                // Remove remaining items from the database
-                while (databaseIterator.hasNext()) {
-                    databaseIterator.next().delete(realm);
-                }
+                element.insert(realm1);
+            }
+
+            // Remove remaining items from the database
+            while (databaseIterator.hasNext()) {
+                databaseIterator.next().delete(realm1);
             }
         });
     }
@@ -176,97 +164,82 @@ public class Queries {
         final int itemsToDelete = expendableItems.size() - maxItems;
 
         if(itemsToDelete > 0) {
-            realm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(@NonNull Realm realm) {
-                    for (int i = 0; i < itemsToDelete; i++) {
-                        expendableItems.deleteFirstFromRealm();
-                    }
+            realm.executeTransaction(realm1 -> {
+                for (int i = 0; i < itemsToDelete; i++) {
+                    expendableItems.deleteFirstFromRealm();
                 }
             });
         }
     }
 
     public static void markAboveAsRead(Realm realm, final List<Item> items, final long lastItemId) {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(@NonNull Realm realm) {
-                try {
-                    for(Item item: items) {
-                        item.setUnread(false);
-                        if(item.getId() == lastItemId) {
-                            break;
-                        }
+        realm.executeTransaction(realm1 -> {
+            try {
+                for(Item item: items) {
+                    item.setUnread(false);
+                    if(item.getId() == lastItemId) {
+                        break;
                     }
-                } finally {
-                    checkAlarm(realm);
                 }
+            } finally {
+                checkAlarm(realm1);
             }
         });
     }
 
     public static void markTemporaryFeedAsRead(Realm realm, Realm.Transaction.OnSuccess onSuccess, Realm.Transaction.OnError onError) {
-        realm.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(@NonNull Realm realm) {
-                try {
-                    RealmResults<Item> unreadItems = TemporaryFeed.getListTemporaryFeed(realm).getItems()
-                            .where()
-                            .equalTo(Item.UNREAD, true).findAll();
+        realm.executeTransactionAsync(realm1 -> {
+            try {
+                RealmResults<Item> unreadItems = TemporaryFeed.getListTemporaryFeed(realm1).getItems()
+                        .where()
+                        .equalTo(Item.UNREAD, true).findAll();
 
-                    for(Item item: unreadItems) {
-                        item.setUnread(false);
-                    }
-                } finally {
-                    checkAlarm(realm);
+                for(Item item: unreadItems) {
+                    item.setUnread(false);
                 }
+            } finally {
+                checkAlarm(realm1);
             }
         }, onSuccess, onError);
     }
 
     public static void setItemsUnread(Realm realm, final boolean newUnread, final Item... items) {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(@NonNull Realm realm) {
-                try {
-                    for (Item item : items) {
-                        /** If the item has a fingerprint, mark all items with the same fingerprint
-                         * as read
-                         */
-                        if(item.getFingerprint() == null) {
-                            item.setUnread(newUnread);
-                        } else {
-                            RealmResults<Item> sameItems = realm.where(Item.class)
-                                    .equalTo(Item.FINGERPRINT, item.getFingerprint())
-                                    .equalTo(Item.UNREAD, !newUnread)
-                                    .findAll();
-                            for(Item sameItem: sameItems) {
-                                sameItem.setUnread(newUnread);
-                            }
+        realm.executeTransaction(realm1 -> {
+            try {
+                for (Item item : items) {
+                    /** If the item has a fingerprint, mark all items with the same fingerprint
+                     * as read
+                     */
+                    if(item.getFingerprint() == null) {
+                        item.setUnread(newUnread);
+                    } else {
+                        RealmResults<Item> sameItems = realm1.where(Item.class)
+                                .equalTo(Item.FINGERPRINT, item.getFingerprint())
+                                .equalTo(Item.UNREAD, !newUnread)
+                                .findAll();
+                        for(Item sameItem: sameItems) {
+                            sameItem.setUnread(newUnread);
                         }
                     }
-                } catch (RealmException e) {
-                    Log.e(TAG, "Failed to set item as unread", e);
-                } finally {
-                    checkAlarm(realm);
                 }
+            } catch (RealmException e) {
+                Log.e(TAG, "Failed to set item as unread", e);
+            } finally {
+                checkAlarm(realm1);
             }
         });
     }
 
     public static void setItemsStarred(Realm realm, final boolean newStarred, final Item... items) {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(@NonNull Realm realm) {
-                try {
-                    for (Item item : items) {
-                        item.setStarred(newStarred);
-                    }
-                } catch (RealmException e) {
-                    Log.e(TAG, "Failed to set item as starred", e);
-                } finally {
-                    checkAlarm(realm);
+        realm.executeTransaction(realm1 -> {
+            try {
+                for (Item item : items) {
+                    item.setStarred(newStarred);
                 }
+            } catch (RealmException e) {
+                Log.e(TAG, "Failed to set item as starred", e);
+            } finally {
+                checkAlarm(realm1);
             }
         });
     }

@@ -76,12 +76,7 @@ public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.Vi
 
             binding.textViewFolder.setText(feed.getFolderTitle(itemView.getContext()));
 
-            binding.deleteFeed.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View view) {
-                    listener.deleteFeed(feed);
-                }
-            });
+            binding.deleteFeed.setOnClickListener(view -> listener.deleteFeed(feed));
 
             if(feed.isConsideredFailed()) {
                 binding.feedFailure.setVisibility(View.VISIBLE);
@@ -90,12 +85,7 @@ public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.Vi
                 binding.feedFailure.setVisibility(View.GONE);
             }
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.showFeedDialog(feed);
-                }
-            });
+            itemView.setOnClickListener(v -> listener.showFeedDialog(feed));
             new FaviconLoader.Builder(binding.imageviewFavicon).build().load(itemView.getContext(), feed, this);
         }
 

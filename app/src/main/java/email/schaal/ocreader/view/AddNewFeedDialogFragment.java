@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
@@ -60,15 +59,12 @@ public class AddNewFeedDialogFragment extends DialogFragment {
         binding.folder.setSelection(activity.getFolderSpinnerAdapter().getPosition(arguments.getLong(ARG_FOLDER_ID, 0)));
         finishAfterClose = arguments.getBoolean(ARG_FINISH_AFTER_CLOSE, false);
 
-        builder.setPositiveButton(newFeed ? R.string.add : R.string.save, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if(listener != null) {
-                    if(newFeed)
-                        listener.addNewFeed(binding.feedUrl.getText().toString(), binding.folder.getSelectedItemId(), finishAfterClose);
-                    else
-                        listener.changeFeed(feedId, binding.folder.getSelectedItemId());
-                }
+        builder.setPositiveButton(newFeed ? R.string.add : R.string.save, (dialogInterface, i) -> {
+            if(listener != null) {
+                if(newFeed)
+                    listener.addNewFeed(binding.feedUrl.getText().toString(), binding.folder.getSelectedItemId(), finishAfterClose);
+                else
+                    listener.changeFeed(feedId, binding.folder.getSelectedItemId());
             }
         });
 

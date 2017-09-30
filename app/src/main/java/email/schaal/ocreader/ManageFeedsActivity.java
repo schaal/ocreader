@@ -47,12 +47,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
         binding.feedsRecyclerview.setLayoutManager(new LinearLayoutManager(this));
         binding.feedsRecyclerview.addItemDecoration(new DividerItemDecoration(this, R.dimen.divider_inset));
 
-        binding.fabAddFeed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AddNewFeedDialogFragment.show(ManageFeedsActivity.this, null, false);
-            }
-        });
+        binding.fabAddFeed.setOnClickListener(view -> AddNewFeedDialogFragment.show(ManageFeedsActivity.this, null, false));
 
         if(Intent.ACTION_SEND.equals(getIntent().getAction())) {
             Feed feed = new Feed(-1);
@@ -101,35 +96,32 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
     public void deleteFeed(final Feed feed) {
         new AlertDialog.Builder(this)
                 .setMessage(getString(R.string.confirm_feed_deletion, feed.getName()))
-                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        final ProgressDialog progressDialog = showProgress(ManageFeedsActivity.this, getString(R.string.deleting_feed, feed.getName()));
+                .setPositiveButton(R.string.delete, (dialog, which) -> {
+                    final ProgressDialog progressDialog = showProgress(ManageFeedsActivity.this, getString(R.string.deleting_feed, feed.getName()));
 
-                        API.get(ManageFeedsActivity.this, new API.InstanceReadyCallback() {
-                            @Override
-                            public void onInstanceReady(API api) {
-                                api.deleteFeed(getRealm(), feed, new API.APICallback<Void, Throwable>() {
-                                    @Override
-                                    public void onSuccess(Void n) {
-                                        progressDialog.dismiss();
-                                        setResult(RESULT_OK);
-                                    }
+                    API.get(ManageFeedsActivity.this, new API.InstanceReadyCallback() {
+                        @Override
+                        public void onInstanceReady(API api) {
+                            api.deleteFeed(getRealm(), feed, new API.APICallback<Void, Throwable>() {
+                                @Override
+                                public void onSuccess(Void n) {
+                                    progressDialog.dismiss();
+                                    setResult(RESULT_OK);
+                                }
 
-                                    @Override
-                                    public void onFailure(Throwable throwable) {
-                                        progressDialog.cancel();
-                                        showErrorMessage(getString(R.string.delete_feed_failed), throwable.getLocalizedMessage());
-                                    }
-                                });
-                            }
+                                @Override
+                                public void onFailure(Throwable throwable) {
+                                    progressDialog.cancel();
+                                    showErrorMessage(getString(R.string.delete_feed_failed), throwable.getLocalizedMessage());
+                                }
+                            });
+                        }
 
-                            @Override
-                            public void onLoginFailure(Throwable e) {
-                                progressDialog.cancel();
-                            }
-                        });
-                    }
+                        @Override
+                        public void onLoginFailure(Throwable e) {
+                            progressDialog.cancel();
+                        }
+                    });
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();

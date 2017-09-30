@@ -127,19 +127,16 @@ public class SyncService extends Service {
         return START_NOT_STICKY;
     }
 
-    private final Realm.Transaction postProcessFeedTransaction = new Realm.Transaction() {
-        @Override
-        public void execute(@NonNull Realm realm) {
-            for (Feed feed: realm.where(Feed.class).findAll()) {
-                feed.setStarredCount((int) realm.where(Item.class)
-                        .equalTo(Item.FEED_ID, feed.getId())
-                        .equalTo(Item.STARRED, true).count()
-                );
-                feed.setUnreadCount((int) realm.where(Item.class)
-                        .equalTo(Item.FEED_ID, feed.getId())
-                        .equalTo(Item.UNREAD, true).count()
-                );
-            }
+    private final Realm.Transaction postProcessFeedTransaction = realm -> {
+        for (Feed feed: realm.where(Feed.class).findAll()) {
+            feed.setStarredCount((int) realm.where(Item.class)
+                    .equalTo(Item.FEED_ID, feed.getId())
+                    .equalTo(Item.STARRED, true).count()
+            );
+            feed.setUnreadCount((int) realm.where(Item.class)
+                    .equalTo(Item.FEED_ID, feed.getId())
+                    .equalTo(Item.UNREAD, true).count()
+            );
         }
     };
 

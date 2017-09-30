@@ -218,12 +218,9 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 .withName(getString(R.string.account_settings))
                 .withIconTinted(true)
                 .withIcon(R.drawable.ic_settings)
-                .withTag(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent loginIntent = new Intent(ListActivity.this, LoginActivity.class);
-                        startActivityForResult(loginIntent, LoginActivity.REQUEST_CODE);
-                    }
+                .withTag((Runnable) () -> {
+                    Intent loginIntent = new Intent(ListActivity.this, LoginActivity.class);
+                    startActivityForResult(loginIntent, LoginActivity.REQUEST_CODE);
                 });
 
         accountHeader = new AccountHeaderBuilder()
@@ -233,18 +230,15 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 .withCurrentProfileHiddenInList(true)
                 .withProfileImagesClickable(false)
                 .withSavedInstance(savedInstanceState)
-                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
-                    @Override
-                    public boolean onProfileChanged(View view, IProfile profile, boolean current) {
-                        if (profile instanceof Tagable) {
-                            Tagable tagable = (Tagable) profile;
-                            if (tagable.getTag() instanceof Runnable) {
-                                ((Runnable) tagable.getTag()).run();
-                                return false;
-                            }
+                .withOnAccountHeaderListener((view, profile, current) -> {
+                    if (profile instanceof Tagable) {
+                        Tagable tagable = (Tagable) profile;
+                        if (tagable.getTag() instanceof Runnable) {
+                            ((Runnable) tagable.getTag()).run();
+                            return false;
                         }
-                        return true;
                     }
+                    return true;
                 })
                 .build();
 
@@ -254,25 +248,17 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 .withIconTintingEnabled(true)
                 .withIcon(R.drawable.ic_refresh)
                 .withIdentifier(REFRESH_DRAWER_ITEM_ID)
-                .withTag(new Runnable() {
-                    @Override
-                    public void run() {
-                        SyncService.startSync(ListActivity.this);
-                    }
-                });
+                .withTag((Runnable) () -> SyncService.startSync(ListActivity.this));
 
         IDrawerItem settingsDrawerItem = new PrimaryDrawerItem()
                 .withName(R.string.settings)
                 .withIcon(R.drawable.ic_settings)
                 .withIconTintingEnabled(true)
                 .withSelectable(false)
-                .withTag(new Runnable() {
-                    @Override
-                    public void run() {
-                        startDrawer.closeDrawer();
-                        Intent settingsIntent = new Intent(ListActivity.this, SettingsActivity.class);
-                        startActivity(settingsIntent);
-                    }
+                .withTag((Runnable) () -> {
+                    startDrawer.closeDrawer();
+                    Intent settingsIntent = new Intent(ListActivity.this, SettingsActivity.class);
+                    startActivity(settingsIntent);
                 });
 
         DrawerBuilder startDrawerBuilder = new DrawerBuilder()
@@ -294,18 +280,15 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
                     }
                 })
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                    @Override
-                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        if (drawerItem.getTag() instanceof TreeItem) {
-                            TreeItem item = (TreeItem) drawerItem.getTag();
-                            onStartDrawerItemClicked(item);
-                            return false;
-                        } else if (drawerItem.getTag() instanceof Runnable) {
-                            ((Runnable) drawerItem.getTag()).run();
-                        }
-                        return true;
+                .withOnDrawerItemClickListener((view, position, drawerItem) -> {
+                    if (drawerItem.getTag() instanceof TreeItem) {
+                        TreeItem item = (TreeItem) drawerItem.getTag();
+                        onStartDrawerItemClicked(item);
+                        return false;
+                    } else if (drawerItem.getTag() instanceof Runnable) {
+                        ((Runnable) drawerItem.getTag()).run();
                     }
+                    return true;
                 })
                 .withSavedInstance(savedInstanceState);
 
@@ -330,16 +313,13 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
                     }
                 })
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                    @Override
-                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        if (drawerItem.getTag() instanceof Feed) {
-                            Feed feed = (Feed) drawerItem.getTag();
-                            onEndDrawerItemClicked(feed);
-                            return false;
-                        }
-                        return true;
+                .withOnDrawerItemClickListener((view, position, drawerItem) -> {
+                    if (drawerItem.getTag() instanceof Feed) {
+                        Feed feed = (Feed) drawerItem.getTag();
+                        onEndDrawerItemClicked(feed);
+                        return false;
                     }
+                    return true;
                 });
 
         startDrawerBuilder.withToolbar(binding.toolbarLayout.toolbar);
@@ -365,28 +345,17 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                     binding.fabMarkAllAsRead.toggleSync();
                 } else {
                     Queries.markTemporaryFeedAsRead(getRealm(),
-                            new Realm.Transaction.OnSuccess() {
-                                @Override
-                                public void onSuccess() {
-                                    onCompletion(view);
-                                }
-                            }, new Realm.Transaction.OnError() {
-                                @Override
-                                public void onError(@NonNull Throwable error) {
-                                    Log.e(TAG, "Failed to mark temporary feed as read", error);
-                                    onCompletion(view);
-                                }
+                            () -> onCompletion(view), error -> {
+                                Log.e(TAG, "Failed to mark temporary feed as read", error);
+                                onCompletion(view);
                             });
                 }
             }
         });
 
-        binding.fabMarkAllAsRead.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Toast.makeText(ListActivity.this, R.string.mark_all_as_read, Toast.LENGTH_SHORT).show();
-                return true;
-            }
+        binding.fabMarkAllAsRead.setOnLongClickListener(v -> {
+            Toast.makeText(ListActivity.this, R.string.mark_all_as_read, Toast.LENGTH_SHORT).show();
+            return true;
         });
 
         binding.itemsRecyclerview.setAdapter(adapter);
@@ -459,12 +428,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 case LoginActivity.REQUEST_CODE:
                     if (data != null && data.getBooleanExtra(LoginActivity.EXTRA_IMPROPERLY_CONFIGURED_CRON, false)) {
                         Snackbar.make(binding.coordinatorLayout, R.string.updater_improperly_configured, Snackbar.LENGTH_INDEFINITE)
-                                .setAction(R.string.more_info, new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        startActivity(data);
-                                    }
-                                })
+                                .setAction(R.string.more_info, v -> startActivity(data))
                                 .setActionTextColor(ContextCompat.getColor(this, R.color.warning))
                                 .show();
                     }

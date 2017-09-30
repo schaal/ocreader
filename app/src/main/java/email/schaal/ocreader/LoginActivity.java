@@ -64,15 +64,12 @@ public class LoginActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.toolbarLayout.toolbar);
 
-        binding.password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.integer.ime_login_id || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
+        binding.password.setOnEditorActionListener((textView, id, keyEvent) -> {
+            if (id == R.integer.ime_login_id || id == EditorInfo.IME_NULL) {
+                attemptLogin();
+                return true;
             }
+            return false;
         });
 
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -88,12 +85,7 @@ public class LoginActivity extends AppCompatActivity {
         binding.password.setText(Preferences.PASSWORD.getString(sharedPreferences));
         binding.url.setText(Preferences.URL.getString(sharedPreferences));
 
-        binding.signInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
+        binding.signInButton.setOnClickListener(view -> attemptLogin());
 
         binding.url.addTextChangedListener(new TextWatcher() {
             @Override

@@ -108,29 +108,16 @@ public class ItemPagerActivity extends RealmActivity {
 
         final SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
 
-        binding.fabOpenInBrowser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(item != null && item.getUrl() != null) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.getUrl()));
-                    startActivity(intent);
-                }
+        binding.fabOpenInBrowser.setOnClickListener(v -> {
+            if(item != null && item.getUrl() != null) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.getUrl()));
+                startActivity(intent);
             }
         });
 
-        binding.fabMarkStarred.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setItemStarred(!item.isStarred());
-            }
-        });
+        binding.fabMarkStarred.setOnClickListener(v -> setItemStarred(!item.isStarred()));
 
-        binding.fabMarkAsRead.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setItemUnread(!item.isUnread());
-            }
-        });
+        binding.fabMarkAsRead.setOnClickListener(v -> setItemUnread(!item.isUnread()));
 
         binding.container.setAdapter(mSectionsPagerAdapter);
 

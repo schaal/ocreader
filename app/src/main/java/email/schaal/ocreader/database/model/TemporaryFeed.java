@@ -96,26 +96,23 @@ public class TemporaryFeed implements RealmModel {
     }
 
     public static void updatePagerTemporaryFeed(Realm realm) {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(@NonNull Realm realm) {
-                final TemporaryFeed listTempFeed = getListTemporaryFeed(realm);
-                final TemporaryFeed pagerTempFeed = getPagerTemporaryFeed(realm);
+        realm.executeTransaction(realm1 -> {
+            final TemporaryFeed listTempFeed = getListTemporaryFeed(realm1);
+            final TemporaryFeed pagerTempFeed = getPagerTemporaryFeed(realm1);
 
-                for(Item item: realm.where(Item.class).equalTo(Item.ACTIVE, true).findAll()) {
-                    item.setActive(false);
-                }
-
-                final RealmList<Item> listTempFeedItems = listTempFeed.getItems();
-
-                for(Item item: listTempFeedItems) {
-                    item.setActive(true);
-                }
-
-                pagerTempFeed.setItems(listTempFeedItems);
-                pagerTempFeed.setName(listTempFeed.getName());
-                pagerTempFeed.setTreeItemId(listTempFeed.getTreeItemId());
+            for(Item item: realm1.where(Item.class).equalTo(Item.ACTIVE, true).findAll()) {
+                item.setActive(false);
             }
+
+            final RealmList<Item> listTempFeedItems = listTempFeed.getItems();
+
+            for(Item item: listTempFeedItems) {
+                item.setActive(true);
+            }
+
+            pagerTempFeed.setItems(listTempFeedItems);
+            pagerTempFeed.setName(listTempFeed.getName());
+            pagerTempFeed.setTreeItemId(listTempFeed.getTreeItemId());
         });
     }
 }

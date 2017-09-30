@@ -194,17 +194,14 @@ class APIv12 extends API {
         }
 
         if (response.isSuccessful()) {
-            realm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(@NonNull Realm realm) {
-                    if (action == MarkAction.MARK_READ || action == MarkAction.MARK_UNREAD) {
-                        for (Item item : results) {
-                            item.setUnreadChanged(false);
-                        }
-                    } else {
-                        for (Item item : results) {
-                            item.setStarredChanged(false);
-                        }
+            realm.executeTransaction(realm1 -> {
+                if (action == MarkAction.MARK_READ || action == MarkAction.MARK_UNREAD) {
+                    for (Item item : results) {
+                        item.setUnreadChanged(false);
+                    }
+                } else {
+                    for (Item item : results) {
+                        item.setStarredChanged(false);
                     }
                 }
             });
@@ -315,76 +312,60 @@ class APIv12 extends API {
 
     @Override
     public void sync(SharedPreferences sharedPreferences, final Realm realm, final SyncType syncType, final Intent intent, final APICallback<Void, Throwable> callback) {
-        syncChanges(new OnCompletionListener() {
-            @Override
-            public void onCompleted(boolean result) {
-                if(result) {
-                    final Set<Callable<Void>> callables = new HashSet<>(6);
+        syncChanges(result -> {
+            if(result) {
+                final Set<Callable<Void>> callables = new HashSet<>(6);
 
-                    switch (syncType) {
-                        case SYNC_CHANGES_ONLY:
-                            callback.onSuccess(null);
-                            return;
-                        case FULL_SYNC:
-                            long lastSync = getLastSyncTimestamp(realm);
+                switch (syncType) {
+                    case SYNC_CHANGES_ONLY:
+                        callback.onSuccess(null);
+                        return;
+                    case FULL_SYNC:
+                        long lastSync = getLastSyncTimestamp(realm);
 
-                            callables.add(new UserCallable(realm));
-                            callables.add(new FoldersCallable(realm));
-                            callables.add(new FeedsCallable(realm));
+                        callables.add(new UserCallable(realm));
+                        callables.add(new FoldersCallable(realm));
+                        callables.add(new FeedsCallable(realm));
 
-                            if (lastSync == 0L) {
-                                callables.add(new StarredItemsCallable(realm));
-                                callables.add(new ItemsCallable(realm));
-                            } else {
-                                callables.add(new UpdatedItemsCallable(realm, lastSync));
-                            }
-                            break;
-                        case LOAD_MORE:
-                            final long id = intent.getLongExtra(EXTRA_ID, -1);
-                            final long offset = intent.getLongExtra(EXTRA_OFFSET, 0);
-                            final boolean isFeed = intent.getBooleanExtra(EXTRA_IS_FEED, false);
+                        if (lastSync == 0L) {
+                            callables.add(new StarredItemsCallable(realm));
+                            callables.add(new ItemsCallable(realm));
+                        } else {
+                            callables.add(new UpdatedItemsCallable(realm, lastSync));
+                        }
+                        break;
+                    case LOAD_MORE:
+                        final long id = intent.getLongExtra(EXTRA_ID, -1);
+                        final long offset = intent.getLongExtra(EXTRA_OFFSET, 0);
+                        final boolean isFeed = intent.getBooleanExtra(EXTRA_IS_FEED, false);
 
-                            callables.add(new MoreItemsCallable(realm, isFeed, offset, id));
+                        callables.add(new MoreItemsCallable(realm, isFeed, offset, id));
 
-                            break;
+                        break;
+                }
+
+                executor.execute(() -> {
+                    final ExecutorCompletionService<Void> completionService = new ExecutorCompletionService<>(threadPool);
+                    // Start API Calls
+                    for (Callable<Void> callable : callables) {
+                        completionService.submit(callable);
                     }
 
-                    executor.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            final ExecutorCompletionService<Void> completionService = new ExecutorCompletionService<>(threadPool);
-                            // Start API Calls
-                            for (Callable<Void> callable : callables) {
-                                completionService.submit(callable);
-                            }
-
-                            try {
-                                // Get API Call results
-                                for (int i = 0, size = callables.size(); i < size; i++) {
-                                    completionService.take().get();
-                                }
-
-                                // Run callback on main thread
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        callback.onSuccess(null);
-                                    }
-                                });
-                            } catch (InterruptedException | ExecutionException e) {
-                                Log.e(TAG, "Failed to execute sync callables", e);
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        callback.onFailure(e);
-                                    }
-                                });
-                            }
+                    try {
+                        // Get API Call results
+                        for (int i = 0, size = callables.size(); i < size; i++) {
+                            completionService.take().get();
                         }
-                    });
-                } else {
-                    callback.onFailure(new Exception("Failed to synchronize changes"));
-                }
+
+                        // Run callback on main thread
+                        handler.post(() -> callback.onSuccess(null));
+                    } catch (InterruptedException | ExecutionException e) {
+                        Log.e(TAG, "Failed to execute sync callables", e);
+                        handler.post(() -> callback.onFailure(e));
+                    }
+                });
+            } else {
+                callback.onFailure(new Exception("Failed to synchronize changes"));
             }
         });
     }
@@ -431,12 +412,7 @@ class APIv12 extends API {
 
         @Override
         protected Runnable getRunnable(final Response<User> response) {
-            return new Runnable() {
-                @Override
-                public void run() {
-                    Queries.insert(realm, response.body());
-                }
-            };
+            return () -> Queries.insert(realm, response.body());
         }
 
         @Override
@@ -457,12 +433,7 @@ class APIv12 extends API {
 
         @Override
         protected Runnable getRunnable(final Response<Items> response) {
-            return new Runnable() {
-                @Override
-                public void run() {
-                    Queries.insert(realm, response.body().getItems());
-                }
-            };
+            return () -> Queries.insert(realm, response.body().getItems());
         }
     }
 
@@ -481,12 +452,7 @@ class APIv12 extends API {
 
         @Override
         protected Runnable getRunnable(final Response<Items> response) {
-            return new Runnable() {
-                @Override
-                public void run() {
-                    Queries.insert(realm, response.body().getItems());
-                }
-            };
+            return () -> Queries.insert(realm, response.body().getItems());
         }
     }
 
@@ -502,12 +468,7 @@ class APIv12 extends API {
 
         @Override
         protected Runnable getRunnable(final Response<Items> response) {
-            return new Runnable() {
-                @Override
-                public void run() {
-                    Queries.insert(realm, response.body().getItems());
-                }
-            };
+            return () -> Queries.insert(realm, response.body().getItems());
         }
     }
 
@@ -535,12 +496,7 @@ class APIv12 extends API {
 
         @Override
         protected Runnable getRunnable(final Response<Items> response) {
-            return new Runnable() {
-                @Override
-                public void run() {
-                    Queries.insert(realm, response.body().getItems());
-                }
-            };
+            return () -> Queries.insert(realm, response.body().getItems());
         }
     }
 
@@ -551,12 +507,7 @@ class APIv12 extends API {
 
         @Override
         protected Runnable getRunnable(final Response<Folders> response) {
-            return new Runnable() {
-                @Override
-                public void run() {
-                    Queries.deleteAndInsert(realm, Folder.class, response.body().getFolders());
-                }
-            };
+            return () -> Queries.deleteAndInsert(realm, Folder.class, response.body().getFolders());
         }
 
         @Override
@@ -572,12 +523,7 @@ class APIv12 extends API {
 
         @Override
         protected Runnable getRunnable(final Response<Feeds> response) {
-            return new Runnable() {
-                @Override
-                public void run() {
-                    Queries.deleteAndInsert(realm, Feed.class, response.body().getFeeds());
-                }
-            };
+            return () -> Queries.deleteAndInsert(realm, Feed.class, response.body().getFeeds());
         }
 
         @Override
@@ -613,12 +559,7 @@ class APIv12 extends API {
         api.moveFeed(feed.getId(), folderIdMap).enqueue(new BaseRetrofitCallback<Void>(apiCallback) {
             @Override
             protected void onResponseReal(Response<Void> response) {
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(@NonNull Realm realm) {
-                        feed.setFolder(Folder.getOrCreate(realm, folderId));
-                    }
-                });
+                realm.executeTransaction(realm1 -> feed.setFolder(Folder.getOrCreate(realm1, folderId)));
             }
         });
     }
@@ -628,12 +569,7 @@ class APIv12 extends API {
         api.deleteFeed(feed.getId()).enqueue(new BaseRetrofitCallback<Void>(apiCallback) {
             @Override
             protected void onResponseReal(Response<Void> response) {
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(@NonNull Realm realm) {
-                        feed.delete(realm);
-                    }
-                });
+                realm.executeTransaction(realm1 -> feed.delete(realm1));
             }
         });
     }

@@ -88,13 +88,10 @@ public class LoadMoreAdapter extends ItemsAdapter {
 
             binding = ListLoadmoreBinding.bind(itemView);
 
-            binding.buttonLoadMore.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showProgress(true);
-                    loadingMoreTreeItem = state.getTreeItem();
-                    loadMoreListener.onLoadMore(state.getTreeItem());
-                }
+            binding.buttonLoadMore.setOnClickListener(v -> {
+                showProgress(true);
+                loadingMoreTreeItem = state.getTreeItem();
+                loadMoreListener.onLoadMore(state.getTreeItem());
             });
         }
 

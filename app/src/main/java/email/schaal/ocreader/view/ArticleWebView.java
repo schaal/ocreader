@@ -126,14 +126,11 @@ public class ArticleWebView extends NestedScrollWebView {
     private class JsCallback {
         @JavascriptInterface
         public void startLoading() {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    new FaviconLoader.Builder()
-                            .build()
-                            .load(ArticleWebView.this.getContext(), item.getFeed(), feedColorsListener);
-                    setScrollY(savedScrollPosition);
-                }
+            post(() -> {
+                new FaviconLoader.Builder()
+                        .build()
+                        .load(ArticleWebView.this.getContext(), item.getFeed(), feedColorsListener);
+                setScrollY(savedScrollPosition);
             });
         }
     }

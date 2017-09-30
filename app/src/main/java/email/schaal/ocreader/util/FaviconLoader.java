@@ -172,12 +172,7 @@ public class FaviconLoader {
         MyTarget(@NonNull Feed feed, @NonNull FeedColorsListener listener, final @ColorInt int backgroundColor) {
             this.feedId = feed.getId();
             this.listener = listener;
-            contrastFilter = new Palette.Filter() {
-                @Override
-                public boolean isAllowed(int rgb, float[] hsl) {
-                    return ColorUtils.calculateContrast(rgb, backgroundColor) >= 4;
-                }
-            };
+            contrastFilter = (rgb, hsl) -> ColorUtils.calculateContrast(rgb, backgroundColor) >= 4;
         }
 
         @Override
@@ -191,13 +186,10 @@ public class FaviconLoader {
         public boolean onResourceReady(Bitmap bitmap, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
             final FeedColors cachedFeedColors = feedColorsCache.get(feedId);
             if (cachedFeedColors == null) {
-                generatePalette(bitmap, contrastFilter, new Palette.PaletteAsyncListener() {
-                    @Override
-                    public void onGenerated(Palette palette) {
-                        FeedColors feedColors = new FeedColors(palette);
-                        feedColorsCache.put(feedId, feedColors);
-                        listener.onGenerated(feedColors);
-                    }
+                generatePalette(bitmap, contrastFilter, palette -> {
+                    FeedColors feedColors = new FeedColors(palette);
+                    feedColorsCache.put(feedId, feedColors);
+                    listener.onGenerated(feedColors);
                 });
             } else {
                 listener.onGenerated(cachedFeedColors);
