@@ -342,6 +342,7 @@ public class Item implements RealmModel, Insertable, Parcelable {
         this.fingerprint = builder.fingerprint;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public static class Builder {
         private long id = -1;
         private String url;

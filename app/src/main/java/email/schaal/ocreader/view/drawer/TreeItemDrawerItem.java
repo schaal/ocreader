@@ -40,6 +40,7 @@ import io.realm.RealmObject;
 /**
  * Represents a TreeItem for display in a Drawer
  */
+@SuppressWarnings("UnusedReturnValue")
 public class TreeItemDrawerItem extends PrimaryDrawerItem {
     private Feed feed;
 
