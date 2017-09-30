@@ -96,7 +96,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
 
-            if(action.equals(SyncService.SYNC_STARTED) || action.equals(SyncService.SYNC_FINISHED)) {
+            if(action != null && (action.equals(SyncService.SYNC_STARTED) || action.equals(SyncService.SYNC_FINISHED))) {
                 final SyncType syncType = SyncType.get(intent.getStringExtra(SyncService.EXTRA_TYPE));
                 if(syncType != null) {
                     switch (syncType) {

@@ -20,6 +20,7 @@
 package email.schaal.ocreader.api;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**
@@ -45,7 +46,7 @@ public enum Level {
         return supported;
     }
 
-    @Nullable
+    @NonNull
     public static API getAPI(Context context, final Level level) {
         switch (level) {
             case V12:
