@@ -246,7 +246,7 @@ class APIv12 extends API {
 
     @SuppressWarnings("SameParameterValue")
     private interface APIv12Interface {
-        /** SERVER **/
+        /* SERVER **/
 
         /** Since 6.0.5 **/
         @GET("user")

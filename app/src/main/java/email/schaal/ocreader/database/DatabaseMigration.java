@@ -29,12 +29,12 @@ class DatabaseMigration implements RealmMigration {
 
         RealmSchema schema = realm.getSchema();
 
-        /**
-         * 9 -> 10
-         *
-         * - Add primary key ID to TemporaryFeed
-         * - Rename TemporaryFeed id to treeItemId
-         * - add TemporaryFeed object for list and pager activities
+        /*
+          9 -> 10
+
+          - Add primary key ID to TemporaryFeed
+          - Rename TemporaryFeed id to treeItemId
+          - add TemporaryFeed object for list and pager activities
          */
         if(oldVersion == 9) {
             realm.delete("TemporaryFeed");
@@ -49,10 +49,10 @@ class DatabaseMigration implements RealmMigration {
             oldVersion++;
         }
 
-        /**
-         * 10 -> 11
-         *
-         *  - Make sure every item has updatedAt != null, set updatedAt = pubDate if not
+        /*
+          10 -> 11
+
+           - Make sure every item has updatedAt != null, set updatedAt = pubDate if not
          */
         if(oldVersion == 10) {
             for(DynamicRealmObject object: realm.where("Item").isNull(Item.UPDATED_AT).findAll()) {
@@ -62,10 +62,10 @@ class DatabaseMigration implements RealmMigration {
             oldVersion++;
         }
 
-        /**
-         * 11 -> 12
-         *
-         * - Add active property to Item
+        /*
+          11 -> 12
+
+          - Add active property to Item
          */
         if(oldVersion == 11) {
             schema.get("Item")

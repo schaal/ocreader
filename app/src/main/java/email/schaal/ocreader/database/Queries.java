@@ -207,8 +207,8 @@ public class Queries {
         realm.executeTransaction(realm1 -> {
             try {
                 for (Item item : items) {
-                    /** If the item has a fingerprint, mark all items with the same fingerprint
-                     * as read
+                    /* If the item has a fingerprint, mark all items with the same fingerprint
+                      as read
                      */
                     if(item.getFingerprint() == null) {
                         item.setUnread(newUnread);
