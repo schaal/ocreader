@@ -39,11 +39,11 @@ import io.realm.Realm;
 abstract class BaseDrawerManager {
     private final Drawer drawer;
 
-    public BaseDrawerManager(Drawer drawer) {
+    BaseDrawerManager(Drawer drawer) {
         this.drawer = drawer;
     }
 
-    public final void reload(Realm realm, boolean showOnlyUnread) {
+    final void reload(Realm realm, boolean showOnlyUnread) {
         drawer.setItems(reloadDrawerItems(realm, showOnlyUnread));
     }
 
