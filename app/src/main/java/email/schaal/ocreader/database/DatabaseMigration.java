@@ -9,6 +9,7 @@ import io.realm.DynamicRealm;
 import io.realm.DynamicRealmObject;
 import io.realm.FieldAttribute;
 import io.realm.RealmMigration;
+import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
 
 /**
@@ -39,7 +40,12 @@ class DatabaseMigration implements RealmMigration {
         if(oldVersion == 9) {
             realm.delete("TemporaryFeed");
 
-            schema.get("TemporaryFeed")
+            final RealmObjectSchema temporaryFeedSchema = schema.get("TemporaryFeed");
+
+            if(temporaryFeedSchema == null)
+                throw new IllegalStateException("TemporaryFeed schema not found");
+
+            temporaryFeedSchema
                     .renameField(TemporaryFeed.ID, TemporaryFeed.TREE_ITEM_ID)
                     .addField(TemporaryFeed.ID, long.class, FieldAttribute.PRIMARY_KEY);
 
@@ -68,7 +74,12 @@ class DatabaseMigration implements RealmMigration {
           - Add active property to Item
          */
         if(oldVersion == 11) {
-            schema.get("Item")
+            final RealmObjectSchema itemSchema = schema.get("Item");
+
+            if(itemSchema == null)
+                throw new IllegalStateException("Item schema not found");
+
+            itemSchema
                     .addField(Item.ACTIVE, boolean.class, FieldAttribute.INDEXED);
 
             //noinspection UnusedAssignment
