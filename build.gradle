@@ -23,7 +23,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-beta7'
+        classpath 'com.android.tools.build:gradle:3.0.0-rc1'
         classpath 'io.realm:realm-gradle-plugin:3.7.2'
         classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
     }
@@ -32,7 +32,7 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
-        maven { url "https://maven.google.com" }
+        google()
     }
 }
 
