@@ -60,6 +60,12 @@ android {
         abortOnError false
         disable 'MissingTranslation'
     }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 ext {
@@ -125,6 +131,6 @@ dependencies {
 
     androidTestCompile "com.squareup.okhttp3:mockwebserver:${versions.okhttp}"
 
-    testCompile 'org.robolectric:robolectric:3.4.2'
+    testImplementation "org.robolectric:robolectric:3.4.2"
     testCompile 'junit:junit:4.12'
 }
