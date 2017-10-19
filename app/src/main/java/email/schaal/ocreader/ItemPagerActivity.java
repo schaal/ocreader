@@ -42,6 +42,7 @@ import android.support.v4.graphics.ColorUtils;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebView;
 
 import java.util.List;
 import java.util.WeakHashMap;
@@ -69,6 +70,10 @@ public class ItemPagerActivity extends RealmActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(Build.VERSION.SDK_INT >= 24) {
+            new WebView(this);
+        }
+
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_item_pager);
 
