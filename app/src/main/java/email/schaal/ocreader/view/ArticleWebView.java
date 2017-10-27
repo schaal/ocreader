@@ -12,7 +12,6 @@ import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 
-import com.google.common.base.Strings;
 import com.vdurmont.emoji.EmojiManager;
 
 import org.jsoup.Jsoup;
@@ -152,7 +151,7 @@ public class ArticleWebView extends NestedScrollWebView {
                 FaviconLoader.getCssColor(fontColor),
                 FaviconLoader.getCssColor(backgroundColor),
                 FaviconLoader.getCssColor(ContextCompat.getColor(context, R.color.selected_background)),
-                Strings.nullToEmpty(item.getUrl()),
+                StringUtils.nullToEmpty(item.getUrl()),
                 item.getTitle(),
                 StringUtils.getByLine(context, "<p class=\"byline\">%s</p>", item.getAuthor()),
                 document.body().html(),

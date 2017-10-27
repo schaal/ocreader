@@ -70,4 +70,18 @@ public class StringUtils {
         //noinspection deprecation
         return Html.fromHtml(source).toString();
     }
+
+    @Nullable
+    public static String emptyToNull(@NonNull String source) {
+        if(source.isEmpty())
+            return null;
+        return source;
+    }
+
+    @NonNull
+    public static String nullToEmpty(@Nullable String source) {
+        if(source == null)
+            return "";
+        return source;
+    }
 }
