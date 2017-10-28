@@ -248,9 +248,6 @@ public abstract class API {
         void onFailure(F failure);
     }
 
-    public static class NotLoggedInException extends Exception {
-    }
-
     abstract class BaseRetrofitCallback<T> implements Callback<T> {
         @Nullable
         final APICallback<Void, Throwable> callback;
