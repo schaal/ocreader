@@ -34,7 +34,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 @LargeTest
 public class LoginActivityTest {
     @Rule
-    public ActivityTestRule<LoginActivity> activityTestRule = new ActivityTestRule<>(LoginActivity.class);
+    public final ActivityTestRule<LoginActivity> activityTestRule = new ActivityTestRule<>(LoginActivity.class);
 
     private final MockWebServer server = new MockWebServer();
     private final APIDispatcher dispatcher = new APIDispatcher();

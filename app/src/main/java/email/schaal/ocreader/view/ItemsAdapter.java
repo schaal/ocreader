@@ -57,7 +57,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     /**
      * Selected item ids, LinkedHashSet to preserve insertion order for getFirstSelectedItem()
      */
-    private Set<Integer> selections = new LinkedHashSet<>();
+    private final Set<Integer> selections = new LinkedHashSet<>();
 
     ItemsAdapter(Context context, Realm realm, DrawerManager.State state, ItemViewHolder.OnClickListener clickListener) {
         this.realm = realm;

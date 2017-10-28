@@ -45,7 +45,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 @LargeTest
 public class ItemPagerActivityTest {
     @Rule
-    public ActivityTestRule<ItemPagerActivity> activityTestRule = new ActivityTestRule<>(ItemPagerActivity.class, true, false);
+    public final ActivityTestRule<ItemPagerActivity> activityTestRule = new ActivityTestRule<>(ItemPagerActivity.class, true, false);
 
     @Test
     public void testItemPagerActivity() throws Exception {
