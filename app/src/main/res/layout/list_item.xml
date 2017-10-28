@@ -75,6 +75,7 @@
                 android:layout_height="@dimen/play_button"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
+                android:focusable="true"
                 android:contentDescription="@string/play_media"
                 android:src="@drawable/ic_play_circle_outline"
                 android:visibility="gone"

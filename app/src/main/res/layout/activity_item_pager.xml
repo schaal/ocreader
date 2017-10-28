@@ -53,6 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
+                android:focusable="true"
                 android:text="@string/action_mark_read"
                 app:fabSize="mini"
                 android:src="@drawable/ic_check_box" />
@@ -65,6 +66,7 @@
                 android:layout_marginEnd="@dimen/materialize_screen_edge"
                 android:layout_marginStart="@dimen/materialize_screen_edge"
                 android:clickable="true"
+                android:focusable="true"
                 app:progressColor="@color/progress"
                 android:src="@drawable/ic_open_in_browser" />
 
@@ -73,6 +75,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
+                android:focusable="true"
                 android:text="@string/action_mark_starred"
                 app:fabSize="mini"
                 android:src="@drawable/ic_star" />
