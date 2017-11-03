@@ -93,7 +93,7 @@ dependencies {
         transitive = true
     }
 
-    implementation('com.mikepenz:aboutlibraries:5.9.6@aar') {
+    implementation('com.mikepenz:aboutlibraries:6.0.0@aar') {
         transitive = true
     }
 
