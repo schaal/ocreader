@@ -89,7 +89,7 @@ dependencies {
 
     implementation "com.android.support:support-v13:${versions.supportLib}"
 
-    implementation('com.mikepenz:materialdrawer:5.9.5@aar') {
+    implementation('com.mikepenz:materialdrawer:6.0.0@aar') {
         transitive = true
     }
 
