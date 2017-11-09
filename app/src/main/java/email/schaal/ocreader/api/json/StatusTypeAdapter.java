@@ -83,6 +83,10 @@ public class StatusTypeAdapter extends JsonAdapter<Status> {
                 case "improperlyConfiguredCron":
                     status.setImproperlyConfiguredCron(in.nextBoolean());
                     break;
+                case "incorrectDbCharset":
+                    // TODO: 11/9/17 Show warning 
+                    in.skipValue();
+                    break;
                 default:
                     Log.w(TAG, "Unknown value in status warnings json: " + name);
                     in.skipValue();
