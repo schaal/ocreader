@@ -118,7 +118,7 @@ dependencies {
 
     releaseImplementation 'ch.acra:acra:4.9.2'
 
-    implementation('com.vdurmont:emoji-java:3.3.0', {
+    implementation('com.vdurmont:emoji-java:4.0.0', {
         exclude group: 'org.json', module: 'json'
     })
 
