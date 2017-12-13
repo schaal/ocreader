@@ -215,7 +215,7 @@ public class ArticleWebView extends NestedScrollWebView {
             final String possibleEmoji = img.attr("alt");
 
             if(EmojiManager.isEmoji(possibleEmoji))
-                img.replaceWith(new TextNode(possibleEmoji, ""));
+                img.replaceWith(new TextNode(possibleEmoji));
         }
 
         Elements iframes = document.getElementsByTag("iframe");
