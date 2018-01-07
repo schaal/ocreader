@@ -129,6 +129,6 @@ dependencies {
 
     androidTestImplementation "com.squareup.okhttp3:mockwebserver:${versions.okhttp}"
 
-    testImplementation "org.robolectric:robolectric:3.5.1"
+    testImplementation "org.robolectric:robolectric:3.6.1"
     testImplementation 'junit:junit:4.12'
 }
