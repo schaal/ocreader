@@ -1,3 +1,8 @@
+## 0.39 (2018-01-20)
+
+* Update libraries
+* Use Android SDK 27
+
 ## 0.38 (2017-09-23)
 
 * Possible fix for "You cannot start a load for a destroyed activity" crash
