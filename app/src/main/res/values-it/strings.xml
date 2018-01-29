@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2018. Michael Moroni <michaelmoroni@disroot.org>
+  ~
+  ~ This file is part of ocreader.
+  ~
+  ~ ocreader is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ocreader is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+
+    <string name="about_app"><h3>Copyright</h3>%1$s<h3>Licenza</h3>Quest\'app è pubblicata sotto licenza GPLv3 o successiva<h3>Codice sorgente</h3>%2$s</string>
+    <string name="about">Informazioni</string>
+
+    <string name="action_mark_read">Segna come letto</string>
+    <string name="action_mark_starred">Segna come preferito</string>
+    <string name="action_mark_unstarred">Segna come non preferito</string>
+    <string name="action_mark_unread">Segna come non letto</string>
+    <string name="action_sync">Sincronizza</string>
+
+    <string name="title_activity_login">Accedi</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_username">Nome utente</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_url">Indirizzo server</string>
+    <string name="action_sign_in">Accedi</string>
+    <string name="action_sign_in_short">Accedi</string>
+    <string name="error_incorrect_username_or_password">Nome utente o password non sono corretti</string>
+    <string name="error_oc_not_found">Impossibile trovare un\'istanza di ownCloud</string>
+    <string name="error_incorrect_url">Questo URL non è valido</string>
+    <string name="error_field_required">Questo campo è obbligatorio</string>
+
+    <string name="unread_items">Articoli non letti</string>
+    <string name="starred_items">Articoli preferiti</string>
+    <string name="fresh_items">Articoli nuovi</string>
+
+    <string name="by_author">di %1$s</string>
+
+    <string name="title_activity_item_pager">Elemento</string>
+
+    <string name="feed_icon_description">Icona del feed</string>
+
+    <string name="now">ora</string>
+
+    <string name="minutes">%d m</string>
+    <string name="hours">%d h</string>
+    <string name="days">%d g</string>
+    <string name="no_articles">Non ci sono articoli qui</string>
+    <string name="load_more">Carica di più</string>
+    <string name="starred">Preferito</string>
+    <string name="only_unread">Mostra solo articoli non letti</string>
+    <string name="share_article">Condividi articolo</string>
+    <string name="account_settings">Impostazioni account</string>
+    <string name="more_info">Altre informazioni</string>
+    <string name="untrusted_certificate">Impossibile verificare il certificato. Controlla le impostazioni SSL</string>
+    <string name="ncnews_too_old">Nextcloud News non è installato o la versione non è supportata. Installa o aggiorna Nextcloud almeno alla versione %s</string>
+    <string name="error_unknown_host">Host sconosciuto</string>
+    <string name="error_insecure_connection">Connessione non sicura. Premi Accedi nuovamente per proseguire comunque</string>
+    <string name="action_sign_in_insecurely">Accedi in maniera non sicura</string>
+    <string name="http_error">Errore HTTP %1$d</string>
+    <string name="mark_previous_articles_read">Segna articoli precedenti come letti</string>
+    <string name="mark_all_as_read">Segna tutti come letti</string>
+    <string name="play_media">Avvia media</string>
+    <string name="article_order">Cambia ordine</string>
+    <string name="title_activity_managefeeds">Gestisci feed</string>
+    <string name="feed_url">URL del feed</string>
+    <string name="delete_feed">Elimina feed</string>
+    <string name="add">Aggiungi</string>
+    <string name="add_new_feed">Aggiungi nuovo feed</string>
+    <string name="adding_feed">Aggiunta del feed</string>
+    <string name="feed_add_failed">Impossibile aggiungere feed</string>
+    <string name="confirm_feed_deletion">Vuoi rimuovere il feed %s?</string>
+    <string name="moving_feed">Spostamento del feed</string>
+    <string name="feed_move_failed">Impossibile spostare feed</string>
+    <string name="delete_feed_failed">Impossibile cancellare feed</string>
+    <string name="deleting_feed">Cancellazione di %s</string>
+    <string name="delete">Elimina</string>
+    <string name="root_folder">Nessuna cartella</string>
+    <string name="warning">Attenzione</string>
+    <string name="feed_update_error">Impossibile aggiornare questo feed</string>
+    <string name="edit_feed">Modifica feed</string>
+    <string name="save">Salva</string>
+    <string name="folder">Cartella</string>
+    <string name="error_not_compatible">La versione installata di Nextcloud News non è compatibile con quest\'app.</string>
+    <string name="publication_date">Data di pubblicazione</string>
+    <string name="updated_date">Data di aggiornamento</string>
+    <string name="ascending">Dal più vecchio al più recente</string>
+    <string name="descending">Dal più recente al più vecchio</string>
+    <string name="could_not_connect">Impossibile connettere all\'host</string>
+    <string name="failed_detect_nc_version">Impossibile determinare la versione di Nextcloud News</string>
+    <string name="crash_text">È avvenuto un errore inaspettato che ha portato l\'app a smettere di funzionare. Premendo su Ok puoi inviare informazioni su questo problema via email.\n
+  \n
+  Puoi aggiungere informazioni importanti nel campo sottostante.</string>
+    <string name="additional_information">Ulteriori informazioni</string>
+    <string name="report_issue">Segnala problema</string>
+    <string name="settings">Impostazioni</string>
+    <string name="appearance">Aspetto</string>
+    <string name="dark_theme">Tema scuro</string>
+    <string name="reading">Lettura</string>
+    <string name="all_items">Tutti gli articoli</string>
+    <string name="no_folders_to_show">Nessuna cartella/feed da mostrare</string>
+    <string name="default_sort_key">Default</string>
+    <string name="sort_by">Ordina per</string>
+</resources>
