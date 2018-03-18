@@ -3,6 +3,7 @@ package email.schaal.ocreader.view;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.preference.PreferenceManager;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
@@ -26,11 +27,13 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.R;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.util.FeedColors;
 import email.schaal.ocreader.util.StringUtils;
+import hugo.weaving.DebugLog;
 
 /**
  * WebView to display a Item
@@ -114,7 +117,7 @@ public class ArticleWebView extends NestedScrollWebView {
 
     public void setItem(Item item) {
         this.item = item;
-        loadDataWithBaseURL(null, getHtml(), "text/html", "UTF-8", null);
+        loadDataWithBaseURL("file:///android_asset/", getHtml(), "text/html", "UTF-8", null);
     }
 
     public void setScrollPosition(int position) {
@@ -134,8 +137,11 @@ public class ArticleWebView extends NestedScrollWebView {
         }
     }
 
+    @DebugLog
     private String getHtml() {
-        Context context = getContext();
+        final Context context = getContext();
+
+        final String font = Preferences.ARTICLE_FONT.getString(PreferenceManager.getDefaultSharedPreferences(context));
 
         Document document = Jsoup.parse(item.getBody());
         document = cleaner.clean(document);
@@ -155,7 +161,8 @@ public class ArticleWebView extends NestedScrollWebView {
                 item.getTitle(),
                 StringUtils.getByLine(context, "<p class=\"byline\">%s</p>", item.getAuthor()),
                 document.body().html(),
-                firstImgString
+                firstImgString,
+                !"system".equals(font) ? context.getString(R.string.crimson_font_css): ""
         );
     }
 

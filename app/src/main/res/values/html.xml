@@ -112,6 +112,7 @@
     margin-bottom: 8px;
     display:block;
   }
+  %10$s
   </style>
   <script>
     document.addEventListener(\"DOMContentLoaded\", function(event) {
@@ -135,5 +136,14 @@
 javascript:(function() {
     document.styleSheets[0].cssRules[0].style.color=\"%1$s\";
 })();
+    ]]></string>
+    <string name="crimson_font_css" translatable="false"><![CDATA[
+\@font-face {
+    font-family: \'Crimson\';
+    src: url(\'font/crimsontextregular.ttf\');
+    font-weight: normal;
+    font-style: normal;
+}
+body { font-family: \'Crimson\'; font-size: 1.2em; }
     ]]></string>
 </resources>

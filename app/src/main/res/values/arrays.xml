@@ -19,4 +19,14 @@
         <item>@string/publication_value</item>
         <item>@string/update_value</item>
     </string-array>
+
+    <string-array name="article_font">
+        <item>System</item>
+        <item>Crimson</item>
+    </string-array>
+    <string-array name="article_font_values">
+        <item>system</item>
+        <item>crimson</item>
+    </string-array>
+
 </resources>
