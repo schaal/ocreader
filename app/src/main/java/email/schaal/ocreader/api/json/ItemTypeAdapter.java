@@ -20,6 +20,7 @@
 
 package email.schaal.ocreader.api.json;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -44,7 +45,7 @@ public class ItemTypeAdapter extends JsonAdapter<Item> {
     private final static String TAG = ItemTypeAdapter.class.getName();
 
     @Override
-    public void toJson(JsonWriter out, Item item) throws IOException {
+    public void toJson(@NonNull JsonWriter out, Item item) throws IOException {
         out.beginObject();
 
         out.name(Item.ID).value(item.getId());
@@ -60,7 +61,7 @@ public class ItemTypeAdapter extends JsonAdapter<Item> {
     }
 
     @Override
-    public Item fromJson(JsonReader in) throws IOException {
+    public Item fromJson(@NonNull JsonReader in) throws IOException {
         if (in.peek() == JsonReader.Token.NULL) {
             in.nextNull();
             return null;

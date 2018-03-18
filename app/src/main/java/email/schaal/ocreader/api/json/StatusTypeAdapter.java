@@ -20,6 +20,7 @@
 
 package email.schaal.ocreader.api.json;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.squareup.moshi.JsonAdapter;
@@ -35,11 +36,11 @@ public class StatusTypeAdapter extends JsonAdapter<Status> {
     private final static String TAG = StatusTypeAdapter.class.getName();
 
     @Override
-    public void toJson(JsonWriter out, Status value) throws IOException {
+    public void toJson(@NonNull JsonWriter out, Status value) throws IOException {
     }
 
     @Override
-    public Status fromJson(JsonReader in) throws IOException {
+    public Status fromJson(@NonNull JsonReader in) throws IOException {
         if (in.peek() == JsonReader.Token.NULL) {
             in.nextNull();
             return null;

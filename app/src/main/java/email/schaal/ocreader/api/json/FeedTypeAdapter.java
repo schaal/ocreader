@@ -20,6 +20,7 @@
 
 package email.schaal.ocreader.api.json;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -40,7 +41,7 @@ public class FeedTypeAdapter extends JsonAdapter<Feed> {
     private final static String TAG = FeedTypeAdapter.class.getName();
 
     @Override
-    public void toJson(JsonWriter out, Feed feed) throws IOException {
+    public void toJson(@NonNull JsonWriter out, Feed feed) throws IOException {
         out.beginObject();
 
         // Only write url for feeds that are not in the database
@@ -56,7 +57,7 @@ public class FeedTypeAdapter extends JsonAdapter<Feed> {
     }
 
     @Override
-    public Feed fromJson(JsonReader in) throws IOException {
+    public Feed fromJson(@NonNull JsonReader in) throws IOException {
         if (in.peek() == JsonReader.Token.NULL) {
             in.nextNull();
             return null;

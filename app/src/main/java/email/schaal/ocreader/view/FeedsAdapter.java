@@ -26,8 +26,9 @@ public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.Vi
         setHasStableIds(true);
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         switch (viewType) {
             case R.id.viewtype_item:
                 ListFeedBinding binding = ListFeedBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
@@ -37,7 +38,7 @@ public class FeedsAdapter extends RealmRecyclerViewAdapter<Feed, RecyclerView.Vi
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof FeedViewHolder) {
             Feed feed = getItem(position);
             ((FeedViewHolder)holder).bindFeed(feed);

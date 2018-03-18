@@ -20,6 +20,7 @@
 
 package email.schaal.ocreader.api.json;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.squareup.moshi.JsonAdapter;
@@ -37,11 +38,11 @@ public class FolderTypeAdapter extends JsonAdapter<Folder> {
     private final static String TAG = FolderTypeAdapter.class.getName();
 
     @Override
-    public void toJson(JsonWriter out, Folder value) throws IOException {
+    public void toJson(@NonNull JsonWriter out, Folder value) throws IOException {
     }
 
     @Override
-    public Folder fromJson(JsonReader in) throws IOException {
+    public Folder fromJson(@NonNull JsonReader in) throws IOException {
         if (in.peek() == JsonReader.Token.NULL) {
             in.nextNull();
             return null;

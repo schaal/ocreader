@@ -1,6 +1,7 @@
 package email.schaal.ocreader.view;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,8 +25,9 @@ public class LoadMoreAdapter extends ItemsAdapter {
         this.loadMoreListener = loadMoreListener;
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if(viewType == R.id.viewtype_loadmore) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_loadmore, parent, false);
             return new LoadMoreViewHolder(view);
@@ -35,7 +37,7 @@ public class LoadMoreAdapter extends ItemsAdapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof LoadMoreViewHolder) {
             ((LoadMoreViewHolder) holder).showProgress(
                     loadingMoreTreeItem != null && loadingMoreTreeItem.equals(state.getTreeItem()));
