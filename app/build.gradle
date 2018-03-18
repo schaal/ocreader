@@ -70,7 +70,7 @@ android {
 
 ext {
     versions = [
-            supportLib: '27.0.2',
+            supportLib: '27.1.0',
             okhttp: '3.9.1',
             retrofit: '2.3.0',
             glide: '4.5.0'
