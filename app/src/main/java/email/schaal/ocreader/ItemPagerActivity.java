@@ -24,8 +24,8 @@ import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
@@ -37,7 +37,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
-import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
@@ -110,7 +110,7 @@ public class ItemPagerActivity extends RealmActivity {
         binding.toolbarLayout.textViewTitle.setText(title);
         binding.toolbarLayout.textViewSubtitle.setText("");
 
-        final SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+        final SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         binding.fabOpenInBrowser.setOnClickListener(v -> {
             if(item != null && item.getUrl() != null) {

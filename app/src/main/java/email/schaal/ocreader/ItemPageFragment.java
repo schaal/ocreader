@@ -20,7 +20,8 @@
 
 package email.schaal.ocreader;
 
-import android.app.Fragment;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -92,13 +93,13 @@ public class ItemPageFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(WEB_VIEW_SCROLL_POSITION, binding.webView.getScrollY());
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentItemPagerBinding.inflate(inflater, container, false);
         webView = binding.webView;
 
