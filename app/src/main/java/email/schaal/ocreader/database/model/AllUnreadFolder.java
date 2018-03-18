@@ -72,7 +72,7 @@ public class AllUnreadFolder implements TreeItem, TreeIconable {
         final RealmQuery<Feed> query = realm.where(Feed.class);
         if(onlyUnread)
             query.greaterThan(Feed.UNREAD_COUNT, 0);
-        return query.findAllSorted(Feed.NAME, Sort.ASCENDING);
+        return query.sort(Feed.NAME, Sort.ASCENDING).findAll();
     }
 
     @Override
@@ -80,7 +80,7 @@ public class AllUnreadFolder implements TreeItem, TreeIconable {
         final RealmQuery<Item> query = realm.where(Item.class);
         if(onlyUnread)
             query.equalTo(Item.UNREAD, true);
-        return query.distinct(Item.FINGERPRINT);
+        return query.distinct(Item.FINGERPRINT).findAll();
     }
 
     @Override

@@ -37,7 +37,7 @@ public class ManageFeedsActivity extends RealmActivity implements FeedManageList
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        folderSpinnerAdapter = new FolderSpinnerAdapter(this, getRealm().where(Folder.class).findAllSorted(Folder.NAME));
+        folderSpinnerAdapter = new FolderSpinnerAdapter(this, getRealm().where(Folder.class).sort(Folder.NAME).findAll());
 
         FeedsAdapter adapter = new FeedsAdapter(getRealm(), this);
 

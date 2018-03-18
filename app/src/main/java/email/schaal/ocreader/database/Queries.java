@@ -123,7 +123,7 @@ public class Queries {
         Collections.sort(elements, TreeItem.COMPARATOR);
 
         realm.executeTransaction(realm1 -> {
-            final RealmResults<T> databaseItems = realm1.where(clazz).findAllSorted(TreeItem.ID, Sort.ASCENDING);
+            final RealmResults<T> databaseItems = realm1.where(clazz).sort(TreeItem.ID, Sort.ASCENDING).findAll();
 
             final Iterator<T> databaseIterator = databaseItems.iterator();
 
@@ -151,7 +151,7 @@ public class Queries {
         if(onlyUnread) {
             query.greaterThan(Feed.UNREAD_COUNT, 0);
         }
-        return query.findAllSorted(Feed.NAME, Sort.ASCENDING);
+        return query.sort(Feed.NAME, Sort.ASCENDING).findAll();
     }
 
     public static void removeExcessItems(Realm realm, final int maxItems) {
@@ -159,7 +159,8 @@ public class Queries {
                 .equalTo(Item.UNREAD, false)
                 .equalTo(Item.STARRED, false)
                 .equalTo(Item.ACTIVE, false)
-                .findAllSorted(Item.LAST_MODIFIED, Sort.ASCENDING);
+                .sort(Item.LAST_MODIFIED, Sort.ASCENDING)
+                .findAll();
 
         final int itemsToDelete = expendableItems.size() - maxItems;
 

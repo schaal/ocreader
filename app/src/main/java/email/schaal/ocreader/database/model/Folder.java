@@ -84,7 +84,7 @@ public class Folder implements RealmModel, TreeItem, Insertable, TreeIconable, P
         final RealmQuery<Feed> query = realm.where(Feed.class).equalTo(Feed.FOLDER_ID, getId());
         if(onlyUnread)
             query.greaterThan(Feed.UNREAD_COUNT, 0);
-        return query.findAllSorted(Feed.NAME, Sort.ASCENDING);
+        return query.sort(Feed.NAME, Sort.ASCENDING).findAll();
     }
 
     @Override
@@ -104,7 +104,7 @@ public class Folder implements RealmModel, TreeItem, Insertable, TreeIconable, P
             if(onlyUnread)
                 query.equalTo(Item.UNREAD, true);
         }
-        return query != null ? query.distinct(Item.FINGERPRINT) : null;
+        return query != null ? query.distinct(Item.FINGERPRINT).findAll() : null;
     }
 
     public void setName(String name) {
@@ -178,7 +178,7 @@ public class Folder implements RealmModel, TreeItem, Insertable, TreeIconable, P
             query = realm.where(Folder.class);
         }
 
-        return query != null ? query.findAllSorted(Folder.NAME, Sort.ASCENDING) : Collections.emptyList();
+        return query != null ? query.sort(Folder.NAME, Sort.ASCENDING).findAll() : Collections.emptyList();
     }
 
     @Override
