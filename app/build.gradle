@@ -72,7 +72,8 @@ ext {
             supportLib: '27.1.0',
             okhttp: '3.10.0',
             retrofit: '2.4.0',
-            glide: '4.6.1'
+            glide: '4.6.1',
+            acra: '5.1.2'
     ]
 }
 
@@ -115,7 +116,8 @@ dependencies {
 
     implementation 'com.github.zafarkhaja:java-semver:0.9.0'
 
-    releaseImplementation 'ch.acra:acra:4.9.2'
+    releaseImplementation "ch.acra:acra-mail:${versions.acra}"
+    releaseImplementation "ch.acra:acra-dialog:${versions.acra}"
 
     implementation('com.vdurmont:emoji-java:4.0.0', {
         exclude group: 'org.json', module: 'json'

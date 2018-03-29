@@ -22,6 +22,12 @@
 -dontnote org.apache.http.**
 -dontnote android.net.http.**
 
+#Realm
+-dontnote io.realm.Sort
+-dontnote io.realm.internal.**
+-dontwarn org.conscrypt.*
+-dontnote io.reactivex.Flowable
+
 #project
 -keep class email.schaal.ocreader.database.model.Item
 -keep class email.schaal.ocreader.view.ArticleWebView$1
@@ -36,3 +42,11 @@
 -dontnote com.google.common.cache.Striped64
 -dontnote com.google.common.cache.Striped64$Cell
 -dontnote com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
+
+#ACRA
+-dontnote org.acra.config.CoreConfiguration
+-dontnote org.acra.data.CrashReportData
+-dontnote org.acra.collections.ImmutableSet
+-dontnote org.acra.builder.ReportBuilder
+-dontnote org.acra.config.CoreConfigurationBuilder
+-dontnote org.acra.log.ACRALog
