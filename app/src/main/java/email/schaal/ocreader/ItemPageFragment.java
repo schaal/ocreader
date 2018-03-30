@@ -58,8 +58,13 @@ public class ItemPageFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        Item item = getArguments().getParcelable(ARG_ITEM);
-        webView.setItem(item);
+        final Bundle arguments = getArguments();
+        if(arguments != null) {
+            final Item item = arguments.getParcelable(ARG_ITEM);
+            webView.setItem(item);
+        } else {
+            // TODO: 3/30/18 show error
+        }
     }
 
     @Override
