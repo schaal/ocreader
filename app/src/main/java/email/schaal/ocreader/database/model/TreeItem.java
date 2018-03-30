@@ -32,7 +32,7 @@ public interface TreeItem {
     String ID = "id";
     String NAME = "name";
 
-    Comparator<TreeItem> COMPARATOR = (lhs, rhs) -> lhs.getId() < rhs.getId() ? -1 : (lhs.getId() == rhs.getId() ? 0 : 1);
+    Comparator<TreeItem> COMPARATOR = (lhs, rhs) -> Long.compare(lhs.getId(), rhs.getId());
 
     long getId();
     String getName();
