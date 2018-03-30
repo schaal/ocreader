@@ -126,10 +126,8 @@ public class DrawerManager {
 
         @Override
         protected List<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread) {
-            List<IDrawerItem> drawerItems = new ArrayList<>();
-
+            final List<IDrawerItem> drawerItems = new ArrayList<>(topDrawerItems);
             ((AbstractSwitchableDrawerItem)topDrawerItems.get(0)).withChecked(showOnlyUnread);
-            drawerItems.addAll(topDrawerItems);
 
             for(IDrawerItem drawerItem: topDrawerItems) {
                 if(drawerItem.getTag() instanceof TreeItem) {
