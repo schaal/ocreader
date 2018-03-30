@@ -95,7 +95,7 @@ public class TreeItemDrawerItem extends PrimaryDrawerItem {
     @Override
     public TreeItemDrawerItem withBadge(int badge) {
         StringHolder newBadge;
-        if(badge > 0)
+        if(badge != 0)
             newBadge = new StringHolder(String.valueOf(badge));
         else
             newBadge = new StringHolder("");
