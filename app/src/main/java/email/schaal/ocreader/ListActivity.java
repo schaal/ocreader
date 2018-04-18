@@ -529,15 +529,15 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                     Bitmap avatarBitmap = BitmapFactory.decodeStream(new Base64InputStream(new ByteArrayInputStream(encodedImage.getBytes()), Base64.DEFAULT));
                     profileDrawerItem.withIcon(avatarBitmap);
                 } else {
-                    profileDrawerItem.withIcon(R.mipmap.ic_launcher);
+                    profileDrawerItem.withIcon(R.mipmap.ic_launcher_round);
                 }
                 if (accountHeader != null)
                     accountHeader.updateProfile(profileDrawerItem);
             } else {
-                profileDrawerItem.withIcon(R.mipmap.ic_launcher);
+                profileDrawerItem.withIcon(R.mipmap.ic_launcher_round);
             }
         } else {
-            profileDrawerItem.withIcon(R.mipmap.ic_launcher);
+            profileDrawerItem.withIcon(R.mipmap.ic_launcher_round);
         }
     }
 
