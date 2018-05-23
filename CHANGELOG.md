@@ -1,3 +1,9 @@
+## 0.40 (2018-05-23)
+
+* Implemented adaptive icons, thanks to @stefan-niedermann
+* Add a second article font
+* Add italian translation, thanks to @airon90
+
 ## 0.39 (2018-01-20)
 
 * Update libraries
