@@ -1,3 +1,7 @@
+## 0.41 (2018-05-25)
+
+* Disable proguard to fix GlideModule not found crash
+
 ## 0.40 (2018-05-23)
 
 * Implemented adaptive icons, thanks to @stefan-niedermann
