@@ -50,3 +50,11 @@
 -dontnote org.acra.builder.ReportBuilder
 -dontnote org.acra.config.CoreConfigurationBuilder
 -dontnote org.acra.log.ACRALog
+
+#Glide
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep public class * extends com.bumptech.glide.module.AppGlideModule
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}
