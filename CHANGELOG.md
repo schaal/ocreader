@@ -1,3 +1,7 @@
+## 0.42 (2018-05-27)
+
+* Only send stack trace and app version code when sending bug report
+
 ## 0.41 (2018-05-25)
 
 * Disable proguard to fix GlideModule not found crash
