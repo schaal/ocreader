@@ -23,6 +23,7 @@ package email.schaal.ocreader;
 import android.content.Context;
 
 import org.acra.ACRA;
+import org.acra.ReportField;
 import org.acra.annotation.AcraCore;
 import org.acra.annotation.AcraDialog;
 import org.acra.annotation.AcraMailSender;
@@ -30,7 +31,9 @@ import org.acra.annotation.AcraMailSender;
 /**
  * Application class to setup the singletons
  */
-@AcraCore(buildConfigClass = BuildConfig.class)
+@AcraCore(
+        buildConfigClass = BuildConfig.class,
+        reportContent = {ReportField.ANDROID_VERSION, ReportField.APP_VERSION_CODE, ReportField.STACK_TRACE, ReportField.USER_COMMENT})
 @AcraDialog(resText = R.string.app_name, reportDialogClass = email.schaal.ocreader.CustomCrashReportDialog.class)
 @AcraMailSender(mailTo = "ocreader+reports@schaal.email")
 public class OCReaderApplication extends OCReaderBaseApplication {
