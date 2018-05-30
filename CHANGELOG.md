@@ -1,3 +1,7 @@
+## 0.43 (2018-05-30)
+
+* Show warning about possible password leak
+
 ## 0.42 (2018-05-27)
 
 * Only send stack trace and app version code when sending bug report
