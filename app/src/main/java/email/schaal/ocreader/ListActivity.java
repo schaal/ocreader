@@ -21,6 +21,8 @@
 package email.schaal.ocreader;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +30,7 @@ import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -191,9 +194,44 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     @Override
     protected void onStart() {
         super.onStart();
-        if(!Preferences.hasCredentials(PreferenceManager.getDefaultSharedPreferences(this))) {
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if(!Preferences.SYS_PW_LEAK_WARNING_SHOWN.getBoolean(sharedPreferences)) {
+            showPwLeakWarning();
+        } else if(!Preferences.hasCredentials(sharedPreferences)) {
             startActivityForResult(new Intent(this, LoginActivity.class), LoginActivity.REQUEST_CODE);
         }
+    }
+
+    private void showPwLeakWarning() {
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder
+                .setTitle("Possible password leak")
+                .setIcon(R.drawable.ic_warning)
+                .setMessage("If you sent a report in the past using this app's builtin crash reporter, it is possible your password was leaked. It is strongly advised to change your server password in this case")
+                .setCancelable(false)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    sharedPreferences
+                            .edit()
+                            .putBoolean(Preferences.SYS_PW_LEAK_WARNING_SHOWN.getKey(), true)
+                            .apply();
+
+                    dialog.dismiss();
+
+                    if(!Preferences.hasCredentials(sharedPreferences)) {
+                        startActivityForResult(new Intent(this, LoginActivity.class), LoginActivity.REQUEST_CODE);
+                    }
+                })
+                .setNeutralButton("more info", (dialog, which) -> {
+                    try {
+                        final Intent moreInfoIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/schaal/ocreader/wiki/Information-about-possible-password-leak"));
+                        startActivity(moreInfoIntent);
+                    } catch (ActivityNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }).show();
     }
 
     @Override
