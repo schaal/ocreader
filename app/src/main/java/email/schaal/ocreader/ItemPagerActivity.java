@@ -139,7 +139,7 @@ public class ItemPagerActivity extends RealmActivity {
         if(item.getUrl() != null) {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
-            shareIntent.putExtra(Intent.EXTRA_TEXT, item.getUrl());
+            shareIntent.putExtra(Intent.EXTRA_TEXT, item.getTitle() + " - " + item.getUrl());
             startActivity(Intent.createChooser(shareIntent, getString(R.string.share_article)));
         }
     }
