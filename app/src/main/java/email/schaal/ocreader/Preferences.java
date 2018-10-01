@@ -52,9 +52,7 @@ public enum Preferences {
     SYS_ISFEED("isfeed", false),
 
     SYS_DETECTED_API_LEVEL("detected_api_level"),
-    SYS_APIv2_ETAG("apiv2_etag"),
-
-    SYS_PW_LEAK_WARNING_SHOWN("pw_leak_warning_shown", false);
+    SYS_APIv2_ETAG("apiv2_etag");
 
     /**
      * What to do after the preference changes
