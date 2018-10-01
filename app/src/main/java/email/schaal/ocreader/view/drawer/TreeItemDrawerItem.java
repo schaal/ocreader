@@ -20,8 +20,8 @@
 
 package email.schaal.ocreader.view.drawer;
 
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import android.view.View;
 import android.widget.ImageView;
 

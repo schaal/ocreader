@@ -22,7 +22,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
 
-    <android.support.design.widget.CoordinatorLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinator_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -63,12 +63,12 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/materialize_spacing">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/url"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -76,28 +76,28 @@
                             android:inputType="textUri"
                             android:maxLines="1"/>
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/materialize_spacing">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/username"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="@string/prompt_username"
                             android:maxLines="1"/>
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <android.support.design.widget.TextInputLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/materialize_spacing">
 
-                        <android.support.design.widget.TextInputEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/password"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -108,7 +108,7 @@
                             android:inputType="textPassword"
                             android:maxLines="1"/>
 
-                    </android.support.design.widget.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <TextView
                         android:id="@+id/status"
@@ -133,5 +133,5 @@
                 </LinearLayout>
             </ScrollView>
         </LinearLayout>
-    </android.support.design.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

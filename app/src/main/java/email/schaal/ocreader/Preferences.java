@@ -21,9 +21,9 @@
 package email.schaal.ocreader;
 
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatDelegate;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import email.schaal.ocreader.database.model.AllUnreadFolder;
 import email.schaal.ocreader.database.model.Item;

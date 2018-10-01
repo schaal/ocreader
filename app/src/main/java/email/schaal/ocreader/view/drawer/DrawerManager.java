@@ -22,7 +22,7 @@ package email.schaal.ocreader.view.drawer;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;

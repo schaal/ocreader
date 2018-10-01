@@ -34,7 +34,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.graphics.drawable.shapes.Shape;
-import android.support.annotation.ColorInt;
+import androidx.annotation.ColorInt;
 
 import java.util.Locale;
 

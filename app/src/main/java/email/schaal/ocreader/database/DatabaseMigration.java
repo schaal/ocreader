@@ -1,6 +1,6 @@
 package email.schaal.ocreader.database;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import email.schaal.ocreader.database.model.Item;

@@ -20,9 +20,9 @@
 package email.schaal.ocreader;
 
 import android.content.Intent;
-import android.support.test.filters.LargeTest;
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
+import androidx.test.rule.ActivityTestRule;
+import androidx.test.runner.AndroidJUnit4;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,10 +32,10 @@ import java.util.ArrayList;
 
 import email.schaal.ocreader.database.model.Item;
 
-import static android.support.test.espresso.Espresso.*;
-import static android.support.test.espresso.action.ViewActions.swipeLeft;
-import static android.support.test.espresso.action.ViewActions.swipeRight;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.Espresso.*;
+import static androidx.test.espresso.action.ViewActions.swipeLeft;
+import static androidx.test.espresso.action.ViewActions.swipeRight;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 /**
  * Created by daniel on 16.04.17.

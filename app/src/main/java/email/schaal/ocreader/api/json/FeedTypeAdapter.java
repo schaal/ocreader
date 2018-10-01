@@ -20,7 +20,7 @@
 
 package email.schaal.ocreader.api.json;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 

@@ -24,22 +24,22 @@ import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.ColorInt;
-import android.support.annotation.Keep;
-import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.graphics.ColorUtils;
-import android.support.v4.view.ViewPager;
+import androidx.annotation.ColorInt;
+import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.core.graphics.ColorUtils;
+import androidx.viewpager.widget.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
@@ -321,11 +321,7 @@ public class ItemPagerActivity extends RealmActivity {
             fabColorTo = defaultAccent;
             currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                statusBarChanger = new StatusBarChangerLollipop();
-            } else {
-                statusBarChanger = new StatusBarChanger();
-            }
+            statusBarChanger = new StatusBarChangerLollipop();
         }
 
         @Override

@@ -22,11 +22,10 @@ package email.schaal.ocreader.view;
 
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.os.Build;
 import android.preference.PreferenceManager;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
@@ -131,10 +130,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder implements FaviconLo
             typedArray.recycle();
         }
 
-        if(Build.VERSION.SDK_INT < 19)
-            setBackgroundResource(itemView, backgroundResource);
-        else
-            itemView.setBackgroundResource(backgroundResource);
+        itemView.setBackgroundResource(backgroundResource);
     }
 
     // Workaround for bug pre sdk 19, where the padding is lost after updating the background resource

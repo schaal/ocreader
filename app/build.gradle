@@ -23,20 +23,20 @@ apply plugin: 'realm-android'
 apply plugin: 'com.jakewharton.hugo'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
 
     dataBinding.enabled = true
 
     defaultConfig {
         applicationId "email.schaal.ocreader"
-        minSdkVersion 17
-        targetSdkVersion 27
+        minSdkVersion 21
+        targetSdkVersion 28
         versionCode 46
         versionName "0.43"
 
         archivesBaseName="${getApplicationId()}_${getVersionCode()}"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
@@ -73,37 +73,41 @@ android {
 
 ext {
     versions = [
-            supportLib: '27.1.1',
-            okhttp: '3.10.0',
+            androidx: '1.0.0',
+            okhttp: '3.11.0',
             retrofit: '2.4.0',
-            glide: '4.6.1',
-            acra: '5.1.3'
+            glide: '4.8.0',
+            acra: '5.2.0'
     ]
 }
 
 dependencies {
-    implementation "com.android.support:support-compat:${versions.supportLib}"
-    implementation "com.android.support:support-core-ui:${versions.supportLib}"
+    implementation "androidx.core:core:${versions.androidx}"
+    implementation "androidx.legacy:legacy-support-core-ui:${versions.androidx}"
 
-    implementation "com.android.support:appcompat-v7:${versions.supportLib}"
-    implementation "com.android.support:cardview-v7:${versions.supportLib}"
-    implementation "com.android.support:recyclerview-v7:${versions.supportLib}"
-    implementation "com.android.support:design:${versions.supportLib}"
-    implementation "com.android.support:palette-v7:${versions.supportLib}"
+    implementation "androidx.appcompat:appcompat:${versions.androidx}"
+    implementation "androidx.cardview:cardview:${versions.androidx}"
+    implementation "androidx.recyclerview:recyclerview:${versions.androidx}"
+    implementation "com.google.android.material:material:${versions.androidx}"
+    implementation "androidx.palette:palette:${versions.androidx}"
 
-    implementation "com.android.support:support-v13:${versions.supportLib}"
+    implementation "androidx.legacy:legacy-support-v13:${versions.androidx}"
 
-    implementation('com.mikepenz:materialdrawer:6.0.6@aar') {
+    // Fix for glide still using com.android.support namespace
+    implementation 'com.android.support:support-annotations:28.0.0'
+    annotationProcessor 'com.android.support:support-annotations:28.0.0'
+
+    implementation('com.mikepenz:materialdrawer:6.1.0@aar') {
         transitive = true
     }
 
-    implementation('com.mikepenz:aboutlibraries:6.0.6@aar') {
+    implementation('com.mikepenz:aboutlibraries:6.2.0@aar') {
         transitive = true
     }
 
-    implementation 'io.realm:android-adapters:2.1.1'
+    implementation 'io.realm:android-adapters:3.0.0'
 
-    implementation 'org.jsoup:jsoup:1.11.2'
+    implementation 'org.jsoup:jsoup:1.11.3'
 
     implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
 
@@ -127,7 +131,7 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     })
 
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha4', {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
     })

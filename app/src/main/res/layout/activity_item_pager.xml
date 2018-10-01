@@ -23,7 +23,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
 
-    <android.support.design.widget.CoordinatorLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -33,7 +33,7 @@
         <include android:id="@+id/toolbar_layout"
                  layout="@layout/toolbar_pager"/>
 
-        <android.support.v4.view.ViewPager
+        <androidx.viewpager.widget.ViewPager
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -48,7 +48,7 @@
             android:gravity="center"
             app:layout_behavior="email.schaal.ocreader.view.ScrollAwareFABLayoutBehavior">
 
-            <android.support.design.widget.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_mark_as_read"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
                 app:progressColor="@color/progress"
                 android:src="@drawable/ic_open_in_browser" />
 
-            <android.support.design.widget.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_mark_starred"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -80,5 +80,5 @@
                 app:fabSize="mini"
                 android:src="@drawable/ic_star" />
         </email.schaal.ocreader.view.FABLayout>
-    </android.support.design.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

@@ -24,7 +24,7 @@
 
 package email.schaal.ocreader.util;
 
-import android.support.annotation.ColorRes;
+import androidx.annotation.ColorRes;
 
 import java.util.Arrays;
 import java.util.List;

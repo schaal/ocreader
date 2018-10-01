@@ -1,7 +1,7 @@
 package email.schaal.ocreader.view;
 
 import android.content.Context;
-import android.support.annotation.LayoutRes;
+import androidx.annotation.LayoutRes;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;

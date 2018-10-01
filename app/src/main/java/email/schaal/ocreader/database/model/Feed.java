@@ -23,7 +23,7 @@ package email.schaal.ocreader.database.model;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import java.util.Collections;
 import java.util.Date;

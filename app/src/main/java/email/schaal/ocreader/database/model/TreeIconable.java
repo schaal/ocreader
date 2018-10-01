@@ -20,7 +20,7 @@
 
 package email.schaal.ocreader.database.model;
 
-import android.support.annotation.DrawableRes;
+import androidx.annotation.DrawableRes;
 
 /**
  * Interface to add an Icon to TreeItems.

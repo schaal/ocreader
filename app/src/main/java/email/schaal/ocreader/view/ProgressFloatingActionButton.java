@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.support.annotation.Keep;
-import android.support.design.widget.FloatingActionButton;
+import androidx.annotation.Keep;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.util.AttributeSet;
 
 import email.schaal.ocreader.R;

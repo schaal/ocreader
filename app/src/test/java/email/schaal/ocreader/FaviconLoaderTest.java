@@ -1,7 +1,7 @@
 package email.schaal.ocreader;
 
 import android.graphics.Color;
-import android.support.v7.content.res.AppCompatResources;
+import androidx.appcompat.content.res.AppCompatResources;
 import android.util.Pair;
 
 import org.junit.Test;

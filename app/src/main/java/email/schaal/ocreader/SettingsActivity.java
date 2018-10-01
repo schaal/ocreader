@@ -21,11 +21,11 @@ package email.schaal.ocreader;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import android.view.MenuItem;
 
 import email.schaal.ocreader.databinding.ActivitySettingsBinding;

@@ -30,6 +30,6 @@
         <item name="drawerArrowStyle">@style/MaterialDrawer.DrawerArrowStyle</item>
     </style>
 
-    <style name="AppTheme" parent="Base.AppTheme" />
+    <style name="AppTheme" parent="Base.AppTheme" ></style>
 
 </resources>

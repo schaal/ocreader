@@ -25,8 +25,8 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.content.res.AppCompatResources;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.content.res.AppCompatResources;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;

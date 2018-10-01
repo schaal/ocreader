@@ -22,7 +22,7 @@ package email.schaal.ocreader.view;
 
 import android.content.Context;
 import android.graphics.drawable.TransitionDrawable;
-import android.support.design.widget.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.util.AttributeSet;
 
 /**

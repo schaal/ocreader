@@ -4,9 +4,9 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.os.Build;
-import android.support.annotation.Keep;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
+import androidx.annotation.Keep;
+import androidx.annotation.Nullable;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Animation;
@@ -37,7 +37,6 @@ public class FABLayout extends LinearLayout {
         init();
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public FABLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
@@ -86,13 +85,11 @@ public class FABLayout extends LinearLayout {
 
     @Keep
     public void setFabBackgroundColor(int color) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ColorStateList colorStateList = ColorStateList.valueOf(color);
-            for (int i = 0; i < getChildCount(); i++) {
-                View view = getChildAt(i);
-                if (view instanceof FloatingActionButton)
-                    view.setBackgroundTintList(colorStateList);
-            }
+        final ColorStateList colorStateList = ColorStateList.valueOf(color);
+        for (int i = 0; i < getChildCount(); i++) {
+            View view = getChildAt(i);
+            if (view instanceof FloatingActionButton)
+                view.setBackgroundTintList(colorStateList);
         }
     }
 

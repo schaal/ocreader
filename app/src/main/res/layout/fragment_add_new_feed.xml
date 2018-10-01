@@ -7,11 +7,11 @@
         android:orientation="vertical"
         android:padding="@dimen/materialize_screen_edge">
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/feed_url"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
                 android:inputType="textUri"
                 android:lines="1"/>
 
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:layout_width="wrap_content"

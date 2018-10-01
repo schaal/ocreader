@@ -1,10 +1,10 @@
 package email.schaal.ocreader.util;
 
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.graphics.Palette;
-import android.support.v7.graphics.Target;
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.palette.graphics.Palette;
+import androidx.palette.graphics.Target;
 
 import java.util.Collections;
 

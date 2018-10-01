@@ -1,6 +1,6 @@
 package email.schaal.ocreader.service;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Created by daniel on 02.04.17.

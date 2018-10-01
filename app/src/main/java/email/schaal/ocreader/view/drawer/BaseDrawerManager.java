@@ -20,8 +20,8 @@
 
 package email.schaal.ocreader.view.drawer;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.holder.StringHolder;
