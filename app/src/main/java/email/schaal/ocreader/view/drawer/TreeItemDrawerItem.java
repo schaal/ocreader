@@ -66,7 +66,7 @@ public class TreeItemDrawerItem extends PrimaryDrawerItem {
         if (icon != null && icon.getUri() != null) {
             ImageView imageView = getImageView(viewHolder);
             ImageHolder.applyTo(icon, imageView);
-        } else if(feed != null && RealmObject.isValid(feed)) {
+        } else if(RealmObject.isValid(feed)) {
             if(feed.isConsideredFailed()) {
                 withTextColor(ContextCompat.getColor(viewHolder.itemView.getContext(), R.color.error));
             }
