@@ -8,6 +8,7 @@ import org.robolectric.RobolectricTestRunner;
 
 import java.io.IOException;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.api.json.FeedTypeAdapter;
 import email.schaal.ocreader.database.model.Item;
@@ -16,7 +17,7 @@ import email.schaal.ocreader.api.json.ItemTypeAdapter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-@RunWith(RobolectricTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class JsonTest {
     private static class ReducedItem {
         long id;

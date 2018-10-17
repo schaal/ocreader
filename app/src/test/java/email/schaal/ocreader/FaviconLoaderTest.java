@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.util.TextDrawable;
@@ -23,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Tests for FaviconLoader
  */
-@RunWith(RobolectricTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class FaviconLoaderTest {
 
     @Test

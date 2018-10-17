@@ -8,6 +8,7 @@ import org.robolectric.RuntimeEnvironment;
 import java.util.Date;
 
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import email.schaal.ocreader.util.StringUtils;
 
 import static org.junit.Assert.assertEquals;
@@ -15,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Test class for StringUtils
  */
-@RunWith(RobolectricTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class StringUtilsTest {
     @Test
     public void testGetByLine() throws Exception {
