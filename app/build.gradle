@@ -131,7 +131,9 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     })
 
-    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-beta01')
+    androidTestImplementation 'androidx.test.ext:junit:1.0.0-beta02'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-beta02'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.1.0-beta02'
 
     androidTestImplementation "com.squareup.okhttp3:mockwebserver:${versions.okhttp}"
 
