@@ -12,6 +12,7 @@ import org.robolectric.RuntimeEnvironment;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.test.core.app.ApplicationProvider;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.util.TextDrawable;
@@ -44,8 +45,8 @@ public class FaviconLoaderTest {
         feed.setUrl("http://example.com");
         feed.setFaviconLink(null);
 
-        assertTrue(FaviconLoader.getDrawable(RuntimeEnvironment.application, feed) instanceof TextDrawable);
-        assertEquals(AppCompatResources.getDrawable(RuntimeEnvironment.application, R.drawable.ic_feed_icon), FaviconLoader.getDrawable(RuntimeEnvironment.application, null));
+        assertTrue(FaviconLoader.getDrawable(ApplicationProvider.getApplicationContext(), feed) instanceof TextDrawable);
+        assertEquals(AppCompatResources.getDrawable(ApplicationProvider.getApplicationContext(), R.drawable.ic_feed_icon), FaviconLoader.getDrawable(ApplicationProvider.getApplicationContext(), null));
 
         // TODO: 01.08.16 Test feed with favicon
     }

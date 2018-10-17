@@ -7,6 +7,7 @@ import org.robolectric.RuntimeEnvironment;
 
 import java.util.Date;
 
+import androidx.test.core.app.ApplicationProvider;
 import email.schaal.ocreader.util.StringUtils;
 
 import static org.junit.Assert.assertEquals;
@@ -18,8 +19,8 @@ import static org.junit.Assert.assertEquals;
 public class StringUtilsTest {
     @Test
     public void testGetByLine() throws Exception {
-        assertEquals("", StringUtils.getByLine(RuntimeEnvironment.application, "<p class=\"byline\">%s</p>", null));
-        assertEquals("<p class=\"byline\">by testAuthor</p>", StringUtils.getByLine(RuntimeEnvironment.application, "<p class=\"byline\">%s</p>", "testAuthor"));
+        assertEquals("", StringUtils.getByLine(ApplicationProvider.getApplicationContext(), "<p class=\"byline\">%s</p>", null));
+        assertEquals("<p class=\"byline\">by testAuthor</p>", StringUtils.getByLine(ApplicationProvider.getApplicationContext(), "<p class=\"byline\">%s</p>", "testAuthor"));
     }
 
     @Test
@@ -30,10 +31,10 @@ public class StringUtilsTest {
         Date testDateHour = new Date(1469849100000L + 60 * 60 * 1000);
         Date testDateDay = new Date(1469849100000L + 24 * 60 * 60 * 1000);
 
-        assertEquals("now", StringUtils.getTimeSpanString(RuntimeEnvironment.application, testDateStart, testDateStart));
-        assertEquals("1m", StringUtils.getTimeSpanString(RuntimeEnvironment.application, testDateStart, testDateMinute));
-        assertEquals("1h", StringUtils.getTimeSpanString(RuntimeEnvironment.application, testDateStart, testDateHour));
-        assertEquals("1d", StringUtils.getTimeSpanString(RuntimeEnvironment.application, testDateStart, testDateDay));
+        assertEquals("now", StringUtils.getTimeSpanString(ApplicationProvider.getApplicationContext(), testDateStart, testDateStart));
+        assertEquals("1m", StringUtils.getTimeSpanString(ApplicationProvider.getApplicationContext(), testDateStart, testDateMinute));
+        assertEquals("1h", StringUtils.getTimeSpanString(ApplicationProvider.getApplicationContext(), testDateStart, testDateHour));
+        assertEquals("1d", StringUtils.getTimeSpanString(ApplicationProvider.getApplicationContext(), testDateStart, testDateDay));
     }
 
     @Test
