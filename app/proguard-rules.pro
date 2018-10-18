@@ -58,3 +58,8 @@
   **[] $VALUES;
   public *;
 }
+
+#Fix tests using MockWebServer
+-keepclassmembers public class okhttp3.internal.Internal{
+    *;
+}
