@@ -22,6 +22,8 @@ package email.schaal.ocreader.database.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -52,6 +54,7 @@ public class Folder implements RealmModel, TreeItem, Insertable, TreeIconable, P
     public Folder() {
     }
 
+    @Keep
     public Folder(long id) {
         this.id = id;
     }

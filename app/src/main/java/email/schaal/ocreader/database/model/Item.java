@@ -25,6 +25,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
 import android.util.Log;
 
@@ -410,6 +412,7 @@ public class Item implements RealmModel, Insertable, Parcelable {
             return this;
         }
 
+        @Keep
         public Builder setFeed(Feed feed) {
             this.feed = feed;
             return this;

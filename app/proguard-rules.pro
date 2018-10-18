@@ -63,3 +63,11 @@
 -keepclassmembers public class okhttp3.internal.Internal{
     *;
 }
+
+-keepclassmembers public class okio.Buffer {
+    *;
+}
+
+-keepclassmembers public class okhttp3.internal.Util {
+    *;
+}
