@@ -1,9 +1,8 @@
 package email.schaal.ocreader.view;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.os.Build;
+
 import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
