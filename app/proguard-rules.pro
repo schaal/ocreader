@@ -59,6 +59,11 @@
   public *;
 }
 
+-keepclassmembers enum * {
+public static **[] values();
+public static ** valueOf(java.lang.String);
+}
+
 #Fix tests using MockWebServer
 -keepclassmembers public class okhttp3.internal.Internal{
     *;
@@ -70,4 +75,9 @@
 
 -keepclassmembers public class okhttp3.internal.Util {
     *;
+}
+
+-keep public class email.schaal.ocreader.view.ArticleWebView$JsCallback
+-keepclassmembers public class email.schaal.ocreader.view.ArticleWebView$JsCallback {
+    <methods>;
 }
