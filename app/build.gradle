@@ -73,7 +73,6 @@ android {
 
 ext {
     versions = [
-            androidx: '1.0.0',
             okhttp: '3.11.0',
             retrofit: '2.4.0',
             glide: '4.8.0',
@@ -82,11 +81,11 @@ ext {
 }
 
 dependencies {
-    implementation "androidx.core:core:${versions.androidx}"
-    implementation "androidx.appcompat:appcompat:${versions.androidx}"
-    implementation "androidx.cardview:cardview:${versions.androidx}"
-    implementation "androidx.recyclerview:recyclerview:${versions.androidx}"
-    implementation "androidx.palette:palette:${versions.androidx}"
+    implementation "androidx.core:core:1.0.1"
+    implementation "androidx.appcompat:appcompat:1.0.2"
+    implementation "androidx.cardview:cardview:1.0.0"
+    implementation "androidx.recyclerview:recyclerview:1.0.0"
+    implementation "androidx.palette:palette:1.0.0"
 
     // Fix for glide still using com.android.support namespace
     implementation 'com.android.support:support-annotations:28.0.0'
