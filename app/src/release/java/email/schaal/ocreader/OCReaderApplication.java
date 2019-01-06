@@ -45,7 +45,7 @@ public class OCReaderApplication extends OCReaderBaseApplication {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        if(!BuildConfig.DEBUG)
-            ACRA.init(this);
+        //if(!BuildConfig.DEBUG)
+        //    ACRA.init(this);
     }
 }
