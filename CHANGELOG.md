@@ -1,3 +1,7 @@
+## 0.44 (2019-01-06)
+
+* Disable ACRA
+
 ## 0.43 (2018-05-30)
 
 * Show warning about possible password leak
