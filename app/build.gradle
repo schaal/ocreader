@@ -20,7 +20,6 @@
 
 apply plugin: 'com.android.application'
 apply plugin: 'realm-android'
-apply plugin: 'com.jakewharton.hugo'
 
 android {
     compileSdkVersion 28

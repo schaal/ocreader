@@ -36,7 +36,6 @@ import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.util.FaviconLoader;
 import email.schaal.ocreader.util.FeedColors;
 import email.schaal.ocreader.util.StringUtils;
-import hugo.weaving.DebugLog;
 
 /**
  * WebView to display a Item
@@ -140,7 +139,6 @@ public class ArticleWebView extends NestedScrollWebView {
         }
     }
 
-    @DebugLog
     private String getHtml() {
         final Context context = getContext();
 
