@@ -100,7 +100,7 @@ dependencies {
 
     implementation 'io.realm:android-adapters:3.0.0'
 
-    implementation 'org.jsoup:jsoup:1.11.3'
+    implementation 'org.jsoup:jsoup:1.12.1'
 
     implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
 
