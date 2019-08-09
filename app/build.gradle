@@ -86,9 +86,8 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:1.0.0"
     implementation "androidx.palette:palette:1.0.0"
 
-    // Fix for glide still using com.android.support namespace
-    implementation 'com.android.support:support-annotations:28.0.0'
-    annotationProcessor 'com.android.support:support-annotations:28.0.0'
+    implementation 'androidx.annotation:annotation:1.1.0'
+    annotationProcessor 'androidx.annotation:annotation:1.1.0'
 
     implementation('com.mikepenz:materialdrawer:6.1.1@aar') {
         transitive = true
