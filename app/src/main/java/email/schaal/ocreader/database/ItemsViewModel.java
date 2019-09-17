@@ -19,52 +19,21 @@
 
 package email.schaal.ocreader.database;
 
-import android.content.SharedPreferences;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
-import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.database.model.Item;
-import email.schaal.ocreader.database.model.TemporaryFeed;
-import email.schaal.ocreader.view.drawer.DrawerManager;
+import io.realm.DynamicRealm;
 import io.realm.Realm;
-import io.realm.RealmResults;
 
 public class ItemsViewModel extends ViewModel {
     private final Realm realm;
-    private final LiveData<List<Item>> items;
+    private LiveData<List<Item>> items;
 
-    public ItemsViewModel(final DrawerManager.State state, final boolean updateTemporaryFeed, final SharedPreferences preferences) {
+    public ItemsViewModel() {
         realm = Realm.getDefaultInstance();
-        items = updateItems(state, updateTemporaryFeed, preferences);
-    }
-
-    private boolean isOnlyUnread(SharedPreferences preferences) {
-        return Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences);
-    }
-
-    private LiveRealmResults<Item> updateItems(final DrawerManager.State state, boolean updateTemporaryFeed, SharedPreferences preferences) {
-        if(state.getTreeItem() == null)
-            return null;
-
-        final TemporaryFeed temporaryFeed = TemporaryFeed.getListTemporaryFeed(realm);
-
-        if (updateTemporaryFeed || temporaryFeed.getTreeItemId() != state.getTreeItem().getId()) {
-            realm.executeTransaction(realm -> {
-                List<Item> tempItems = state.getTreeItem().getItems(realm, isOnlyUnread(preferences));
-                temporaryFeed.setTreeItemId(state.getTreeItem().getId());
-                temporaryFeed.setName(state.getTreeItem().getName());
-                temporaryFeed.getItems().clear();
-                if (tempItems != null) {
-                    temporaryFeed.getItems().addAll(tempItems);
-                }
-            });
-        }
-
-        return new LiveRealmResults<>(temporaryFeed.getItems().sort(Preferences.SORT_FIELD.getString(preferences), Preferences.ORDER.getOrder(preferences)));
     }
 
     public LiveData<List<Item>> getItems() {
@@ -75,5 +44,13 @@ public class ItemsViewModel extends ViewModel {
     protected void onCleared() {
         realm.close();
         super.onCleared();
+    }
+
+    public void updateItems(LiveData<List<Item>> liveRealmResults) {
+        items = liveRealmResults;
+    }
+
+    public Realm getRealm() {
+        return realm;
     }
 }

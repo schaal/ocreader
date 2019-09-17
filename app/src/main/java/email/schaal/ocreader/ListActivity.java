@@ -34,6 +34,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -65,7 +66,11 @@ import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.mikepenz.materialdrawer.model.interfaces.Tagable;
 
 import java.io.ByteArrayInputStream;
+import java.util.Collections;
+import java.util.List;
 
+import email.schaal.ocreader.database.ItemsViewModel;
+import email.schaal.ocreader.database.LiveRealmResults;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.database.model.AllUnreadFolder;
 import email.schaal.ocreader.database.model.Feed;
@@ -77,8 +82,8 @@ import email.schaal.ocreader.databinding.ActivityListBinding;
 import email.schaal.ocreader.service.SyncService;
 import email.schaal.ocreader.service.SyncType;
 import email.schaal.ocreader.view.DividerItemDecoration;
-import email.schaal.ocreader.view.ErrorAdapter;
 import email.schaal.ocreader.view.ItemViewHolder;
+import email.schaal.ocreader.view.LiveItemsAdapter;
 import email.schaal.ocreader.view.LoadMoreAdapter;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 
@@ -102,8 +107,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                     switch (syncType) {
                         case LOAD_MORE:
                             if (action.equals(SyncService.SYNC_FINISHED)) {
-                                adapter.updateItems(true);
-                                adapter.resetLoadMore();
+                                //todo: adapter.resetLoadMore();
                             }
                             break;
                         case FULL_SYNC:
@@ -134,6 +138,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             reloadListFragment();
         }
     };
+    private ItemsViewModel itemsViewModel;
 
     private void updateSyncStatus() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -143,8 +148,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         if(needsUpdate) {
             drawerManager.reloadAdapters(getRealm(), isShowOnlyUnread());
-
-            adapter.updateItems(true);
+            setupItemsViewModel(true);
 
             updateUserProfile();
 
@@ -161,8 +165,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             binding.swipeRefreshLayout.setRefreshing(syncRunning);
         }
 
-        if(!syncRunning)
-            adapter.resetLoadMore();
+        //todo: if(!syncRunning)
+        //    adapter.resetLoadMore();
     }
 
     private Drawer startDrawer;
@@ -171,7 +175,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private PrimaryDrawerItem refreshDrawerItem;
     private AccountHeader accountHeader;
 
-    private ErrorAdapter adapter;
+    private LiveItemsAdapter adapter;
     private LinearLayoutManager layoutManager;
 
     @Override
@@ -184,7 +188,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     protected void onResume() {
         super.onResume();
         updateSyncStatus();
-        adapter.updateItems(false);
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, SyncService.syncFilter);
     }
 
@@ -328,11 +331,13 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         layoutManager = new LinearLayoutManager(this);
 
-        adapter = new ErrorAdapter(this, getRealm(), drawerManager.getState(), this, this);
+        adapter = new LiveItemsAdapter(Collections.emptyList(), this);
+
+        itemsViewModel = ViewModelProviders.of(this).get(ItemsViewModel.class);
+        setupItemsViewModel(false);
 
         binding.fabMarkAllAsRead.setOnClickListener(new View.OnClickListener() {
             private void onCompletion(View view) {
-                adapter.updateItems(false);
                 view.setEnabled(true);
                 binding.fabMarkAllAsRead.toggleSync();
             }
@@ -368,8 +373,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         binding.itemsRecyclerview.addItemDecoration(new DividerItemDecoration(this, R.dimen.divider_inset));
 
-        adapter.updateItems(false);
-
         if(savedInstanceState != null) {
             layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE));
             adapter.onRestoreInstanceState(savedInstanceState);
@@ -386,6 +389,36 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
     private boolean isShowOnlyUnread() {
         return Preferences.SHOW_ONLY_UNREAD.getBoolean(PreferenceManager.getDefaultSharedPreferences(this));
+    }
+
+    private void setupItemsViewModel(final boolean updateTemporaryFeed) {
+        final TreeItem treeItem = drawerManager.getState().getTreeItem();
+
+        if(treeItem == null)
+            return;
+
+        final TemporaryFeed temporaryFeed = TemporaryFeed.getListTemporaryFeed(getRealm());
+
+        if (updateTemporaryFeed || temporaryFeed.getTreeItemId() != treeItem.getId()) {
+            itemsViewModel.getRealm().executeTransaction(realm -> {
+                List<Item> tempItems = treeItem.getItems(realm, isShowOnlyUnread());
+                temporaryFeed.setTreeItemId(treeItem.getId());
+                temporaryFeed.setName(treeItem.getName());
+                temporaryFeed.getItems().clear();
+                if (tempItems != null) {
+                    temporaryFeed.getItems().addAll(tempItems);
+                }
+            });
+        }
+
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        itemsViewModel.updateItems(new LiveRealmResults<>(temporaryFeed.getItems().sort(Preferences.SORT_FIELD.getString(preferences), Preferences.ORDER.getOrder(preferences))));
+
+        itemsViewModel.getItems().observe(this, items -> {
+            if(adapter != null) {
+                adapter.updateItems(items);
+            }
+        });
     }
 
     @Override
@@ -413,7 +446,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     }
 
     private void reloadListFragment() {
-        adapter.updateItems(true);
+        setupItemsViewModel(true);
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(drawerManager.getState().getTreeItem().getName());
         binding.itemsRecyclerview.scrollToPosition(0);
@@ -605,7 +638,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 mode.finish();
                 return true;
             case R.id.action_mark_above_read:
-                Queries.markAboveAsRead(getRealm(), adapter.getItems(), adapter.getSelectedItems()[0].getId());
+                Queries.markAboveAsRead(getRealm(), itemsViewModel.getItems().getValue(), adapter.getSelectedItems()[0].getId());
                 mode.finish();
                 return true;
         }

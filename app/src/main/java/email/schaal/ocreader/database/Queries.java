@@ -155,21 +155,17 @@ public class Queries {
     }
 
     public static void removeExcessItems(Realm realm, final int maxItems) {
-        final RealmResults<Item> expendableItems = realm.where(Item.class)
-                .equalTo(Item.UNREAD, false)
-                .equalTo(Item.STARRED, false)
-                .equalTo(Item.ACTIVE, false)
-                .sort(Item.LAST_MODIFIED, Sort.ASCENDING)
-                .findAll();
+        long itemCount = realm.where(Item.class).count();
 
-        final int itemsToDelete = expendableItems.size() - maxItems;
-
-        if(itemsToDelete > 0) {
-            realm.executeTransaction(realm1 -> {
-                for (int i = 0; i < itemsToDelete; i++) {
-                    expendableItems.deleteFirstFromRealm();
-                }
-            });
+        if(itemCount > maxItems) {
+            final RealmResults<Item> expendableItems = realm.where(Item.class)
+                    .equalTo(Item.UNREAD, false)
+                    .equalTo(Item.STARRED, false)
+                    .equalTo(Item.ACTIVE, false)
+                    .sort(Item.LAST_MODIFIED, Sort.ASCENDING)
+                    .limit(itemCount - maxItems)
+                    .findAll();
+            realm.executeTransaction(realm1 -> expendableItems.deleteAllFromRealm());
         }
     }
 
