@@ -19,27 +19,34 @@
 
 package email.schaal.ocreader.database;
 
+import android.content.SharedPreferences;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
+import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.database.model.Item;
-import io.realm.DynamicRealm;
+import email.schaal.ocreader.database.model.TemporaryFeed;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class ItemsViewModel extends ViewModel {
+public class FeedViewModel extends ViewModel {
     private final Realm realm;
-    private MutableLiveData<List<Item>> items;
+    private MutableLiveData<TemporaryFeed> temporaryFeedLiveData;
+    private MutableLiveData<List<Item>> itemsLiveData;
 
-    public ItemsViewModel() {
+    public FeedViewModel() {
         realm = Realm.getDefaultInstance();
     }
 
+    public LiveData<TemporaryFeed> getTemporaryFeed() {
+        return temporaryFeedLiveData;
+    }
     public LiveData<List<Item>> getItems() {
-        return items;
+        return itemsLiveData;
     }
 
     @Override
@@ -48,12 +55,18 @@ public class ItemsViewModel extends ViewModel {
         super.onCleared();
     }
 
-    public void updateItems(RealmResults<Item> liveRealmResults) {
-        if(items == null) {
-            items = new LiveRealmResults<>(liveRealmResults);
+    public void updateTemporaryFeed(TemporaryFeed temporaryFeed, SharedPreferences preferences) {
+        if(temporaryFeedLiveData == null) {
+            temporaryFeedLiveData = new LiveRealmObject<>(temporaryFeed);
+            itemsLiveData = new LiveRealmResults<>(getSortedItems(temporaryFeed, preferences));
         } else {
-            items.setValue(liveRealmResults);
+            temporaryFeedLiveData.setValue(temporaryFeed);
+            itemsLiveData.setValue(getSortedItems(temporaryFeed, preferences));
         }
+    }
+
+    private RealmResults<Item> getSortedItems(TemporaryFeed temporaryFeed, SharedPreferences preferences) {
+        return temporaryFeed.getItems().sort(Preferences.SORT_FIELD.getString(preferences), Preferences.ORDER.getOrder(preferences));
     }
 
     public Realm getRealm() {

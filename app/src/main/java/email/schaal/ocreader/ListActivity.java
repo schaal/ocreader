@@ -69,8 +69,7 @@ import java.io.ByteArrayInputStream;
 import java.util.Collections;
 import java.util.List;
 
-import email.schaal.ocreader.database.ItemsViewModel;
-import email.schaal.ocreader.database.LiveRealmResults;
+import email.schaal.ocreader.database.FeedViewModel;
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.database.model.AllUnreadFolder;
 import email.schaal.ocreader.database.model.Feed;
@@ -138,7 +137,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             reloadListFragment();
         }
     };
-    private ItemsViewModel itemsViewModel;
+
+    private FeedViewModel feedViewModel;
 
     private void updateSyncStatus() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -333,11 +333,11 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
         adapter = new LiveItemsAdapter(Collections.emptyList(), this);
 
-        itemsViewModel = ViewModelProviders.of(this).get(ItemsViewModel.class);
+        feedViewModel = ViewModelProviders.of(this).get(FeedViewModel.class);
 
         setupItemsViewModel(false);
 
-        itemsViewModel.getItems().observe(this, items -> {
+        feedViewModel.getItems().observe(this, items -> {
             if(adapter != null) {
                 adapter.updateItems(items);
             }
@@ -346,6 +346,11 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             } else {
                 binding.listviewSwitcher.setDisplayedChild(1);
             }
+        });
+
+        feedViewModel.getTemporaryFeed().observe(this, temporaryFeed -> {
+            //noinspection ConstantConditions
+            getSupportActionBar().setTitle(temporaryFeed.getName());
         });
 
         binding.fabMarkAllAsRead.setOnClickListener(new View.OnClickListener() {
@@ -394,9 +399,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         }
 
         drawerManager.reloadAdapters(getRealm(), isShowOnlyUnread());
-
-        //noinspection ConstantConditions
-        getSupportActionBar().setTitle(drawerManager.getState().getTreeItem().getName());
     }
 
     private boolean isShowOnlyUnread() {
@@ -412,7 +414,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         final TemporaryFeed temporaryFeed = TemporaryFeed.getListTemporaryFeed(getRealm());
 
         if (updateTemporaryFeed || temporaryFeed.getTreeItemId() != treeItem.getId()) {
-            itemsViewModel.getRealm().executeTransaction(realm -> {
+            feedViewModel.getRealm().executeTransaction(realm -> {
                 List<Item> tempItems = treeItem.getItems(realm, isShowOnlyUnread());
                 temporaryFeed.setTreeItemId(treeItem.getId());
                 temporaryFeed.setName(treeItem.getName());
@@ -424,7 +426,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         }
 
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        itemsViewModel.updateItems(temporaryFeed.getItems().sort(Preferences.SORT_FIELD.getString(preferences), Preferences.ORDER.getOrder(preferences)));
+        feedViewModel.updateTemporaryFeed(temporaryFeed, preferences);
     }
 
     @Override
@@ -453,8 +455,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
     private void reloadListFragment() {
         setupItemsViewModel(true);
-        //noinspection ConstantConditions
-        getSupportActionBar().setTitle(drawerManager.getState().getTreeItem().getName());
         binding.itemsRecyclerview.scrollToPosition(0);
         binding.fabMarkAllAsRead.setSync(false);
     }
@@ -644,7 +644,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 mode.finish();
                 return true;
             case R.id.action_mark_above_read:
-                Queries.markAboveAsRead(getRealm(), itemsViewModel.getItems().getValue(), adapter.getSelectedItems()[0].getId());
+                Queries.markAboveAsRead(getRealm(), feedViewModel.getItems().getValue(), adapter.getSelectedItems()[0].getId());
                 mode.finish();
                 return true;
         }

@@ -19,6 +19,7 @@ package email.schaal.ocreader.database;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import io.realm.ObjectChangeSet;
 import io.realm.RealmModel;
@@ -39,7 +40,7 @@ import io.realm.RealmObjectChangeListener;
  *
  * @param <T> the type of the RealmModel
  */
-public class LiveRealmObject<T extends RealmModel> extends LiveData<T> {
+public class LiveRealmObject<T extends RealmModel> extends MutableLiveData<T> {
     // The listener will listen until the object is deleted.
     // An invalidated object shouldn't be set in LiveData, null is set instead.
     private RealmObjectChangeListener<T> listener = new RealmObjectChangeListener<T>() {
