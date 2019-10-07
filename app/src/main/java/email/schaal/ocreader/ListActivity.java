@@ -334,7 +334,19 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         adapter = new LiveItemsAdapter(Collections.emptyList(), this);
 
         itemsViewModel = ViewModelProviders.of(this).get(ItemsViewModel.class);
+
         setupItemsViewModel(false);
+
+        itemsViewModel.getItems().observe(this, items -> {
+            if(adapter != null) {
+                adapter.updateItems(items);
+            }
+            if(items.isEmpty()) {
+                binding.listviewSwitcher.setDisplayedChild(0);
+            } else {
+                binding.listviewSwitcher.setDisplayedChild(1);
+            }
+        });
 
         binding.fabMarkAllAsRead.setOnClickListener(new View.OnClickListener() {
             private void onCompletion(View view) {
@@ -412,18 +424,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         }
 
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        itemsViewModel.updateItems(new LiveRealmResults<>(temporaryFeed.getItems().sort(Preferences.SORT_FIELD.getString(preferences), Preferences.ORDER.getOrder(preferences))));
-
-        itemsViewModel.getItems().observe(this, items -> {
-            if(adapter != null) {
-                adapter.updateItems(items);
-            }
-            if(items.isEmpty()) {
-                binding.listviewSwitcher.setDisplayedChild(0);
-            } else {
-                binding.listviewSwitcher.setDisplayedChild(1);
-            }
-        });
+        itemsViewModel.updateItems(temporaryFeed.getItems().sort(Preferences.SORT_FIELD.getString(preferences), Preferences.ORDER.getOrder(preferences)));
     }
 
     @Override

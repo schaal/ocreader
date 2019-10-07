@@ -20,6 +20,7 @@
 package email.schaal.ocreader.database;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.List;
@@ -27,10 +28,11 @@ import java.util.List;
 import email.schaal.ocreader.database.model.Item;
 import io.realm.DynamicRealm;
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class ItemsViewModel extends ViewModel {
     private final Realm realm;
-    private LiveData<List<Item>> items;
+    private MutableLiveData<List<Item>> items;
 
     public ItemsViewModel() {
         realm = Realm.getDefaultInstance();
@@ -46,8 +48,12 @@ public class ItemsViewModel extends ViewModel {
         super.onCleared();
     }
 
-    public void updateItems(LiveData<List<Item>> liveRealmResults) {
-        items = liveRealmResults;
+    public void updateItems(RealmResults<Item> liveRealmResults) {
+        if(items == null) {
+            items = new LiveRealmResults<>(liveRealmResults);
+        } else {
+            items.setValue(liveRealmResults);
+        }
     }
 
     public Realm getRealm() {

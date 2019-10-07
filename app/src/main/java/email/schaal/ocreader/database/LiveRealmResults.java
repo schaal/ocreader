@@ -19,6 +19,7 @@ package email.schaal.ocreader.database;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
@@ -39,7 +40,7 @@ import io.realm.RealmResults;
  *
  * @param <T> the type of the RealmModel
  */
-public class LiveRealmResults<T extends RealmModel> extends LiveData<List<T>> {
+public class LiveRealmResults<T extends RealmModel> extends MutableLiveData<List<T>> {
     private final RealmResults<T> results;
 
     // The listener will notify the observers whenever a change occurs.
