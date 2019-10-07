@@ -39,11 +39,20 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+            <ViewSwitcher
+                android:id="@+id/listview_switcher"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <include layout="@layout/list_empty" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/items_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"/>
+
+            </ViewSwitcher>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

@@ -418,6 +418,11 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             if(adapter != null) {
                 adapter.updateItems(items);
             }
+            if(items.isEmpty()) {
+                binding.listviewSwitcher.setDisplayedChild(0);
+            } else {
+                binding.listviewSwitcher.setDisplayedChild(1);
+            }
         });
     }
 
