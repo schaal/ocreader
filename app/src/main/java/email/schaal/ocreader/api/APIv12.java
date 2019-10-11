@@ -30,8 +30,10 @@ import androidx.annotation.Nullable;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -314,7 +316,7 @@ class APIv12 extends API {
     public void sync(SharedPreferences sharedPreferences, final Realm realm, final SyncType syncType, final Intent intent, final APICallback<Void, Throwable> callback) {
         syncChanges(result -> {
             if(result) {
-                final Set<Callable<Void>> callables = new HashSet<>(6);
+                final Set<Callable<Runnable>> callables = new HashSet<>(6);
 
                 switch (syncType) {
                     case SYNC_CHANGES_ONLY:
@@ -345,20 +347,27 @@ class APIv12 extends API {
                 }
 
                 executor.execute(() -> {
-                    final ExecutorCompletionService<Void> completionService = new ExecutorCompletionService<>(threadPool);
+                    final ExecutorCompletionService<Runnable> completionService = new ExecutorCompletionService<>(threadPool);
                     // Start API Calls
-                    for (Callable<Void> callable : callables) {
+                    for (Callable<Runnable> callable : callables) {
                         completionService.submit(callable);
                     }
 
                     try {
+                        final List<Runnable> runnables = new ArrayList<>();
                         // Get API Call results
                         for (int i = 0, size = callables.size(); i < size; i++) {
-                            completionService.take().get();
+                            runnables.add(completionService.take().get());
                         }
 
                         // Run callback on main thread
-                        handler.post(() -> callback.onSuccess(null));
+                        handler.post(() -> {
+                            for(Runnable runnable : runnables) {
+                                if(runnable != null)
+                                    runnable.run();
+                            }
+                            callback.onSuccess(null);
+                        });
                     } catch (InterruptedException | ExecutionException e) {
                         Log.e(TAG, "Failed to execute sync callables", e);
                         handler.post(() -> callback.onFailure(e));
@@ -386,7 +395,7 @@ class APIv12 extends API {
         });
     }
 
-    private abstract class RealmCallable<T> implements Callable<Void> {
+    private abstract class RealmCallable<T> implements Callable<Runnable> {
         protected final Realm realm;
 
         RealmCallable(Realm realm) {
@@ -397,10 +406,10 @@ class APIv12 extends API {
         protected abstract Response<T> getResponse() throws IOException;
 
         @Override
-        public Void call() throws Exception {
+        public Runnable call() throws Exception {
             final Response<T> response = getResponse();
             if(response.isSuccessful())
-                handler.post(getRunnable(response));
+                return getRunnable(response);
             return null;
         }
     }
