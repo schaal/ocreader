@@ -462,6 +462,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         if(resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
                 case LoginActivity.REQUEST_CODE:
