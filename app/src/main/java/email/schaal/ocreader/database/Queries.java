@@ -105,44 +105,38 @@ public class Queries {
     }
 
     public static void insert(Realm realm, @Nullable final Insertable element) {
-        realm.executeTransaction(realm1 -> {
-            if(element != null)
-                element.insert(realm1);
-        });
+        if(element != null)
+            element.insert(realm);
     }
 
     public static void insert(Realm realm, final Iterable<? extends Insertable> elements) {
-        realm.executeTransaction(realm1 -> {
-            for(final Insertable element: elements) {
-                element.insert(realm1);
-            }
-        });
+        for(final Insertable element: elements) {
+            element.insert(realm);
+        }
     }
 
     public static <T extends RealmModel & TreeItem & Insertable> void deleteAndInsert(Realm realm, final Class<T> clazz, final List<T> elements) {
         Collections.sort(elements, TreeItem.COMPARATOR);
 
-        realm.executeTransaction(realm1 -> {
-            final RealmResults<T> databaseItems = realm1.where(clazz).sort(TreeItem.ID, Sort.ASCENDING).findAll();
+        final RealmResults<T> databaseItems = realm.where(clazz).sort(TreeItem.ID, Sort.ASCENDING).findAll();
 
-            final Iterator<T> databaseIterator = databaseItems.iterator();
+        final Iterator<T> databaseIterator = databaseItems.iterator();
 
-            for (T element : elements) {
-                T currentDatabaseItem;
+        for (T element : elements) {
+            T currentDatabaseItem;
 
-                // The lists are sorted by id, so if currentDatabaseItem.getId() < element.getId() we can remove it from the database
-                while (databaseIterator.hasNext() && (currentDatabaseItem = databaseIterator.next()).getId() < element.getId()) {
-                    currentDatabaseItem.delete(realm1);
-                }
-
-                element.insert(realm1);
+            // The lists are sorted by id, so if currentDatabaseItem.getId() < element.getId() we can remove it from the database
+            while (databaseIterator.hasNext() && (currentDatabaseItem = databaseIterator.next()).getId() < element.getId()) {
+                currentDatabaseItem.delete(realm);
             }
 
-            // Remove remaining items from the database
-            while (databaseIterator.hasNext()) {
-                databaseIterator.next().delete(realm1);
-            }
-        });
+            element.insert(realm);
+        }
+
+        // Remove remaining items from the database
+        while (databaseIterator.hasNext()) {
+            databaseIterator.next().delete(realm);
+        }
     }
 
     @NonNull

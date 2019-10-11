@@ -360,11 +360,16 @@ class APIv12 extends API {
                             runnables.add(completionService.take().get());
                         }
 
-                        // Run callback on main thread
+                        // Insert items into DB and run callback on main thread
                         handler.post(() -> {
-                            for(Runnable runnable : runnables) {
-                                if(runnable != null)
-                                    runnable.run();
+                            try {
+                                realm.beginTransaction();
+                                for (Runnable runnable : runnables) {
+                                    if (runnable != null)
+                                        runnable.run();
+                                }
+                            } finally {
+                                realm.commitTransaction();
                             }
                             callback.onSuccess(null);
                         });
@@ -390,7 +395,7 @@ class APIv12 extends API {
         api.user().enqueue(new BaseRetrofitCallback<User>(callback) {
             @Override
             protected void onResponseReal(Response<User> response) {
-                Queries.insert(realm, response.body());
+                realm.executeTransaction(realm1 -> Queries.insert(realm1, response.body()));
             }
         });
     }

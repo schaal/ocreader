@@ -84,7 +84,7 @@ class APIv2 extends API {
             protected void onResponseReal(Response<Status> response) {
                 final Status status = response.body();
                 if(status != null)
-                    Queries.insert(realm, status.getUser());
+                    realm.executeTransaction(realm1 -> Queries.insert(realm1, status.getUser()));
             }
         });
     }
@@ -100,9 +100,11 @@ class APIv2 extends API {
                 if(syncResponse != null) {
                     sharedPreferences.edit().putString(Preferences.SYS_APIv2_ETAG.getKey(), response.headers().get("Etag")).apply();
 
-                    Queries.deleteAndInsert(realm, Folder.class, syncResponse.getFolders());
-                    Queries.deleteAndInsert(realm, Feed.class, syncResponse.getFeeds());
-                    Queries.insert(realm, syncResponse.getItems());
+                    realm.executeTransaction(realm1 -> {
+                        Queries.deleteAndInsert(realm1, Folder.class, syncResponse.getFolders());
+                        Queries.deleteAndInsert(realm1, Feed.class, syncResponse.getFeeds());
+                        Queries.insert(realm1, syncResponse.getItems());
+                    });
                 }
             }
         };
@@ -148,7 +150,7 @@ class APIv2 extends API {
                     Feed feed = feeds.getFeeds().get(0);
                     feed.setUnreadCount(0);
 
-                    Queries.insert(realm, feed);
+                    realm.executeTransaction(realm1 -> Queries.insert(realm1, feed));
                 }
             }
         });
@@ -166,7 +168,7 @@ class APIv2 extends API {
                 final Map<String, Feed> feedMap = response.body();
 
                 if(feedMap != null)
-                    Queries.insert(realm, feedMap.get("feed"));
+                    realm.executeTransaction(realm1 -> Queries.insert(realm1, feedMap.get("feed")));
             }
         });
     }
