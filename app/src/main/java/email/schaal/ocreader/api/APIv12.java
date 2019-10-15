@@ -362,15 +362,12 @@ class APIv12 extends API {
 
                         // Insert items into DB and run callback on main thread
                         handler.post(() -> {
-                            try {
-                                realm.beginTransaction();
+                            realm.executeTransaction(realm1 -> {
                                 for (Runnable runnable : runnables) {
                                     if (runnable != null)
                                         runnable.run();
                                 }
-                            } finally {
-                                realm.commitTransaction();
-                            }
+                            });
                             callback.onSuccess(null);
                         });
                     } catch (InterruptedException | ExecutionException e) {
