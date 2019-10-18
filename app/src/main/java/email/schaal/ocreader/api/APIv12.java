@@ -316,7 +316,7 @@ class APIv12 extends API {
     public void sync(SharedPreferences sharedPreferences, final Realm realm, final SyncType syncType, final Intent intent, final APICallback<Void, Throwable> callback) {
         syncChanges(result -> {
             if(result) {
-                final Set<Callable<Runnable>> callables = new HashSet<>(6);
+                final Set<Callable<RealmRunnable>> callables = new HashSet<>(6);
 
                 switch (syncType) {
                     case SYNC_CHANGES_ONLY:
@@ -325,15 +325,15 @@ class APIv12 extends API {
                     case FULL_SYNC:
                         long lastSync = getLastSyncTimestamp(realm);
 
-                        callables.add(new UserCallable(realm));
-                        callables.add(new FoldersCallable(realm));
-                        callables.add(new FeedsCallable(realm));
+                        callables.add(new UserCallable());
+                        callables.add(new FoldersCallable());
+                        callables.add(new FeedsCallable());
 
                         if (lastSync == 0L) {
-                            callables.add(new StarredItemsCallable(realm));
-                            callables.add(new ItemsCallable(realm));
+                            callables.add(new StarredItemsCallable());
+                            callables.add(new ItemsCallable());
                         } else {
-                            callables.add(new UpdatedItemsCallable(realm, lastSync));
+                            callables.add(new UpdatedItemsCallable(lastSync));
                         }
                         break;
                     case LOAD_MORE:
@@ -341,20 +341,20 @@ class APIv12 extends API {
                         final long offset = intent.getLongExtra(EXTRA_OFFSET, 0);
                         final boolean isFeed = intent.getBooleanExtra(EXTRA_IS_FEED, false);
 
-                        callables.add(new MoreItemsCallable(realm, isFeed, offset, id));
+                        callables.add(new MoreItemsCallable(isFeed, offset, id));
 
                         break;
                 }
 
                 executor.execute(() -> {
-                    final ExecutorCompletionService<Runnable> completionService = new ExecutorCompletionService<>(threadPool);
+                    final ExecutorCompletionService<RealmRunnable> completionService = new ExecutorCompletionService<>(threadPool);
                     // Start API Calls
-                    for (Callable<Runnable> callable : callables) {
+                    for (Callable<RealmRunnable> callable : callables) {
                         completionService.submit(callable);
                     }
 
                     try {
-                        final List<Runnable> runnables = new ArrayList<>();
+                        final List<RealmRunnable> runnables = new ArrayList<>();
                         // Get API Call results
                         for (int i = 0, size = callables.size(); i < size; i++) {
                             runnables.add(completionService.take().get());
@@ -363,9 +363,9 @@ class APIv12 extends API {
                         // Insert items into DB and run callback on main thread
                         handler.post(() -> {
                             realm.executeTransaction(realm1 -> {
-                                for (Runnable runnable : runnables) {
+                                for (RealmRunnable runnable : runnables) {
                                     if (runnable != null)
-                                        runnable.run();
+                                        runnable.run(realm1);
                                 }
                             });
                             callback.onSuccess(null);
@@ -397,18 +397,19 @@ class APIv12 extends API {
         });
     }
 
-    private abstract class RealmCallable<T> implements Callable<Runnable> {
-        protected final Realm realm;
+    private interface RealmRunnable {
+        void run(final Realm realm);
+    }
 
-        RealmCallable(Realm realm) {
-            this.realm = realm;
+    private abstract class RealmCallable<T> implements Callable<RealmRunnable> {
+        RealmCallable() {
         }
 
-        protected abstract Runnable getRunnable(Response<T> response);
+        protected abstract RealmRunnable getRunnable(Response<T> response);
         protected abstract Response<T> getResponse() throws IOException;
 
         @Override
-        public Runnable call() throws Exception {
+        public RealmRunnable call() throws Exception {
             final Response<T> response = getResponse();
             if(response.isSuccessful())
                 return getRunnable(response);
@@ -417,13 +418,9 @@ class APIv12 extends API {
     }
 
     private class UserCallable extends RealmCallable<User> {
-        UserCallable(Realm realm) {
-            super(realm);
-        }
-
         @Override
-        protected Runnable getRunnable(final Response<User> response) {
-            return () -> Queries.insert(realm, response.body());
+        protected RealmRunnable getRunnable(final Response<User> response) {
+            return (realm) -> Queries.insert(realm, response.body());
         }
 
         @Override
@@ -433,18 +430,14 @@ class APIv12 extends API {
     }
 
     private class ItemsCallable extends RealmCallable<Items> {
-        ItemsCallable(Realm realm) {
-            super(realm);
-        }
-
         @Override
         protected Response<Items> getResponse() throws IOException {
             return api.items(-1, 0L, QueryType.ALL.getType(), 0L, false, false).execute();
         }
 
         @Override
-        protected Runnable getRunnable(final Response<Items> response) {
-            return () -> {
+        protected RealmRunnable getRunnable(final Response<Items> response) {
+            return (realm) -> {
                 final Items items = response.body();
 
                 if(items != null)
@@ -456,8 +449,7 @@ class APIv12 extends API {
     private class UpdatedItemsCallable extends RealmCallable<Items> {
         private final long lastSync;
 
-        UpdatedItemsCallable(Realm realm, long lastSync) {
-            super(realm);
+        UpdatedItemsCallable(long lastSync) {
             this.lastSync = lastSync;
         }
 
@@ -467,8 +459,8 @@ class APIv12 extends API {
         }
 
         @Override
-        protected Runnable getRunnable(final Response<Items> response) {
-            return () -> {
+        protected RealmRunnable getRunnable(final Response<Items> response) {
+            return (realm) -> {
                 final Items items = response.body();
 
                 if(items != null)
@@ -478,18 +470,14 @@ class APIv12 extends API {
     }
 
     private class StarredItemsCallable extends RealmCallable<Items> {
-        StarredItemsCallable(Realm realm) {
-            super(realm);
-        }
-
         @Override
         protected Response<Items> getResponse() throws IOException {
             return api.items(-1, 0L, QueryType.STARRED.getType(), 0L, true, false).execute();
         }
 
         @Override
-        protected Runnable getRunnable(final Response<Items> response) {
-            return () -> {
+        protected RealmRunnable getRunnable(final Response<Items> response) {
+            return (realm) -> {
                 final Items items = response.body();
 
                 if(items != null)
@@ -503,8 +491,7 @@ class APIv12 extends API {
         private final long offset;
         private final long id;
 
-        MoreItemsCallable(Realm realm, final boolean isFeed, final long offset, final long id) {
-            super(realm);
+        MoreItemsCallable(final boolean isFeed, final long offset, final long id) {
             this.offset = offset;
             if (id == StarredFolder.ID) {
                 type = QueryType.STARRED;
@@ -521,8 +508,8 @@ class APIv12 extends API {
         }
 
         @Override
-        protected Runnable getRunnable(final Response<Items> response) {
-            return () -> {
+        protected RealmRunnable getRunnable(final Response<Items> response) {
+            return (realm) -> {
                 final Items items = response.body();
 
                 if(items != null)
@@ -532,13 +519,9 @@ class APIv12 extends API {
     }
 
     private class FoldersCallable extends RealmCallable<Folders> {
-        FoldersCallable(Realm realm) {
-            super(realm);
-        }
-
         @Override
-        protected Runnable getRunnable(final Response<Folders> response) {
-            return () -> {
+        protected RealmRunnable getRunnable(final Response<Folders> response) {
+            return (realm) -> {
                 final Folders folders = response.body();
 
                 if(folders != null)
@@ -553,13 +536,9 @@ class APIv12 extends API {
     }
 
     private class FeedsCallable extends RealmCallable<Feeds> {
-        FeedsCallable(Realm realm) {
-            super(realm);
-        }
-
         @Override
-        protected Runnable getRunnable(final Response<Feeds> response) {
-            return () -> {
+        protected RealmRunnable getRunnable(final Response<Feeds> response) {
+            return (realm) -> {
                 final Feeds feeds = response.body();
 
                 if(feeds != null)
