@@ -341,6 +341,9 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         feedViewModel.getItems().observe(this, items -> {
             if(adapter != null) {
                 adapter.updateItems(items);
+                if(adapter.getSelectedItemsCount() > 0 && actionMode == null) {
+                    actionMode = startActionMode(this);
+                }
             }
             if(items.isEmpty()) {
                 binding.listviewSwitcher.setDisplayedChild(0);
@@ -394,9 +397,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         if(savedInstanceState != null) {
             layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE));
             adapter.onRestoreInstanceState(savedInstanceState);
-            if(adapter.getSelectedItemsCount() > 0) {
-                actionMode = startActionMode(this);
-            }
         }
 
         drawerManager.reloadAdapters(getRealm(), isShowOnlyUnread());
