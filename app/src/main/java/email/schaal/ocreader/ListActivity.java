@@ -345,11 +345,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                     actionMode = startActionMode(this);
                 }
             }
-            if(items.isEmpty()) {
-                binding.listviewSwitcher.setDisplayedChild(0);
-            } else {
-                binding.listviewSwitcher.setDisplayedChild(1);
-            }
+            binding.listviewSwitcher.setDisplayedChild(items.isEmpty() ? 0 : 1);
         });
 
         feedViewModel.getTemporaryFeed().observe(this, temporaryFeed -> {
@@ -431,7 +427,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(LAYOUT_MANAGER_STATE, layoutManager.onSaveInstanceState());
         drawerManager.getState().saveInstanceState(getPreferences(MODE_PRIVATE));
