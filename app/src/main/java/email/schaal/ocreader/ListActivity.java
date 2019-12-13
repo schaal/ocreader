@@ -353,32 +353,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             getSupportActionBar().setTitle(temporaryFeed.getName());
         });
 
-        binding.fabMarkAllAsRead.setOnClickListener(new View.OnClickListener() {
-            private void onCompletion(View view) {
-                view.setEnabled(true);
-                binding.fabMarkAllAsRead.toggleSync();
-            }
-
-            @Override
-            public void onClick(final View view) {
-                if(binding.fabMarkAllAsRead.isSync()) {
-                    SyncService.startSync(ListActivity.this);
-                    binding.fabMarkAllAsRead.toggleSync();
-                } else {
-                    Queries.markTemporaryFeedAsRead(getRealm(),
-                            () -> onCompletion(view), error -> {
-                                Log.e(TAG, "Failed to mark temporary feed as read", error);
-                                onCompletion(view);
-                            });
-                }
-            }
-        });
-
-        binding.fabMarkAllAsRead.setOnLongClickListener(v -> {
-            Toast.makeText(ListActivity.this, R.string.mark_all_as_read, Toast.LENGTH_SHORT).show();
-            return true;
-        });
-
         binding.itemsRecyclerview.setAdapter(adapter);
         binding.itemsRecyclerview.setLayoutManager(layoutManager);
 
@@ -453,7 +427,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private void reloadListFragment() {
         setupItemsViewModel(true);
         binding.itemsRecyclerview.scrollToPosition(0);
-        binding.fabMarkAllAsRead.setSync(false);
     }
 
     @Override
@@ -596,7 +569,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         mode.setTitle(String.valueOf(adapter.getSelectedItemsCount()));
         startDrawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         binding.swipeRefreshLayout.setEnabled(false);
-        binding.fabMarkAllAsRead.setVisibility(View.GONE);
         return true;
     }
 
@@ -655,7 +627,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         actionMode = null;
         startDrawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         binding.swipeRefreshLayout.setEnabled(true);
-        binding.fabMarkAllAsRead.setVisibility(View.VISIBLE);
         adapter.clearSelection();
     }
 }

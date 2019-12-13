@@ -56,16 +56,5 @@
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        <email.schaal.ocreader.view.DoneSyncFloatingActionButton
-            android:id="@+id/fab_mark_all_as_read"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/materialize_screen_edge"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/donesynctransition"
-            android:tint="@color/md_white_1000"
-            app:layout_behavior="email.schaal.ocreader.view.ScrollAwareFABBehavior"/>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
