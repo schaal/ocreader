@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright © 2019. Daniel Schaal <daniel@schaal.email>
+  ~
+  ~ This file is part of ocreader.
+  ~
+  ~ ocreader is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ocreader is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/sync"
+        android:title="@string/action_sync"
+        android:icon="@drawable/ic_refresh"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/mark_all_as_read"
+        android:title="@string/mark_all_as_read"
+        android:icon="@drawable/ic_done_all"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/settings"
+        android:title="@string/settings"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/show_only_unread"
+        android:title="@string/only_unread"
+        android:checkable="true" />
+
+    <item
+        android:id="@+id/menu_manage_feeds"
+        android:icon="@drawable/ic_feed_icon"
+        android:title="@string/title_activity_managefeeds"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_about"
+        android:title="@string/about"
+        app:showAsAction="never" />
+</menu>
