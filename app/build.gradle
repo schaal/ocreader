@@ -78,6 +78,8 @@ ext {
 }
 
 dependencies {
+    implementation 'com.google.android.material:material:1.1.0-beta02'
+
     implementation "androidx.core:core:1.1.0"
     implementation "androidx.appcompat:appcompat:1.1.0"
     implementation "androidx.cardview:cardview:1.0.0"
