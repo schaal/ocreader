@@ -25,6 +25,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -157,14 +159,11 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                     .putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), false).apply();
         }
 
-        if (refreshDrawerItem != null) {
-            refreshDrawerItem.withEnabled(!syncRunning);
-            startDrawer.updateStickyFooterItem(refreshDrawerItem);
-        }
-
         if (binding.swipeRefreshLayout != null) {
             binding.swipeRefreshLayout.setRefreshing(syncRunning);
         }
+
+        binding.bottomAppbar.getMenu().findItem(R.id.menu_sync).setEnabled(!syncRunning);
 
         //todo: if(!syncRunning)
         //    adapter.resetLoadMore();
@@ -173,7 +172,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private Drawer startDrawer;
     private DrawerManager drawerManager;
     private ProfileDrawerItem profileDrawerItem;
-    private PrimaryDrawerItem refreshDrawerItem;
     private AccountHeader accountHeader;
 
     private LiveItemsAdapter adapter;
@@ -206,7 +204,40 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         binding = DataBindingUtil.setContentView(this, R.layout.activity_list);
         setSupportActionBar(binding.toolbarLayout.toolbar);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        final MenuItem menuItemShowOnlyUnread = binding.bottomAppbar.getMenu().findItem(R.id.menu_show_only_unread);
+        menuItemShowOnlyUnread.setChecked(Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences));
+
+        binding.bottomAppbar.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.menu_settings:
+                    final Intent settingsIntent = new Intent(ListActivity.this, SettingsActivity.class);
+                    startActivity(settingsIntent);
+                    return true;
+                case R.id.menu_show_only_unread:
+                    final boolean showOnlyUnread = !item.isChecked();
+                    preferences.edit().putBoolean(Preferences.SHOW_ONLY_UNREAD.getKey(), showOnlyUnread).apply();
+                    item.setChecked(showOnlyUnread);
+                    drawerManager.reloadAdapters(getRealm(), showOnlyUnread);
+                    reloadListFragment();
+
+                    return true;
+                case R.id.menu_sync:
+                    SyncService.startSync(ListActivity.this);
+                    return true;
+                case R.id.menu_about:
+                    showAboutDialog();
+                    return true;
+                case R.id.menu_mark_all_as_read:
+                    Queries.markTemporaryFeedAsRead(getRealm(), null, null);
+                    return true;
+                case R.id.menu_manage_feeds:
+                    startActivityForResult(new Intent(ListActivity.this, ManageFeedsActivity.class), ManageFeedsActivity.REQUEST_CODE);
+                    return true;
+            }
+            return false;
+        });
 
         binding.swipeRefreshLayout.setColorSchemeResources(R.color.primary);
         binding.swipeRefreshLayout.setOnRefreshListener(this);
@@ -245,29 +276,9 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                 })
                 .build();
 
-        refreshDrawerItem = new PrimaryDrawerItem()
-                .withName(getString(R.string.action_sync))
-                .withSelectable(false)
-                .withIconTintingEnabled(true)
-                .withIcon(R.drawable.ic_refresh)
-                .withIdentifier(REFRESH_DRAWER_ITEM_ID)
-                .withTag((Runnable) () -> SyncService.startSync(ListActivity.this));
-
-        IDrawerItem settingsDrawerItem = new PrimaryDrawerItem()
-                .withName(R.string.settings)
-                .withIcon(R.drawable.ic_settings)
-                .withIconTintingEnabled(true)
-                .withSelectable(false)
-                .withTag((Runnable) () -> {
-                    startDrawer.closeDrawer();
-                    Intent settingsIntent = new Intent(ListActivity.this, SettingsActivity.class);
-                    startActivity(settingsIntent);
-                });
-
         DrawerBuilder startDrawerBuilder = new DrawerBuilder()
                 .withActivity(this)
                 .withAccountHeader(accountHeader)
-                .addStickyDrawerItems(settingsDrawerItem, refreshDrawerItem)
                 .withOnDrawerListener(new Drawer.OnDrawerListener() {
                     @Override
                     public void onDrawerOpened(View drawerView) {
@@ -325,7 +336,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                     return true;
                 });
 
-        startDrawerBuilder.withToolbar(binding.toolbarLayout.toolbar);
+        startDrawerBuilder.withToolbar(binding.bottomAppbar);
         startDrawer = startDrawerBuilder.build();
 
         drawerManager = new DrawerManager(this, startDrawer, endDrawerBuilder.append(startDrawer), unreadSwitchListener);
@@ -466,7 +477,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_item_list, menu);
+        //getMenuInflater().inflate(R.menu.menu_item_list, menu);
         return true;
     }
 

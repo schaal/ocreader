@@ -21,23 +21,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/sync"
+        android:id="@+id/menu_sync"
         android:title="@string/action_sync"
         android:icon="@drawable/ic_refresh"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/mark_all_as_read"
+        android:id="@+id/menu_mark_all_as_read"
         android:title="@string/mark_all_as_read"
         android:icon="@drawable/ic_done_all"
         app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/settings"
+        android:id="@+id/menu_settings"
         android:title="@string/settings"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/show_only_unread"
+        android:id="@+id/menu_show_only_unread"
         android:title="@string/only_unread"
         android:checkable="true" />
 
