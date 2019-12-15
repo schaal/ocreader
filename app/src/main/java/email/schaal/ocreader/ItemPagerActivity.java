@@ -23,11 +23,9 @@ package email.schaal.ocreader;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
-import android.animation.TypeEvaluator;
 import android.annotation.TargetApi;
 
 import androidx.annotation.DrawableRes;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import android.content.Intent;
@@ -222,7 +220,7 @@ public class ItemPagerActivity extends RealmActivity {
         private final WeakHashMap<Integer, ItemPageFragment> fragments;
 
         SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
+            super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
             fragments = new WeakHashMap<>(getCount());
         }
 

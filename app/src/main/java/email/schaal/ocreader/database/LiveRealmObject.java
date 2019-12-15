@@ -18,7 +18,6 @@ package email.schaal.ocreader.database;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import io.realm.ObjectChangeSet;

@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import androidx.annotation.Keep;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.util.AttributeSet;
-import android.view.View;
 
 import email.schaal.ocreader.R;
 

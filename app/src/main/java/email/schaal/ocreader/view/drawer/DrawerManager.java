@@ -25,7 +25,6 @@ import android.content.SharedPreferences;
 import androidx.annotation.Nullable;
 
 import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.model.AbstractSwitchableDrawerItem;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
@@ -233,7 +232,6 @@ public class DrawerManager {
         }
 
         public void restoreInstanceState(Realm realm, SharedPreferences preferences) {
-            //noinspection ConstantConditions
             startDrawerItemId = Preferences.SYS_STARTDRAWERITEMID.getLong(preferences);
             endDrawerItemId = Preferences.SYS_ENDRAWERITEM_ID.getLong(preferences);
 

@@ -67,7 +67,6 @@ public class StringUtils {
 
     @NonNull
     public static String cleanString(@NonNull String source) {
-        //noinspection deprecation
         return Html.fromHtml(source).toString();
     }
 
