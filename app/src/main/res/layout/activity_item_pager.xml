@@ -39,46 +39,26 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-        <email.schaal.ocreader.view.FABLayout
-            android:id="@+id/fab_layout"
+        <com.google.android.material.bottomappbar.BottomAppBar
+            android:id="@+id/bottom_appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:menu="@menu/menu_item_pager_bottom"
             android:layout_gravity="bottom"
-            android:padding="@dimen/materialize_baseline_grid"
-            android:gravity="center"
-            app:layout_behavior="email.schaal.ocreader.view.ScrollAwareFABLayoutBehavior">
+            app:hideOnScroll="true"
+            app:fabAlignmentMode="center"
+            style="@style/Widget.MaterialComponents.BottomAppBar.PrimarySurface"/>
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_mark_as_read"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:text="@string/action_mark_read"
-                app:fabSize="mini"
-                android:src="@drawable/ic_check_box" />
-
-            <email.schaal.ocreader.view.ProgressFloatingActionButton
-                android:id="@+id/fab_open_in_browser"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_marginEnd="@dimen/materialize_screen_edge"
-                android:layout_marginStart="@dimen/materialize_screen_edge"
-                android:clickable="true"
-                android:focusable="true"
-                app:progressColor="@color/progress"
-                android:src="@drawable/ic_open_in_browser" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_mark_starred"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:text="@string/action_mark_starred"
-                app:fabSize="mini"
-                android:src="@drawable/ic_star" />
-        </email.schaal.ocreader.view.FABLayout>
+        <email.schaal.ocreader.view.ProgressFloatingActionButton
+            android:id="@+id/fab_open_in_browser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            app:progressColor="@color/progress"
+            app:layout_anchor="@id/bottom_appbar"
+            app:tint="@null"
+            android:src="@drawable/ic_open_in_browser"
+            app:layout_behavior="email.schaal.ocreader.view.ScrollAwareFABBehavior"/>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

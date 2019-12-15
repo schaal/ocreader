@@ -23,10 +23,15 @@ package email.schaal.ocreader;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
+import android.animation.TypeEvaluator;
 import android.annotation.TargetApi;
+
+import androidx.annotation.DrawableRes;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import androidx.databinding.DataBindingUtil;
@@ -77,7 +82,7 @@ public class ItemPagerActivity extends RealmActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_item_pager);
 
-        setSupportActionBar(binding.toolbarLayout.toolbar);
+        setSupportActionBar(binding.bottomAppbar);
 
         final Sort order = Preferences.ORDER.getOrder(PreferenceManager.getDefaultSharedPreferences(this));
         final String sortField = Preferences.SORT_FIELD.getString(PreferenceManager.getDefaultSharedPreferences(this));
@@ -107,8 +112,8 @@ public class ItemPagerActivity extends RealmActivity {
 
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        binding.toolbarLayout.textViewTitle.setText(title);
-        binding.toolbarLayout.textViewSubtitle.setText("");
+        binding.toolbarLayout.toolbar.setTitle(title);
+        binding.toolbarLayout.toolbar.setSubtitle("");
 
         final SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
@@ -118,10 +123,6 @@ public class ItemPagerActivity extends RealmActivity {
                 startActivity(intent);
             }
         });
-
-        binding.fabMarkStarred.setOnClickListener(v -> setItemStarred(!item.isStarred()));
-
-        binding.fabMarkAsRead.setOnClickListener(v -> setItemUnread(!item.isUnread()));
 
         binding.container.setAdapter(mSectionsPagerAdapter);
 
@@ -150,29 +151,34 @@ public class ItemPagerActivity extends RealmActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_item_pager, menu);
+        getMenuInflater().inflate(R.menu.menu_item_pager_bottom, menu);
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.findItem(R.id.action_play_enclosure_media).setVisible(item.getEnclosureLink() != null);
+
+        final MenuItem menuItemRead = menu.findItem(R.id.menu_mark_read);
+        updateMenuItem(menuItemRead, !item.isUnread(), R.drawable.ic_check_box, R.drawable.ic_check_box_outline_blank);
+
+        final MenuItem menuItemStarred = menu.findItem(R.id.menu_mark_starred);
+        updateMenuItem(menuItemStarred, item.isStarred(), R.drawable.ic_star, R.drawable.ic_star_outline);
+
         return super.onPrepareOptionsMenu(menu);
     }
 
-    private void prepareFabBar() {
-        binding.fabMarkAsRead.setImageResource(!item.isUnread() ? R.drawable.ic_check_box : R.drawable.ic_check_box_outline_blank);
-        binding.fabMarkStarred.setImageResource(item.isStarred() ? R.drawable.ic_star : R.drawable.ic_star_outline);
+    private void updateMenuItem(@NonNull final MenuItem menuItem, final boolean value, @DrawableRes final int checkedIcon, @DrawableRes final int uncheckedIcon) {
+        menuItem.setChecked(value);
+        menuItem.setIcon(value ? checkedIcon : uncheckedIcon);
     }
 
     private void setItemUnread(boolean unread) {
         Queries.setItemsUnread(getRealm(), unread, this.item);
-        prepareFabBar();
     }
 
     private void setItemStarred(boolean starred) {
         Queries.setItemsStarred(getRealm(), starred, this.item);
-        prepareFabBar();
     }
 
     public void updateResult() {
@@ -188,19 +194,27 @@ public class ItemPagerActivity extends RealmActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
             case android.R.id.home:
                 updateResult();
-                return super.onOptionsItemSelected(item);
+                return super.onOptionsItemSelected(menuItem);
             case R.id.action_play_enclosure_media:
                 this.item.play(this);
                 return true;
             case R.id.action_share_article:
                 shareArticle();
                 return true;
+            case R.id.menu_mark_read:
+                setItemUnread(!this.item.isUnread());
+                updateMenuItem(menuItem, !this.item.isUnread(), R.drawable.ic_check_box, R.drawable.ic_check_box_outline_blank);
+                return true;
+            case R.id.menu_mark_starred:
+                setItemStarred(!this.item.isStarred());
+                updateMenuItem(menuItem, this.item.isStarred(), R.drawable.ic_star, R.drawable.ic_star_outline);
+                return true;
             default:
-                return super.onOptionsItemSelected(item);
+                return super.onOptionsItemSelected(menuItem);
         }
     }
 
@@ -212,6 +226,7 @@ public class ItemPagerActivity extends RealmActivity {
             fragments = new WeakHashMap<>(getCount());
         }
 
+        @NonNull
         @Override
         public Fragment getItem(int position) {
             ItemPageFragment fragment;
@@ -234,6 +249,7 @@ public class ItemPagerActivity extends RealmActivity {
         @Keep
         void setStatusBarColor(final int backgroundColor) {
             binding.toolbarLayout.toolbar.setBackgroundColor(backgroundColor);
+            binding.bottomAppbar.setBackgroundTint(ColorStateList.valueOf(backgroundColor));
         }
     }
 
@@ -287,11 +303,11 @@ public class ItemPagerActivity extends RealmActivity {
                     if(currentNightMode == Configuration.UI_MODE_NIGHT_NO)
                         statusBarChanger.setStatusBarColor(colorTo);
 
-                    binding.fabLayout.setFabBackgroundColor(fabColorTo);
+                    binding.fabOpenInBrowser.setBackgroundColor(fabColorTo);
                 } else {
                     ObjectAnimator fabAnimator =
                             ObjectAnimator
-                                    .ofInt(binding.fabLayout, "fabBackgroundColor", fabColorFrom, fabColorTo);
+                                    .ofInt(binding.fabOpenInBrowser, "fabBackgroundColor", fabColorFrom, fabColorTo);
                     fabAnimator.setEvaluator(argbEvaluator);
 
                     final AnimatorSet animatorSet = new AnimatorSet();
@@ -335,7 +351,7 @@ public class ItemPagerActivity extends RealmActivity {
             item = getItemForPosition(position);
             setItemUnread(false);
 
-            binding.toolbarLayout.textViewSubtitle.setText(item.getFeed().getName());
+            binding.toolbarLayout.toolbar.setSubtitle(item.getFeed().getName());
 
             new FaviconLoader.Builder(binding.fabOpenInBrowser)
                     .withGenerateFallbackImage(false)
@@ -345,8 +361,9 @@ public class ItemPagerActivity extends RealmActivity {
 
             progressFrom = progressTo;
             progressTo = (float) (position + 1) / (float) mSectionsPagerAdapter.getCount();
-            prepareFabBar();
-            binding.fabLayout.show();
+
+            binding.bottomAppbar.performShow();
+            binding.fabOpenInBrowser.show();
 
             ObjectAnimator progressAnimator = ObjectAnimator
                     .ofFloat(binding.fabOpenInBrowser, "progress", progressFrom, progressTo)
