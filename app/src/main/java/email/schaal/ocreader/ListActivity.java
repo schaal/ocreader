@@ -26,7 +26,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -44,14 +43,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Base64;
 import android.util.Base64InputStream;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.Toast;
 
 import com.mikepenz.aboutlibraries.Libs;
 import com.mikepenz.aboutlibraries.LibsBuilder;
@@ -59,13 +55,9 @@ import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
-import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.mikepenz.materialdrawer.model.interfaces.Tagable;
 
 import java.io.ByteArrayInputStream;
@@ -74,7 +66,6 @@ import java.util.List;
 
 import email.schaal.ocreader.database.FeedViewModel;
 import email.schaal.ocreader.database.Queries;
-import email.schaal.ocreader.database.model.AllUnreadFolder;
 import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.database.model.TemporaryFeed;
@@ -92,7 +83,6 @@ import email.schaal.ocreader.view.drawer.DrawerManager;
 public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, LoadMoreAdapter.OnLoadMoreListener, ActionMode.Callback {
     private static final String TAG = ListActivity.class.getName();
 
-    private static final int REFRESH_DRAWER_ITEM_ID = 999;
     public static final String LAYOUT_MANAGER_STATE = "LAYOUT_MANAGER_STATE";
 
     private ActionMode actionMode;
@@ -118,26 +108,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                     }
                 }
             }
-        }
-    };
-
-    private final OnCheckedChangeListener unreadSwitchListener = new OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
-            PreferenceManager.getDefaultSharedPreferences(ListActivity.this)
-                    .edit()
-                    .putBoolean(Preferences.SHOW_ONLY_UNREAD.getKey(), isChecked)
-                    .apply();
-
-            if(drawerItem instanceof Nameable && drawerItem.getTag() instanceof AllUnreadFolder) {
-                final AllUnreadFolder unreadFolder = (AllUnreadFolder) drawerItem.getTag();
-
-                unreadFolder.updateName(ListActivity.this, isShowOnlyUnread());
-                ((Nameable) drawerItem).withName(unreadFolder.getName());
-            }
-
-            drawerManager.reloadAdapters(getRealm(), isShowOnlyUnread());
-            reloadListFragment();
         }
     };
 
@@ -339,7 +309,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         startDrawerBuilder.withToolbar(binding.bottomAppbar);
         startDrawer = startDrawerBuilder.build();
 
-        drawerManager = new DrawerManager(this, startDrawer, endDrawerBuilder.append(startDrawer), unreadSwitchListener);
+        drawerManager = new DrawerManager(this, startDrawer, endDrawerBuilder.append(startDrawer));
 
         layoutManager = new LinearLayoutManager(this);
 

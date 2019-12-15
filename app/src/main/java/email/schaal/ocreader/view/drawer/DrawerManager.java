@@ -25,7 +25,6 @@ import android.content.SharedPreferences;
 import androidx.annotation.Nullable;
 
 import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
 import com.mikepenz.materialdrawer.model.AbstractSwitchableDrawerItem;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
@@ -61,14 +60,14 @@ public class DrawerManager {
     private final StarredFolder starredFolder;
     private final FreshFolder freshFolder;
 
-    public DrawerManager(Context context, Drawer startDrawer, Drawer endDrawer, OnCheckedChangeListener unreadSwitchListener) {
+    public DrawerManager(Context context, Drawer startDrawer, Drawer endDrawer) {
         allUnreadFolder = new AllUnreadFolder(context);
         starredFolder = new StarredFolder(context);
         freshFolder = new FreshFolder(context);
 
         state = new State();
 
-        startAdapter = new SubscriptionDrawerManager(startDrawer, unreadSwitchListener);
+        startAdapter = new SubscriptionDrawerManager(startDrawer);
         endAdapter = new FolderDrawerManager(endDrawer);
     }
 
@@ -111,13 +110,10 @@ public class DrawerManager {
     public class SubscriptionDrawerManager extends BaseDrawerManager {
         private final List<IDrawerItem> topDrawerItems = new ArrayList<>(3);
 
-        public SubscriptionDrawerManager(Drawer drawer, OnCheckedChangeListener unreadSwitchListener) {
+        public SubscriptionDrawerManager(Drawer drawer) {
             super(drawer);
 
-            topDrawerItems.add(
-                    new TreeItemSwitchDrawerItem(allUnreadFolder)
-                            .withOnCheckedChangeListener(unreadSwitchListener)
-            );
+            topDrawerItems.add(new TreeItemDrawerItem(allUnreadFolder));
             topDrawerItems.add(new TreeItemDrawerItem(starredFolder));
             topDrawerItems.add(new TreeItemDrawerItem(freshFolder));
 
@@ -127,7 +123,6 @@ public class DrawerManager {
         @Override
         protected List<IDrawerItem> reloadDrawerItems(Realm realm, boolean showOnlyUnread) {
             final List<IDrawerItem> drawerItems = new ArrayList<>(topDrawerItems);
-            ((AbstractSwitchableDrawerItem)topDrawerItems.get(0)).withChecked(showOnlyUnread);
 
             for(IDrawerItem drawerItem: topDrawerItems) {
                 if(drawerItem.getTag() instanceof TreeItem) {
