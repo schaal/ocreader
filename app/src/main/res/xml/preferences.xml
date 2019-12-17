@@ -2,11 +2,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/reading">
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="show_only_unread"
-            android:title="@string/only_unread" />
-
         <ListPreference
             android:defaultValue="@string/ascending_value"
             android:entries="@array/order"
