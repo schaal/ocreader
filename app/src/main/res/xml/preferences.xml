@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="@string/reading">
+    <PreferenceCategory app:title="@string/reading">
         <ListPreference
-            android:defaultValue="@string/ascending_value"
-            android:entries="@array/order"
-            android:entryValues="@array/order_values"
-            android:key="order"
-            android:summary="%s"
-            android:title="@string/article_order" />
+            app:defaultValue="@string/ascending_value"
+            app:entries="@array/order"
+            app:entryValues="@array/order_values"
+            app:key="order"
+            app:useSimpleSummaryProvider="true"
+            app:title="@string/article_order" />
 
         <ListPreference
-            android:defaultValue="@string/default_sort_field_value"
-            android:entries="@array/sort_field"
-            android:entryValues="@array/sort_field_values"
-            android:key="sort_field"
-            android:summary="%s"
-            android:title="@string/sort_by" />
+            app:defaultValue="@string/default_sort_field_value"
+            app:entries="@array/sort_field"
+            app:entryValues="@array/sort_field_values"
+            app:key="sort_field"
+            app:useSimpleSummaryProvider="true"
+            app:title="@string/sort_by" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/appearance">
+    <PreferenceCategory app:title="@string/appearance">
         <ListPreference
-            android:defaultValue="system"
-            android:entries="@array/article_font"
-            android:entryValues="@array/article_font_values"
-            android:key="article_font"
-            android:summary="%s"
-            android:title="Article Font" />
+            app:defaultValue="system"
+            app:entries="@array/article_font"
+            app:entryValues="@array/article_font_values"
+            app:key="article_font"
+            app:useSimpleSummaryProvider="true"
+            app:title="Article Font" />
 
         <SwitchPreference
-            android:defaultValue="false"
-            android:key="dark_theme"
-            android:title="@string/dark_theme" />
+            app:defaultValue="false"
+            app:key="dark_theme"
+            app:title="@string/dark_theme" />
     </PreferenceCategory>
 </PreferenceScreen>
