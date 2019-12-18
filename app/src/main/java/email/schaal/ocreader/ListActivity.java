@@ -62,7 +62,6 @@ import com.mikepenz.materialdrawer.model.interfaces.Tagable;
 
 import java.io.ByteArrayInputStream;
 import java.util.Collections;
-import java.util.List;
 
 import email.schaal.ocreader.database.FeedViewModel;
 import email.schaal.ocreader.database.Queries;
@@ -360,25 +359,8 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     private void setupItemsViewModel(final boolean updateTemporaryFeed) {
         final TreeItem treeItem = drawerManager.getState().getTreeItem();
 
-        if(treeItem == null)
-            return;
-
-        final TemporaryFeed temporaryFeed = TemporaryFeed.getListTemporaryFeed(getRealm());
-
-        if (updateTemporaryFeed || temporaryFeed.getTreeItemId() != treeItem.getId()) {
-            feedViewModel.getRealm().executeTransaction(realm -> {
-                List<Item> tempItems = treeItem.getItems(realm, isShowOnlyUnread());
-                temporaryFeed.setTreeItemId(treeItem.getId());
-                temporaryFeed.setName(treeItem.getName());
-                temporaryFeed.getItems().clear();
-                if (tempItems != null) {
-                    temporaryFeed.getItems().addAll(tempItems);
-                }
-            });
-        }
-
-        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        feedViewModel.updateTemporaryFeed(temporaryFeed, preferences);
+        if(treeItem != null)
+            feedViewModel.updateTemporaryFeed(PreferenceManager.getDefaultSharedPreferences(this), updateTemporaryFeed, treeItem);
     }
 
     @Override

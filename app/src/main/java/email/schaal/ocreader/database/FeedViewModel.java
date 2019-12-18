@@ -30,16 +30,18 @@ import java.util.List;
 import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.database.model.TemporaryFeed;
+import email.schaal.ocreader.database.model.TreeItem;
 import io.realm.Realm;
-import io.realm.RealmResults;
 
 public class FeedViewModel extends ViewModel {
     private final Realm realm;
-    private MutableLiveData<TemporaryFeed> temporaryFeedLiveData;
-    private MutableLiveData<List<Item>> itemsLiveData;
+    private final MutableLiveData<TemporaryFeed> temporaryFeedLiveData;
+    private final MutableLiveData<List<Item>> itemsLiveData;
 
     public FeedViewModel() {
         realm = Realm.getDefaultInstance();
+        temporaryFeedLiveData = new LiveRealmObject<>(TemporaryFeed.getListTemporaryFeed(realm));
+        itemsLiveData = new LiveRealmResults<>(realm.where(Item.class).alwaysFalse().findAll());
     }
 
     public LiveData<TemporaryFeed> getTemporaryFeed() {
@@ -55,21 +57,23 @@ public class FeedViewModel extends ViewModel {
         super.onCleared();
     }
 
-    public void updateTemporaryFeed(TemporaryFeed temporaryFeed, SharedPreferences preferences) {
-        if(temporaryFeedLiveData == null) {
-            temporaryFeedLiveData = new LiveRealmObject<>(temporaryFeed);
-            itemsLiveData = new LiveRealmResults<>(getSortedItems(temporaryFeed, preferences));
-        } else {
-            temporaryFeedLiveData.setValue(temporaryFeed);
-            itemsLiveData.setValue(getSortedItems(temporaryFeed, preferences));
+    public void updateTemporaryFeed(final SharedPreferences preferences, final boolean updateTemporaryFeed, final TreeItem treeItem) {
+        final TemporaryFeed temporaryFeed = temporaryFeedLiveData.getValue();
+        if(temporaryFeed == null)
+            return;
+
+        if (updateTemporaryFeed || temporaryFeed.getTreeItemId() != treeItem.getId()) {
+            realm.executeTransaction(realm -> {
+                final List<Item> tempItems = treeItem.getItems(realm, Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences));
+                temporaryFeed.setTreeItemId(treeItem.getId());
+                temporaryFeed.setName(treeItem.getName());
+                temporaryFeed.getItems().clear();
+                if (tempItems != null) {
+                    temporaryFeed.getItems().addAll(tempItems);
+                }
+            });
         }
-    }
 
-    private RealmResults<Item> getSortedItems(TemporaryFeed temporaryFeed, SharedPreferences preferences) {
-        return temporaryFeed.getItems().sort(Preferences.SORT_FIELD.getString(preferences), Preferences.ORDER.getOrder(preferences));
-    }
-
-    public Realm getRealm() {
-        return realm;
+        itemsLiveData.setValue(temporaryFeed.getItems().sort(Preferences.SORT_FIELD.getString(preferences), Preferences.ORDER.getOrder(preferences)));
     }
 }
