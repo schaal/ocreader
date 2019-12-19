@@ -28,6 +28,7 @@ import androidx.lifecycle.ViewModel;
 import java.util.List;
 
 import email.schaal.ocreader.Preferences;
+import email.schaal.ocreader.database.model.Folder;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.database.model.TemporaryFeed;
 import email.schaal.ocreader.database.model.TreeItem;
@@ -37,11 +38,13 @@ public class FeedViewModel extends ViewModel {
     private final Realm realm;
     private final MutableLiveData<TemporaryFeed> temporaryFeedLiveData;
     private final MutableLiveData<List<Item>> itemsLiveData;
+    private final MutableLiveData<List<Folder>> foldersLiveData;
 
     public FeedViewModel() {
         realm = Realm.getDefaultInstance();
         temporaryFeedLiveData = new LiveRealmObject<>(TemporaryFeed.getListTemporaryFeed(realm));
         itemsLiveData = new LiveRealmResults<>(realm.where(Item.class).alwaysFalse().findAll());
+        foldersLiveData = new LiveRealmResults<>(realm.where(Folder.class).findAll());
     }
 
     public LiveData<TemporaryFeed> getTemporaryFeed() {
@@ -50,11 +53,18 @@ public class FeedViewModel extends ViewModel {
     public LiveData<List<Item>> getItems() {
         return itemsLiveData;
     }
+    public LiveData<List<Folder>> getFolders() {
+        return foldersLiveData;
+    }
 
     @Override
     protected void onCleared() {
         realm.close();
         super.onCleared();
+    }
+
+    public void updateFolders(final boolean onlyUnread) {
+        foldersLiveData.setValue(Folder.getAll(realm, onlyUnread));
     }
 
     public void updateTemporaryFeed(final SharedPreferences preferences, final boolean updateTemporaryFeed, final TreeItem treeItem) {
