@@ -165,23 +165,20 @@ public class Folder implements RealmModel, TreeItem, Insertable, TreeIconable, P
     }
 
     @NonNull
-    public static List<Folder> getAll(Realm realm, boolean onlyUnread) {
-        RealmQuery<Folder> query = null;
+    public static RealmResults<Folder> getAll(final Realm realm, final boolean onlyUnread) {
+        final RealmQuery<Folder> query = realm.where(Folder.class);
         if(onlyUnread) {
             RealmResults<Feed> unreadFeeds = realm.where(Feed.class).greaterThan(Feed.UNREAD_COUNT, 0).notEqualTo(Feed.FOLDER_ID, 0).findAll();
             if(unreadFeeds.size() > 0) {
                 Iterator<Feed> feedIterator = unreadFeeds.iterator();
-                query = realm.where(Folder.class)
-                        .equalTo(Folder.ID, feedIterator.next().getFolderId());
+                query.equalTo(Folder.ID, feedIterator.next().getFolderId());
                 while (feedIterator.hasNext()) {
                     query.or().equalTo(Folder.ID, feedIterator.next().getFolderId());
                 }
             }
-        } else {
-            query = realm.where(Folder.class);
         }
 
-        return query != null ? query.sort(Folder.NAME, Sort.ASCENDING).findAll() : Collections.emptyList();
+        return query.sort(Folder.NAME, Sort.ASCENDING).findAll();
     }
 
     @Override
