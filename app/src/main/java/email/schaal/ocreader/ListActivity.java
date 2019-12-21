@@ -35,6 +35,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -74,12 +75,14 @@ import email.schaal.ocreader.databinding.ActivityListBinding;
 import email.schaal.ocreader.service.SyncService;
 import email.schaal.ocreader.service.SyncType;
 import email.schaal.ocreader.view.DividerItemDecoration;
+import email.schaal.ocreader.view.FolderBottomSheetDialogFragment;
+import email.schaal.ocreader.view.FoldersAdapter;
 import email.schaal.ocreader.view.ItemViewHolder;
 import email.schaal.ocreader.view.LiveItemsAdapter;
 import email.schaal.ocreader.view.LoadMoreAdapter;
 import email.schaal.ocreader.view.drawer.DrawerManager;
 
-public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, LoadMoreAdapter.OnLoadMoreListener, ActionMode.Callback {
+public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, LoadMoreAdapter.OnLoadMoreListener, ActionMode.Callback, FoldersAdapter.TreeItemClickListener {
     private static final String TAG = ListActivity.class.getName();
 
     public static final String LAYOUT_MANAGER_STATE = "LAYOUT_MANAGER_STATE";
@@ -178,6 +181,13 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         final MenuItem menuItemShowOnlyUnread = binding.bottomAppbar.getMenu().findItem(R.id.menu_show_only_unread);
         menuItemShowOnlyUnread.setChecked(Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences));
 
+        binding.bottomAppbar.setNavigationIcon(R.drawable.ic_folder);
+        binding.bottomAppbar.setNavigationOnClickListener(v -> {
+            final FragmentManager fm = getSupportFragmentManager();
+            final FolderBottomSheetDialogFragment bottomSheetDialogFragment = new FolderBottomSheetDialogFragment();
+            bottomSheetDialogFragment.setTreeItemClickListener(this);
+            bottomSheetDialogFragment.show(fm, null);
+        });
         binding.bottomAppbar.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.menu_settings:
@@ -305,7 +315,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                     return true;
                 });
 
-        startDrawerBuilder.withToolbar(binding.bottomAppbar);
+        //startDrawerBuilder.withToolbar(binding.bottomAppbar);
         startDrawer = startDrawerBuilder.build();
 
         drawerManager = new DrawerManager(this, startDrawer, endDrawerBuilder.append(startDrawer));
@@ -591,5 +601,11 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         startDrawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         binding.swipeRefreshLayout.setEnabled(true);
         adapter.clearSelection();
+    }
+
+    @Override
+    public void onTreeItemClick(final TreeItem treeItem) {
+        drawerManager.setSelectedTreeItem(getRealm(), treeItem, isShowOnlyUnread());
+        reloadListFragment();
     }
 }

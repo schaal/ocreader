@@ -44,7 +44,7 @@ public class FeedViewModel extends ViewModel {
         realm = Realm.getDefaultInstance();
         temporaryFeedLiveData = new LiveRealmObject<>(TemporaryFeed.getListTemporaryFeed(realm));
         itemsLiveData = new LiveRealmResults<>(realm.where(Item.class).alwaysFalse().findAll());
-        foldersLiveData = new LiveRealmResults<>(realm.where(Folder.class).findAll());
+        foldersLiveData = new LiveRealmResults<>(Folder.getAll(realm, true));
     }
 
     public LiveData<TemporaryFeed> getTemporaryFeed() {
