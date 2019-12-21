@@ -74,6 +74,8 @@ import email.schaal.ocreader.database.model.User;
 import email.schaal.ocreader.databinding.ActivityListBinding;
 import email.schaal.ocreader.service.SyncService;
 import email.schaal.ocreader.service.SyncType;
+import email.schaal.ocreader.util.ColorGenerator;
+import email.schaal.ocreader.util.TextDrawable;
 import email.schaal.ocreader.view.DividerItemDecoration;
 import email.schaal.ocreader.view.FolderBottomSheetDialogFragment;
 import email.schaal.ocreader.view.FoldersAdapter;
@@ -439,18 +441,16 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.menu_item_list, menu);
+        getMenuInflater().inflate(R.menu.menu_item_list_top, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.menu_about:
-                showAboutDialog();
-                return true;
-            case R.id.menu_manage_feeds:
-                startActivityForResult(new Intent(this, ManageFeedsActivity.class), ManageFeedsActivity.REQUEST_CODE);
+            case R.id.menu_account:
+                Intent loginIntent = new Intent(ListActivity.this, LoginActivity.class);
+                startActivityForResult(loginIntent, LoginActivity.REQUEST_CODE);
                 return true;
         }
         return super.onOptionsItemSelected(item);
