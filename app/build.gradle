@@ -95,9 +95,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:2.1.0"
     implementation "androidx.lifecycle:lifecycle-common-java8:2.1.0"
 
-    implementation('com.mikepenz:materialdrawer:6.1.1@aar') {
-        transitive = true
-    }
+    implementation "com.mikepenz:materialize:1.2.1"
 
     implementation('com.mikepenz:aboutlibraries:6.2.0@aar') {
         transitive = true

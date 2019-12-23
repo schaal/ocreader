@@ -175,6 +175,9 @@ public class Folder implements RealmModel, TreeItem, Insertable, TreeIconable, P
                 while (feedIterator.hasNext()) {
                     query.or().equalTo(Folder.ID, feedIterator.next().getFolderId());
                 }
+            } else {
+                // No folders with unread items
+                query.alwaysFalse();
             }
         }
 

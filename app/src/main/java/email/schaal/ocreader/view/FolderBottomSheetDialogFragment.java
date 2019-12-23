@@ -26,20 +26,15 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-import java.util.List;
-
-import email.schaal.ocreader.R;
+import email.schaal.ocreader.Preferences;
 import email.schaal.ocreader.database.FeedViewModel;
-import email.schaal.ocreader.database.model.Folder;
-import email.schaal.ocreader.database.model.TreeItem;
 import email.schaal.ocreader.databinding.DialogFoldersBinding;
-import email.schaal.ocreader.databinding.ListFolderBinding;
 
 public class FolderBottomSheetDialogFragment extends BottomSheetDialogFragment {
     private DialogFoldersBinding binding;
@@ -50,7 +45,13 @@ public class FolderBottomSheetDialogFragment extends BottomSheetDialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(requireActivity()).get(FeedViewModel.class);
+        viewModel = ViewModelProviders.of(requireActivity(), new FeedViewModel.FeedViewModelFactory(requireContext())).get(FeedViewModel.class);
+        // TODO: 12/24/19 Find out why RealmChangeListener for folders is not triggered when syncing
+        viewModel.updateFolders(Preferences.SHOW_ONLY_UNREAD.getBoolean(PreferenceManager.getDefaultSharedPreferences(requireContext())));
+        viewModel.getFolders().observe(this, folders -> {
+            if(foldersAdapter != null)
+                foldersAdapter.updateFolders(folders);
+        });
     }
 
     @Nullable
@@ -71,13 +72,8 @@ public class FolderBottomSheetDialogFragment extends BottomSheetDialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        foldersAdapter = new FoldersAdapter(requireContext(), viewModel.getFolders().getValue(), treeItemClickListener);
+        foldersAdapter = new FoldersAdapter(requireContext(), viewModel.getFolders().getValue(), viewModel.getTopFolderList(), treeItemClickListener);
         binding.recyclerViewFolders.setAdapter(foldersAdapter);
         binding.recyclerViewFolders.setLayoutManager(new LinearLayoutManager(requireContext()));
-        //binding.recyclerViewFolders.addItemDecoration(new DividerItemDecoration(requireContext(), R.dimen.divider_inset));
-
-        viewModel.getFolders().observe(this, folders -> {
-            foldersAdapter.updateFolders(folders);
-        });
     }
 }

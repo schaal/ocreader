@@ -20,6 +20,7 @@
 package email.schaal.ocreader.view;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,9 +29,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.mikepenz.materialdrawer.model.interfaces.Iconable;
-
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import email.schaal.ocreader.R;
@@ -50,6 +50,13 @@ public class FoldersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final List<TreeItem> topFolders;
     @Nullable private List<? extends TreeItem> folders;
     private final TreeItemClickListener clickListener;
+
+    private long selectedTreeItemId = AllUnreadFolder.ID;
+
+    public void setSelectedTreeItemId(long id) {
+        this.selectedTreeItemId = id;
+        notifyDataSetChanged();
+    }
 
     private static class DividerTreeItem implements TreeItem {
         private final String name;
@@ -89,14 +96,12 @@ public class FoldersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    public FoldersAdapter(final Context context, @Nullable final List<? extends TreeItem> folders, TreeItemClickListener clickListener) {
+    public FoldersAdapter(final Context context, @Nullable final List<? extends TreeItem> folders, final Collection<TreeItem> defaultTopFolders, TreeItemClickListener clickListener) {
         this.folders = folders;
         this.clickListener = clickListener;
 
-        topFolders = new ArrayList<>(3);
-        topFolders.add(new AllUnreadFolder(context));
-        topFolders.add(new FreshFolder(context));
-        topFolders.add(new StarredFolder(context));
+        topFolders = new ArrayList<>(defaultTopFolders.size() + 1);
+        topFolders.addAll(defaultTopFolders);
         topFolders.add(new DividerTreeItem(context.getString(R.string.folder)));
 
         setHasStableIds(true);
@@ -136,7 +141,7 @@ public class FoldersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof FolderViewHolder)
-            ((FolderViewHolder)holder).bind(getTreeItem(position));
+            ((FolderViewHolder)holder).bind(getTreeItem(position), selectedTreeItemId);
         else if(holder instanceof DividerViewHolder)
             ((DividerViewHolder)holder).bind(getTreeItem(position));
     }
@@ -171,8 +176,9 @@ public class FoldersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             this.clickListener = clickListener;
         }
 
-        void bind(@Nullable final TreeItem folder) {
+        void bind(@Nullable final TreeItem folder, long selectedTreeItemId) {
             if(folder != null) {
+                itemView.setSelected(folder.getId() == selectedTreeItemId);
                 itemView.setOnClickListener(v -> clickListener.onTreeItemClick(folder));
                 if (folder instanceof TreeIconable)
                     binding.imageviewFavicon.setImageResource(((TreeIconable) folder).getIcon());
@@ -180,6 +186,18 @@ public class FoldersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     binding.imageviewFavicon.setImageResource(R.drawable.ic_feed_icon);
                 binding.textViewTitle.setText(folder.getName());
             }
+        }
+
+        private void setSelected(boolean selected) {
+            int backgroundResource = R.drawable.item_background;
+            if (!selected) {
+                int[] attrs = new int[]{R.attr.selectableItemBackground};
+                TypedArray typedArray = itemView.getContext().obtainStyledAttributes(attrs);
+                backgroundResource = typedArray.getResourceId(0, 0);
+                typedArray.recycle();
+            }
+
+            itemView.setBackgroundResource(backgroundResource);
         }
     }
 }

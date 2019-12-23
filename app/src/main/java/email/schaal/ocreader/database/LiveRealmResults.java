@@ -61,6 +61,11 @@ public class LiveRealmResults<T extends RealmModel> extends MutableLiveData<List
             throw new IllegalArgumentException("The provided RealmResults is no longer valid, the Realm instance it belongs to is closed. It can no longer be observed for changes.");
         }
         this.results = results;
+        if (results.isLoaded()) {
+            // we should not notify observers when results aren't ready yet (async query).
+            // however, synchronous query should be set explicitly.
+            setValue(results);
+        }
     }
 
     // We should start observing and stop observing, depending on whether we have observers.
@@ -73,7 +78,6 @@ public class LiveRealmResults<T extends RealmModel> extends MutableLiveData<List
         super.onActive();
         if (results.isValid()) { // invalidated results can no longer be observed.
             results.addChangeListener(listener);
-            setValue(results);
         }
     }
 

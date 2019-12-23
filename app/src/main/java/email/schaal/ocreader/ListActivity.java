@@ -27,8 +27,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import androidx.databinding.DataBindingUtil;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
@@ -36,33 +35,23 @@ import androidx.annotation.Nullable;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.util.Base64;
-import android.util.Base64InputStream;
 import android.view.ActionMode;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.mikepenz.aboutlibraries.Libs;
 import com.mikepenz.aboutlibraries.LibsBuilder;
-import com.mikepenz.materialdrawer.AccountHeader;
-import com.mikepenz.materialdrawer.AccountHeaderBuilder;
-import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
-import com.mikepenz.materialdrawer.model.interfaces.Tagable;
 
-import java.io.ByteArrayInputStream;
 import java.util.Collections;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 
 import email.schaal.ocreader.database.FeedViewModel;
 import email.schaal.ocreader.database.Queries;
@@ -70,21 +59,16 @@ import email.schaal.ocreader.database.model.Feed;
 import email.schaal.ocreader.database.model.Item;
 import email.schaal.ocreader.database.model.TemporaryFeed;
 import email.schaal.ocreader.database.model.TreeItem;
-import email.schaal.ocreader.database.model.User;
 import email.schaal.ocreader.databinding.ActivityListBinding;
 import email.schaal.ocreader.service.SyncService;
 import email.schaal.ocreader.service.SyncType;
-import email.schaal.ocreader.util.ColorGenerator;
-import email.schaal.ocreader.util.TextDrawable;
 import email.schaal.ocreader.view.DividerItemDecoration;
 import email.schaal.ocreader.view.FolderBottomSheetDialogFragment;
 import email.schaal.ocreader.view.FoldersAdapter;
 import email.schaal.ocreader.view.ItemViewHolder;
 import email.schaal.ocreader.view.LiveItemsAdapter;
-import email.schaal.ocreader.view.LoadMoreAdapter;
-import email.schaal.ocreader.view.drawer.DrawerManager;
 
-public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, LoadMoreAdapter.OnLoadMoreListener, ActionMode.Callback, FoldersAdapter.TreeItemClickListener {
+public class ListActivity extends RealmActivity implements ItemViewHolder.OnClickListener, SwipeRefreshLayout.OnRefreshListener, ActionMode.Callback, FoldersAdapter.TreeItemClickListener {
     private static final String TAG = ListActivity.class.getName();
 
     public static final String LAYOUT_MANAGER_STATE = "LAYOUT_MANAGER_STATE";
@@ -116,6 +100,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     };
 
     private FeedViewModel feedViewModel;
+    private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
 
     private void updateSyncStatus() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -124,10 +109,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         boolean syncRunning = Preferences.SYS_SYNC_RUNNING.getBoolean(sharedPreferences);
 
         if(needsUpdate) {
-            drawerManager.reloadAdapters(getRealm(), isShowOnlyUnread());
-            setupItemsViewModel(true);
-
-            updateUserProfile();
+            feedViewModel.updateTemporaryFeed(PreferenceManager.getDefaultSharedPreferences(this), true);
 
             sharedPreferences.edit()
                     .putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getKey(), false).apply();
@@ -142,11 +124,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         //todo: if(!syncRunning)
         //    adapter.resetLoadMore();
     }
-
-    private Drawer startDrawer;
-    private DrawerManager drawerManager;
-    private ProfileDrawerItem profileDrawerItem;
-    private AccountHeader accountHeader;
 
     private LiveItemsAdapter adapter;
     private LinearLayoutManager layoutManager;
@@ -200,7 +177,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                     final boolean showOnlyUnread = !item.isChecked();
                     preferences.edit().putBoolean(Preferences.SHOW_ONLY_UNREAD.getKey(), showOnlyUnread).apply();
                     item.setChecked(showOnlyUnread);
-                    drawerManager.reloadAdapters(getRealm(), showOnlyUnread);
                     reloadListFragment();
 
                     return true;
@@ -220,115 +196,22 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
             return false;
         });
 
+        preferenceChangeListener = (sharedPreferences, key) -> {
+            if (Preferences.SHOW_ONLY_UNREAD.getKey().equals(key)) {
+                feedViewModel.updateFolders(Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences));
+            }
+        };
+
+        preferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+
         binding.swipeRefreshLayout.setColorSchemeResources(R.color.primary);
         binding.swipeRefreshLayout.setOnRefreshListener(this);
 
-        profileDrawerItem = new ProfileDrawerItem()
-                .withName(preferences.getString(Preferences.USERNAME.getKey(), getString(R.string.app_name)))
-                .withEmail(Preferences.URL.getString(preferences));
-
-        updateUserProfile();
-
-        IProfile profileSettingsItem = new ProfileSettingDrawerItem()
-                .withName(getString(R.string.account_settings))
-                .withIconTinted(true)
-                .withIcon(R.drawable.ic_settings)
-                .withTag((Runnable) () -> {
-                    Intent loginIntent = new Intent(ListActivity.this, LoginActivity.class);
-                    startActivityForResult(loginIntent, LoginActivity.REQUEST_CODE);
-                });
-
-        accountHeader = new AccountHeaderBuilder()
-                .withActivity(this)
-                .withHeaderBackground(R.drawable.header_background)
-                .addProfiles(profileDrawerItem, profileSettingsItem)
-                .withCurrentProfileHiddenInList(true)
-                .withProfileImagesClickable(false)
-                .withSavedInstance(savedInstanceState)
-                .withOnAccountHeaderListener((view, profile, current) -> {
-                    if (profile instanceof Tagable) {
-                        Tagable tagable = (Tagable) profile;
-                        if (tagable.getTag() instanceof Runnable) {
-                            ((Runnable) tagable.getTag()).run();
-                            return false;
-                        }
-                    }
-                    return true;
-                })
-                .build();
-
-        DrawerBuilder startDrawerBuilder = new DrawerBuilder()
-                .withActivity(this)
-                .withAccountHeader(accountHeader)
-                .withOnDrawerListener(new Drawer.OnDrawerListener() {
-                    @Override
-                    public void onDrawerOpened(View drawerView) {
-                        drawerManager.getStartAdapter().updateUnreadCount(getRealm(), isShowOnlyUnread());
-                    }
-
-                    @Override
-                    public void onDrawerClosed(View drawerView) {
-                    }
-
-                    @Override
-                    public void onDrawerSlide(View drawerView, float slideOffset) {
-
-                    }
-                })
-                .withOnDrawerItemClickListener((view, position, drawerItem) -> {
-                    if (drawerItem.getTag() instanceof TreeItem) {
-                        TreeItem item = (TreeItem) drawerItem.getTag();
-                        onStartDrawerItemClicked(item);
-                        return false;
-                    } else if (drawerItem.getTag() instanceof Runnable) {
-                        ((Runnable) drawerItem.getTag()).run();
-                    }
-                    return true;
-                })
-                .withSavedInstance(savedInstanceState);
-
-        DrawerBuilder endDrawerBuilder = new DrawerBuilder()
-                .withActivity(this)
-                .withDrawerGravity(Gravity.END)
-                .withSavedInstance(savedInstanceState)
-                .withShowDrawerOnFirstLaunch(true)
-                .withOnDrawerListener(new Drawer.OnDrawerListener() {
-                    @Override
-                    public void onDrawerOpened(View drawerView) {
-                        drawerManager.getEndAdapter().updateUnreadCount(getRealm(), isShowOnlyUnread());
-                    }
-
-                    @Override
-                    public void onDrawerClosed(View drawerView) {
-
-                    }
-
-                    @Override
-                    public void onDrawerSlide(View drawerView, float slideOffset) {
-
-                    }
-                })
-                .withOnDrawerItemClickListener((view, position, drawerItem) -> {
-                    if (drawerItem.getTag() instanceof Feed) {
-                        Feed feed = (Feed) drawerItem.getTag();
-                        onEndDrawerItemClicked(feed);
-                        return false;
-                    }
-                    return true;
-                });
-
-        //startDrawerBuilder.withToolbar(binding.bottomAppbar);
-        startDrawer = startDrawerBuilder.build();
-
-        drawerManager = new DrawerManager(this, startDrawer, endDrawerBuilder.append(startDrawer));
-
         layoutManager = new LinearLayoutManager(this);
 
+        feedViewModel = ViewModelProviders.of(this, new FeedViewModel.FeedViewModelFactory(this)).get(FeedViewModel.class);
+
         adapter = new LiveItemsAdapter(Collections.emptyList(), this);
-
-        feedViewModel = ViewModelProviders.of(this).get(FeedViewModel.class);
-
-        setupItemsViewModel(false);
 
         feedViewModel.getItems().observe(this, items -> {
             if(adapter != null) {
@@ -348,59 +231,32 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         binding.itemsRecyclerview.setAdapter(adapter);
         binding.itemsRecyclerview.setLayoutManager(layoutManager);
 
-        if(savedInstanceState == null && getIntent().hasExtra(SyncService.EXTRA_ID)) {
-            drawerManager.getState().restore(getRealm(), getIntent().getIntExtra(SyncService.EXTRA_ID, -10), null, false);
-        } else {
-            drawerManager.getState().restoreInstanceState(getRealm(), getPreferences(MODE_PRIVATE));
-        }
-
         binding.itemsRecyclerview.addItemDecoration(new DividerItemDecoration(this, R.dimen.divider_inset));
 
         if(savedInstanceState != null) {
             layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE));
             adapter.onRestoreInstanceState(savedInstanceState);
         }
-
-        drawerManager.reloadAdapters(getRealm(), isShowOnlyUnread());
     }
 
     private boolean isShowOnlyUnread() {
         return Preferences.SHOW_ONLY_UNREAD.getBoolean(PreferenceManager.getDefaultSharedPreferences(this));
     }
 
-    private void setupItemsViewModel(final boolean updateTemporaryFeed) {
-        final TreeItem treeItem = drawerManager.getState().getTreeItem();
-
-        if(treeItem != null)
-            feedViewModel.updateTemporaryFeed(PreferenceManager.getDefaultSharedPreferences(this), updateTemporaryFeed, treeItem);
-    }
-
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(LAYOUT_MANAGER_STATE, layoutManager.onSaveInstanceState());
-        drawerManager.getState().saveInstanceState(getPreferences(MODE_PRIVATE));
         adapter.onSaveInstanceState(outState);
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        drawerManager.getState().saveInstanceState(getPreferences(MODE_PRIVATE));
-    }
-
-    private void onStartDrawerItemClicked(TreeItem item) {
-        drawerManager.setSelectedTreeItem(getRealm(), item, isShowOnlyUnread());
-        reloadListFragment();
-    }
-
-    private void onEndDrawerItemClicked(Feed feed) {
-        drawerManager.setSelectedFeed(feed);
-        reloadListFragment();
     }
 
     private void reloadListFragment() {
-        setupItemsViewModel(true);
+        feedViewModel.updateTemporaryFeed(PreferenceManager.getDefaultSharedPreferences(this), true);
         binding.itemsRecyclerview.scrollToPosition(0);
     }
 
@@ -417,11 +273,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                                 .setActionTextColor(ContextCompat.getColor(this, R.color.warning))
                                 .show();
                     }
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-                    profileDrawerItem.withName(Preferences.USERNAME.getString(preferences));
-                    profileDrawerItem.withEmail(Preferences.URL.getString(preferences));
-
-                    drawerManager.reset();
                     reloadListFragment();
                     Queries.resetDatabase();
                     SyncService.startSync(this, true);
@@ -431,9 +282,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
                         binding.itemsRecyclerview.smoothScrollToPosition(data.getIntExtra(ItemPagerActivity.EXTRA_CURRENT_POSITION, -1));
                     break;
                 case ManageFeedsActivity.REQUEST_CODE:
-                    drawerManager.reset();
                     reloadListFragment();
-                    drawerManager.reloadAdapters(getRealm(), isShowOnlyUnread());
                     break;
             }
         }
@@ -500,32 +349,7 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
         SyncService.startSync(this);
     }
 
-    private void updateUserProfile() {
-        final String username = Preferences.USERNAME.getString(PreferenceManager.getDefaultSharedPreferences(this));
-
-        if(username != null) {
-            final User user = getRealm().where(User.class).equalTo(User.USER_ID, username).findFirst();
-
-            if (user != null) {
-                profileDrawerItem.withName(user.getDisplayName());
-                final String encodedImage = user.getAvatar();
-                if (encodedImage != null) {
-                    Bitmap avatarBitmap = BitmapFactory.decodeStream(new Base64InputStream(new ByteArrayInputStream(encodedImage.getBytes()), Base64.DEFAULT));
-                    profileDrawerItem.withIcon(avatarBitmap);
-                } else {
-                    profileDrawerItem.withIcon(R.mipmap.ic_launcher_round);
-                }
-                if (accountHeader != null)
-                    accountHeader.updateProfile(profileDrawerItem);
-            } else {
-                profileDrawerItem.withIcon(R.mipmap.ic_launcher_round);
-            }
-        } else {
-            profileDrawerItem.withIcon(R.mipmap.ic_launcher_round);
-        }
-    }
-
-    @Override
+    // TODO: 12/21/19 implement loadmore
     public void onLoadMore(@NonNull TreeItem treeItem) {
         final Number minId = TemporaryFeed.getListTemporaryFeed(getRealm())
                 .getItems()
@@ -540,7 +364,6 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         mode.getMenuInflater().inflate(R.menu.menu_item_list_action, menu);
         mode.setTitle(String.valueOf(adapter.getSelectedItemsCount()));
-        startDrawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         binding.swipeRefreshLayout.setEnabled(false);
         return true;
     }
@@ -598,14 +421,13 @@ public class ListActivity extends RealmActivity implements ItemViewHolder.OnClic
     @Override
     public void onDestroyActionMode(ActionMode mode) {
         actionMode = null;
-        startDrawer.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         binding.swipeRefreshLayout.setEnabled(true);
         adapter.clearSelection();
     }
 
     @Override
     public void onTreeItemClick(final TreeItem treeItem) {
-        drawerManager.setSelectedTreeItem(getRealm(), treeItem, isShowOnlyUnread());
+        feedViewModel.updateSelectedTreeItem(treeItem);
         reloadListFragment();
     }
 }

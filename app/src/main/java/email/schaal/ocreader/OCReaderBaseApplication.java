@@ -30,7 +30,6 @@ import androidx.appcompat.content.res.AppCompatResources;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 
 import email.schaal.ocreader.database.Queries;
 import email.schaal.ocreader.util.AlarmUtils;
@@ -58,48 +57,6 @@ public abstract class OCReaderBaseApplication extends Application {
         Queries.init(this);
 
         AlarmUtils.init(this);
-
-        DrawerImageLoader.init(new DrawerImageLoader.IDrawerImageLoader() {
-            @Override
-            public void set(ImageView imageView, Uri uri, Drawable placeholder) {
-                set(imageView, uri, placeholder, null);
-            }
-
-            @Override
-            public void set(ImageView imageView, Uri uri, Drawable placeholder, String tag) {
-                Glide.with(imageView.getContext()).load(uri).into(imageView);
-            }
-
-            @Override
-            public void cancel(ImageView imageView) {
-                Glide.with(imageView.getContext()).clear(imageView);
-            }
-
-            @Override
-            public Drawable placeholder(Context ctx) {
-                return AppCompatResources.getDrawable(ctx, R.drawable.ic_feed_icon);
-            }
-
-            @Override
-            public Drawable placeholder(Context ctx, String tag) {
-                final int drawableRes;
-
-                if(tag != null) {
-                    switch (DrawerImageLoader.Tags.valueOf(tag)) {
-                        case PROFILE:
-                            drawableRes = R.mipmap.ic_launcher;
-                            break;
-                        default:
-                            drawableRes = R.drawable.ic_feed_icon;
-                            break;
-                    }
-                } else {
-                    drawableRes = R.drawable.ic_feed_icon;
-                }
-
-                return AppCompatResources.getDrawable(ctx, drawableRes);
-            }
-        });
     }
 
     /**
