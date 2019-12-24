@@ -71,14 +71,14 @@ android {
 ext {
     versions = [
             okhttp: '4.2.2',
-            retrofit: '2.6.1',
+            retrofit: '2.6.3',
             glide: '4.10.0',
             acra: '5.2.0'
     ]
 }
 
 dependencies {
-    implementation 'com.google.android.material:material:1.2.0-alpha02'
+    implementation 'com.google.android.material:material:1.2.0-alpha03'
 
     implementation "androidx.core:core:1.1.0"
     implementation "androidx.appcompat:appcompat:1.1.0"
@@ -97,9 +97,7 @@ dependencies {
 
     implementation "com.mikepenz:materialize:1.2.1"
 
-    implementation('com.mikepenz:aboutlibraries:6.2.0@aar') {
-        transitive = true
-    }
+    implementation 'com.mikepenz:aboutlibraries:7.1.0'
 
     implementation 'io.realm:android-adapters:3.0.0'
 
