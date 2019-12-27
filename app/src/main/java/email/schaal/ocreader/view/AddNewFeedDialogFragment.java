@@ -6,7 +6,12 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
+
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import email.schaal.ocreader.ManageFeedsActivity;
 import email.schaal.ocreader.R;
@@ -16,7 +21,7 @@ import email.schaal.ocreader.databinding.FragmentAddNewFeedBinding;
 /**
  * Display form to add new Feed
  */
-public class AddNewFeedDialogFragment extends DialogFragment {
+public class AddNewFeedDialogFragment extends BottomSheetDialogFragment {
     public static final String ARG_URL = "url";
     public static final String ARG_FOLDER_ID = "folder_id";
     public static final String ARG_FINISH_AFTER_CLOSE = "finish_after_close";
@@ -25,7 +30,7 @@ public class AddNewFeedDialogFragment extends DialogFragment {
     private FeedManageListener listener;
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
         try {
@@ -35,9 +40,10 @@ public class AddNewFeedDialogFragment extends DialogFragment {
         }
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        ManageFeedsActivity activity = (ManageFeedsActivity) getActivity();
+        ManageFeedsActivity activity = (ManageFeedsActivity) requireActivity();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
@@ -79,7 +85,7 @@ public class AddNewFeedDialogFragment extends DialogFragment {
      * @param feed feed to edit or add (id < 0 means add new feed, id >=0 means edit existing feed)
      * @param finishAfterClose should the activity be finished after operation was successful
      */
-    public static void show(Activity activity, @Nullable Feed feed, boolean finishAfterClose) {
+    public static void show(FragmentActivity activity, @Nullable Feed feed, boolean finishAfterClose) {
         AddNewFeedDialogFragment dialogFragment = new AddNewFeedDialogFragment();
 
         Bundle bundle = new Bundle();
@@ -95,6 +101,6 @@ public class AddNewFeedDialogFragment extends DialogFragment {
         }
 
         dialogFragment.setArguments(bundle);
-        dialogFragment.show(activity.getFragmentManager(), "newfeed");
+        dialogFragment.show(activity.getSupportFragmentManager(), "newfeed");
     }
 }
