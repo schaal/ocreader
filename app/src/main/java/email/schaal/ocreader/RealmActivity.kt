@@ -17,33 +17,26 @@
  * along with OCReader.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+package email.schaal.ocreader
 
-package email.schaal.ocreader;
-
-import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-
-import io.realm.Realm;
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import io.realm.Realm
 
 /**
  * Base Activity class to setup a Realm database object.
  */
-public abstract class RealmActivity extends AppCompatActivity {
-    private Realm realm;
+abstract class RealmActivity : AppCompatActivity() {
+    protected lateinit var realm: Realm
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        realm = Realm.getDefaultInstance();
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        realm = Realm.getDefaultInstance()
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        realm.close();
+    override fun onDestroy() {
+        super.onDestroy()
+        realm.close()
     }
 
-    protected final Realm getRealm() {
-        return realm;
-    }
 }
