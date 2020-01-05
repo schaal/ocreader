@@ -131,9 +131,6 @@ public abstract class API {
 
     public abstract void deleteFeed(final Realm realm, final Feed feed, APICallback<Void, Throwable> apiCallback);
 
-    // Temporary API instance used to get the metaData when logging in
-    private static API loginInstance = null;
-
     public static void login(final Context context, final HttpUrl baseUrl, final String username, final String password, final APICallback<Status, LoginError> loginCallback) {
         final HttpManager httpManager = new HttpManager(username, password, baseUrl);
 
@@ -159,16 +156,13 @@ public abstract class API {
             @Override
             public void onResponse(@NonNull Call<APILevels> call, @NonNull Response<APILevels> response) {
                 if(response.isSuccessful()) {
-                    loginInstance = null;
-
                     final APILevels apiLevels = response.body();
                     final Level apiLevel = apiLevels != null ? apiLevels.highestSupportedApi() : null;
-
-                    loginInstance = Level.getAPI(context, apiLevel);
 
                     if(apiLevel == null) {
                         loginCallback.onFailure(new LoginError(context.getString(R.string.error_not_compatible)));
                     } else {
+                        final API loginInstance = Level.getAPI(context, apiLevel);
                         loginInstance.setupApi(httpManager);
 
                         loginInstance.metaData(new Callback<Status>() {
@@ -186,7 +180,6 @@ public abstract class API {
                                                 .apply();
 
                                         instance = loginInstance;
-                                        loginInstance = null;
 
                                         loginCallback.onSuccess(status);
                                     } else {
