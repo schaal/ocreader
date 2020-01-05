@@ -231,7 +231,7 @@ public class ItemPagerActivity extends RealmActivity {
             if(fragments.containsKey(position))
                 fragment = fragments.get(position);
             else {
-                fragment = ItemPageFragment.newInstance(getItemForPosition(position));
+                fragment = ItemPageFragment.Companion.newInstance(getItemForPosition(position));
                 fragments.put(position, fragment);
             }
             return fragment;
