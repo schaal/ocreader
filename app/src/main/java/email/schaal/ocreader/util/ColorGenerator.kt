@@ -21,48 +21,39 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
  */
+package email.schaal.ocreader.util
 
-package email.schaal.ocreader.util;
-
-import androidx.annotation.ColorRes;
-
-import java.util.Arrays;
-import java.util.List;
-
-import email.schaal.ocreader.R;
+import androidx.annotation.ColorRes
+import email.schaal.ocreader.R
+import java.util.*
+import kotlin.math.abs
 
 /**
  * @author amulya
  */
-class ColorGenerator {
-    final static ColorGenerator MATERIAL = new ColorGenerator(Arrays.asList(
-            R.color.tdb_Red,
-            R.color.tdb_Purple,
-            R.color.tdb_Indigo,
-            R.color.tdb_Blue,
-            R.color.tdb_LightBlue,
-            R.color.tdb_Cyan,
-            R.color.tdb_Teal,
-            R.color.tdb_Green,
-            R.color.tdb_LightGreen,
-            R.color.tdb_Lime,
-            R.color.tdb_Amber,
-            R.color.tdb_DeepOrange,
-            R.color.tdb_Brown,
-            R.color.tdb_BlueGrey
-    ));
-
-    private final List<Integer> mColors;
-
-    private ColorGenerator(List<Integer> colorList) {
-        mColors = colorList;
-    }
-
+internal class ColorGenerator private constructor(private val mColors: List<Int>) {
     @ColorRes
-    public int getColor(Object key) {
-        if(key != null)
-            return mColors.get(Math.abs(key.hashCode()) % mColors.size());
-        else
-            return mColors.get(0);
+    fun getColor(key: Any?): Int {
+        return if (key != null) mColors[abs(key.hashCode()) % mColors.size] else mColors[0]
     }
+
+    companion object {
+        val MATERIAL = ColorGenerator(listOf(
+                R.color.tdb_Red,
+                R.color.tdb_Purple,
+                R.color.tdb_Indigo,
+                R.color.tdb_Blue,
+                R.color.tdb_LightBlue,
+                R.color.tdb_Cyan,
+                R.color.tdb_Teal,
+                R.color.tdb_Green,
+                R.color.tdb_LightGreen,
+                R.color.tdb_Lime,
+                R.color.tdb_Amber,
+                R.color.tdb_DeepOrange,
+                R.color.tdb_Brown,
+                R.color.tdb_BlueGrey
+        ))
+    }
+
 }

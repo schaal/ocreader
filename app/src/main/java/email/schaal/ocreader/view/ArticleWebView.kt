@@ -17,7 +17,8 @@ import email.schaal.ocreader.database.model.Item
 import email.schaal.ocreader.util.FaviconLoader
 import email.schaal.ocreader.util.FaviconLoader.FeedColorsListener
 import email.schaal.ocreader.util.FeedColors
-import email.schaal.ocreader.util.StringUtils
+import email.schaal.ocreader.util.getByLine
+import email.schaal.ocreader.util.nullToEmpty
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.TextNode
@@ -111,9 +112,9 @@ class ArticleWebView : NestedScrollWebView {
                     FaviconLoader.getCssColor(fontColor),
                     FaviconLoader.getCssColor(backColor),
                     FaviconLoader.getCssColor(ContextCompat.getColor(context, R.color.selected_background)),
-                    StringUtils.nullToEmpty(item!!.url),
+                    nullToEmpty(item!!.url),
                     item!!.title,
-                    StringUtils.getByLine(context, "<p class=\"byline\">%s</p>", item!!.author),
+                    getByLine(context, "<p class=\"byline\">%s</p>", item!!.author),
                     document.body().html(),
                     firstImgString,
                     if ("system" != font) context.getString(R.string.crimson_font_css) else ""

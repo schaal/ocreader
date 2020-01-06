@@ -241,8 +241,8 @@ public class Queries {
                 .or()
                 .equalTo(Item.STARRED_CHANGED, true).count();
         if (changedItemsCount > 0)
-            AlarmUtils.getInstance().setAlarm();
+            AlarmUtils.Companion.getInstance().setAlarm();
         else
-            AlarmUtils.getInstance().cancelAlarm();
+            AlarmUtils.Companion.getInstance().cancelAlarm();
     }
 }

@@ -129,7 +129,7 @@ class APIv12 extends API {
     }
 
     private void syncChanges(@Nullable final OnCompletionListener completionListener) {
-        AlarmUtils.getInstance().cancelAlarm();
+        AlarmUtils.Companion.getInstance().cancelAlarm();
 
         executor.execute(new Runnable() {
             @Override

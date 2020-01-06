@@ -31,7 +31,7 @@ import email.schaal.ocreader.databinding.ListItemBinding
 import email.schaal.ocreader.util.FaviconLoader
 import email.schaal.ocreader.util.FaviconLoader.FeedColorsListener
 import email.schaal.ocreader.util.FeedColors
-import email.schaal.ocreader.util.StringUtils
+import email.schaal.ocreader.util.getTimeSpanString
 import java.util.*
 
 /**
@@ -53,7 +53,7 @@ class ItemViewHolder(private val binding: ListItemBinding, private val clickList
         val preferences = PreferenceManager.getDefaultSharedPreferences(binding.root.context)
         val date: Date
         date = if (Preferences.SORT_FIELD.getString(preferences) == Item.UPDATED_AT) item.updatedAt else item.pubDate
-        binding.textViewTime.text = StringUtils.getTimeSpanString(itemView.context, date)
+        binding.textViewTime.text = getTimeSpanString(itemView.context, date)
         binding.textViewFeedTitle.setTextColor(defaultFeedTextColor)
         FaviconLoader.Builder(binding.imageviewFavicon).build().load(binding.imageviewFavicon.context, feed, this)
         itemView.setOnClickListener { clickListener.onItemClick(item, position) }
