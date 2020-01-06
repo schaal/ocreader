@@ -61,22 +61,14 @@ class ItemPageFragment : Fragment() {
         super.onDestroyView()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt(WEB_VIEW_SCROLL_POSITION, binding.webView.scrollY)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentItemPagerBinding.inflate(inflater, container, false)
         webView = binding.webView
-        if (savedInstanceState != null)
-            webView.setScrollPosition(savedInstanceState.getInt(WEB_VIEW_SCROLL_POSITION, 0))
         return binding.root
     }
 
     companion object {
         private const val ARG_ITEM = "ARG_ITEM"
-        private const val WEB_VIEW_SCROLL_POSITION = "webViewScrollPosition"
         fun newInstance(item: Item?): ItemPageFragment {
             val bundle = Bundle()
             bundle.putParcelable(ARG_ITEM, item)
