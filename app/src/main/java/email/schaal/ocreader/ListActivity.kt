@@ -176,7 +176,7 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
         binding.swipeRefreshLayout.setOnRefreshListener(this)
         layoutManager = LinearLayoutManager(this)
         adapter = LiveItemsAdapter(emptyList(), this)
-        feedViewModel.items.observe(this, Observer { items: List<Item?> ->
+        feedViewModel.items.observe(this, Observer { items: List<Item> ->
             adapter.updateItems(items)
             if (adapter.selectedItemsCount > 0 && actionMode == null) {
                 actionMode = startActionMode(this)
@@ -337,7 +337,7 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
                 return true
             }
             R.id.action_mark_above_read -> {
-                Queries.markAboveAsRead(realm, feedViewModel.items.value, adapter.selectedItems[0].id)
+                Queries.markAboveAsRead(realm, feedViewModel.items.value, adapter.selectedItems[0]!!.id)
                 mode.finish()
                 return true
             }
