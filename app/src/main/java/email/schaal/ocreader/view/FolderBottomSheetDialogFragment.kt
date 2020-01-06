@@ -46,7 +46,7 @@ class FolderBottomSheetDialogFragment : BottomSheetDialogFragment() {
         viewModel = ViewModelProviders.of(requireActivity(), FeedViewModelFactory(requireContext())).get(FeedViewModel::class.java)
         // TODO: 12/24/19 Find out why RealmChangeListener for folders is not triggered when syncing
         viewModel.updateFolders(Preferences.SHOW_ONLY_UNREAD.getBoolean(PreferenceManager.getDefaultSharedPreferences(requireContext())))
-        viewModel.folders.observe(this, Observer { folders: List<Folder?>? -> if (foldersAdapter != null) foldersAdapter!!.updateFolders(folders) })
+        viewModel.folders.observe(this, Observer { folders: List<Folder>? -> if (foldersAdapter != null) foldersAdapter!!.updateFolders(folders) })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -55,9 +55,11 @@ class FolderBottomSheetDialogFragment : BottomSheetDialogFragment() {
     }
 
     fun setTreeItemClickListener(treeItemClickListener: TreeItemClickListener) {
-        this.treeItemClickListener = TreeItemClickListener { treeItem: TreeItem? ->
-            treeItemClickListener.onTreeItemClick(treeItem)
-            dismiss()
+        this.treeItemClickListener = object : TreeItemClickListener {
+            override fun onTreeItemClick(treeItem: TreeItem) {
+                treeItemClickListener.onTreeItemClick(treeItem)
+                dismiss()
+            }
         }
     }
 
