@@ -58,9 +58,9 @@ public abstract class API {
 
     public static void get(Context context, final InstanceReadyCallback callback) {
         if(instance == null) {
-            Level detectedApiLevel = Level.get(Preferences.SYS_DETECTED_API_LEVEL.getString(PreferenceManager.getDefaultSharedPreferences(context)));
+            Level detectedApiLevel = Level.Companion.get(Preferences.SYS_DETECTED_API_LEVEL.getString(PreferenceManager.getDefaultSharedPreferences(context)));
             if (detectedApiLevel != null) {
-                instance = Level.getAPI(context, detectedApiLevel);
+                instance = Level.Companion.getAPI(context, detectedApiLevel);
                 callback.onInstanceReady(instance);
             } else {
                 final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -162,7 +162,7 @@ public abstract class API {
                     if(apiLevel == null) {
                         loginCallback.onFailure(new LoginError(context.getString(R.string.error_not_compatible)));
                     } else {
-                        final API loginInstance = Level.getAPI(context, apiLevel);
+                        final API loginInstance = Level.Companion.getAPI(context, apiLevel);
                         loginInstance.setupApi(httpManager);
 
                         loginInstance.metaData(new Callback<Status>() {
