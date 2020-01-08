@@ -228,7 +228,7 @@ public abstract class API {
             if(errorBody != null) {
                 NewsError error = adapter.fromJson(errorBody.source());
                 if(error != null)
-                    message = error.message;
+                    message = error.getMessage();
             }
         } catch (IOException e) {
             Log.e(TAG, "Failed to get error message", e);
