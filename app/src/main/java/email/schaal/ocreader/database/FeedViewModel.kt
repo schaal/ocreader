@@ -88,9 +88,8 @@ class FeedViewModel(context: Context?) : ViewModel() {
 
     class FeedViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return modelClass.getConstructor(Context::class.java).newInstance(context)
+            return FeedViewModel(context) as T
         }
-
     }
 
     init {
