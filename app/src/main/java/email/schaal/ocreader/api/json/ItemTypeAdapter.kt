@@ -39,10 +39,10 @@ class ItemTypeAdapter : JsonAdapter<Item?>() {
     @Throws(IOException::class)
     override fun toJson(out: JsonWriter, item: Item?) {
         out.beginObject()
-        out.name(Item.ID).value(item!!.id)
-        out.name(Item.CONTENT_HASH).value(item.contentHash)
-        if (item.isUnreadChanged) out.name("isUnread").value(item.isUnread)
-        if (item.isStarredChanged) out.name("isStarred").value(item.isStarred)
+        out.name(Item::id.name).value(item!!.id)
+        out.name(Item::contentHash.name).value(item.contentHash)
+        if (item.unreadChanged) out.name("isUnread").value(item.unread)
+        if (item.starredChanged) out.name("isStarred").value(item.starred)
         out.endObject()
     }
 
@@ -57,29 +57,29 @@ class ItemTypeAdapter : JsonAdapter<Item?>() {
         `in`.beginObject()
         while (`in`.hasNext()) {
             when (val name = `in`.nextName()) {
-                "id" -> builder.setId(`in`.nextLong())
-                "guid" -> builder.setGuid(`in`.nextString())
-                "guidHash" -> builder.setGuidHash(`in`.nextString())
-                "url" -> builder.setUrl(reader.nextString())
-                "title" -> builder.setTitle(cleanString(`in`.nextString()))
-                "author" -> builder.setAuthor(emptyToNull(`in`.nextString()))
-                "pubDate" -> builder.setPubDate(Date(`in`.nextLong() * 1000))
-                "body" -> builder.setBody(`in`.nextString())
-                "enclosureMime" -> if (`in`.peek() != JsonReader.Token.NULL) builder.setEnclosureMime(emptyToNull(`in`.nextString())) else `in`.skipValue()
-                "enclosureLink" -> if (`in`.peek() != JsonReader.Token.NULL) builder.setEnclosureLink(emptyToNull(`in`.nextString())) else `in`.skipValue()
-                "publishedAt" -> builder.setPubDate(parseDate(`in`.nextString()))
-                "updatedAt" -> builder.setUpdatedAt(parseDate(`in`.nextString()))
+                "id" -> builder.id = (`in`.nextLong())
+                "guid" -> builder.guid = (`in`.nextString())
+                "guidHash" -> builder.guidHash = (`in`.nextString())
+                "url" -> builder.url = (reader.nextString())
+                "title" -> builder.title = (cleanString(`in`.nextString()))
+                "author" -> builder.author = (emptyToNull(`in`.nextString()))
+                "pubDate" -> builder.pubDate = (Date(`in`.nextLong() * 1000))
+                "body" -> builder.body = (`in`.nextString())
+                "enclosureMime" -> if (`in`.peek() != JsonReader.Token.NULL) builder.enclosureMime = (emptyToNull(`in`.nextString())) else `in`.skipValue()
+                "enclosureLink" -> if (`in`.peek() != JsonReader.Token.NULL) builder.enclosureLink = (emptyToNull(`in`.nextString())) else `in`.skipValue()
+                "publishedAt" -> builder.pubDate = (parseDate(`in`.nextString()))
+                "updatedAt" -> builder.updatedAt = (parseDate(`in`.nextString()))
                 "enclosure" -> parseEnclosure(reader, builder)
-                "feedId" -> builder.setFeedId(`in`.nextLong())
-                "isUnread", "unread" -> builder.setUnread(`in`.nextBoolean())
-                "starred", "isStarred" -> builder.setStarred(`in`.nextBoolean())
-                "lastModified" -> builder.setLastModified(`in`.nextLong())
+                "feedId" -> builder.feedId = (`in`.nextLong())
+                "isUnread", "unread" -> builder.unread = (`in`.nextBoolean())
+                "starred", "isStarred" -> builder.starred = (`in`.nextBoolean())
+                "lastModified" -> builder.lastModified = (`in`.nextLong())
                 "rtl" -> `in`.skipValue()
-                "fingerprint" -> builder.setFingerprint(reader.nextString())
+                "fingerprint" -> builder.fingerprint = (reader.nextString())
                 "contentHash" ->  // ignore for now, old items don't have this set yet.
 //item.setContentHash(in.nextString());
                     `in`.skipValue()
-                "updatedDate" -> if (`in`.peek() == JsonReader.Token.NUMBER) builder.setUpdatedAt(Date(`in`.nextLong() * 1000)) else `in`.skipValue()
+                "updatedDate" -> if (`in`.peek() == JsonReader.Token.NUMBER) builder.updatedAt = (Date(`in`.nextLong() * 1000)) else `in`.skipValue()
                 else -> {
                     Log.w(TAG, "Unknown value in item json: $name")
                     `in`.skipValue()
@@ -95,8 +95,8 @@ class ItemTypeAdapter : JsonAdapter<Item?>() {
         reader.`in`.beginObject()
         while (reader.`in`.hasNext()) {
             when (reader.`in`.nextName()) {
-                "mimeType" -> builder.setEnclosureMime(reader.nextString())
-                "url" -> builder.setEnclosureLink(reader.nextString())
+                "mimeType" -> builder.enclosureMime = (reader.nextString())
+                "url" -> builder.enclosureLink = (reader.nextString())
             }
         }
         reader.`in`.endObject()

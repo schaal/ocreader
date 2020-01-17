@@ -127,11 +127,11 @@ class SyncService : Service() {
     private val postProcessFeedTransaction = Realm.Transaction { realm: Realm ->
         for (feed in realm.where(Feed::class.java).findAll()) {
             feed.starredCount = realm.where(Item::class.java)
-                    .equalTo(Item.FEED_ID, feed.id)
-                    .equalTo(Item.STARRED, true).count().toInt()
+                    .equalTo(Item::feedId.name, feed.id)
+                    .equalTo(Item::starred.name, true).count().toInt()
             feed.unreadCount = realm.where(Item::class.java)
-                    .equalTo(Item.FEED_ID, feed.id)
-                    .equalTo(Item.UNREAD, true).count().toInt()
+                    .equalTo(Item::feedId.name, feed.id)
+                    .equalTo(Item::unread.name, true).count().toInt()
         }
     }
 

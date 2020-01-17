@@ -78,7 +78,7 @@ class ItemPagerActivity : RealmActivity() {
         } else {
             TemporaryFeed.updatePagerTemporaryFeed(realm)
             val temporaryFeed = TemporaryFeed.getPagerTemporaryFeed(realm)
-            items = temporaryFeed.items.sort(sortField, order)
+            items = temporaryFeed!!.items!!.sort(sortField, order)
             title = temporaryFeed.name
         }
         val typedArray = obtainStyledAttributes(intArrayOf(R.attr.colorPrimary, R.attr.colorAccent))
@@ -128,9 +128,9 @@ class ItemPagerActivity : RealmActivity() {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         menu.findItem(R.id.action_play_enclosure_media).isVisible = item!!.enclosureLink != null
         val menuItemRead = menu.findItem(R.id.menu_mark_read)
-        updateMenuItem(menuItemRead, !item!!.isUnread, R.drawable.ic_check_box, R.drawable.ic_check_box_outline_blank)
+        updateMenuItem(menuItemRead, !item!!.unread, R.drawable.ic_check_box, R.drawable.ic_check_box_outline_blank)
         val menuItemStarred = menu.findItem(R.id.menu_mark_starred)
-        updateMenuItem(menuItemStarred, item!!.isStarred, R.drawable.ic_star, R.drawable.ic_star_outline)
+        updateMenuItem(menuItemStarred, item!!.starred, R.drawable.ic_star, R.drawable.ic_star_outline)
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -173,13 +173,13 @@ class ItemPagerActivity : RealmActivity() {
                 true
             }
             R.id.menu_mark_read -> {
-                setItemUnread(!item!!.isUnread)
-                updateMenuItem(menuItem, !item!!.isUnread, R.drawable.ic_check_box, R.drawable.ic_check_box_outline_blank)
+                setItemUnread(!item!!.unread)
+                updateMenuItem(menuItem, !item!!.unread, R.drawable.ic_check_box, R.drawable.ic_check_box_outline_blank)
                 true
             }
             R.id.menu_mark_starred -> {
-                setItemStarred(!item!!.isStarred)
-                updateMenuItem(menuItem, item!!.isStarred, R.drawable.ic_star, R.drawable.ic_star_outline)
+                setItemStarred(!item!!.starred)
+                updateMenuItem(menuItem, item!!.starred, R.drawable.ic_star, R.drawable.ic_star_outline)
                 true
             }
             else -> super.onOptionsItemSelected(menuItem)
@@ -280,7 +280,7 @@ class ItemPagerActivity : RealmActivity() {
             invalidateOptionsMenu()
             item = getItemForPosition(position)
             setItemUnread(false)
-            binding.toolbarLayout.toolbar.subtitle = item!!.feed.name
+            binding.toolbarLayout.toolbar.subtitle = item!!.feed?.name
             FaviconLoader.Builder(binding.fabOpenInBrowser)
                     .withGenerateFallbackImage(false)
                     .withPlaceholder(R.drawable.ic_open_in_browser)

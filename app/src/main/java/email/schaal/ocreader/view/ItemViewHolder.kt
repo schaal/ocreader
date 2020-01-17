@@ -52,7 +52,7 @@ class ItemViewHolder(private val binding: ListItemBinding, private val clickList
         }
         val preferences = PreferenceManager.getDefaultSharedPreferences(binding.root.context)
         val date: Date
-        date = if (Preferences.SORT_FIELD.getString(preferences) == Item.UPDATED_AT) item.updatedAt else item.pubDate
+        date = if (Preferences.SORT_FIELD.getString(preferences) == Item::updatedAt.name) item.updatedAt!! else item.pubDate!!
         binding.textViewTime.text = getTimeSpanString(itemView.context, date)
         binding.textViewFeedTitle.setTextColor(defaultFeedTextColor)
         FaviconLoader.Builder(binding.imageviewFavicon).build().load(binding.imageviewFavicon.context, feed, this)
@@ -68,8 +68,8 @@ class ItemViewHolder(private val binding: ListItemBinding, private val clickList
             binding.play.visibility = View.GONE
             binding.play.setOnClickListener(null)
         }
-        setUnreadState(item.isUnread)
-        setStarredState(item.isStarred)
+        setUnreadState(item.unread)
+        setStarredState(item.starred)
         setSelected(selected)
     }
 

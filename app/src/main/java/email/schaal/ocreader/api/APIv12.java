@@ -583,7 +583,7 @@ class APIv12 extends API {
         api.moveFeed(feed.getId(), folderIdMap).enqueue(new BaseRetrofitCallback<Void>(apiCallback) {
             @Override
             protected void onResponseReal(Response<Void> response) {
-                realm.executeTransaction(realm1 -> feed.setFolder(Folder.getOrCreate(realm1, folderId)));
+                realm.executeTransaction(realm1 -> feed.setFolder(Folder.Companion.getOrCreate(realm1, folderId)));
             }
         });
     }

@@ -16,7 +16,7 @@ import io.realm.RealmRecyclerViewAdapter
 /**
  * RecyclerView Adapter for Feeds
  */
-class FeedsAdapter(realm: Realm, private val listener: FeedManageListener) : RealmRecyclerViewAdapter<Feed?, RecyclerView.ViewHolder>(realm.where(Feed::class.java).sort(Feed.NAME).findAll(), true) {
+class FeedsAdapter(realm: Realm, private val listener: FeedManageListener) : RealmRecyclerViewAdapter<Feed?, RecyclerView.ViewHolder>(realm.where(Feed::class.java).sort(Feed::name.name).findAll(), true) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding = ListFeedBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return FeedViewHolder(binding, listener)
@@ -46,7 +46,7 @@ class FeedsAdapter(realm: Realm, private val listener: FeedManageListener) : Rea
             binding.textViewTitle.text = feed!!.name
             binding.textViewFolder.text = feed.getFolderTitle(itemView.context)
             binding.deleteFeed.setOnClickListener { listener.deleteFeed(feed) }
-            if (feed.isConsideredFailed) {
+            if (feed.isConsideredFailed()) {
                 binding.feedFailure.visibility = View.VISIBLE
                 binding.feedFailure.text = feed.lastUpdateError
             } else {

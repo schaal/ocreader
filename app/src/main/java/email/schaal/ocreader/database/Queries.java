@@ -26,6 +26,7 @@ import androidx.annotation.Nullable;
 import android.util.Log;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,6 +40,7 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmMigration;
 import io.realm.RealmModel;
+import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
@@ -115,10 +117,10 @@ public class Queries {
         }
     }
 
-    public static <T extends RealmModel & TreeItem & Insertable> void deleteAndInsert(Realm realm, final Class<T> clazz, final List<T> elements) {
-        Collections.sort(elements, TreeItem.COMPARATOR);
+    public static <T extends RealmObject & TreeItem & Insertable> void deleteAndInsert(Realm realm, final Class<T> clazz, final List<T> elements) {
+        Collections.sort(elements, (Comparator<TreeItem>) (o1, o2) -> Long.compare(o1.treeItemId(), o2.treeItemId()));
 
-        final RealmResults<T> databaseItems = realm.where(clazz).sort(TreeItem.ID, Sort.ASCENDING).findAll();
+        final RealmResults<T> databaseItems = realm.where(clazz).sort("id", Sort.ASCENDING).findAll();
 
         final Iterator<T> databaseIterator = databaseItems.iterator();
 
@@ -126,7 +128,7 @@ public class Queries {
             T currentDatabaseItem;
 
             // The lists are sorted by id, so if currentDatabaseItem.getId() < element.getId() we can remove it from the database
-            while (databaseIterator.hasNext() && (currentDatabaseItem = databaseIterator.next()).getId() < element.getId()) {
+            while (databaseIterator.hasNext() && (currentDatabaseItem = databaseIterator.next()).treeItemId() < element.treeItemId()) {
                 currentDatabaseItem.delete(realm);
             }
 
@@ -181,7 +183,7 @@ public class Queries {
     public static void markTemporaryFeedAsRead(Realm realm, Realm.Transaction.OnSuccess onSuccess, Realm.Transaction.OnError onError) {
         realm.executeTransactionAsync(realm1 -> {
             try {
-                RealmResults<Item> unreadItems = TemporaryFeed.getListTemporaryFeed(realm1).getItems()
+                RealmResults<Item> unreadItems = TemporaryFeed.Companion.getListTemporaryFeed(realm1).getItems()
                         .where()
                         .equalTo(Item.UNREAD, true).findAll();
 

@@ -121,7 +121,7 @@ class APIv2 extends API {
                     api.sync().enqueue(retrofitCallback);
                 } else {
                     final Items items = new Items();
-                    items.setItems(realm.where(Item.class).equalTo(Item.UNREAD_CHANGED, true).or().equalTo(Item.STARRED_CHANGED, true).findAll());
+                    items.setItems(realm.where(Item.class).equalTo("unreadChanged", true).or().equalTo("starredChanged", true).findAll());
 
                     api.sync(etag, items).enqueue(retrofitCallback);
                 }

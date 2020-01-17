@@ -27,7 +27,7 @@ class ManageFeedsActivity : RealmActivity(), FeedManageListener {
         val binding = DataBindingUtil.setContentView<ActivityManageFeedsBinding>(this, R.layout.activity_manage_feeds)
         setSupportActionBar(binding.toolbarLayout.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        folderSpinnerAdapter = FolderSpinnerAdapter(this, realm.where(Folder::class.java).sort(Folder.NAME).findAll())
+        folderSpinnerAdapter = FolderSpinnerAdapter(this, realm.where(Folder::class.java).sort(Folder::name.name).findAll())
         val adapter = FeedsAdapter(realm, this)
         binding.feedsRecyclerview.adapter = adapter
         binding.feedsRecyclerview.layoutManager = LinearLayoutManager(this)

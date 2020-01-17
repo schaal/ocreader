@@ -29,7 +29,7 @@ import email.schaal.ocreader.Preferences
 import email.schaal.ocreader.database.model.*
 import io.realm.Realm
 
-class FeedViewModel(context: Context?) : ViewModel() {
+class FeedViewModel(context: Context) : ViewModel() {
     private val realm: Realm = Realm.getDefaultInstance()
     private val temporaryFeedLiveData: MutableLiveData<TemporaryFeed>
     private val itemsLiveData: MutableLiveData<List<Item>>
@@ -72,18 +72,16 @@ class FeedViewModel(context: Context?) : ViewModel() {
         val temporaryFeed = temporaryFeedLiveData.value
         val selectedTreeItem = selectedTreeItemLiveData.value
         if (temporaryFeed == null || selectedTreeItem == null) return
-        if (updateTemporaryFeed || temporaryFeed.treeItemId != selectedTreeItem.id) {
-            realm.executeTransaction { realm: Realm? ->
+        if (updateTemporaryFeed || temporaryFeed.treeItemId != selectedTreeItem.treeItemId()) {
+            realm.executeTransaction { realm: Realm ->
                 val tempItems = selectedTreeItem.getItems(realm, Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences))
-                temporaryFeed.treeItemId = selectedTreeItem.id
-                temporaryFeed.name = selectedTreeItem.name
-                temporaryFeed.items.clear()
-                if (tempItems != null) {
-                    temporaryFeed.items.addAll(tempItems)
-                }
+                temporaryFeed.treeItemId = selectedTreeItem.treeItemId()
+                temporaryFeed.name = selectedTreeItem.treeItemName()
+                temporaryFeed.items?.clear()
+                temporaryFeed.items?.addAll(tempItems)
             }
         }
-        itemsLiveData.value = temporaryFeed.items.sort(Preferences.SORT_FIELD.getString(preferences), Preferences.ORDER.getOrder(preferences))
+        itemsLiveData.value = temporaryFeed.items?.sort(Preferences.SORT_FIELD.getString(preferences), Preferences.ORDER.getOrder(preferences))
     }
 
     class FeedViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
@@ -95,8 +93,8 @@ class FeedViewModel(context: Context?) : ViewModel() {
     init {
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val temporaryFeed = TemporaryFeed.getListTemporaryFeed(realm)
-        temporaryFeedLiveData = LiveRealmObject(temporaryFeed)
-        itemsLiveData = LiveRealmResults(temporaryFeed.items.sort(Preferences.SORT_FIELD.getString(preferences), Preferences.ORDER.getOrder(preferences)))
+        temporaryFeedLiveData = LiveRealmObject<TemporaryFeed>(temporaryFeed!!)
+        itemsLiveData = LiveRealmResults<Item>(temporaryFeed.items?.sort(Preferences.SORT_FIELD.getString(preferences), Preferences.ORDER.getOrder(preferences))!!)
         foldersLiveData = LiveRealmResults(Folder.getAll(realm, Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences)))
         topFolderMap = HashMap(3)
         topFolderMap[AllUnreadFolder.ID] = AllUnreadFolder(context)

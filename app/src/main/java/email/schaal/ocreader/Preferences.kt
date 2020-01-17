@@ -36,7 +36,7 @@ enum class Preferences constructor(val key: String, private val defaultValue: An
     PASSWORD("password"),
     URL("url"),
     ORDER("order", Sort.ASCENDING.name, ChangeAction.UPDATE),
-    SORT_FIELD("sort_field", Item.ID, ChangeAction.UPDATE),
+    SORT_FIELD("sort_field", Item::id.name, ChangeAction.UPDATE),
     DARK_THEME("dark_theme", false, ChangeAction.RECREATE),
     ARTICLE_FONT("article_font", "system"), /** System preferences  */
     SYS_NEEDS_UPDATE_AFTER_SYNC("needs_update_after_sync", false),

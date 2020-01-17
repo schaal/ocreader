@@ -282,16 +282,6 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
         SyncService.startSync(this)
     }
 
-    // TODO: 12/21/19 implement loadmore
-    fun onLoadMore(treeItem: TreeItem) {
-        val minId = TemporaryFeed.getListTemporaryFeed(realm)
-                .items
-                .where()
-                .min(Item.ID)
-        // minId is null if there are no feed items in treeItem
-        SyncService.startLoadMore(this, treeItem.id, minId?.toLong() ?: 0, treeItem is Feed)
-    }
-
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
         mode.menuInflater.inflate(R.menu.menu_item_list_action, menu)
         mode.title = adapter.selectedItemsCount.toString()
@@ -304,10 +294,10 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
         // the menu only changes on the first and second selection
         if (selectedItemsCount > 2) return false
         val firstSelectedItem = adapter.firstSelectedItem
-        val firstSelectedUnread = firstSelectedItem != null && firstSelectedItem.isUnread
+        val firstSelectedUnread = firstSelectedItem != null && firstSelectedItem.unread
         menu.findItem(R.id.action_mark_read).isVisible = firstSelectedUnread
         menu.findItem(R.id.action_mark_unread).isVisible = !firstSelectedUnread
-        val firstSelectedStarred = firstSelectedItem != null && firstSelectedItem.isStarred
+        val firstSelectedStarred = firstSelectedItem != null && firstSelectedItem.starred
         menu.findItem(R.id.action_mark_starred).isVisible = !firstSelectedStarred
         menu.findItem(R.id.action_mark_unstarred).isVisible = firstSelectedStarred
         menu.findItem(R.id.action_mark_above_read).isVisible = selectedItemsCount == 1

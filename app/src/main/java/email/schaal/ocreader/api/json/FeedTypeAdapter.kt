@@ -61,8 +61,8 @@ class FeedTypeAdapter : JsonAdapter<Feed?>() {
         while (`in`.hasNext()) {
             when (val name = `in`.nextName()) {
                 "id" -> feed.id = `in`.nextLong()
-                "url" -> feed.url = reader.nextString()
-                "link" -> feed.link = reader.nextString()
+                "url" -> feed.url = reader.nextString() ?: ""
+                "link" -> feed.link = reader.nextString() ?: ""
                 "faviconLink" -> {
                     var faviconLink = reader.nextString()
                     if (faviconLink != null && TextUtils.getTrimmedLength(faviconLink) == 0) faviconLink = null
@@ -76,7 +76,7 @@ class FeedTypeAdapter : JsonAdapter<Feed?>() {
                 "ordering" ->  // createFeed returns a feed with ordering set to NULL
                     feed.ordering = reader.nextInt(0)
                 "pinned" ->  // createFeed returns a feed with pinned set to NULL
-                    feed.isPinned = reader.nextBoolean(false)
+                    feed.pinned = reader.nextBoolean(false)
                 "updateErrorCount" -> feed.updateErrorCount = reader.nextInt(0)
                 "lastUpdateError" -> feed.lastUpdateError = reader.nextString()
                 "error" -> parseError(reader, feed)

@@ -16,7 +16,7 @@ class ItemMap(items: Iterable<Item>) {
         for (item in items) {
             val itemMap = HashMap<String, Any>()
             itemMap["feedId"] = item.feedId
-            itemMap["guidHash"] = item.guidHash
+            itemMap["guidHash"] = item.guidHash ?: ""
             this.items.add(itemMap)
         }
     }

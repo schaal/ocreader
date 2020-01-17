@@ -39,20 +39,20 @@ class FoldersAdapter(context: Context, private var folders: List<TreeItem>?, def
     }
 
     private class DividerTreeItem(private val name: String) : TreeItem {
-        override fun getId(): Long {
+        override fun treeItemId(): Long {
             return 0
         }
 
-        override fun getName(): String {
+        override fun treeItemName(): String {
             return name
+        }
+
+        override fun getIcon(): Int {
+            return 0
         }
 
         override fun getCount(realm: Realm): Int {
             return 0
-        }
-
-        override fun canLoadMore(): Boolean {
-            return false
         }
 
         override fun getFeeds(realm: Realm, onlyUnread: Boolean): List<Feed> {
@@ -99,7 +99,7 @@ class FoldersAdapter(context: Context, private var folders: List<TreeItem>?, def
 
     private class DividerViewHolder internal constructor(private val binding: ListDividerBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(treeItem: TreeItem) {
-            binding.textViewDivider.text = treeItem.name
+            binding.textViewDivider.text = treeItem.treeItemName()
         }
 
     }
@@ -107,10 +107,10 @@ class FoldersAdapter(context: Context, private var folders: List<TreeItem>?, def
     class FolderViewHolder internal constructor(private val binding: ListFolderBinding, private val clickListener: TreeItemClickListener?) : RecyclerView.ViewHolder(binding.root) {
         fun bind(folder: TreeItem?, selectedTreeItemId: Long) {
             if (folder != null) {
-                itemView.isSelected = folder.id == selectedTreeItemId
+                itemView.isSelected = folder.treeItemId() == selectedTreeItemId
                 itemView.setOnClickListener { clickListener?.onTreeItemClick(folder) }
-                if (folder is TreeIconable) binding.imageviewFavicon.setImageResource((folder as TreeIconable).icon) else binding.imageviewFavicon.setImageResource(R.drawable.ic_feed_icon)
-                binding.textViewTitle.text = folder.name
+                binding.imageviewFavicon.setImageResource(folder.getIcon())
+                binding.textViewTitle.text = folder.treeItemName()
             }
         }
 
