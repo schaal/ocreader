@@ -20,14 +20,14 @@ package email.schaal.ocreader.database
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import androidx.preference.PreferenceManager
 import email.schaal.ocreader.Preferences
+import email.schaal.ocreader.api.API
 import email.schaal.ocreader.database.model.*
+import email.schaal.ocreader.service.SyncType
 import io.realm.Realm
+import kotlinx.coroutines.launch
 
 class FeedViewModel(context: Context) : ViewModel() {
     private val realm: Realm = Realm.getDefaultInstance()
@@ -35,6 +35,7 @@ class FeedViewModel(context: Context) : ViewModel() {
     private val itemsLiveData: MutableLiveData<List<Item>>
     private val foldersLiveData: MutableLiveData<List<Folder>>
     private val selectedTreeItemLiveData: MutableLiveData<TreeItem?>
+    private val syncStatusLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
     private val topFolderMap: MutableMap<Long, TreeItem>
     val temporaryFeed: LiveData<TemporaryFeed>
         get() = temporaryFeedLiveData
@@ -45,12 +46,8 @@ class FeedViewModel(context: Context) : ViewModel() {
     val folders: LiveData<List<Folder>>
         get() = foldersLiveData
 
-    val selectedTreeItem: LiveData<TreeItem?>
-        get() = selectedTreeItemLiveData
-
-    fun getTopTreeItem(id: Long): TreeItem? {
-        return topFolderMap[id]
-    }
+    val syncStatus: LiveData<Boolean>
+        get() = syncStatusLiveData
 
     val topFolderList: Collection<TreeItem>
         get() = topFolderMap.values
@@ -58,6 +55,15 @@ class FeedViewModel(context: Context) : ViewModel() {
     override fun onCleared() {
         realm.close()
         super.onCleared()
+    }
+
+    fun sync(context: Context, syncType: SyncType) {
+        syncStatusLiveData.value = true
+        viewModelScope.launch {
+            API(context).sync(realm, syncType)
+        }.invokeOnCompletion {
+            syncStatusLiveData.value = false
+        }
     }
 
     fun updateFolders(onlyUnread: Boolean) {
@@ -92,14 +98,15 @@ class FeedViewModel(context: Context) : ViewModel() {
 
     init {
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val temporaryFeed = TemporaryFeed.getListTemporaryFeed(realm)
-        temporaryFeedLiveData = LiveRealmObject<TemporaryFeed>(temporaryFeed!!)
-        itemsLiveData = LiveRealmResults<Item>(temporaryFeed.items?.sort(Preferences.SORT_FIELD.getString(preferences), Preferences.ORDER.getOrder(preferences))!!)
+        val temporaryFeed = TemporaryFeed.getListTemporaryFeed(realm)!!
+        temporaryFeedLiveData = LiveRealmObject(temporaryFeed)
+        itemsLiveData = LiveRealmResults<Item>(temporaryFeed.items?.sort(Preferences.SORT_FIELD.getString(preferences) ?: Item::pubDate.name, Preferences.ORDER.getOrder(preferences))!!)
         foldersLiveData = LiveRealmResults(Folder.getAll(realm, Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences)))
         topFolderMap = HashMap(3)
         topFolderMap[AllUnreadFolder.ID] = AllUnreadFolder(context)
         topFolderMap[StarredFolder.ID] = StarredFolder(context)
         topFolderMap[FreshFolder.ID] = FreshFolder(context)
         selectedTreeItemLiveData = MutableLiveData(topFolderMap[AllUnreadFolder.ID])
+        updateTemporaryFeed(preferences, false)
     }
 }

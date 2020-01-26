@@ -23,14 +23,17 @@ import android.content.Context
 import android.os.Parcelable
 import email.schaal.ocreader.R
 import io.realm.Realm
+import io.realm.RealmModel
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
+import io.realm.annotations.RealmClass
 import io.realm.kotlin.createObject
 import io.realm.kotlin.where
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
 @Parcelize
+@RealmClass
 open class Feed(
         @PrimaryKey var id: Long = 0,
         var folderId: Long = 0,
@@ -46,7 +49,7 @@ open class Feed(
         var pinned: Boolean = false,
         var updateErrorCount: Int = 0,
         var lastUpdateError: String? = null
-) : RealmObject(), TreeItem, Insertable, Parcelable {
+) : RealmModel, TreeItem, Insertable, Parcelable {
 
     fun isConsideredFailed(): Boolean {
         return updateErrorCount >= 50
@@ -100,10 +103,23 @@ open class Feed(
 
     override fun delete(realm: Realm) {
         realm.where<Item>().equalTo(Item::feedId.name, id).findAll().deleteAllFromRealm()
-        deleteFromRealm()
+        RealmObject.deleteFromRealm(this)
     }
 
     fun getFolderTitle(context: Context?): CharSequence? {
         return folder?.name ?: if(folderId == 0.toLong()) context?.getString(R.string.root_folder) else null
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Feed) return false
+
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
     }
 }

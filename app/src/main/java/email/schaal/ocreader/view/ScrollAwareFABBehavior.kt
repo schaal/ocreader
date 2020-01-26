@@ -19,6 +19,8 @@
  */
 package email.schaal.ocreader.view
 
+import android.content.Context
+import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.Keep
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -27,7 +29,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton.OnVisibilityChangedListener
 
 @Keep
-class ScrollAwareFABBehavior : FloatingActionButton.Behavior() {
+class ScrollAwareFABBehavior() : FloatingActionButton.Behavior() {
+    constructor(context: Context, attributeSet: AttributeSet) : this() {
+
+    }
+
     override fun onStartNestedScroll(coordinatorLayout: CoordinatorLayout, child: FloatingActionButton, directTargetChild: View, target: View, axes: Int, type: Int): Boolean {
         return axes == ViewCompat.SCROLL_AXIS_VERTICAL ||
                 super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, axes, type)

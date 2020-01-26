@@ -34,12 +34,11 @@ import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import email.schaal.ocreader.api.API
-import email.schaal.ocreader.api.API.APICallback
-import email.schaal.ocreader.api.json.Status
 import email.schaal.ocreader.databinding.ActivityLoginBinding
 import email.schaal.ocreader.util.LoginError
-import okhttp3.HttpUrl
+import kotlinx.coroutines.launch
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 /**
@@ -63,12 +62,12 @@ class LoginActivity : AppCompatActivity() {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         // Only show the home button in the action bar when already logged in
         val hasCredentials = Preferences.USERNAME.getString(sharedPreferences) != null
-        supportActionBar!!.setHomeButtonEnabled(hasCredentials)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(hasCredentials)
+        supportActionBar?.setHomeButtonEnabled(hasCredentials)
+        supportActionBar?.setDisplayHomeAsUpEnabled(hasCredentials)
         binding.username.setText(Preferences.USERNAME.getString(sharedPreferences))
         binding.password.setText(Preferences.PASSWORD.getString(sharedPreferences))
         binding.url.setText(Preferences.URL.getString(sharedPreferences))
-        binding.signInButton.setOnClickListener { view: View? -> attemptLogin() }
+        binding.signInButton.setOnClickListener { attemptLogin() }
         binding.url.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -121,26 +120,20 @@ class LoginActivity : AppCompatActivity() {
         } else { // Show a progress spinner, and kick off a background task to
 // perform the user login attempt.
             showProgress(true)
-            val fixedUrl = url!!.newBuilder().addPathSegment("").build()
-            API.login(this, fixedUrl, username, password, object : APICallback<Status?, LoginError?> {
-                override fun onSuccess(status: Status?) {
-                    val data = Intent(Intent.ACTION_VIEW)
-                    data.putExtra(EXTRA_IMPROPERLY_CONFIGURED_CRON, status?.isImproperlyConfiguredCron)
-                    setResult(Activity.RESULT_OK)
+            val fixedUrl = url?.newBuilder()?.addPathSegment("")?.build()
+            if (fixedUrl != null) {
+                lifecycleScope.launch {
+                    val status = API.login(this@LoginActivity, fixedUrl, username, password)
+                    if(status != null) {
+                        val data = Intent(Intent.ACTION_VIEW)
+                        data.putExtra(EXTRA_IMPROPERLY_CONFIGURED_CRON, status.isImproperlyConfiguredCron)
+                        setResult(Activity.RESULT_OK, data)
+                    } else {
+                        setResult(Activity.RESULT_CANCELED)
+                    }
                     finish()
                 }
-
-                override fun onFailure(loginError: LoginError?) {
-                    if (SCHEME_ADDED == binding.url.tag) {
-                        binding.url.setText(fixedUrl.newBuilder().scheme("http").toString())
-                        binding.url.tag = null
-                        attemptLogin()
-                    } else {
-                        showError(loginError)
-                    }
-                    showProgress(false)
-                }
-            })
+            }
         }
     }
 

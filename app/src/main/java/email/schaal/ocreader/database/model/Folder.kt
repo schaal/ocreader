@@ -20,21 +20,22 @@
 package email.schaal.ocreader.database.model
 
 import android.os.Parcelable
+import com.squareup.moshi.JsonClass
 import email.schaal.ocreader.R
-import io.realm.Realm
-import io.realm.RealmObject
-import io.realm.RealmResults
-import io.realm.Sort
+import io.realm.*
 import io.realm.annotations.PrimaryKey
+import io.realm.annotations.RealmClass
 import io.realm.kotlin.createObject
 import io.realm.kotlin.where
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
+@RealmClass
+@JsonClass(generateAdapter = true)
 open class Folder(
         @PrimaryKey var id: Long = 0,
         var name: String = ""
-) : RealmObject(), TreeItem, Insertable, Parcelable {
+) : RealmModel, TreeItem, Insertable, Parcelable {
 
     companion object {
         fun get(realm: Realm, folderId: Long) : Folder? {
@@ -42,7 +43,7 @@ open class Folder(
         }
 
         fun getOrCreate(realm: Realm, folderId: Long): Folder? {
-            if(folderId == 0.toLong())
+            if(folderId == 0L)
                 return null
             return get(realm ,folderId) ?: realm.createObject(folderId)
         }
@@ -106,10 +107,25 @@ open class Folder(
     }
 
     override fun insert(realm: Realm) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if(name != null)
+            realm.insertOrUpdate(this)
     }
 
     override fun delete(realm: Realm) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        realm.where<Feed>().equalTo(Feed::folderId.name, id).findAll().deleteAllFromRealm()
+        RealmObject.deleteFromRealm(this)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Folder) return false
+
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
     }
 }

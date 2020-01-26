@@ -26,7 +26,7 @@ import io.realm.Sort
 import io.realm.kotlin.where
 
 class AllUnreadFolder(val context: Context) : TreeItem {
-    val name: String = context.getString(R.string.all_items)
+    val name: String = context.getString(R.string.unread_items)
 
     companion object {
         const val ID: Long = -10

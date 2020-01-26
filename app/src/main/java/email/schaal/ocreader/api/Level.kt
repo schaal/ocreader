@@ -19,6 +19,8 @@
 package email.schaal.ocreader.api
 
 import android.content.Context
+import email.schaal.ocreader.R
+import email.schaal.ocreader.http.HttpManager
 
 /**
  * Created by daniel on 26.05.17.
@@ -28,10 +30,10 @@ enum class Level(val level: String, val isSupported: Boolean) {
     V12("v1-2", true);
 
     companion object {
-        fun getAPI(context: Context, level: Level): API {
+        fun getAPI(context: Context, level: Level, httpManager: HttpManager): API {
             return when (level) {
-                V12 -> APIv12(context)
-                V2 -> APIv2(context)
+                V12 -> API(context, httpManager)
+                V2 -> throw IllegalStateException(context.getString(R.string.error_not_compatible))
             }
         }
 

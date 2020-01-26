@@ -20,23 +20,26 @@
 package email.schaal.ocreader.database.model
 
 import io.realm.Realm
+import io.realm.RealmModel
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
+import io.realm.annotations.RealmClass
 import io.realm.annotations.Required
 import java.util.Date
 
+@RealmClass
 open class User(
         @PrimaryKey @Required var userId: String = "",
         var displayName: String = "",
         var lastLogin: Date = Date(),
         var avatar: String? = null,
         var avatarMime: String? = null
-) : RealmObject(), Insertable {
+) : RealmModel, Insertable {
     override fun insert(realm: Realm) {
         realm.insertOrUpdate(this)
     }
 
     override fun delete(realm: Realm) {
-        deleteFromRealm()
+        RealmObject.deleteFromRealm(this)
     }
 }

@@ -93,7 +93,7 @@ class ArticleWebView : NestedScrollWebView {
             post {
                 FaviconLoader.Builder()
                         .build()
-                        .load(this@ArticleWebView.context, item!!.feed, feedColorsListener)
+                        .load(this@ArticleWebView.context, item?.feed, feedColorsListener)
             }
         }
     }
@@ -102,7 +102,7 @@ class ArticleWebView : NestedScrollWebView {
         get() {
             val context = context
             val font = Preferences.ARTICLE_FONT.getString(PreferenceManager.getDefaultSharedPreferences(context))
-            var document = Jsoup.parse(item!!.body)
+            var document = Jsoup.parse(item?.body)
             document = cleaner.clean(document)
             val firstImgString = extractFirstImg(document)
             prepareDocument(document)
@@ -112,9 +112,9 @@ class ArticleWebView : NestedScrollWebView {
                     FaviconLoader.getCssColor(fontColor),
                     FaviconLoader.getCssColor(backColor),
                     FaviconLoader.getCssColor(ContextCompat.getColor(context, R.color.selected_background)),
-                    nullToEmpty(item!!.url),
-                    item!!.title,
-                    getByLine(context, "<p class=\"byline\">%s</p>", item!!.author),
+                    item?.url ?: "",
+                    item?.title,
+                    getByLine(context, "<p class=\"byline\">%s</p>", item?.author),
                     document.body().html(),
                     firstImgString,
                     if ("system" != font) context.getString(R.string.crimson_font_css) else ""

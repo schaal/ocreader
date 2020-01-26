@@ -22,7 +22,6 @@ import android.app.Application
 import androidx.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatDelegate
 import email.schaal.ocreader.database.Queries
-import email.schaal.ocreader.util.AlarmUtils
 
 /**
  * Application base class to setup the singletons
@@ -37,7 +36,6 @@ abstract class OCReaderBaseApplication : Application() {
                 .putBoolean(Preferences.SYS_SYNC_RUNNING.key, false)
                 .apply()
         Queries.init(this)
-        AlarmUtils.init(this)
     }
 
     /**

@@ -23,14 +23,20 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Parcelable
+import android.util.Log
 import io.realm.Realm
+import io.realm.RealmModel
 import io.realm.RealmObject
+import io.realm.Sort
 import io.realm.annotations.PrimaryKey
+import io.realm.annotations.RealmClass
+import io.realm.exceptions.RealmException
 import io.realm.kotlin.where
 import kotlinx.android.parcel.Parcelize
-import java.util.Date
+import java.util.*
 
 @Parcelize
+@RealmClass
 open class Item(
         @PrimaryKey var id: Long = 0,
         var guid: String? = null,
@@ -53,7 +59,7 @@ open class Item(
         var fingerprint: String? = null,
         var contentHash: String? = null,
         var active: Boolean = true
-) : RealmObject(), Insertable, Parcelable {
+) : RealmModel, Insertable, Parcelable {
     companion object {
         const val UNREAD = "unread"
         const val UNREAD_CHANGED ="unreadChanged"
@@ -63,7 +69,57 @@ open class Item(
         const val UPDATED_AT = "updatedAt"
         const val PUB_DATE = "pubDate"
         const val ACTIVE = "active"
-        const val FINGERPRINT ="fingerprint"
+
+        fun setItemsUnread(realm: Realm, newUnread: Boolean, vararg items: Item?) {
+            realm.executeTransaction {
+                try {
+                    for (item in items.filterNotNull()) { /* If the item has a fingerprint, mark all items with the same fingerprint
+                              as read
+                             */
+                        if (item.fingerprint == null) {
+                            item.unread = newUnread
+                        } else {
+                            val sameItems = it.where<Item>()
+                                    .equalTo(Item::fingerprint.name, item.fingerprint)
+                                    .equalTo(UNREAD, !newUnread)
+                                    .findAll()
+                            for (sameItem in sameItems) {
+                                sameItem.unread = newUnread
+                            }
+                        }
+                    }
+                } catch (e: RealmException) {
+                    Log.e(Item::class.simpleName, "Failed to set item as unread", e)
+                }
+            }
+        }
+
+        fun setItemsStarred(realm: Realm, newStarred: Boolean, vararg items: Item?) {
+            realm.executeTransaction {
+                try {
+                    for (item in items.filterNotNull()) {
+                        item.starred = newStarred
+                    }
+                } catch (e: RealmException) {
+                    Log.e(Item::class.simpleName, "Failed to set item as starred", e)
+                }
+            }
+        }
+
+        fun removeExcessItems(realm: Realm, maxItems: Int) {
+            val itemCount = realm.where<Item>().count()
+            if (itemCount > maxItems) {
+                val expendableItems = realm.where<Item>()
+                        .equalTo(Item::unread.name, false)
+                        .equalTo(Item::starred.name, false)
+                        .equalTo(Item::active.name, false)
+                        .sort(Item::lastModified.name, Sort.ASCENDING)
+                        .limit(itemCount - maxItems)
+                        .findAll()
+                realm.executeTransaction { expendableItems.deleteAllFromRealm() }
+            }
+        }
+
     }
 
     class Builder {
@@ -126,11 +182,11 @@ open class Item(
         } else {
             feed = Feed.getOrCreate(realm, feedId)
         }
-        realm.insert(this)
+        realm.insertOrUpdate(this)
     }
 
     override fun delete(realm: Realm) {
-        deleteFromRealm()
+        RealmObject.deleteFromRealm(this)
     }
 
     fun play(context: Context) {

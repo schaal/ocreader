@@ -40,10 +40,11 @@ class AddNewFeedDialogFragment : BottomSheetDialogFragment() {
         binding.feedUrl.setText(arguments.getString(ARG_URL))
         binding.folder.setSelection(activity.folderSpinnerAdapter.getPosition(arguments.getLong(ARG_FOLDER_ID, 0)))
         finishAfterClose = arguments.getBoolean(ARG_FINISH_AFTER_CLOSE, false)
-        builder.setPositiveButton(if (newFeed) R.string.add else R.string.save) { dialogInterface: DialogInterface?, i: Int ->
-            if (listener != null) {
-                if (newFeed) listener!!.addNewFeed(binding.feedUrl.text.toString(), binding.folder.selectedItemId, finishAfterClose) else listener!!.changeFeed(feedId, binding.folder.selectedItemId)
-            }
+        builder.setPositiveButton(if (newFeed) R.string.add else R.string.save) { _, _ ->
+            if (newFeed)
+                listener?.addNewFeed(binding.feedUrl.text.toString(), binding.folder.selectedItemId, finishAfterClose)
+            else
+                listener?.changeFeed(feedId, binding.folder.selectedItemId)
         }
         builder.setView(binding.root)
         return builder.create()

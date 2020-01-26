@@ -30,7 +30,8 @@ import io.realm.kotlin.where
 /**
  * TemporaryFeed allows to store the currently displayed Items.
  */
-open class TemporaryFeed() : RealmObject() {
+@RealmClass
+open class TemporaryFeed() : RealmModel {
     @PrimaryKey
     var id: Long = 0
     var treeItemId: Long = 0
@@ -42,9 +43,6 @@ open class TemporaryFeed() : RealmObject() {
     }
 
     companion object {
-        const val ID = "id"
-        const val TREE_ITEM_ID = "treeItemId"
-
         const val LIST_ID = 0
         const val PAGER_ID = 1
 
@@ -63,13 +61,15 @@ open class TemporaryFeed() : RealmObject() {
                 for (item in realm1.where<Item>().equalTo(Item::active.name, true).findAll()) {
                     item.active = false
                 }
-                val listTempFeedItems = listTempFeed!!.items
-                for (item in listTempFeedItems!!) {
-                    item.active = true
+                val listTempFeedItems = listTempFeed?.items
+                if (listTempFeedItems != null) {
+                    for (item in listTempFeedItems) {
+                        item.active = true
+                    }
                 }
-                pagerTempFeed!!.items = listTempFeedItems
-                pagerTempFeed.name = listTempFeed.name
-                pagerTempFeed.treeItemId = listTempFeed.treeItemId
+                pagerTempFeed?.items = listTempFeedItems
+                pagerTempFeed?.name = listTempFeed?.name ?: ""
+                pagerTempFeed?.treeItemId = listTempFeed?.treeItemId ?: 0
             }
         }
     }

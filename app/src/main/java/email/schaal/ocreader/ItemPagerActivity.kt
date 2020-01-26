@@ -59,8 +59,8 @@ class ItemPagerActivity : RealmActivity() {
     private var defaultToolbarColor = 0
     @ColorInt
     private var defaultAccent = 0
-    private var item: Item? = null
-    private var items: List<Item>? = null
+    private lateinit var item: Item
+    private lateinit var items: List<Item>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (Build.VERSION.SDK_INT >= 24) {
@@ -72,52 +72,64 @@ class ItemPagerActivity : RealmActivity() {
         val order = Preferences.ORDER.getOrder(PreferenceManager.getDefaultSharedPreferences(this))
         val sortField = Preferences.SORT_FIELD.getString(PreferenceManager.getDefaultSharedPreferences(this))
         val title: String
-        if (intent.hasExtra("ARG_ITEMS")) {
-            title = "Test"
-            items = intent.getParcelableArrayListExtra("ARG_ITEMS")
-        } else {
-            TemporaryFeed.updatePagerTemporaryFeed(realm)
-            val temporaryFeed = TemporaryFeed.getPagerTemporaryFeed(realm)
-            items = temporaryFeed!!.items!!.sort(sortField, order)
-            title = temporaryFeed.name
-        }
-        val typedArray = obtainStyledAttributes(intArrayOf(R.attr.colorPrimary, R.attr.colorAccent))
         try {
-            defaultToolbarColor = typedArray.getColor(0, 0)
-            defaultAccent = typedArray.getColor(1, 0)
-        } finally {
-            typedArray.recycle()
-        }
-        val position = intent.getIntExtra(EXTRA_CURRENT_POSITION, 0)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        binding.toolbarLayout.toolbar.title = title
-        binding.toolbarLayout.toolbar.subtitle = ""
-        val mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
-        binding.fabOpenInBrowser.setOnClickListener {
-            if (item != null && item!!.url != null) {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item!!.url))
-                startActivity(intent)
+            if (intent.hasExtra("ARG_ITEMS")) {
+                title = "Test"
+                items = intent.getParcelableArrayListExtra("ARG_ITEMS")
+                        ?: throw IllegalStateException()
+            } else {
+                TemporaryFeed.updatePagerTemporaryFeed(realm)
+                val temporaryFeed = TemporaryFeed.getPagerTemporaryFeed(realm)
+                items = temporaryFeed?.items?.sort(sortField, order)
+                        ?: throw IllegalStateException()
+                title = temporaryFeed.name
             }
+
+            val position = intent.getIntExtra(EXTRA_CURRENT_POSITION, 0)
+
+            val typedArray = obtainStyledAttributes(intArrayOf(R.attr.colorPrimary, R.attr.colorAccent))
+            try {
+                defaultToolbarColor = typedArray.getColor(0, 0)
+                defaultAccent = typedArray.getColor(1, 0)
+            } finally {
+                typedArray.recycle()
+            }
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            binding.toolbarLayout.toolbar.title = title
+            binding.toolbarLayout.toolbar.subtitle = ""
+
+            val mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
+            binding.container.adapter = mSectionsPagerAdapter
+
+            val pageChangeListener: OnPageChangeListener = MyOnPageChangeListener(mSectionsPagerAdapter)
+            binding.container.addOnPageChangeListener(pageChangeListener)
+            // The initial position is 0, so the pageChangeListener won't be called when setting the position to 0
+            if (position == 0) pageChangeListener.onPageSelected(position)
+            binding.container.setCurrentItem(position, false)
+
+            binding.fabOpenInBrowser.setOnClickListener {
+                if (item.url != null) {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
+                    startActivity(intent)
+                }
+            }
+        } catch (e: IllegalStateException) {
+            setResult(Activity.RESULT_CANCELED)
+            finish()
         }
-        binding.container.adapter = mSectionsPagerAdapter
-        val pageChangeListener: OnPageChangeListener = MyOnPageChangeListener(mSectionsPagerAdapter)
-        binding.container.addOnPageChangeListener(pageChangeListener)
-        // The initial position is 0, so the pageChangeListener won't be called when setting the position to 0
-        if (position == 0) pageChangeListener.onPageSelected(position)
-        binding.container.setCurrentItem(position, false)
     }
 
     private fun shareArticle() {
-        if (item!!.url != null) {
+        if (item.url != null) {
             val shareIntent = Intent(Intent.ACTION_SEND)
             shareIntent.type = "text/plain"
-            shareIntent.putExtra(Intent.EXTRA_TEXT, item!!.title + " - " + item!!.url)
+            shareIntent.putExtra(Intent.EXTRA_TEXT, item.title + " - " + item.url)
             startActivity(Intent.createChooser(shareIntent, getString(R.string.share_article)))
         }
     }
 
     fun getItemForPosition(position: Int): Item {
-        return items!![position]
+        return items[position]
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -126,11 +138,11 @@ class ItemPagerActivity : RealmActivity() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        menu.findItem(R.id.action_play_enclosure_media).isVisible = item!!.enclosureLink != null
+        menu.findItem(R.id.action_play_enclosure_media).isVisible = item.enclosureLink != null
         val menuItemRead = menu.findItem(R.id.menu_mark_read)
-        updateMenuItem(menuItemRead, !item!!.unread, R.drawable.ic_check_box, R.drawable.ic_check_box_outline_blank)
+        updateMenuItem(menuItemRead, !item.unread, R.drawable.ic_check_box, R.drawable.ic_check_box_outline_blank)
         val menuItemStarred = menu.findItem(R.id.menu_mark_starred)
-        updateMenuItem(menuItemStarred, item!!.starred, R.drawable.ic_star, R.drawable.ic_star_outline)
+        updateMenuItem(menuItemStarred, item.starred, R.drawable.ic_star, R.drawable.ic_star_outline)
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -140,11 +152,11 @@ class ItemPagerActivity : RealmActivity() {
     }
 
     private fun setItemUnread(unread: Boolean) {
-        Queries.setItemsUnread(realm, unread, item)
+        Item.setItemsUnread(realm, unread, item)
     }
 
     private fun setItemStarred(starred: Boolean) {
-        Queries.setItemsStarred(realm, starred, item)
+        Item.setItemsStarred(realm, starred, item)
     }
 
     fun updateResult() {
@@ -165,7 +177,7 @@ class ItemPagerActivity : RealmActivity() {
                 super.onOptionsItemSelected(menuItem)
             }
             R.id.action_play_enclosure_media -> {
-                item!!.play(this)
+                item.play(this)
                 true
             }
             R.id.action_share_article -> {
@@ -173,20 +185,20 @@ class ItemPagerActivity : RealmActivity() {
                 true
             }
             R.id.menu_mark_read -> {
-                setItemUnread(!item!!.unread)
-                updateMenuItem(menuItem, !item!!.unread, R.drawable.ic_check_box, R.drawable.ic_check_box_outline_blank)
+                setItemUnread(!item.unread)
+                updateMenuItem(menuItem, !item.unread, R.drawable.ic_check_box, R.drawable.ic_check_box_outline_blank)
                 true
             }
             R.id.menu_mark_starred -> {
-                setItemStarred(!item!!.starred)
-                updateMenuItem(menuItem, item!!.starred, R.drawable.ic_star, R.drawable.ic_star_outline)
+                setItemStarred(!item.starred)
+                updateMenuItem(menuItem, item.starred, R.drawable.ic_star, R.drawable.ic_star_outline)
                 true
             }
             else -> super.onOptionsItemSelected(menuItem)
         }
     }
 
-    private inner class SectionsPagerAdapter internal constructor(fm: FragmentManager?) : FragmentStatePagerAdapter(fm!!, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    private inner class SectionsPagerAdapter internal constructor(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
         private val fragments: WeakHashMap<Int, ItemPageFragment?>
         override fun getItem(position: Int): Fragment {
             val fragment: ItemPageFragment
@@ -198,7 +210,7 @@ class ItemPagerActivity : RealmActivity() {
         }
 
         override fun getCount(): Int {
-            return items!!.size
+            return items.size
         }
 
         init {
@@ -280,12 +292,12 @@ class ItemPagerActivity : RealmActivity() {
             invalidateOptionsMenu()
             item = getItemForPosition(position)
             setItemUnread(false)
-            binding.toolbarLayout.toolbar.subtitle = item!!.feed?.name
+            binding.toolbarLayout.toolbar.subtitle = item.feed?.name
             FaviconLoader.Builder(binding.fabOpenInBrowser)
                     .withGenerateFallbackImage(false)
                     .withPlaceholder(R.drawable.ic_open_in_browser)
                     .build()
-                    .load(this@ItemPagerActivity, item!!.feed, toListener)
+                    .load(this@ItemPagerActivity, item.feed, toListener)
             progressFrom = progressTo
             progressTo = (position + 1).toFloat() / mSectionsPagerAdapter.count.toFloat()
             binding.bottomAppbar.performShow()

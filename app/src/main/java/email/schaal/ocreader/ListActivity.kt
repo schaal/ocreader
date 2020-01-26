@@ -20,8 +20,6 @@
 package email.schaal.ocreader
 
 import android.app.Activity
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
@@ -30,12 +28,10 @@ import androidx.preference.PreferenceManager
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.google.android.material.snackbar.Snackbar
@@ -45,12 +41,10 @@ import email.schaal.ocreader.R.string
 import email.schaal.ocreader.database.FeedViewModel
 import email.schaal.ocreader.database.FeedViewModel.FeedViewModelFactory
 import email.schaal.ocreader.database.Queries
-import email.schaal.ocreader.database.model.Feed
 import email.schaal.ocreader.database.model.Item
 import email.schaal.ocreader.database.model.TemporaryFeed
 import email.schaal.ocreader.database.model.TreeItem
 import email.schaal.ocreader.databinding.ActivityListBinding
-import email.schaal.ocreader.service.SyncService
 import email.schaal.ocreader.service.SyncType
 import email.schaal.ocreader.view.DividerItemDecoration
 import email.schaal.ocreader.view.FolderBottomSheetDialogFragment
@@ -66,26 +60,9 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
     private lateinit var feedViewModel: FeedViewModel
     private lateinit var preferenceChangeListener: OnSharedPreferenceChangeListener
 
-    private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val action = intent.action
-            if (action != null && (action == SyncService.SYNC_STARTED || action == SyncService.SYNC_FINISHED)) {
-                val syncType = SyncType.get(intent.getStringExtra(SyncService.EXTRA_TYPE))
-                if (syncType != null) {
-                    when (syncType) {
-                        SyncType.LOAD_MORE -> if (action == SyncService.SYNC_FINISHED) { //todo: adapter.resetLoadMore();
-                        }
-                        SyncType.FULL_SYNC -> updateSyncStatus()
-                        SyncType.SYNC_CHANGES_ONLY -> TODO()
-                    }
-                }
-            }
-        }
-    }
-    private fun updateSyncStatus() {
+    private fun updateSyncStatus(syncRunning: Boolean) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         val needsUpdate = Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getBoolean(sharedPreferences)
-        val syncRunning = Preferences.SYS_SYNC_RUNNING.getBoolean(sharedPreferences)
         if (needsUpdate) {
             feedViewModel.updateTemporaryFeed(PreferenceManager.getDefaultSharedPreferences(this), true)
             sharedPreferences.edit()
@@ -97,17 +74,6 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
         binding.bottomAppbar.menu.findItem(R.id.menu_sync).isEnabled = !syncRunning
         //todo: if(!syncRunning)
 //    adapter.resetLoadMore();
-    }
-
-    override fun onPause() {
-        super.onPause()
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        updateSyncStatus()
-        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, SyncService.syncFilter)
     }
 
     override fun onStart() {
@@ -125,7 +91,7 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
         val menuItemShowOnlyUnread = binding.bottomAppbar.menu.findItem(R.id.menu_show_only_unread)
         menuItemShowOnlyUnread.isChecked = Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences)
         binding.bottomAppbar.setNavigationIcon(R.drawable.ic_folder)
-        binding.bottomAppbar.setNavigationOnClickListener { v: View? ->
+        binding.bottomAppbar.setNavigationOnClickListener {
             val fm = supportFragmentManager
             val bottomSheetDialogFragment = FolderBottomSheetDialogFragment()
             bottomSheetDialogFragment.setTreeItemClickListener(this)
@@ -146,7 +112,7 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_sync -> {
-                    SyncService.startSync(this@ListActivity)
+                    feedViewModel.sync(this, SyncType.FULL_SYNC)
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_about -> {
@@ -166,7 +132,7 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
         }
         feedViewModel = ViewModelProviders.of(this, FeedViewModelFactory(this)).get(FeedViewModel::class.java)
 
-        preferenceChangeListener = OnSharedPreferenceChangeListener { sharedPreferences: SharedPreferences?, key: String ->
+        preferenceChangeListener = OnSharedPreferenceChangeListener { _: SharedPreferences?, key: String ->
             if (Preferences.SHOW_ONLY_UNREAD.key == key) {
                 feedViewModel.updateFolders(Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences))
             }
@@ -183,7 +149,9 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
             }
             binding.listviewSwitcher.displayedChild = if (items.isEmpty()) 0 else 1
         })
-        feedViewModel.temporaryFeed.observe(this, Observer { temporaryFeed: TemporaryFeed -> supportActionBar!!.setTitle(temporaryFeed.name) })
+        feedViewModel.temporaryFeed.observe(this, Observer { temporaryFeed: TemporaryFeed -> supportActionBar?.title = temporaryFeed.name })
+        feedViewModel.syncStatus.observe(this, Observer { updateSyncStatus(it) })
+
         binding.itemsRecyclerview.adapter = adapter
         binding.itemsRecyclerview.layoutManager = layoutManager
         binding.itemsRecyclerview.addItemDecoration(DividerItemDecoration(this, R.dimen.divider_inset))
@@ -215,13 +183,13 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
                 LoginActivity.REQUEST_CODE -> {
                     if (data != null && data.getBooleanExtra(LoginActivity.EXTRA_IMPROPERLY_CONFIGURED_CRON, false)) {
                         Snackbar.make(binding.coordinatorLayout, string.updater_improperly_configured, Snackbar.LENGTH_INDEFINITE)
-                                .setAction(string.more_info) { v: View? -> startActivity(data) }
+                                .setAction(string.more_info) { startActivity(data) }
                                 .setActionTextColor(ContextCompat.getColor(this, R.color.warning))
                                 .show()
                     }
                     reloadListFragment()
                     Queries.resetDatabase()
-                    SyncService.startSync(this, true)
+                    feedViewModel.sync(this, SyncType.FULL_SYNC)
                 }
                 ItemPagerActivity.REQUEST_CODE -> if (data != null) binding.itemsRecyclerview.smoothScrollToPosition(data.getIntExtra(ItemPagerActivity.EXTRA_CURRENT_POSITION, -1))
                 ManageFeedsActivity.REQUEST_CODE -> reloadListFragment()
@@ -279,7 +247,7 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
     }
 
     override fun onRefresh() {
-        SyncService.startSync(this)
+        feedViewModel.sync(this, SyncType.FULL_SYNC)
     }
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
@@ -307,27 +275,29 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
     override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_mark_read -> {
-                Queries.setItemsUnread(realm, false, *adapter.selectedItems)
+                Item.setItemsUnread(realm, false, *adapter.selectedItems)
                 mode.finish()
                 return true
             }
             R.id.action_mark_unread -> {
-                Queries.setItemsUnread(realm, true, *adapter.selectedItems)
+                Item.setItemsUnread(realm, true, *adapter.selectedItems)
                 mode.finish()
                 return true
             }
             R.id.action_mark_starred -> {
-                Queries.setItemsStarred(realm, true, *adapter.selectedItems)
+                Item.setItemsStarred(realm, true, *adapter.selectedItems)
                 mode.finish()
                 return true
             }
             R.id.action_mark_unstarred -> {
-                Queries.setItemsStarred(realm, false, *adapter.selectedItems)
+                Item.setItemsStarred(realm, false, *adapter.selectedItems)
                 mode.finish()
                 return true
             }
             R.id.action_mark_above_read -> {
-                Queries.markAboveAsRead(realm, feedViewModel.items.value, adapter.selectedItems[0]!!.id)
+                val lastItemId = adapter.selectedItems[0]?.id
+                if(lastItemId != null)
+                    Queries.markAboveAsRead(realm, feedViewModel.items.value, lastItemId)
                 mode.finish()
                 return true
             }

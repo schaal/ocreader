@@ -24,35 +24,32 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import email.schaal.ocreader.database.model.Folder
-import java.io.IOException
 
 /**
  * TypeAdapter to deserialize the JSON response for Folders.
  */
 class FolderTypeAdapter : JsonAdapter<Folder?>() {
-    @Throws(IOException::class)
     override fun toJson(out: JsonWriter, value: Folder?) {
     }
 
-    @Throws(IOException::class)
-    override fun fromJson(`in`: JsonReader): Folder? {
-        if (`in`.peek() == JsonReader.Token.NULL) {
-            `in`.nextNull<Any>()
+    override fun fromJson(inReader: JsonReader): Folder? {
+        if (inReader.peek() == JsonReader.Token.NULL) {
+            inReader.nextNull<Any>()
             return null
         }
         val folder = Folder()
-        `in`.beginObject()
-        while (`in`.hasNext()) {
-            when (val name = `in`.nextName()) {
-                "id" -> folder.id = `in`.nextLong()
-                "name" -> folder.name = `in`.nextString()
+        inReader.beginObject()
+        while (inReader.hasNext()) {
+            when (val name = inReader.nextName()) {
+                "id" -> folder.id = inReader.nextLong()
+                "name" -> folder.name = inReader.nextString()
                 else -> {
                     Log.w(TAG, "Unknown value in folder json: $name")
-                    `in`.skipValue()
+                    inReader.skipValue()
                 }
             }
         }
-        `in`.endObject()
+        inReader.endObject()
         return folder
     }
 
