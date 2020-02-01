@@ -43,14 +43,6 @@
 -dontnote com.google.common.cache.Striped64$Cell
 -dontnote com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
 
-#ACRA
--dontnote org.acra.config.CoreConfiguration
--dontnote org.acra.data.CrashReportData
--dontnote org.acra.collections.ImmutableSet
--dontnote org.acra.builder.ReportBuilder
--dontnote org.acra.config.CoreConfigurationBuilder
--dontnote org.acra.log.ACRALog
-
 #Glide
 -keep public class * implements com.bumptech.glide.module.GlideModule
 -keep public class * extends com.bumptech.glide.module.AppGlideModule

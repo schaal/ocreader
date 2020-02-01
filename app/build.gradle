@@ -76,7 +76,6 @@ ext {
             okhttp: '4.3.1',
             retrofit: '2.6.3',
             glide: '4.11.0',
-            acra: '5.2.0',
             lifecycle: '2.2.0'
     ]
 }
@@ -131,9 +130,6 @@ dependencies {
     kapt "com.github.bumptech.glide:compiler:${versions.glide}"
 
     implementation 'com.github.zafarkhaja:java-semver:0.9.0'
-
-    releaseImplementation "ch.acra:acra-mail:${versions.acra}"
-    releaseImplementation "ch.acra:acra-dialog:${versions.acra}"
 
     implementation('com.vdurmont:emoji-java:4.0.0', {
         exclude group: 'org.json', module: 'json'

@@ -71,14 +71,6 @@
             android:label="Settings"
             android:parentActivityName=".ListActivity" />
 
-        <!-- This activity is only defined in release -->
-        <!--suppress AndroidDomInspection -->
-        <activity
-            android:name=".CustomCrashReportDialog"
-            android:excludeFromRecents="true"
-            android:finishOnTaskLaunch="true"
-            android:launchMode="singleInstance" />
-
     </application>
 
 </manifest>

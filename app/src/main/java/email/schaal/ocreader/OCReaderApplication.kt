@@ -26,23 +26,15 @@ import email.schaal.ocreader.database.Queries
 /**
  * Application base class to setup the singletons
  */
-abstract class OCReaderBaseApplication : Application() {
+abstract class OCReaderApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        if (shouldExit()) return
+
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         AppCompatDelegate.setDefaultNightMode(Preferences.getNightMode(preferences))
         preferences.edit()
                 .putBoolean(Preferences.SYS_SYNC_RUNNING.key, false)
                 .apply()
         Queries.init(this)
-    }
-
-    /**
-     *
-     * @return true if app specific initialization should be skipped, e.g. for ACRA process
-     */
-    protected fun shouldExit(): Boolean {
-        return false
     }
 }
