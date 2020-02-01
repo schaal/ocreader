@@ -62,7 +62,7 @@ class DatabaseTest {
             val folder = TestGenerator.testFolder
             realm = Realm.getDefaultInstance()
             realm.beginTransaction()
-            Queries.insert(realm, folder)
+            folder.insert(realm)
             realm.commitTransaction()
             val dbFolder = Folder.get(realm, 1)
             Assert.assertNotNull(dbFolder)
@@ -80,7 +80,7 @@ class DatabaseTest {
             var feed: Feed? = TestGenerator.testFeed
             realm = Realm.getDefaultInstance()
             realm.beginTransaction()
-            Queries.insert(realm, feed)
+            feed?.insert(realm)
             realm.commitTransaction()
             feed = Feed.get(realm, 1)
             Assert.assertNotNull(feed)
@@ -99,8 +99,8 @@ class DatabaseTest {
             var item: Item? = TestGenerator.testItem
             realm = Realm.getDefaultInstance()
             realm.beginTransaction()
-            Queries.insert(realm, feed)
-            Queries.insert(realm, item)
+            feed?.insert(realm)
+            item?.insert(realm)
             realm.commitTransaction()
             item = realm.where<Item>().findFirst()
             Assert.assertEquals(item!!.id, 1)

@@ -29,6 +29,7 @@ import io.realm.Realm
 import io.realm.Realm.Transaction.OnSuccess
 import io.realm.RealmConfiguration
 import io.realm.RealmMigration
+import io.realm.kotlin.createObject
 import io.realm.kotlin.where
 
 /**
@@ -36,11 +37,11 @@ import io.realm.kotlin.where
  */
 object Queries {
     private val TAG = Queries::class.java.name
-    const val SCHEMA_VERSION = 12
+    const val SCHEMA_VERSION = 12L
     private val initialData = Realm.Transaction { realm: Realm ->
         realm.deleteAll()
-        realm.createObject(TemporaryFeed::class.java, TemporaryFeed.LIST_ID)
-        realm.createObject(TemporaryFeed::class.java, TemporaryFeed.PAGER_ID)
+        realm.createObject<TemporaryFeed>(TemporaryFeed.LIST_ID)
+        realm.createObject<TemporaryFeed>(TemporaryFeed.PAGER_ID)
     }
     private val migration: RealmMigration = DatabaseMigration()
     const val MAX_ITEMS = 10000
@@ -48,43 +49,27 @@ object Queries {
     fun init(context: Context) {
         Realm.init(context)
         val realmConfiguration = RealmConfiguration.Builder()
-                .schemaVersion(SCHEMA_VERSION.toLong())
+                .schemaVersion(SCHEMA_VERSION)
                 .migration(migration)
                 .initialData(initialData)
                 .compactOnLaunch()
                 .build()
         Realm.setDefaultConfiguration(realmConfiguration)
-        var realm: Realm? = null
+
         try {
-            realm = Realm.getDefaultInstance()
-            if (realm.isEmpty) realm.executeTransaction(initialData)
-        } catch (ex: Exception) {
-            Log.e(TAG, "Failed to open realm db", ex)
-            realm?.close()
-            Realm.deleteRealm(realmConfiguration)
-        } finally {
-            realm?.close()
+            Realm.getDefaultInstance().use {
+                if(it.isEmpty)
+                    it.executeTransaction(initialData)
+            }
+        } catch(e: Exception) {
+            Log.e(TAG, "Failed to open realm db", e)
         }
     }
 
     fun resetDatabase() {
         Log.w(TAG, "Database will be reset")
-        var realm: Realm? = null
-        try {
-            realm = Realm.getDefaultInstance()
-            realm.executeTransaction(initialData)
-        } finally {
-            realm?.close()
-        }
-    }
-
-    fun insert(realm: Realm, element: Insertable?) {
-        element?.insert(realm)
-    }
-
-    fun insert(realm: Realm, elements: Iterable<Insertable>) {
-        for (element in elements) {
-            element.insert(realm)
+        Realm.getDefaultInstance().use {
+            it.executeTransaction(initialData)
         }
     }
 
