@@ -72,8 +72,6 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
             binding.swipeRefreshLayout.isRefreshing = syncRunning
         }
         binding.bottomAppbar.menu.findItem(R.id.menu_sync).isEnabled = !syncRunning
-        //todo: if(!syncRunning)
-//    adapter.resetLoadMore();
     }
 
     override fun onStart() {

@@ -191,8 +191,8 @@ class API {
         return retrofit.create(APIv12Interface::class.java)
     }
 
-    private suspend fun syncChanges(realm: Realm): Map<MarkAction, List<Item>?> = runBlocking {
-        MarkAction.values()
+    private suspend fun syncChanges(realm: Realm): Map<MarkAction, List<Item>?> {
+        return MarkAction.values()
                 .toList().associateWith {
                     markItems(it, realm)
                 }
