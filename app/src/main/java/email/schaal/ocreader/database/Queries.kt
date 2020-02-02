@@ -44,7 +44,6 @@ object Queries {
         realm.createObject<TemporaryFeed>(TemporaryFeed.PAGER_ID)
     }
     private val migration: RealmMigration = DatabaseMigration()
-    const val MAX_ITEMS = 10000
 
     fun init(context: Context) {
         Realm.init(context)
@@ -75,16 +74,12 @@ object Queries {
 
     fun markAboveAsRead(realm: Realm, items: List<Item>?, lastItemId: Long) {
         if(items != null) {
-            realm.executeTransaction { realm1: Realm ->
-                try {
-                    for (item in items) {
-                        item.unread = false
-                        if (item.id == lastItemId) {
-                            break
-                        }
+            realm.executeTransaction {
+                for (item in items) {
+                    item.unread = false
+                    if (item.id == lastItemId) {
+                        break
                     }
-                } finally {
-                    checkAlarm(realm1)
                 }
             }
         }
@@ -92,32 +87,16 @@ object Queries {
 
     fun markTemporaryFeedAsRead(realm: Realm, onSuccess: OnSuccess?, onError: Realm.Transaction.OnError?) {
         realm.executeTransactionAsync(Realm.Transaction { realm1: Realm ->
-            try {
-                val unreadItems = getListTemporaryFeed(realm1)
-                        ?.items
-                        ?.where()
-                        ?.equalTo(Item.UNREAD, true)
-                        ?.findAll()
-                if(unreadItems != null)
-                    for (item in unreadItems) {
-                        item.unread = false
-                    }
-            } finally {
-                checkAlarm(realm1)
-            }
+            val unreadItems = getListTemporaryFeed(realm1)
+                    ?.items
+                    ?.where()
+                    ?.equalTo(Item.UNREAD, true)
+                    ?.findAll()
+            if(unreadItems != null)
+                for (item in unreadItems) {
+                    item.unread = false
+                }
         }, onSuccess, onError)
     }
 
-    @Synchronized
-    private fun checkAlarm(realm: Realm) {
-        val changedItemsCount = realm.where<Item>()
-                .equalTo(Item::unreadChanged.name, true)
-                .or()
-                .equalTo(Item::starredChanged.name, true).count()
-        if (changedItemsCount > 0) {
-            TODO("Add job")
-        } else {
-            TODO("cancel job")
-        }
-    }
 }

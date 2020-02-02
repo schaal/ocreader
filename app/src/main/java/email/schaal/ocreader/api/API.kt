@@ -328,6 +328,8 @@ class API {
                                     .equalTo(Item::feedId.name, feed.id)
                                     .equalTo(Item.UNREAD, true).count().toInt()
                         }
+
+                        Item.removeExcessItems(realm, 10000)
                     }
                 }
             }

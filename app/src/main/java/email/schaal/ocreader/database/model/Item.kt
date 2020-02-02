@@ -28,7 +28,6 @@ import io.realm.Realm
 import io.realm.RealmModel
 import io.realm.RealmObject
 import io.realm.Sort
-import io.realm.annotations.Ignore
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 import io.realm.annotations.RealmField
@@ -108,14 +107,14 @@ open class Item(
         fun removeExcessItems(realm: Realm, maxItems: Int) {
             val itemCount = realm.where<Item>().count()
             if (itemCount > maxItems) {
-                val expendableItems = realm.where<Item>()
+                realm.where<Item>()
                         .equalTo(UNREAD, false)
                         .equalTo(STARRED, false)
                         .equalTo(Item::active.name, false)
                         .sort(Item::lastModified.name, Sort.ASCENDING)
                         .limit(itemCount - maxItems)
                         .findAll()
-                realm.executeTransaction { expendableItems.deleteAllFromRealm() }
+                        .deleteAllFromRealm()
             }
         }
 
