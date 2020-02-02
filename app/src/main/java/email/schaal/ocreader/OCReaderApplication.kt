@@ -26,7 +26,7 @@ import email.schaal.ocreader.database.Queries
 /**
  * Application base class to setup the singletons
  */
-abstract class OCReaderApplication : Application() {
+class OCReaderApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
