@@ -45,7 +45,7 @@ class StarredFolder(val context: Context): TreeItem {
     }
 
     override fun getCount(realm: Realm): Int {
-        return realm.where<Item>().equalTo(Item::starred.name, true).count().toInt()
+        return realm.where<Item>().equalTo(Item.STARRED, true).count().toInt()
     }
 
     override fun getFeeds(realm: Realm, onlyUnread: Boolean): List<Feed> {
@@ -53,6 +53,6 @@ class StarredFolder(val context: Context): TreeItem {
     }
 
     override fun getItems(realm: Realm, onlyUnread: Boolean): List<Item> {
-        return realm.where<Item>().equalTo(Item::starred.name, true).findAll()
+        return realm.where<Item>().equalTo(Item.STARRED, true).findAll()
     }
 }

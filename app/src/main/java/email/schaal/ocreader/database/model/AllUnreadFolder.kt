@@ -58,7 +58,7 @@ class AllUnreadFolder(val context: Context) : TreeItem {
     override fun getItems(realm: Realm, onlyUnread: Boolean): List<Item> {
         val query = realm.where<Item>()
         if(onlyUnread)
-            query.equalTo(Item::unread.name, true)
+            query.equalTo(Item.UNREAD, true)
         return query.distinct(Item::fingerprint.name).findAll()
     }
 }

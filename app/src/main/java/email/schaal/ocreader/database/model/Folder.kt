@@ -101,7 +101,7 @@ open class Folder(
                 query.or().equalTo(Item::feedId.name, iterator.next().id)
             query.endGroup()
             if(onlyUnread)
-                query.equalTo(Item::unread.name, true)
+                query.equalTo(Item.UNREAD, true)
         }
         return query.findAll()
     }

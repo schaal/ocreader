@@ -98,10 +98,10 @@ class API {
     }
 
     enum class MarkAction(val key: String, val changedKey: String, val value: Boolean) {
-        MARK_READ(Item::unread.name, Item::unreadChanged.name, false),
-        MARK_UNREAD(Item::unread.name, Item::unreadChanged.name, true),
-        MARK_STARRED(Item::starred.name, Item::starredChanged.name, true),
-        MARK_UNSTARRED(Item::starred.name, Item::starredChanged.name, false);
+        MARK_READ(Item.UNREAD, Item::unreadChanged.name, false),
+        MARK_UNREAD(Item.UNREAD, Item::unreadChanged.name, true),
+        MARK_STARRED(Item.STARRED, Item::starredChanged.name, true),
+        MARK_UNSTARRED(Item.STARRED, Item::starredChanged.name, false);
     }
 
     private interface APIv12Interface {
@@ -327,10 +327,10 @@ class API {
                         for (feed in dbFeeds) {
                             feed.starredCount = realm.where<Item>()
                                     .equalTo(Item::feedId.name, feed.id)
-                                    .equalTo(Item::starred.name, true).count().toInt()
+                                    .equalTo(Item.STARRED, true).count().toInt()
                             feed.unreadCount = realm.where<Item>()
                                     .equalTo(Item::feedId.name, feed.id)
-                                    .equalTo(Item::unread.name, true).count().toInt()
+                                    .equalTo(Item.UNREAD, true).count().toInt()
                         }
                     }
                 }

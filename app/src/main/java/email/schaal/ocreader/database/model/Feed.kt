@@ -88,7 +88,7 @@ open class Feed(
     override fun getItems(realm: Realm, onlyUnread: Boolean): List<Item> {
         val query = realm.where<Item>().equalTo(Item::feedId.name, id)
         if(onlyUnread)
-            query.equalTo(Item::unread.name, true)
+            query.equalTo(Item.UNREAD, true)
         return query.findAll()
     }
 

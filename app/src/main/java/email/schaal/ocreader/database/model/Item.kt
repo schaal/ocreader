@@ -28,8 +28,10 @@ import io.realm.Realm
 import io.realm.RealmModel
 import io.realm.RealmObject
 import io.realm.Sort
+import io.realm.annotations.Ignore
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
+import io.realm.annotations.RealmField
 import io.realm.exceptions.RealmException
 import io.realm.kotlin.isManaged
 import io.realm.kotlin.where
@@ -52,8 +54,10 @@ open class Item(
         var enclosureLink: String? = null,
         var feed: Feed? = null,
         var feedId: Long = 0,
+        @RealmField(name = "unread")
         private var actualUnread: Boolean = true,
         var unreadChanged: Boolean = false,
+        @RealmField(name = "starred")
         private var actualStarred: Boolean = false,
         var starredChanged: Boolean = false,
         var lastModified: Long = 0,
@@ -62,6 +66,9 @@ open class Item(
         var active: Boolean = true
 ) : RealmModel, Insertable, Parcelable {
     companion object {
+        const val UNREAD = "actualUnread"
+        const val STARRED = "actualStarred"
+
         fun setItemsUnread(realm: Realm, newUnread: Boolean, vararg items: Item?) {
             realm.executeTransaction {
                 try {
@@ -73,7 +80,7 @@ open class Item(
                         } else {
                             val sameItems = it.where<Item>()
                                     .equalTo(Item::fingerprint.name, item.fingerprint)
-                                    .equalTo(Item::unread.name, !newUnread)
+                                    .equalTo(UNREAD, !newUnread)
                                     .findAll()
                             for (sameItem in sameItems) {
                                 sameItem.unread = newUnread
@@ -102,8 +109,8 @@ open class Item(
             val itemCount = realm.where<Item>().count()
             if (itemCount > maxItems) {
                 val expendableItems = realm.where<Item>()
-                        .equalTo(Item::unread.name, false)
-                        .equalTo(Item::starred.name, false)
+                        .equalTo(UNREAD, false)
+                        .equalTo(STARRED, false)
                         .equalTo(Item::active.name, false)
                         .sort(Item::lastModified.name, Sort.ASCENDING)
                         .limit(itemCount - maxItems)

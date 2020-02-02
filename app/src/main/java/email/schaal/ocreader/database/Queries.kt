@@ -96,7 +96,7 @@ object Queries {
                 val unreadItems = getListTemporaryFeed(realm1)
                         ?.items
                         ?.where()
-                        ?.equalTo(Item::unread.name, true)
+                        ?.equalTo(Item.UNREAD, true)
                         ?.findAll()
                 if(unreadItems != null)
                     for (item in unreadItems) {
