@@ -56,10 +56,6 @@ open class Feed(
     }
 
     companion object {
-        const val FOLDER_ID = "folderId"
-        const val UNREAD_COUNT = "unreadCount"
-        const val NAME = "name"
-
         fun get(realm: Realm, feedId: Long) : Feed? {
             return realm.where<Feed>().equalTo(Feed::id.name, feedId).findFirst()
         }
@@ -94,6 +90,14 @@ open class Feed(
         if(onlyUnread)
             query.equalTo(Item::unread.name, true)
         return query.findAll()
+    }
+
+    fun incrementUnreadCount(value: Int) {
+        unreadCount += value
+    }
+
+    fun incrementStarredCount(value: Int) {
+        starredCount += value
     }
 
     override fun insert(realm: Realm) {

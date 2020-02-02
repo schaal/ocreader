@@ -31,6 +31,7 @@ import io.realm.Sort
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 import io.realm.exceptions.RealmException
+import io.realm.kotlin.isManaged
 import io.realm.kotlin.where
 import kotlinx.android.parcel.Parcelize
 import java.util.*
@@ -51,9 +52,9 @@ open class Item(
         var enclosureLink: String? = null,
         var feed: Feed? = null,
         var feedId: Long = 0,
-        var unread: Boolean = true,
+        private var actualUnread: Boolean = true,
         var unreadChanged: Boolean = false,
-        var starred: Boolean = false,
+        private var actualStarred: Boolean = false,
         var starredChanged: Boolean = false,
         var lastModified: Long = 0,
         var fingerprint: String? = null,
@@ -61,15 +62,6 @@ open class Item(
         var active: Boolean = true
 ) : RealmModel, Insertable, Parcelable {
     companion object {
-        const val UNREAD = "unread"
-        const val UNREAD_CHANGED ="unreadChanged"
-        const val STARRED = "starred"
-        const val STARRED_CHANGED = "starredChanged"
-        const val LAST_MODIFIED = "lastModified"
-        const val UPDATED_AT = "updatedAt"
-        const val PUB_DATE = "pubDate"
-        const val ACTIVE = "active"
-
         fun setItemsUnread(realm: Realm, newUnread: Boolean, vararg items: Item?) {
             realm.executeTransaction {
                 try {
@@ -81,7 +73,7 @@ open class Item(
                         } else {
                             val sameItems = it.where<Item>()
                                     .equalTo(Item::fingerprint.name, item.fingerprint)
-                                    .equalTo(UNREAD, !newUnread)
+                                    .equalTo(Item::unread.name, !newUnread)
                                     .findAll()
                             for (sameItem in sameItems) {
                                 sameItem.unread = newUnread
@@ -173,6 +165,26 @@ open class Item(
             builder.contentHash,
             builder.active
     )
+
+    var unread: Boolean
+        get() { return actualUnread }
+        set(value) {
+            if(isManaged() && actualUnread != value) {
+                unreadChanged = !unreadChanged
+                feed?.incrementUnreadCount(if(value) 1 else -1)
+            }
+            actualUnread = value
+        }
+
+    var starred: Boolean
+        get() { return actualStarred }
+        set(value) {
+            if(isManaged() && actualStarred != value) {
+                starredChanged = !starredChanged
+                feed?.incrementStarredCount(if(value) 1 else -1)
+            }
+            actualStarred = value
+        }
 
     override fun insert(realm: Realm) {
         if(title == null) {

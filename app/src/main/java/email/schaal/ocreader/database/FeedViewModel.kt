@@ -60,7 +60,11 @@ class FeedViewModel(context: Context) : ViewModel() {
     fun sync(context: Context, syncType: SyncType) {
         syncStatusLiveData.value = true
         viewModelScope.launch {
-            API(context).sync(realm, syncType)
+            try {
+                API(context).sync(realm, syncType)
+            } catch(e: IllegalStateException) {
+                e.printStackTrace()
+            }
         }.invokeOnCompletion {
             syncStatusLiveData.value = false
         }

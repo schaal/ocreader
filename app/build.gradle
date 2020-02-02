@@ -88,6 +88,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.lifecycle}"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:${versions.lifecycle}"
 
+    implementation "androidx.work:work-runtime-ktx:2.3.0"
+
     implementation 'com.google.android.material:material:1.2.0-alpha04'
 
     implementation "androidx.core:core:1.1.0"

@@ -96,7 +96,7 @@ object Queries {
                 val unreadItems = getListTemporaryFeed(realm1)
                         ?.items
                         ?.where()
-                        ?.equalTo(Item.UNREAD, true)
+                        ?.equalTo(Item::unread.name, true)
                         ?.findAll()
                 if(unreadItems != null)
                     for (item in unreadItems) {
@@ -111,9 +111,9 @@ object Queries {
     @Synchronized
     private fun checkAlarm(realm: Realm) {
         val changedItemsCount = realm.where<Item>()
-                .equalTo(Item.UNREAD_CHANGED, true)
+                .equalTo(Item::unreadChanged.name, true)
                 .or()
-                .equalTo(Item.STARRED_CHANGED, true).count()
+                .equalTo(Item::starredChanged.name, true).count()
         if (changedItemsCount > 0) {
             TODO("Add job")
         } else {

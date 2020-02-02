@@ -233,94 +233,111 @@ class API {
     }
 
     suspend fun sync(realm: Realm, syncType: SyncType) {
-        try {
-            val result = syncChanges(realm)
-            when(syncType) {
-                SyncType.SYNC_CHANGES_ONLY -> {}
-                SyncType.FULL_SYNC -> {
-                    val lastSync = realm.where<Item>().max(Item::lastModified.name)?.toLong() ?: 0L
-
-                    val toInsert: MutableSet<List<Insertable?>> = mutableSetOf()
-
-                    toInsert.add(listOf(api?.user()))
-
-                    val folders = api?.folders()?.folders
-                    val feeds = api?.feeds()?.feeds
-
-                    if(lastSync == 0L) {
-                        api?.items(-1L, 0L, QueryType.STARRED.type, 0L, getRead = true, oldestFirst = false)?.items?.let { toInsert.add(it) }
-                        api?.items(-1L, 0L, QueryType.ALL.type, 0L, getRead = false, oldestFirst = false)?.items?.let { toInsert.add(it) }
-                    } else {
-                        api?.updatedItems(lastSync, QueryType.ALL.type, 0L)?.items?.let { toInsert.add(it) }
-                    }
-                    withContext(Dispatchers.Main) {
-                        realm.executeTransaction {
-                            for ((action, results) in result) {
-                                if(results != null) {
-                                    when (action) {
-                                        MarkAction.MARK_READ, MarkAction.MARK_UNREAD -> {
-                                            for (item in results) {
-                                                item.unreadChanged = false
-                                            }
+        val result = syncChanges(realm)
+        when(syncType) {
+            SyncType.SYNC_CHANGES_ONLY -> {
+                withContext(Dispatchers.Main) {
+                    realm.executeTransaction {
+                        for ((action, results) in result) {
+                            if(results != null) {
+                                when (action) {
+                                    MarkAction.MARK_READ, MarkAction.MARK_UNREAD -> {
+                                        for (item in results) {
+                                            item.unreadChanged = false
                                         }
-                                        MarkAction.MARK_STARRED, MarkAction.MARK_UNSTARRED -> {
-                                            for (item in results) {
-                                                item.starredChanged = false
-                                            }
+                                    }
+                                    MarkAction.MARK_STARRED, MarkAction.MARK_UNSTARRED -> {
+                                        for (item in results) {
+                                            item.starredChanged = false
                                         }
                                     }
                                 }
                             }
-
-                            if(folders != null) {
-                                val dbFolders = realm.where<Folder>().findAll()
-                                val foldersToDelete = dbFolders.minus(folders)
-
-                                for(folder in folders)
-                                    folder.insert(realm)
-
-                                Log.d("API", foldersToDelete.toString())
-
-                                for(folder in foldersToDelete)
-                                    folder.delete(realm)
-                            }
-
-                            val dbFeeds = realm.where<Feed>().findAll()
-
-                            if(feeds != null) {
-                                val feedsToDelete = dbFeeds.minus(feeds)
-
-                                for(feed in feeds)
-                                    feed.insert(realm)
-
-                                Log.d("API", feedsToDelete.toString())
-
-                                for(feed in feedsToDelete)
-                                    feed.delete(realm)
-                            }
-
-                            for (insertables in toInsert) {
-                                for (insertable in insertables.filterNotNull())
-                                    insertable.insert(realm)
-                            }
-
-                            for (feed in dbFeeds) {
-                                feed.starredCount = realm.where<Item>()
-                                        .equalTo(Item::feedId.name, feed.id)
-                                        .equalTo(Item::starred.name, true).count().toInt()
-                                feed.unreadCount = realm.where<Item>()
-                                        .equalTo(Item::feedId.name, feed.id)
-                                        .equalTo(Item::unread.name, true).count().toInt()
-                            }
                         }
                     }
                 }
-                SyncType.LOAD_MORE -> {
+            }
+            SyncType.FULL_SYNC -> {
+                val lastSync = realm.where<Item>().max(Item::lastModified.name)?.toLong() ?: 0L
 
+                val toInsert: MutableSet<List<Insertable?>> = mutableSetOf()
+
+                toInsert.add(listOf(api?.user()))
+
+                val folders = api?.folders()?.folders
+                val feeds = api?.feeds()?.feeds
+
+                if(lastSync == 0L) {
+                    api?.items(-1L, 0L, QueryType.STARRED.type, 0L, getRead = true, oldestFirst = false)?.items?.let { toInsert.add(it) }
+                    api?.items(-1L, 0L, QueryType.ALL.type, 0L, getRead = false, oldestFirst = false)?.items?.let { toInsert.add(it) }
+                } else {
+                    api?.updatedItems(lastSync, QueryType.ALL.type, 0L)?.items?.let { toInsert.add(it) }
+                }
+                withContext(Dispatchers.Main) {
+                    realm.executeTransaction {
+                        for ((action, results) in result) {
+                            if(results != null) {
+                                when (action) {
+                                    MarkAction.MARK_READ, MarkAction.MARK_UNREAD -> {
+                                        for (item in results) {
+                                            item.unreadChanged = false
+                                        }
+                                    }
+                                    MarkAction.MARK_STARRED, MarkAction.MARK_UNSTARRED -> {
+                                        for (item in results) {
+                                            item.starredChanged = false
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if(folders != null) {
+                            val dbFolders = realm.where<Folder>().findAll()
+                            val foldersToDelete = dbFolders.minus(folders)
+
+                            for(folder in folders)
+                                folder.insert(realm)
+
+                            Log.d("API", foldersToDelete.toString())
+
+                            for(folder in foldersToDelete)
+                                folder.delete(realm)
+                        }
+
+                        val dbFeeds = realm.where<Feed>().findAll()
+
+                        if(feeds != null) {
+                            val feedsToDelete = dbFeeds.minus(feeds)
+
+                            for(feed in feeds)
+                                feed.insert(realm)
+
+                            Log.d("API", feedsToDelete.toString())
+
+                            for(feed in feedsToDelete)
+                                feed.delete(realm)
+                        }
+
+                        for (insertables in toInsert) {
+                            for (insertable in insertables.filterNotNull())
+                                insertable.insert(realm)
+                        }
+
+                        for (feed in dbFeeds) {
+                            feed.starredCount = realm.where<Item>()
+                                    .equalTo(Item::feedId.name, feed.id)
+                                    .equalTo(Item::starred.name, true).count().toInt()
+                            feed.unreadCount = realm.where<Item>()
+                                    .equalTo(Item::feedId.name, feed.id)
+                                    .equalTo(Item::unread.name, true).count().toInt()
+                        }
+                    }
                 }
             }
-        } catch(e: IllegalStateException) {
-            e.printStackTrace()
+            SyncType.LOAD_MORE -> {
+
+            }
         }
     }
 
