@@ -61,16 +61,10 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
     private lateinit var preferenceChangeListener: OnSharedPreferenceChangeListener
 
     private fun updateSyncStatus(syncRunning: Boolean) {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val needsUpdate = Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.getBoolean(sharedPreferences)
-        if (needsUpdate) {
+        if(!syncRunning)
             feedViewModel.updateTemporaryFeed(PreferenceManager.getDefaultSharedPreferences(this), true)
-            sharedPreferences.edit()
-                    .putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.key, false).apply()
-        }
-        if (binding.swipeRefreshLayout != null) {
-            binding.swipeRefreshLayout.isRefreshing = syncRunning
-        }
+
+        binding.swipeRefreshLayout?.isRefreshing = syncRunning
         binding.bottomAppbar.menu.findItem(R.id.menu_sync).isEnabled = !syncRunning
     }
 
@@ -231,9 +225,9 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
             startActivityForResult(itemActivityIntent, ItemPagerActivity.REQUEST_CODE)
         } else {
             adapter.toggleSelection(position)
-            if (adapter.selectedItemsCount == 0) actionMode!!.finish() else {
-                actionMode!!.title = adapter.selectedItemsCount.toString()
-                actionMode!!.invalidate()
+            if (adapter.selectedItemsCount == 0) actionMode?.finish() else {
+                actionMode?.title = adapter.selectedItemsCount.toString()
+                actionMode?.invalidate()
             }
         }
     }

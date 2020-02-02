@@ -299,8 +299,6 @@ class API {
                             for(folder in folders)
                                 folder.insert(realm)
 
-                            Log.d("API", foldersToDelete.toString())
-
                             for(folder in foldersToDelete)
                                 folder.delete(realm)
                         }
@@ -312,8 +310,6 @@ class API {
 
                             for(feed in feeds)
                                 feed.insert(realm)
-
-                            Log.d("API", feedsToDelete.toString())
 
                             for(feed in feedsToDelete)
                                 feed.delete(realm)
