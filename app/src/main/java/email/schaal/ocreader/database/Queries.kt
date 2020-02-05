@@ -43,13 +43,12 @@ object Queries {
         realm.createObject<TemporaryFeed>(TemporaryFeed.LIST_ID)
         realm.createObject<TemporaryFeed>(TemporaryFeed.PAGER_ID)
     }
-    private val migration: RealmMigration = DatabaseMigration()
 
     fun init(context: Context) {
         Realm.init(context)
         val realmConfiguration = RealmConfiguration.Builder()
                 .schemaVersion(SCHEMA_VERSION)
-                .migration(migration)
+                .deleteRealmIfMigrationNeeded()
                 .initialData(initialData)
                 .compactOnLaunch()
                 .build()

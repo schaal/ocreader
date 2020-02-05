@@ -20,7 +20,6 @@
 package email.schaal.ocreader.api
 
 import android.content.Context
-import android.util.Log
 import androidx.preference.PreferenceManager
 import com.github.zafarkhaja.semver.Version
 import com.squareup.moshi.Moshi
@@ -35,7 +34,6 @@ import email.schaal.ocreader.service.SyncType
 import io.realm.Realm
 import io.realm.kotlin.where
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -122,7 +120,7 @@ class API {
         suspend fun feeds(): Feeds
 
         @POST("feeds")
-        suspend fun createFeed(@Body feedMap: Map<String, Any>): Response<Feeds>
+        suspend fun createFeed(@Body feedMap: Map<String, Any>): Feeds
 
         @PUT("feeds/{feedId}/move")
         suspend fun moveFeed(@Path("feedId") feedId: Long, @Body folderIdMap: Map<String, Long>): Response<Void>
@@ -339,16 +337,34 @@ class API {
         }
     }
 
-    fun createFeed(realm: Realm, url: String, folderId: Long) {
+    suspend fun createFeed(realm: Realm, url: String, folderId: Long) {
+        val feeds = api?.createFeed(mapOf("url" to url, "folderId" to folderId))?.feeds
 
+        feeds?.get(0)?.let { feed: Feed ->
+            realm.executeTransaction {
+                feed.unreadCount = 0
+                feed.insert(it)
+            }
+        }
     }
 
-    fun deleteFeed(realm: Realm, feed: Feed) {
-
+    suspend fun deleteFeed(realm: Realm, feed: Feed) {
+        val response = api?.deleteFeed(feed.id)
+        if(response?.isSuccessful == true) {
+            realm.executeTransaction {
+                feed.delete(it)
+            }
+        }
     }
 
-    fun moveFeed(realm: Realm, feed: Feed, folderId: Long) {
-
+    suspend fun moveFeed(realm: Realm, feed: Feed, folderId: Long) {
+        val response = api?.moveFeed(feed.id, mapOf("folderId" to folderId))
+        if(response?.isSuccessful == true) {
+            realm.executeTransaction {
+                feed.folderId = folderId
+                feed.folder = Folder.getOrCreate(it, folderId)
+            }
+        }
     }
 
     private interface CommonAPI {

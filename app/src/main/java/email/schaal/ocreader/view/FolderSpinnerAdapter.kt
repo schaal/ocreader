@@ -13,7 +13,7 @@ import io.realm.OrderedRealmCollection
 /**
  * Adapter for Spinner to display Folders
  */
-class FolderSpinnerAdapter(context: Context, private val folders: OrderedRealmCollection<Folder>) : BaseAdapter() {
+class FolderSpinnerAdapter(context: Context, private val folders: List<Folder>) : BaseAdapter() {
     private val rootFolder: String = context.getString(R.string.root_folder)
 
     override fun getCount(): Int {
@@ -32,11 +32,11 @@ class FolderSpinnerAdapter(context: Context, private val folders: OrderedRealmCo
         return if (position == 0) VIEW_TYPE_NONE else VIEW_TYPE_FOLDER
     }
 
-    override fun getDropDownView(position: Int, convertView: View, parent: ViewGroup): View {
+    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
         return getSpinnerView(position, convertView, parent, R.layout.spinner_folder_dropdown)
     }
 
-    override fun getView(position: Int, convertView: View, parent: ViewGroup): View {
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         return getSpinnerView(position, convertView, parent, R.layout.spinner_folder)
     }
 
@@ -53,8 +53,7 @@ class FolderSpinnerAdapter(context: Context, private val folders: OrderedRealmCo
     fun getPosition(folderId: Long): Int {
         if (folderId == 0L) return 0
         var i = 1
-        val foldersSize = folders.size
-        while (i - 1 < foldersSize) {
+        while (i - 1 < folders.size) {
             if (folders[i - 1].id == folderId) {
                 return i
             }

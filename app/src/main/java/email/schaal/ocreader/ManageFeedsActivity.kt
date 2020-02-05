@@ -1,6 +1,5 @@
 package email.schaal.ocreader
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
@@ -9,12 +8,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import email.schaal.ocreader.api.API
 import email.schaal.ocreader.database.model.Feed
 import email.schaal.ocreader.database.model.Folder
 import email.schaal.ocreader.databinding.ActivityManageFeedsBinding
 import email.schaal.ocreader.view.*
-import io.realm.kotlin.where
+import kotlinx.coroutines.launch
 
 class ManageFeedsActivity : RealmActivity(), FeedManageListener {
     lateinit var folderSpinnerAdapter: FolderSpinnerAdapter
@@ -24,9 +25,8 @@ class ManageFeedsActivity : RealmActivity(), FeedManageListener {
         val binding = DataBindingUtil.setContentView<ActivityManageFeedsBinding>(this, R.layout.activity_manage_feeds)
         setSupportActionBar(binding.toolbarLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        folderSpinnerAdapter = FolderSpinnerAdapter(this, realm.where<Folder>().sort(Folder::name.name).findAll())
-        val adapter = FeedsAdapter(realm, this)
-        binding.feedsRecyclerview.adapter = adapter
+        folderSpinnerAdapter = FolderSpinnerAdapter(this, Folder.getAll(realm, false))
+        binding.feedsRecyclerview.adapter = FeedsAdapter(realm, this)
         binding.feedsRecyclerview.layoutManager = LinearLayoutManager(this)
         binding.feedsRecyclerview.addItemDecoration(DividerItemDecoration(this, R.dimen.divider_inset))
         binding.fabAddFeed.setOnClickListener { AddNewFeedDialogFragment.show(this@ManageFeedsActivity, null, false) }
@@ -39,7 +39,12 @@ class ManageFeedsActivity : RealmActivity(), FeedManageListener {
 
     override fun addNewFeed(url: String, folderId: Long, finishAfterAdd: Boolean) {
         val progressDialog = showProgress(this, getString(R.string.adding_feed))
-        TODO()
+        lifecycleScope.launch {
+            API(this@ManageFeedsActivity).createFeed(realm, url, folderId)
+        }.invokeOnCompletion {
+            it?.printStackTrace()
+            progressDialog.dismiss()
+        }
     }
 
     override fun deleteFeed(feed: Feed) {
@@ -47,7 +52,12 @@ class ManageFeedsActivity : RealmActivity(), FeedManageListener {
                 .setMessage(getString(R.string.confirm_feed_deletion, feed.name))
                 .setPositiveButton(R.string.delete) { _: DialogInterface?, _: Int ->
                     val progressDialog = showProgress(this@ManageFeedsActivity, getString(R.string.deleting_feed, feed.name))
-                    TODO()
+                    lifecycleScope.launch {
+                        API(this@ManageFeedsActivity).deleteFeed(realm, feed)
+                    }.invokeOnCompletion {
+                        it?.printStackTrace()
+                        progressDialog.dismiss()
+                    }
                 }
                 .setNegativeButton(android.R.string.cancel, null)
                 .show()
@@ -58,13 +68,18 @@ class ManageFeedsActivity : RealmActivity(), FeedManageListener {
     }
 
     override fun changeFeed(feedId: Long, folderId: Long) {
-        val feed = Feed.get(realm, feedId)
+        val feed = Feed.get(realm, feedId) ?: return
         val progressDialog = showProgress(this, getString(R.string.moving_feed))
-        TODO()
+        lifecycleScope.launch {
+            API(this@ManageFeedsActivity).moveFeed(realm, feed, folderId)
+        }.invokeOnCompletion {
+            it?.printStackTrace()
+            progressDialog.dismiss()
+        }
     }
 
     private fun showErrorMessage(title: String, message: String) {
-        Toast.makeText(this@ManageFeedsActivity, String.format("%s\n%s", title, message), Toast.LENGTH_LONG).show()
+        Toast.makeText(this@ManageFeedsActivity, "$title\n$message", Toast.LENGTH_LONG).show()
     }
 
     private fun showProgress(context: Context, message: String): ProgressDialog {
