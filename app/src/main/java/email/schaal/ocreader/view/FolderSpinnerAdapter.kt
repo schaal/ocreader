@@ -13,11 +13,16 @@ import io.realm.OrderedRealmCollection
 /**
  * Adapter for Spinner to display Folders
  */
-class FolderSpinnerAdapter(context: Context, private val folders: List<Folder>) : BaseAdapter() {
+class FolderSpinnerAdapter(context: Context, private var folders: List<Folder> = emptyList()) : BaseAdapter() {
     private val rootFolder: String = context.getString(R.string.root_folder)
 
     override fun getCount(): Int {
         return folders.size + 1
+    }
+
+    fun updateFolders(folders: List<Folder>) {
+        this.folders = folders
+        notifyDataSetChanged()
     }
 
     override fun getItem(position: Int): Any {

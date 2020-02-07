@@ -87,7 +87,7 @@ open class Item(
                         }
                     }
                 } catch (e: RealmException) {
-                    Log.e(Item::class.simpleName, "Failed to set item as unread", e)
+                    Log.e("Item", "Failed to set item as unread", e)
                 }
             }
         }
@@ -99,7 +99,7 @@ open class Item(
                         item.starred = newStarred
                     }
                 } catch (e: RealmException) {
-                    Log.e(Item::class.simpleName, "Failed to set item as starred", e)
+                    Log.e("Item", "Failed to set item as starred", e)
                 }
             }
         }

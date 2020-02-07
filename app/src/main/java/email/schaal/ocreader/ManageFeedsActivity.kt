@@ -7,25 +7,31 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import email.schaal.ocreader.api.API
+import email.schaal.ocreader.database.FolderViewModel
 import email.schaal.ocreader.database.model.Feed
-import email.schaal.ocreader.database.model.Folder
 import email.schaal.ocreader.databinding.ActivityManageFeedsBinding
 import email.schaal.ocreader.view.*
 import kotlinx.coroutines.launch
 
 class ManageFeedsActivity : RealmActivity(), FeedManageListener {
     lateinit var folderSpinnerAdapter: FolderSpinnerAdapter
+    private val folderViewModel by viewModels<FolderViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = DataBindingUtil.setContentView<ActivityManageFeedsBinding>(this, R.layout.activity_manage_feeds)
         setSupportActionBar(binding.toolbarLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        folderSpinnerAdapter = FolderSpinnerAdapter(this, Folder.getAll(realm, false))
+        folderSpinnerAdapter = FolderSpinnerAdapter(this)
+        folderViewModel.foldersLiveData.observe(this, Observer {
+            folderSpinnerAdapter.updateFolders(it)
+        })
         binding.feedsRecyclerview.adapter = FeedsAdapter(realm, this)
         binding.feedsRecyclerview.layoutManager = LinearLayoutManager(this)
         binding.feedsRecyclerview.addItemDecoration(DividerItemDecoration(this, R.dimen.divider_inset))

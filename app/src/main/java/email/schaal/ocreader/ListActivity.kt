@@ -28,10 +28,10 @@ import androidx.preference.PreferenceManager
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.google.android.material.snackbar.Snackbar
@@ -57,14 +57,14 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
     private lateinit var binding: ActivityListBinding
     private lateinit var adapter: LiveItemsAdapter
     private lateinit var layoutManager: LinearLayoutManager
-    private lateinit var feedViewModel: FeedViewModel
+    private val feedViewModel: FeedViewModel by viewModels { FeedViewModelFactory(this) }
     private lateinit var preferenceChangeListener: OnSharedPreferenceChangeListener
 
     private fun updateSyncStatus(syncRunning: Boolean) {
         if(!syncRunning)
             feedViewModel.updateTemporaryFeed(PreferenceManager.getDefaultSharedPreferences(this), true)
 
-        binding.swipeRefreshLayout?.isRefreshing = syncRunning
+        binding.swipeRefreshLayout.isRefreshing = syncRunning
         binding.bottomAppbar.menu.findItem(R.id.menu_sync).isEnabled = !syncRunning
     }
 
@@ -122,7 +122,6 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
             }
             false
         }
-        feedViewModel = ViewModelProviders.of(this, FeedViewModelFactory(this)).get(FeedViewModel::class.java)
 
         preferenceChangeListener = OnSharedPreferenceChangeListener { _: SharedPreferences?, key: String ->
             if (Preferences.SHOW_ONLY_UNREAD.key == key) {
