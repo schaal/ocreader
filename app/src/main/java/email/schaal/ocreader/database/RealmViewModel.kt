@@ -19,8 +19,13 @@
 
 package email.schaal.ocreader.database
 
-import email.schaal.ocreader.database.model.Folder
+import androidx.lifecycle.ViewModel
+import io.realm.Realm
 
-class FolderViewModel: RealmViewModel() {
-    val foldersLiveData = LiveRealmResults(Folder.getAll(realm, false))
+open class RealmViewModel : ViewModel() {
+    protected val realm: Realm = Realm.getDefaultInstance()
+    override fun onCleared() {
+        realm.close()
+        super.onCleared()
+    }
 }

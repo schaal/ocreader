@@ -29,8 +29,7 @@ import email.schaal.ocreader.service.SyncType
 import io.realm.Realm
 import kotlinx.coroutines.launch
 
-class FeedViewModel(context: Context) : ViewModel() {
-    private val realm: Realm = Realm.getDefaultInstance()
+class FeedViewModel(context: Context) : RealmViewModel() {
     private val temporaryFeedLiveData: MutableLiveData<TemporaryFeed>
     private val itemsLiveData: MutableLiveData<List<Item>>
     private val foldersLiveData: MutableLiveData<List<Folder>>
@@ -51,11 +50,6 @@ class FeedViewModel(context: Context) : ViewModel() {
 
     val topFolderList: Collection<TreeItem>
         get() = topFolderMap.values
-
-    override fun onCleared() {
-        realm.close()
-        super.onCleared()
-    }
 
     fun sync(context: Context, syncType: SyncType) {
         if(syncType != SyncType.SYNC_CHANGES_ONLY)

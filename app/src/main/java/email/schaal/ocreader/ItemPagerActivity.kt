@@ -34,6 +34,7 @@ import androidx.preference.PreferenceManager
 import android.view.Menu
 import android.view.MenuItem
 import android.webkit.WebView
+import androidx.activity.viewModels
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.Keep
@@ -42,11 +43,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import email.schaal.ocreader.ItemPageFragment.Companion.newInstance
-import email.schaal.ocreader.database.Queries
+import email.schaal.ocreader.database.PagerViewModel
 import email.schaal.ocreader.database.model.Item
-import email.schaal.ocreader.database.model.TemporaryFeed
 import email.schaal.ocreader.databinding.ActivityItemPagerBinding
 import email.schaal.ocreader.util.FaviconLoader
 import email.schaal.ocreader.util.FaviconLoader.FeedColorsListener
@@ -62,6 +63,8 @@ class ItemPagerActivity : RealmActivity() {
     private lateinit var item: Item
     private lateinit var items: List<Item>
 
+    private val pagerViewModel:PagerViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         if (Build.VERSION.SDK_INT >= 24) {
             WebView(this)
@@ -69,21 +72,16 @@ class ItemPagerActivity : RealmActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_item_pager)
         setSupportActionBar(binding.bottomAppbar)
+
         val order = Preferences.ORDER.getOrder(PreferenceManager.getDefaultSharedPreferences(this))
         val sortField = Preferences.SORT_FIELD.getString(PreferenceManager.getDefaultSharedPreferences(this))
-        val title: String
+
         try {
-            if (intent.hasExtra("ARG_ITEMS")) {
-                title = "Test"
-                items = intent.getParcelableArrayListExtra("ARG_ITEMS")
-                        ?: throw IllegalStateException()
-            } else {
-                TemporaryFeed.updatePagerTemporaryFeed(realm)
-                val temporaryFeed = TemporaryFeed.getPagerTemporaryFeed(realm)
-                items = temporaryFeed?.items?.sort(sortField, order)
-                        ?: throw IllegalStateException()
-                title = temporaryFeed.name
-            }
+            pagerViewModel.updatePager()
+            val temporaryFeed = pagerViewModel.pager.value
+            items = temporaryFeed?.items?.sort(sortField, order) ?: throw IllegalStateException()
+            binding.toolbarLayout.toolbar.title = temporaryFeed.name
+            binding.toolbarLayout.toolbar.subtitle = ""
 
             val position = intent.getIntExtra(EXTRA_CURRENT_POSITION, 0)
 
@@ -95,8 +93,6 @@ class ItemPagerActivity : RealmActivity() {
                 typedArray.recycle()
             }
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            binding.toolbarLayout.toolbar.title = title
-            binding.toolbarLayout.toolbar.subtitle = ""
 
             val mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
             binding.container.adapter = mSectionsPagerAdapter
