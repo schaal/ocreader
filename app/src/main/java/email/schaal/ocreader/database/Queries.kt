@@ -71,31 +71,4 @@ object Queries {
         }
     }
 
-    fun markAboveAsRead(realm: Realm, items: List<Item>?, lastItemId: Long) {
-        if(items != null) {
-            realm.executeTransaction {
-                for (item in items) {
-                    item.unread = false
-                    if (item.id == lastItemId) {
-                        break
-                    }
-                }
-            }
-        }
-    }
-
-    fun markTemporaryFeedAsRead(realm: Realm, onSuccess: OnSuccess?, onError: Realm.Transaction.OnError?) {
-        realm.executeTransactionAsync(Realm.Transaction { realm1: Realm ->
-            val unreadItems = getListTemporaryFeed(realm1)
-                    ?.items
-                    ?.where()
-                    ?.equalTo(Item.UNREAD, true)
-                    ?.findAll()
-            if(unreadItems != null)
-                for (item in unreadItems) {
-                    item.unread = false
-                }
-        }, onSuccess, onError)
-    }
-
 }

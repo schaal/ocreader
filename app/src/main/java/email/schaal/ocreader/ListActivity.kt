@@ -29,6 +29,7 @@ import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -52,7 +53,7 @@ import email.schaal.ocreader.view.FoldersAdapter.TreeItemClickListener
 import email.schaal.ocreader.view.ItemViewHolder
 import email.schaal.ocreader.view.LiveItemsAdapter
 
-class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshListener, ActionMode.Callback, TreeItemClickListener {
+class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefreshListener, ActionMode.Callback, TreeItemClickListener {
     private var actionMode: ActionMode? = null
     private lateinit var binding: ActivityListBinding
     private lateinit var adapter: LiveItemsAdapter
@@ -112,7 +113,7 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_mark_all_as_read -> {
-                    Queries.markTemporaryFeedAsRead(realm, null, null)
+                    feedViewModel.markTemporaryFeedAsRead()
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_manage_feeds -> {
@@ -266,29 +267,29 @@ class ListActivity : RealmActivity(), ItemViewHolder.OnClickListener, OnRefreshL
     override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_mark_read -> {
-                Item.setItemsUnread(realm, false, *adapter.selectedItems)
+                feedViewModel.setItemUnread(false, *adapter.selectedItems)
                 mode.finish()
                 return true
             }
             R.id.action_mark_unread -> {
-                Item.setItemsUnread(realm, true, *adapter.selectedItems)
+                feedViewModel.setItemUnread(true, *adapter.selectedItems)
                 mode.finish()
                 return true
             }
             R.id.action_mark_starred -> {
-                Item.setItemsStarred(realm, true, *adapter.selectedItems)
+                feedViewModel.setItemStarred(true, *adapter.selectedItems)
                 mode.finish()
                 return true
             }
             R.id.action_mark_unstarred -> {
-                Item.setItemsStarred(realm, false, *adapter.selectedItems)
+                feedViewModel.setItemStarred(false, *adapter.selectedItems)
                 mode.finish()
                 return true
             }
             R.id.action_mark_above_read -> {
                 val lastItemId = adapter.selectedItems[0]?.id
                 if(lastItemId != null)
-                    Queries.markAboveAsRead(realm, feedViewModel.items.value, lastItemId)
+                    feedViewModel.markAboveAsRead(feedViewModel.items.value, lastItemId)
                 mode.finish()
                 return true
             }

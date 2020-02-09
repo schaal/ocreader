@@ -22,6 +22,7 @@ package email.schaal.ocreader
 import android.animation.AnimatorSet
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
@@ -38,12 +39,12 @@ import androidx.activity.viewModels
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.Keep
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.ColorUtils
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import email.schaal.ocreader.ItemPageFragment.Companion.newInstance
 import email.schaal.ocreader.database.PagerViewModel
@@ -54,7 +55,7 @@ import email.schaal.ocreader.util.FaviconLoader.FeedColorsListener
 import email.schaal.ocreader.util.FeedColors
 import java.util.*
 
-class ItemPagerActivity : RealmActivity() {
+class ItemPagerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityItemPagerBinding
     @ColorInt
     private var defaultToolbarColor = 0
@@ -65,6 +66,7 @@ class ItemPagerActivity : RealmActivity() {
 
     private val pagerViewModel:PagerViewModel by viewModels()
 
+    @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         if (Build.VERSION.SDK_INT >= 24) {
             WebView(this)
@@ -148,11 +150,11 @@ class ItemPagerActivity : RealmActivity() {
     }
 
     private fun setItemUnread(unread: Boolean) {
-        Item.setItemsUnread(realm, unread, item)
+        pagerViewModel.setItemUnread(unread, item)
     }
 
     private fun setItemStarred(starred: Boolean) {
-        Item.setItemsStarred(realm, starred, item)
+        pagerViewModel.setItemStarred(starred, item)
     }
 
     fun updateResult() {

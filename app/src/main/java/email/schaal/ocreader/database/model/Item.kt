@@ -68,42 +68,6 @@ open class Item(
         const val UNREAD = "actualUnread"
         const val STARRED = "actualStarred"
 
-        fun setItemsUnread(realm: Realm, newUnread: Boolean, vararg items: Item?) {
-            realm.executeTransaction {
-                try {
-                    for (item in items.filterNotNull()) { /* If the item has a fingerprint, mark all items with the same fingerprint
-                              as read
-                             */
-                        if (item.fingerprint == null) {
-                            item.unread = newUnread
-                        } else {
-                            val sameItems = it.where<Item>()
-                                    .equalTo(Item::fingerprint.name, item.fingerprint)
-                                    .equalTo(UNREAD, !newUnread)
-                                    .findAll()
-                            for (sameItem in sameItems) {
-                                sameItem.unread = newUnread
-                            }
-                        }
-                    }
-                } catch (e: RealmException) {
-                    Log.e("Item", "Failed to set item as unread", e)
-                }
-            }
-        }
-
-        fun setItemsStarred(realm: Realm, newStarred: Boolean, vararg items: Item?) {
-            realm.executeTransaction {
-                try {
-                    for (item in items.filterNotNull()) {
-                        item.starred = newStarred
-                    }
-                } catch (e: RealmException) {
-                    Log.e("Item", "Failed to set item as starred", e)
-                }
-            }
-        }
-
         fun removeExcessItems(realm: Realm, maxItems: Int) {
             val itemCount = realm.where<Item>().count()
             if (itemCount > maxItems) {

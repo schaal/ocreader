@@ -25,6 +25,7 @@ import androidx.preference.PreferenceManager
 import email.schaal.ocreader.Preferences
 import email.schaal.ocreader.api.API
 import email.schaal.ocreader.database.model.*
+import email.schaal.ocreader.database.model.TemporaryFeed.Companion.getListTemporaryFeed
 import email.schaal.ocreader.service.SyncType
 import io.realm.Realm
 import kotlinx.coroutines.launch
@@ -91,6 +92,33 @@ class FeedViewModel(context: Context) : RealmViewModel() {
         itemsLiveData.value = temporaryFeed.items?.sort(Preferences.SORT_FIELD.getString(preferences), Preferences.ORDER.getOrder(preferences))
     }
 
+    fun markTemporaryFeedAsRead() {
+        realm.executeTransactionAsync(Realm.Transaction { realm1: Realm ->
+            val unreadItems = getListTemporaryFeed(realm1)
+                    ?.items
+                    ?.where()
+                    ?.equalTo(Item.UNREAD, true)
+                    ?.findAll()
+            if(unreadItems != null)
+                for (item in unreadItems) {
+                    item.unread = false
+                }
+        }, null, null)
+    }
+
+    fun markAboveAsRead(items: List<Item>?, lastItemId: Long) {
+        if(items != null) {
+            realm.executeTransaction {
+                for (item in items) {
+                    item.unread = false
+                    if (item.id == lastItemId) {
+                        break
+                    }
+                }
+            }
+        }
+    }
+
     class FeedViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return FeedViewModel(context) as T
@@ -99,7 +127,7 @@ class FeedViewModel(context: Context) : RealmViewModel() {
 
     init {
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val temporaryFeed = TemporaryFeed.getListTemporaryFeed(realm)!!
+        val temporaryFeed = getListTemporaryFeed(realm)!!
         temporaryFeedLiveData = LiveRealmObject(temporaryFeed)
         itemsLiveData = LiveRealmResults<Item>(temporaryFeed.items?.sort(Preferences.SORT_FIELD.getString(preferences) ?: Item::pubDate.name, Preferences.ORDER.getOrder(preferences))!!)
         foldersLiveData = LiveRealmResults(Folder.getAll(realm, Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences)))
