@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 
 class ManageFeedsActivity : RealmActivity(), FeedManageListener {
     lateinit var folderSpinnerAdapter: FolderSpinnerAdapter
+    private lateinit var feedsAdapter: FeedsAdapter
     private val folderViewModel by viewModels<FolderViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,10 +30,17 @@ class ManageFeedsActivity : RealmActivity(), FeedManageListener {
         setSupportActionBar(binding.toolbarLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         folderSpinnerAdapter = FolderSpinnerAdapter(this)
+        feedsAdapter = FeedsAdapter(this)
+        binding.feedsRecyclerview.adapter = feedsAdapter
+
         folderViewModel.foldersLiveData.observe(this, Observer {
             folderSpinnerAdapter.updateFolders(it)
         })
-        binding.feedsRecyclerview.adapter = FeedsAdapter(realm, this)
+
+        folderViewModel.feedsLiveData.observe(this, Observer {
+            feedsAdapter.feeds = it
+        })
+
         binding.feedsRecyclerview.layoutManager = LinearLayoutManager(this)
         binding.feedsRecyclerview.addItemDecoration(DividerItemDecoration(this, R.dimen.divider_inset))
         binding.fabAddFeed.setOnClickListener { AddNewFeedDialogFragment.show(this@ManageFeedsActivity, null, false) }

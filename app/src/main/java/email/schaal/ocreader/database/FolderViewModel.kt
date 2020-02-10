@@ -19,8 +19,11 @@
 
 package email.schaal.ocreader.database
 
+import email.schaal.ocreader.database.model.Feed
 import email.schaal.ocreader.database.model.Folder
+import io.realm.kotlin.where
 
 class FolderViewModel: RealmViewModel() {
     val foldersLiveData = LiveRealmResults(Folder.getAll(realm, false))
+    val feedsLiveData = LiveRealmResults(realm.where<Feed>().sort(Feed::name.name).findAll())
 }
