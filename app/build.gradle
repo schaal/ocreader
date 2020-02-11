@@ -80,7 +80,8 @@ ext {
             okhttp: '4.3.1',
             retrofit: '2.6.3',
             glide: '4.11.0',
-            lifecycle: '2.2.0'
+            lifecycle: '2.2.0',
+            moshi: '1.9.2'
     ]
 }
 
@@ -99,7 +100,6 @@ dependencies {
 
     implementation "androidx.core:core:1.1.0"
     implementation "androidx.appcompat:appcompat:1.1.0"
-    implementation "androidx.cardview:cardview:1.0.0"
     implementation "androidx.recyclerview:recyclerview:1.1.0"
     implementation "androidx.palette:palette:1.0.0"
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
@@ -111,8 +111,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime:2.2.0"
     implementation "androidx.lifecycle:lifecycle-common-java8:2.2.0"
 
-    implementation "com.mikepenz:materialize:1.2.1"
-
     implementation 'com.mikepenz:aboutlibraries:7.1.0'
 
     implementation 'org.jsoup:jsoup:1.12.1'
@@ -122,12 +120,13 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:${versions.retrofit}"
     implementation "com.squareup.retrofit2:converter-moshi:${versions.retrofit}"
 
-    implementation "com.squareup.moshi:moshi:1.9.2"
-    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.9.2")
+    implementation "com.squareup.moshi:moshi:${versions.moshi}"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:${versions.moshi}"
 
     implementation("com.github.bumptech.glide:glide:${versions.glide}@aar") {
         transitive = true
     }
+
     implementation "com.github.bumptech.glide:okhttp3-integration:${versions.glide}@aar"
     implementation "com.github.bumptech.glide:recyclerview-integration:${versions.glide}@aar"
 

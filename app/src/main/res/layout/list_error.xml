@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/materialize_baseline_grid"
+            android:layout_marginEnd="@dimen/materialize_spacing"
             android:contentDescription="@string/warning"
             android:src="@drawable/ic_warning" />
 

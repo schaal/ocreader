@@ -37,7 +37,7 @@
             android:layout_height="match_parent"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:padding="@dimen/materialize_screen_edge"
+            android:padding="@dimen/materialize_spacing"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:context="email.schaal.ocreader.LoginActivity">
 
@@ -47,7 +47,7 @@
                 style="?android:attr/progressBarStyleLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/materialize_baseline_grid"
+                android:layout_marginBottom="@dimen/materialize_spacing"
                 android:visibility="gone"/>
 
             <ScrollView

@@ -33,7 +33,7 @@
     <color name="delete">@color/md_red_500</color>
     <color name="warning">@color/md_amber_500</color>
     <color name="error">@color/md_red_500</color>
-    <color name="textdrawable_text">@color/md_dark_primary_text</color>
+    <color name="textdrawable_text">?android:textColor</color>
 
     <!-- Background colors for textdrawable -->
     <color name="tdb_Red">@color/md_red_900</color>

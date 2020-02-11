@@ -42,8 +42,8 @@
 
         <ImageView
             android:id="@+id/imageview_favicon"
-            android:layout_width="@dimen/materialize_icon"
-            android:layout_height="@dimen/materialize_icon"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_centerVertical="true"
@@ -83,8 +83,8 @@
 
             <ImageView
                 android:id="@+id/imageview_star"
-                android:layout_width="@dimen/materialize_icon"
-                android:layout_height="@dimen/materialize_icon"
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
                 android:contentDescription="@string/starred"
                 android:src="@drawable/ic_star"
                 android:tint="@color/star"
