@@ -10,7 +10,6 @@ import android.webkit.JavascriptInterface
 import androidx.annotation.ColorInt
 import androidx.annotation.Keep
 import androidx.core.content.ContextCompat
-import com.vdurmont.emoji.EmojiManager
 import email.schaal.ocreader.Preferences
 import email.schaal.ocreader.R
 import email.schaal.ocreader.database.model.Item
@@ -18,10 +17,8 @@ import email.schaal.ocreader.util.FaviconLoader
 import email.schaal.ocreader.util.FaviconLoader.FeedColorsListener
 import email.schaal.ocreader.util.FeedColors
 import email.schaal.ocreader.util.getByLine
-import email.schaal.ocreader.util.nullToEmpty
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.TextNode
 import org.jsoup.safety.Cleaner
 import org.jsoup.safety.Whitelist
 import java.util.*
@@ -153,14 +150,7 @@ class ArticleWebView : NestedScrollWebView {
 
     }
 
-    private fun prepareDocument(document: Document) { // Some blog engines replace emojis with an image and place the emoji in the image tag.
-// Find images with the tag being a single character and check if they are emoji. Then
-// replace the img with the actual emoji in unicode.
-        val imgs = document.select("img[alt~=^.$]")
-        for (img in imgs) {
-            val possibleEmoji = img.attr("alt")
-            if (EmojiManager.isEmoji(possibleEmoji)) img.replaceWith(TextNode(possibleEmoji))
-        }
+    private fun prepareDocument(document: Document) {
         val iframes = document.getElementsByTag("iframe")
         for (iframe in iframes) {
             if (iframe.hasAttr("src")) {
