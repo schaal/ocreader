@@ -56,7 +56,10 @@ class ManageFeedsActivity : RealmActivity(), FeedManageListener {
         lifecycleScope.launch {
             API(this@ManageFeedsActivity).createFeed(realm, url, folderId)
         }.invokeOnCompletion {
-            it?.printStackTrace()
+            if(it != null) {
+                it.printStackTrace()
+                showErrorMessage(getString(R.string.feed_add_failed), it.localizedMessage ?: "")
+            }
             progressDialog.dismiss()
         }
     }
@@ -69,7 +72,10 @@ class ManageFeedsActivity : RealmActivity(), FeedManageListener {
                     lifecycleScope.launch {
                         API(this@ManageFeedsActivity).deleteFeed(realm, feed)
                     }.invokeOnCompletion {
-                        it?.printStackTrace()
+                        if(it != null) {
+                            it.printStackTrace()
+                            showErrorMessage(getString(R.string.delete_feed_failed), it.localizedMessage ?: "")
+                        }
                         progressDialog.dismiss()
                     }
                 }
@@ -87,7 +93,10 @@ class ManageFeedsActivity : RealmActivity(), FeedManageListener {
         lifecycleScope.launch {
             API(this@ManageFeedsActivity).moveFeed(realm, feed, folderId)
         }.invokeOnCompletion {
-            it?.printStackTrace()
+            if(it != null) {
+                it.printStackTrace()
+                showErrorMessage(getString(R.string.feed_move_failed), it.localizedMessage ?: "")
+            }
             progressDialog.dismiss()
         }
     }
