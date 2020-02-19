@@ -23,13 +23,10 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import email.schaal.ocreader.api.API
-import io.realm.Realm
 
 class SyncChangesWorker(val context: Context, workerParams: WorkerParameters) : CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
-        Realm.getDefaultInstance().use {
-            API(context).sync(it, SyncType.SYNC_CHANGES_ONLY)
-        }
+        API(context).sync(SyncType.SYNC_CHANGES_ONLY)
         return Result.success()
     }
 }

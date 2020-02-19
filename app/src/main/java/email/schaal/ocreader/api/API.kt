@@ -20,6 +20,7 @@
 package email.schaal.ocreader.api
 
 import android.content.Context
+import android.util.Log
 import androidx.preference.PreferenceManager
 import com.github.zafarkhaja.semver.Version
 import com.squareup.moshi.Moshi
@@ -44,6 +45,8 @@ import retrofit2.http.*
 
 class API {
     companion object {
+        private const val TAG = "API"
+
         const val BATCH_SIZE = 100
         const val API_ROOT = "./index.php/apps/news/api/"
 
@@ -230,65 +233,34 @@ class API {
         ALL(3)
     }
 
-    suspend fun sync(realm: Realm, syncType: SyncType) {
-        val result = syncChanges(realm)
-        when(syncType) {
-            SyncType.SYNC_CHANGES_ONLY -> {
-                withContext(Dispatchers.Main) {
+    suspend fun sync(syncType: SyncType) {
+        Log.d(TAG, "Sync started: ${syncType.action}")
+        Realm.getDefaultInstance().use { realm ->
+            val result = syncChanges(realm)
+            when(syncType) {
+                SyncType.SYNC_CHANGES_ONLY -> {
                     realm.executeTransaction {
-                        for ((action, results) in result) {
-                            if(results != null) {
-                                when (action) {
-                                    MarkAction.MARK_READ, MarkAction.MARK_UNREAD -> {
-                                        for (item in results) {
-                                            item.unreadChanged = false
-                                        }
-                                    }
-                                    MarkAction.MARK_STARRED, MarkAction.MARK_UNSTARRED -> {
-                                        for (item in results) {
-                                            item.starredChanged = false
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        resetItemChanged(result)
                     }
                 }
-            }
-            SyncType.FULL_SYNC -> {
-                val lastSync = realm.where<Item>().max(Item::lastModified.name)?.toLong() ?: 0L
+                SyncType.FULL_SYNC -> {
+                    val lastSync = realm.where<Item>().max(Item::lastModified.name)?.toLong() ?: 0L
 
-                val toInsert: MutableSet<List<Insertable?>> = mutableSetOf()
+                    val toInsert: MutableSet<List<Insertable?>> = mutableSetOf()
 
-                toInsert.add(listOf(api?.user()))
+                    toInsert.add(listOf(api?.user()))
 
-                val folders = api?.folders()?.folders
-                val feeds = api?.feeds()?.feeds
+                    val folders = api?.folders()?.folders
+                    val feeds = api?.feeds()?.feeds
 
-                if(lastSync == 0L) {
-                    api?.items(-1L, 0L, QueryType.STARRED.type, 0L, getRead = true, oldestFirst = false)?.items?.let { toInsert.add(it) }
-                    api?.items(-1L, 0L, QueryType.ALL.type, 0L, getRead = false, oldestFirst = false)?.items?.let { toInsert.add(it) }
-                } else {
-                    api?.updatedItems(lastSync, QueryType.ALL.type, 0L)?.items?.let { toInsert.add(it) }
-                }
-                withContext(Dispatchers.Main) {
+                    if(lastSync == 0L) {
+                        api?.items(-1L, 0L, QueryType.STARRED.type, 0L, getRead = true, oldestFirst = false)?.items?.let { toInsert.add(it) }
+                        api?.items(-1L, 0L, QueryType.ALL.type, 0L, getRead = false, oldestFirst = false)?.items?.let { toInsert.add(it) }
+                    } else {
+                        api?.updatedItems(lastSync, QueryType.ALL.type, 0L)?.items?.let { toInsert.add(it) }
+                    }
                     realm.executeTransaction {
-                        for ((action, results) in result) {
-                            if(results != null) {
-                                when (action) {
-                                    MarkAction.MARK_READ, MarkAction.MARK_UNREAD -> {
-                                        for (item in results) {
-                                            item.unreadChanged = false
-                                        }
-                                    }
-                                    MarkAction.MARK_STARRED, MarkAction.MARK_UNSTARRED -> {
-                                        for (item in results) {
-                                            item.starredChanged = false
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        resetItemChanged(result)
 
                         if(folders != null) {
                             val dbFolders = realm.where<Folder>().findAll()
@@ -330,9 +302,25 @@ class API {
                         Item.removeExcessItems(realm, 10000)
                     }
                 }
-            }
-            SyncType.LOAD_MORE -> {
+                SyncType.LOAD_MORE -> {
 
+                }
+            }
+        }
+        Log.d(TAG, "Sync finished: ${syncType.action}")
+    }
+
+    private fun resetItemChanged(result: Map<MarkAction, List<Item>?>) {
+        for ((action, results) in result) {
+            if (results != null) {
+                when (action) {
+                    MarkAction.MARK_READ, MarkAction.MARK_UNREAD -> {
+                        results.forEach { it.unreadChanged = false }
+                    }
+                    MarkAction.MARK_STARRED, MarkAction.MARK_UNSTARRED -> {
+                        results.forEach { it.starredChanged = false }
+                    }
+                }
             }
         }
     }

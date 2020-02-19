@@ -58,7 +58,7 @@ class FeedViewModel(context: Context) : RealmViewModel() {
 
         viewModelScope.launch {
             try {
-                API(context).sync(realm, syncType)
+                API(context).sync(syncType)
             } catch(e: IllegalStateException) {
                 e.printStackTrace()
             }
