@@ -34,8 +34,10 @@ import email.schaal.ocreader.http.HttpManager
 import email.schaal.ocreader.service.SyncType
 import io.realm.Realm
 import io.realm.kotlin.where
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.runBlocking
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import retrofit2.Response
@@ -192,11 +194,9 @@ class API {
         return retrofit.create(APIv12Interface::class.java)
     }
 
-    private suspend fun syncChanges(realm: Realm): Map<MarkAction, List<Item>?> {
-        return MarkAction.values()
-                .toList().associateWith {
-                    markItems(it, realm)
-                }
+    private fun syncChanges(realm: Realm): Flow<Pair<MarkAction, List<Item>?>> = flow {
+        for(markAction in MarkAction.values())
+            emit(markAction to markItems(markAction, realm))
     }
 
     private suspend fun markItems(action: MarkAction, realm: Realm): List<Item>? {
@@ -310,10 +310,10 @@ class API {
         Log.d(TAG, "Sync finished: ${syncType.action}")
     }
 
-    private fun resetItemChanged(result: Map<MarkAction, List<Item>?>) {
-        for ((action, results) in result) {
-            if (results != null) {
-                when (action) {
+    private fun resetItemChanged(result: Flow<Pair<MarkAction, List<Item>?>>) = runBlocking {
+        result.collect { (action, results) ->
+            if(results != null) {
+                when(action) {
                     MarkAction.MARK_READ, MarkAction.MARK_UNREAD -> {
                         results.forEach { it.unreadChanged = false }
                     }
