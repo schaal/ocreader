@@ -29,6 +29,7 @@ import email.schaal.ocreader.database.model.TemporaryFeed.Companion.getListTempo
 import email.schaal.ocreader.service.SyncType
 import io.realm.Realm
 import kotlinx.coroutines.launch
+import kotlin.IllegalArgumentException
 
 class FeedViewModel(context: Context) : RealmViewModel() {
     private val temporaryFeedLiveData: MutableLiveData<TemporaryFeed>
@@ -120,7 +121,9 @@ class FeedViewModel(context: Context) : RealmViewModel() {
 
     class FeedViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return FeedViewModel(context) as T
+            if(modelClass.isAssignableFrom(FeedViewModel::class.java))
+                return FeedViewModel(context) as T
+            throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
 
