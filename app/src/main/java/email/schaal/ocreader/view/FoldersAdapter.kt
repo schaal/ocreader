@@ -118,18 +118,6 @@ class FoldersAdapter(context: Context, private var folders: List<TreeItem>?, def
                 binding.textViewTitle.text = folder.treeItemName()
             }
         }
-
-        private fun setSelected(selected: Boolean) {
-            var backgroundResource = R.drawable.item_background
-            if (!selected) {
-                val attrs = intArrayOf(R.attr.selectableItemBackground)
-                val typedArray = itemView.context.obtainStyledAttributes(attrs)
-                backgroundResource = typedArray.getResourceId(0, 0)
-                typedArray.recycle()
-            }
-            itemView.setBackgroundResource(backgroundResource)
-        }
-
     }
 
     init {
