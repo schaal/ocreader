@@ -22,6 +22,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.NO_ID
 import email.schaal.ocreader.R
 import email.schaal.ocreader.database.model.Item
 import email.schaal.ocreader.databinding.ListItemBinding
@@ -41,11 +42,11 @@ class LiveItemsAdapter(private var items: List<Item>?, private val clickListener
                 holder = ItemViewHolder(binding, clickListener)
             }
         }
-        return holder!!
+        return holder ?: throw IllegalArgumentException("Unknown view type")
     }
 
     override fun getItemId(position: Int): Long {
-        return items!![position].id
+        return items?.get(position)?.id ?: NO_ID
     }
 
     fun toggleSelection(position: Int) {
@@ -66,17 +67,22 @@ class LiveItemsAdapter(private var items: List<Item>?, private val clickListener
             val itemsArray = arrayOfNulls<Item>(selections.size)
             var i = 0
             for (position in selections) {
-                itemsArray[i++] = items!![position]
+                itemsArray[i++] = items?.get(position)
             }
             return itemsArray
         }
 
     val firstSelectedItem: Item?
-        get() = if (selections.isEmpty()) null else items!![selections.iterator().next()]
+        get() = if (selections.isEmpty())
+            null
+        else
+            items?.get(selections.iterator().next())
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ItemViewHolder) {
-            holder.bindItem(items!![position], position, selections.contains(position))
+            val item = items?.get(position)
+            if(item != null)
+                holder.bindItem(item, position, selections.contains(position))
         }
     }
 
