@@ -174,12 +174,12 @@ class API {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val username = Preferences.USERNAME.getString(sharedPreferences)
         val password = Preferences.PASSWORD.getString(sharedPreferences)
-        val url = Preferences.URL.getString(sharedPreferences)
+        val url = Preferences.URL.getString(sharedPreferences)?.toHttpUrlOrNull()
 
-        if(username == null || password == null)
+        if(username == null || password == null || url == null)
             throw IllegalStateException()
 
-        val httpManager = HttpManager(username, password, url?.toHttpUrlOrNull()!!)
+        val httpManager = HttpManager(username, password, url)
 
         api = setupApi(httpManager)
     }
