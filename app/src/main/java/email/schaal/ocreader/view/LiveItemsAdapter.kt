@@ -85,7 +85,7 @@ class LiveItemsAdapter(private var items: List<Item>?, private val clickListener
     }
 
     override fun getItemCount(): Int {
-        return if (items != null) items!!.size else 0
+        return items?.size ?: 0
     }
 
     fun updateItems(items: List<Item>?) {

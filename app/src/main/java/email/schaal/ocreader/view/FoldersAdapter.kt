@@ -27,7 +27,6 @@ import email.schaal.ocreader.database.model.*
 import email.schaal.ocreader.databinding.ListDividerBinding
 import email.schaal.ocreader.databinding.ListFolderBinding
 import io.realm.Realm
-import java.util.*
 
 class FoldersAdapter(context: Context, private var folders: List<TreeItem>?, defaultTopFolders: Array<TreeItem>, private val clickListener: TreeItemClickListener?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val topFolders: List<TreeItem>
