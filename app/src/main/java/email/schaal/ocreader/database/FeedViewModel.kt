@@ -36,7 +36,9 @@ class FeedViewModel(context: Context) : RealmViewModel() {
     private val foldersLiveData: MutableLiveData<List<Folder>>
     private val selectedTreeItemLiveData: MutableLiveData<TreeItem?>
     private val syncStatusLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
-    private val topFolderMap: MutableMap<Long, TreeItem>
+
+    val topFolders: Array<TreeItem>
+
     val temporaryFeed: LiveData<TemporaryFeed>
         get() = temporaryFeedLiveData
 
@@ -48,9 +50,6 @@ class FeedViewModel(context: Context) : RealmViewModel() {
 
     val syncStatus: LiveData<Boolean>
         get() = syncStatusLiveData
-
-    val topFolderList: Collection<TreeItem>
-        get() = topFolderMap.values
 
     fun sync(context: Context, syncType: SyncType) {
         if(syncType != SyncType.SYNC_CHANGES_ONLY)
@@ -131,11 +130,12 @@ class FeedViewModel(context: Context) : RealmViewModel() {
         temporaryFeedLiveData = LiveRealmObject(temporaryFeed)
         itemsLiveData = LiveRealmResults<Item>(temporaryFeed.items?.sort(Preferences.SORT_FIELD.getString(preferences) ?: Item::pubDate.name, Preferences.ORDER.getOrder(preferences))!!)
         foldersLiveData = LiveRealmResults(Folder.getAll(realm, Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences)))
-        topFolderMap = HashMap(3)
-        topFolderMap[AllUnreadFolder.ID] = AllUnreadFolder(context)
-        topFolderMap[StarredFolder.ID] = StarredFolder(context)
-        topFolderMap[FreshFolder.ID] = FreshFolder(context)
-        selectedTreeItemLiveData = MutableLiveData(topFolderMap[AllUnreadFolder.ID])
+        topFolders = arrayOf(
+                AllUnreadFolder(context),
+                StarredFolder(context),
+                FreshFolder(context)
+        )
+        selectedTreeItemLiveData = MutableLiveData(topFolders[0])
         updateTemporaryFeed(preferences, false)
     }
 }

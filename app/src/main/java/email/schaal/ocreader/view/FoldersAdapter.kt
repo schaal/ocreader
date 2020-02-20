@@ -29,8 +29,8 @@ import email.schaal.ocreader.databinding.ListFolderBinding
 import io.realm.Realm
 import java.util.*
 
-class FoldersAdapter(context: Context, private var folders: List<TreeItem>?, defaultTopFolders: Collection<TreeItem>, private val clickListener: TreeItemClickListener?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private val topFolders: MutableList<TreeItem>
+class FoldersAdapter(context: Context, private var folders: List<TreeItem>?, defaultTopFolders: Array<TreeItem>, private val clickListener: TreeItemClickListener?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private val topFolders: List<TreeItem>
     private var selectedTreeItemId = AllUnreadFolder.ID
 
     fun setSelectedTreeItemId(id: Long) {
@@ -86,11 +86,16 @@ class FoldersAdapter(context: Context, private var folders: List<TreeItem>?, def
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is FolderViewHolder) holder.bind(getTreeItem(position), selectedTreeItemId) else if (holder is DividerViewHolder) holder.bind(getTreeItem(position)!!)
+        val treeItem = getTreeItem(position) ?: return
+
+        if (holder is FolderViewHolder)
+            holder.bind(treeItem, selectedTreeItemId)
+        else if (holder is DividerViewHolder)
+            holder.bind(treeItem)
     }
 
     override fun getItemCount(): Int {
-        return topFolders.size + if (folders != null) folders!!.size else 0
+        return topFolders.size + (folders?.size ?: 0)
     }
 
     interface TreeItemClickListener {
@@ -128,9 +133,9 @@ class FoldersAdapter(context: Context, private var folders: List<TreeItem>?, def
     }
 
     init {
-        topFolders = ArrayList(defaultTopFolders.size + 1)
-        topFolders.addAll(defaultTopFolders)
-        topFolders.add(DividerTreeItem(context.getString(R.string.folder)))
+        topFolders = listOf(
+                *defaultTopFolders, DividerTreeItem(context.getString(R.string.folder))
+        )
         setHasStableIds(true)
     }
 }

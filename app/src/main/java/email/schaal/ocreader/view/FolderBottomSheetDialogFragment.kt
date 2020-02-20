@@ -66,7 +66,7 @@ class FolderBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        foldersAdapter = FoldersAdapter(requireContext(), viewModel.folders.value, viewModel.topFolderList, treeItemClickListener)
+        foldersAdapter = FoldersAdapter(requireContext(), viewModel.folders.value, viewModel.topFolders, treeItemClickListener)
         binding.recyclerViewFolders.adapter = foldersAdapter
         binding.recyclerViewFolders.layoutManager = LinearLayoutManager(requireContext())
     }
