@@ -81,16 +81,20 @@ class FoldersAdapter(context: Context, private var folders: List<TreeItem>?, def
     }
 
     private fun getTreeItem(position: Int): TreeItem? {
-        return if (position >= topFolders.size) if (folders != null) folders!![position - topFolders.size] else null else topFolders[position]
+        return if(position >= topFolders.size) {
+            folders?.get(position - topFolders.size)
+        } else {
+            topFolders[position]
+        }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val treeItem = getTreeItem(position) ?: return
 
-        if (holder is FolderViewHolder)
-            holder.bind(treeItem, selectedTreeItemId)
-        else if (holder is DividerViewHolder)
-            holder.bind(treeItem)
+        when (holder) {
+            is FolderViewHolder -> holder.bind(treeItem, selectedTreeItemId)
+            is DividerViewHolder -> holder.bind(treeItem)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -105,7 +109,6 @@ class FoldersAdapter(context: Context, private var folders: List<TreeItem>?, def
         fun bind(treeItem: TreeItem) {
             binding.textViewDivider.text = treeItem.treeItemName()
         }
-
     }
 
     class FolderViewHolder internal constructor(private val binding: ListFolderBinding, private val clickListener: TreeItemClickListener?) : RecyclerView.ViewHolder(binding.root) {
@@ -120,9 +123,7 @@ class FoldersAdapter(context: Context, private var folders: List<TreeItem>?, def
     }
 
     init {
-        topFolders = listOf(
-                *defaultTopFolders, DividerTreeItem(context.getString(R.string.folder))
-        )
+        topFolders = listOf(*defaultTopFolders, DividerTreeItem(context.getString(R.string.folder)))
         setHasStableIds(true)
     }
 }
