@@ -33,7 +33,7 @@
     <color name="delete">@color/md_red_500</color>
     <color name="warning">@color/md_amber_500</color>
     <color name="error">@color/md_red_500</color>
-    <color name="textdrawable_text">@color/md_white_1000</color>
+    <color name="textdrawable_text">@color/design_default_color_background</color>
 
     <!-- Background colors for textdrawable -->
     <color name="tdb_Red">@color/md_red_900</color>

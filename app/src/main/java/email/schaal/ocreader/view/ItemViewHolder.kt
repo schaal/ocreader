@@ -70,18 +70,7 @@ class ItemViewHolder(private val binding: ListItemBinding, private val clickList
         }
         setUnreadState(item.unread)
         setStarredState(item.starred)
-        setSelected(selected)
-    }
-
-    private fun setSelected(selected: Boolean) {
-        var backgroundResource = R.drawable.item_background
-        if (!selected) {
-            val attrs = intArrayOf(R.attr.selectableItemBackground)
-            val typedArray = itemView.context.obtainStyledAttributes(attrs)
-            backgroundResource = typedArray.getResourceId(0, 0)
-            typedArray.recycle()
-        }
-        itemView.setBackgroundResource(backgroundResource)
+        itemView.isSelected = selected
     }
 
     private fun setUnreadState(unread: Boolean) {
