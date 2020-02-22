@@ -30,6 +30,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import email.schaal.ocreader.Preferences
 import email.schaal.ocreader.database.FeedViewModel
 import email.schaal.ocreader.database.FeedViewModel.FeedViewModelFactory
+import email.schaal.ocreader.database.model.AllUnreadFolder
 import email.schaal.ocreader.database.model.Folder
 import email.schaal.ocreader.database.model.TreeItem
 import email.schaal.ocreader.databinding.DialogFoldersBinding
@@ -67,6 +68,7 @@ class FolderBottomSheetDialogFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         foldersAdapter = FoldersAdapter(requireContext(), viewModel.folders.value, viewModel.topFolders, treeItemClickListener)
+        foldersAdapter?.setSelectedTreeItemId(viewModel.selectedTreeItem.value?.treeItemId() ?: AllUnreadFolder.ID)
         binding.recyclerViewFolders.adapter = foldersAdapter
         binding.recyclerViewFolders.layoutManager = LinearLayoutManager(requireContext())
     }

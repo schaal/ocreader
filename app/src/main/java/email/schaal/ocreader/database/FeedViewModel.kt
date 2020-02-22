@@ -52,6 +52,9 @@ class FeedViewModel(context: Context) : RealmViewModel() {
     val syncStatus: LiveData<Boolean>
         get() = syncStatusLiveData
 
+    val selectedTreeItem: LiveData<TreeItem?>
+        get() = selectedTreeItemLiveData
+
     fun sync(context: Context, syncType: SyncType) {
         if(syncType != SyncType.SYNC_CHANGES_ONLY)
             syncStatusLiveData.value = true
