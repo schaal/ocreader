@@ -246,20 +246,21 @@ class API {
                 SyncType.FULL_SYNC -> {
                     val lastSync = realm.where<Item>().max(Item::lastModified.name)?.toLong() ?: 0L
 
-                    val toInsert: MutableSet<List<Insertable?>> = mutableSetOf()
-
-                    toInsert.add(listOf(api?.user()))
-
                     val folders = api?.folders()?.folders
                     val feeds = api?.feeds()?.feeds
 
-                    if(lastSync == 0L) {
-                        api?.items(-1L, 0L, QueryType.STARRED.type, 0L, getRead = true, oldestFirst = false)?.items?.let { toInsert.add(it) }
-                        api?.items(-1L, 0L, QueryType.ALL.type, 0L, getRead = false, oldestFirst = false)?.items?.let { toInsert.add(it) }
-                    } else {
-                        api?.updatedItems(lastSync, QueryType.ALL.type, 0L)?.items?.let { toInsert.add(it) }
+                    val insertFlow = flow<List<Insertable?>> {
+                        emit(listOf(api?.user()))
+
+                        if(lastSync == 0L) {
+                            api?.items(-1L, 0L, QueryType.STARRED.type, 0L, getRead = true, oldestFirst = false)?.items?.let { emit(it) }
+                            api?.items(-1L, 0L, QueryType.ALL.type, 0L, getRead = false, oldestFirst = false)?.items?.let { emit(it) }
+                        } else {
+                            api?.updatedItems(lastSync, QueryType.ALL.type, 0L)?.items?.let { emit(it) }
+                        }
                     }
-                    realm.executeTransaction {
+
+                    realm.beginTransaction()
                         resetItemChanged(result)
 
                         if(folders != null) {
@@ -285,8 +286,8 @@ class API {
                                 feed.delete(realm)
                         }
 
-                        for (insertables in toInsert) {
-                            for (insertable in insertables.filterNotNull())
+                        insertFlow.collect {
+                            for(insertable in it.filterNotNull())
                                 insertable.insert(realm)
                         }
 
@@ -300,7 +301,8 @@ class API {
                         }
 
                         Item.removeExcessItems(realm, 10000)
-                    }
+                    realm.commitTransaction()
+
                 }
                 SyncType.LOAD_MORE -> {
 
