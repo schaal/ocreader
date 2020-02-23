@@ -61,6 +61,8 @@ class ManageFeedsActivity : RealmActivity(), FeedManageListener {
                 showErrorMessage(getString(R.string.feed_add_failed), throwable.localizedMessage ?: "")
             }
             progressDialog.dismiss()
+            if(finishAfterAdd)
+                finish()
         }
     }
 
@@ -116,7 +118,6 @@ class ManageFeedsActivity : RealmActivity(), FeedManageListener {
     }
 
     companion object {
-        private val TAG = ManageFeedsActivity::class.java.name
         const val REQUEST_CODE = 3
     }
 }
