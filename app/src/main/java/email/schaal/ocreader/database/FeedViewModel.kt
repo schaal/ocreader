@@ -28,7 +28,9 @@ import email.schaal.ocreader.database.model.*
 import email.schaal.ocreader.database.model.TemporaryFeed.Companion.getListTemporaryFeed
 import email.schaal.ocreader.service.SyncType
 import io.realm.Realm
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.IllegalArgumentException
 
 class FeedViewModel(context: Context) : RealmViewModel() {
@@ -60,10 +62,8 @@ class FeedViewModel(context: Context) : RealmViewModel() {
             syncStatusLiveData.value = true
 
         viewModelScope.launch {
-            try {
+            withContext(Dispatchers.IO) {
                 API(context).sync(syncType)
-            } catch(e: IllegalStateException) {
-                e.printStackTrace()
             }
         }.invokeOnCompletion {
             it?.printStackTrace()
