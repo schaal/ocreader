@@ -55,10 +55,10 @@ class ManageFeedsActivity : RealmActivity(), FeedManageListener {
         val progressDialog = showProgress(this, getString(R.string.adding_feed))
         lifecycleScope.launch {
             API(this@ManageFeedsActivity).createFeed(realm, url, folderId)
-        }.invokeOnCompletion {
-            if(it != null) {
-                it.printStackTrace()
-                showErrorMessage(getString(R.string.feed_add_failed), it.localizedMessage ?: "")
+        }.invokeOnCompletion { throwable ->
+            if(throwable != null) {
+                throwable.printStackTrace()
+                showErrorMessage(getString(R.string.feed_add_failed), throwable.localizedMessage ?: "")
             }
             progressDialog.dismiss()
         }
@@ -71,10 +71,10 @@ class ManageFeedsActivity : RealmActivity(), FeedManageListener {
                     val progressDialog = showProgress(this@ManageFeedsActivity, getString(R.string.deleting_feed, feed.name))
                     lifecycleScope.launch {
                         API(this@ManageFeedsActivity).deleteFeed(realm, feed)
-                    }.invokeOnCompletion {
-                        if(it != null) {
-                            it.printStackTrace()
-                            showErrorMessage(getString(R.string.delete_feed_failed), it.localizedMessage ?: "")
+                    }.invokeOnCompletion { throwable ->
+                        if(throwable != null) {
+                            throwable.printStackTrace()
+                            showErrorMessage(getString(R.string.delete_feed_failed), throwable.localizedMessage ?: "")
                         }
                         progressDialog.dismiss()
                     }
@@ -92,10 +92,10 @@ class ManageFeedsActivity : RealmActivity(), FeedManageListener {
         val progressDialog = showProgress(this, getString(R.string.moving_feed))
         lifecycleScope.launch {
             API(this@ManageFeedsActivity).moveFeed(realm, feed, folderId)
-        }.invokeOnCompletion {
-            if(it != null) {
-                it.printStackTrace()
-                showErrorMessage(getString(R.string.feed_move_failed), it.localizedMessage ?: "")
+        }.invokeOnCompletion { throwable ->
+            if(throwable != null) {
+                throwable.printStackTrace()
+                showErrorMessage(getString(R.string.feed_move_failed), throwable.localizedMessage ?: "")
             }
             progressDialog.dismiss()
         }

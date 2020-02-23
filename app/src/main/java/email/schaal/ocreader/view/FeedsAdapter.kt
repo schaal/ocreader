@@ -28,9 +28,7 @@ class FeedsAdapter(private val listener: FeedManageListener) : RecyclerView.Adap
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is FeedViewHolder) {
-            val feed = getItem(position)
-            if(feed != null)
-                holder.bindFeed(feed)
+            getItem(position)?.let { holder.bindFeed(it) }
         }
     }
 
@@ -39,8 +37,7 @@ class FeedsAdapter(private val listener: FeedManageListener) : RecyclerView.Adap
     }
 
     override fun getItemId(index: Int): Long {
-        val feed = getItem(index)
-        return feed?.id ?: RecyclerView.NO_ID
+        return getItem(index)?.id ?: RecyclerView.NO_ID
     }
 
     override fun getItemViewType(position: Int): Int {
