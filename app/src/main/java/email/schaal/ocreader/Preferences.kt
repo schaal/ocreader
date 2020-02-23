@@ -78,10 +78,18 @@ enum class Preferences constructor(val key: String, private val defaultValue: An
     companion object {
         @NightMode
         fun getNightMode(preferences: SharedPreferences): Int {
-            return when(preferences.getString(DARK_THEME.key, "system")) {
-                "always" -> AppCompatDelegate.MODE_NIGHT_YES
-                "never" -> AppCompatDelegate.MODE_NIGHT_NO
-                else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            return try {
+                when(preferences.getString(DARK_THEME.key, "system")) {
+                    "always" -> AppCompatDelegate.MODE_NIGHT_YES
+                    "never" -> AppCompatDelegate.MODE_NIGHT_NO
+                    else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+                }
+            } catch(e: ClassCastException) {
+                preferences.edit()
+                        .remove(DARK_THEME.key)
+                        .putString(DARK_THEME.key, "system")
+                        .apply()
+                AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
             }
         }
 
