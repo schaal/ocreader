@@ -249,8 +249,8 @@ class API {
                     val folders = api?.folders()?.folders
                     val feeds = api?.feeds()?.feeds
 
-                    val insertFlow = flow<List<Insertable?>> {
-                        emit(listOf(api?.user()))
+                    val insertFlow = flow<List<Insertable>> {
+                        api?.user()?.let { emit(listOf(it))}
 
                         if(lastSync == 0L) {
                             api?.items(-1L, 0L, QueryType.STARRED.type, 0L, getRead = true, oldestFirst = false)?.items?.let { emit(it) }
@@ -287,7 +287,7 @@ class API {
                         }
 
                         insertFlow.collect {
-                            for(insertable in it.filterNotNull())
+                            for(insertable in it)
                                 insertable.insert(realm)
                         }
 
