@@ -38,8 +38,8 @@ class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
         if (intent.hasExtra(EXTRA_RECREATE_ACTIVITY)) recreateActivity = intent.getBooleanExtra(EXTRA_RECREATE_ACTIVITY, false)
         val binding = DataBindingUtil.setContentView<ActivitySettingsBinding>(this, R.layout.activity_settings)
         setSupportActionBar(binding.toolbarLayout.toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setTitle(R.string.settings)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setTitle(R.string.settings)
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this)
     }
 

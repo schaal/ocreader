@@ -28,9 +28,12 @@
             app:useSimpleSummaryProvider="true"
             app:title="Article Font" />
 
-        <SwitchPreference
-            app:defaultValue="false"
+        <ListPreference
+            app:defaultValue="system"
+            app:entries="@array/theme"
+            app:entryValues="@array/theme_values"
             app:key="dark_theme"
+            app:useSimpleSummaryProvider="true"
             app:title="@string/dark_theme" />
     </PreferenceCategory>
 </PreferenceScreen>

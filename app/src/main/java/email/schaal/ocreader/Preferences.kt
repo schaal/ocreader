@@ -37,12 +37,11 @@ enum class Preferences constructor(val key: String, private val defaultValue: An
     URL("url"),
     ORDER("order", Sort.ASCENDING.name, ChangeAction.UPDATE),
     SORT_FIELD("sort_field", Item::id.name, ChangeAction.UPDATE),
-    DARK_THEME("dark_theme", false, ChangeAction.RECREATE),
+    DARK_THEME("dark_theme", "system", ChangeAction.RECREATE),
     ARTICLE_FONT("article_font", "system"), /** System preferences  */
     SYS_NEEDS_UPDATE_AFTER_SYNC("needs_update_after_sync", false),
     SYS_SYNC_RUNNING("is_sync_running", false),
     SYS_STARTDRAWERITEMID("startdrawer_itemid", AllUnreadFolder.ID),
-    SYS_ENDRAWERITEM_ID("enddrawer_itemid"), SYS_ISFEED("isfeed", false),
     SYS_DETECTED_API_LEVEL("detected_api_level"),
     SYS_APIv2_ETAG("apiv2_etag");
 
@@ -79,7 +78,11 @@ enum class Preferences constructor(val key: String, private val defaultValue: An
     companion object {
         @NightMode
         fun getNightMode(preferences: SharedPreferences): Int {
-            return if (preferences.getBoolean(DARK_THEME.key, false)) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+            return when(preferences.getString(DARK_THEME.key, "system")) {
+                "always" -> AppCompatDelegate.MODE_NIGHT_YES
+                "never" -> AppCompatDelegate.MODE_NIGHT_NO
+                else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            }
         }
 
         fun hasCredentials(preferences: SharedPreferences): Boolean {

@@ -29,4 +29,15 @@
         <item>crimson</item>
     </string-array>
 
+    <string-array name="theme">
+        <item>System</item>
+        <item>Always</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="theme_values">
+        <item>system</item>
+        <item>always</item>
+        <item>never</item>
+    </string-array>
+
 </resources>
