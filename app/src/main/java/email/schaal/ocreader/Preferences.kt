@@ -40,10 +40,7 @@ enum class Preferences constructor(val key: String, private val defaultValue: An
     DARK_THEME("dark_theme", "system", ChangeAction.RECREATE),
     ARTICLE_FONT("article_font", "system"), /** System preferences  */
     SYS_NEEDS_UPDATE_AFTER_SYNC("needs_update_after_sync", false),
-    SYS_SYNC_RUNNING("is_sync_running", false),
-    SYS_STARTDRAWERITEMID("startdrawer_itemid", AllUnreadFolder.ID),
-    SYS_DETECTED_API_LEVEL("detected_api_level"),
-    SYS_APIv2_ETAG("apiv2_etag");
+    SYS_DETECTED_API_LEVEL("detected_api_level");
 
     /**
      * What to do after the preference changes

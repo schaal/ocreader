@@ -233,7 +233,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
     }
 
     override fun onItemLongClick(item: Item, position: Int) {
-        if (actionMode != null || Preferences.SYS_SYNC_RUNNING.getBoolean(PreferenceManager.getDefaultSharedPreferences(this))) return
+        if (actionMode != null || feedViewModel.syncStatus.value == true) return
         adapter.toggleSelection(position)
         actionMode = startActionMode(this)
     }
