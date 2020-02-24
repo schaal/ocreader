@@ -30,6 +30,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -212,7 +213,6 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
                 .withAboutDescription(getString(string.about_app, getString(string.app_year_author), getString(string.app_url)))
                 .withAboutAppName(getString(string.app_name))
                 .withLicenseShown(true)
-                .withActivityStyle(if (Preferences.DARK_THEME.getBoolean(PreferenceManager.getDefaultSharedPreferences(this))) ActivityStyle.DARK else ActivityStyle.LIGHT_DARK_TOOLBAR)
                 .withActivityTitle(getString(string.about))
                 .withFields(string::class.java.fields)
                 .start(this)

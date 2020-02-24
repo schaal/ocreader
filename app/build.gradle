@@ -23,6 +23,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'realm-android'
+apply plugin: 'com.mikepenz.aboutlibraries.plugin'
 
 android {
     compileSdkVersion 29
@@ -113,7 +114,7 @@ dependencies {
 
     implementation 'com.google.android.material:material:1.2.0-alpha04'
 
-    implementation 'com.mikepenz:aboutlibraries:7.1.0'
+    implementation 'com.mikepenz:aboutlibraries:8.0.0-rc01'
 
     implementation 'org.jsoup:jsoup:1.12.1'
 
