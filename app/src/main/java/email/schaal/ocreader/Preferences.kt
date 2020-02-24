@@ -56,20 +56,20 @@ enum class Preferences constructor(val key: String, private val defaultValue: An
     }
 
     fun getBoolean(preferences: SharedPreferences): Boolean {
-        return if (defaultValue == null) false else preferences.getBoolean(key, (defaultValue as Boolean?)!!)
+        return preferences.getBoolean(key, (defaultValue as Boolean?) ?: false)
     }
 
     fun getLong(preferences: SharedPreferences): Long {
-        return if (defaultValue == null) 0L else preferences.getLong(key, (defaultValue as Long?)!!)
+        return preferences.getLong(key, (defaultValue as Long?) ?: 0L)
     }
 
     fun getOrder(preferences: SharedPreferences): Sort {
         try {
-            return Sort.valueOf(preferences.getString(key, defaultValue as String?)!!)
+            return preferences.getString(key, defaultValue as String?)?.let { Sort.valueOf(it) } ?: Sort.ASCENDING
         } catch (e: ClassCastException) {
             preferences.edit().remove(key).apply()
         }
-        return Sort.valueOf((defaultValue as String?)!!)
+        return Sort.ASCENDING
     }
 
     companion object {
