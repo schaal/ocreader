@@ -116,7 +116,7 @@ dependencies {
 
     implementation 'com.mikepenz:aboutlibraries:8.0.0-rc01'
 
-    implementation 'org.jsoup:jsoup:1.12.1'
+    implementation 'org.jsoup:jsoup:1.12.2'
 
     implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
 
