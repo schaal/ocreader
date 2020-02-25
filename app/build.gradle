@@ -126,14 +126,11 @@ dependencies {
     implementation "com.squareup.moshi:moshi:${versions.moshi}"
     kapt "com.squareup.moshi:moshi-kotlin-codegen:${versions.moshi}"
 
-    implementation("com.github.bumptech.glide:glide:${versions.glide}@aar") {
-        transitive = true
-    }
-
-    implementation "com.github.bumptech.glide:okhttp3-integration:${versions.glide}@aar"
-    implementation "com.github.bumptech.glide:recyclerview-integration:${versions.glide}@aar"
-
+    implementation "com.github.bumptech.glide:glide:${versions.glide}"
     kapt "com.github.bumptech.glide:compiler:${versions.glide}"
+
+    implementation "com.github.bumptech.glide:okhttp3-integration:${versions.glide}"
+    implementation "com.github.bumptech.glide:recyclerview-integration:${versions.glide}"
 
     implementation 'com.github.zafarkhaja:java-semver:0.9.0'
 
