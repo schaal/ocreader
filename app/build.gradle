@@ -101,8 +101,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime:${versions.lifecycle}"
     implementation "androidx.lifecycle:lifecycle-common-java8:${versions.lifecycle}"
 
-    implementation "androidx.work:work-runtime-ktx:2.3.1"
-    implementation "androidx.fragment:fragment-ktx:1.2.1"
+    implementation "androidx.work:work-runtime-ktx:2.3.2"
+    implementation "androidx.fragment:fragment-ktx:1.2.2"
 
     implementation "androidx.recyclerview:recyclerview:1.1.0"
     implementation "androidx.palette:palette:1.0.0"
@@ -112,7 +112,7 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
     kapt 'androidx.annotation:annotation:1.1.0'
 
-    implementation 'com.google.android.material:material:1.2.0-alpha04'
+    implementation 'com.google.android.material:material:1.2.0-alpha05'
 
     implementation 'com.mikepenz:aboutlibraries:8.0.0-rc01'
 
