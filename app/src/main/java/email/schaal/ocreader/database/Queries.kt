@@ -21,14 +21,11 @@ package email.schaal.ocreader.database
 
 import android.content.Context
 import android.util.Log
-import email.schaal.ocreader.database.model.Insertable
-import email.schaal.ocreader.database.model.Item
-import email.schaal.ocreader.database.model.TemporaryFeed
-import email.schaal.ocreader.database.model.TemporaryFeed.Companion.getListTemporaryFeed
+import email.schaal.ocreader.database.model.*
 import io.realm.Realm
-import io.realm.Realm.Transaction.OnSuccess
 import io.realm.RealmConfiguration
-import io.realm.RealmMigration
+import io.realm.exceptions.RealmException
+import io.realm.exceptions.RealmPrimaryKeyConstraintException
 import io.realm.kotlin.createObject
 import io.realm.kotlin.where
 
@@ -39,9 +36,16 @@ object Queries {
     private val TAG = Queries::class.java.name
     const val SCHEMA_VERSION = 12L
     private val initialData = Realm.Transaction { realm: Realm ->
-        realm.deleteAll()
-        realm.createObject<TemporaryFeed>(TemporaryFeed.LIST_ID)
-        realm.createObject<TemporaryFeed>(TemporaryFeed.PAGER_ID)
+        realm.where<User>().findAll().deleteAllFromRealm()
+        realm.where<Item>().findAll().deleteAllFromRealm()
+        realm.where<Feed>().findAll().deleteAllFromRealm()
+        realm.where<Folder>().findAll().deleteAllFromRealm()
+        try {
+            realm.createObject<TemporaryFeed>(TemporaryFeed.LIST_ID)
+            realm.createObject<TemporaryFeed>(TemporaryFeed.PAGER_ID)
+        } catch (e: RealmPrimaryKeyConstraintException) {
+            e.printStackTrace()
+        }
     }
 
     fun init(context: Context) {

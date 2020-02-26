@@ -180,7 +180,6 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
                                 .setActionTextColor(ContextCompat.getColor(this, R.color.warning))
                                 .show()
                     }
-                    reloadListFragment()
                     Queries.resetDatabase()
                     feedViewModel.sync(this, SyncType.FULL_SYNC)
                 }
