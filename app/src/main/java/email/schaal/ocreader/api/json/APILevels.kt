@@ -8,7 +8,7 @@ import email.schaal.ocreader.api.Level
 class APILevels {
     private var apiLevels: List<String>? = null
     fun highestSupportedApi(): Level? {
-        for (level in Level.values()) if (level.isSupported && apiLevels!!.contains(level.level)) return level
+        for (level in Level.values()) if (level.isSupported && apiLevels?.contains(level.level) == true) return level
         return null
     }
 
