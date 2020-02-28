@@ -5,14 +5,13 @@ import email.schaal.ocreader.api.Level
 /**
  * API response containing supported API levels
  */
-class APILevels {
-    private var apiLevels: List<String>? = null
+data class APILevels(
+        val apiLevels: List<String> = emptyList()
+) {
     fun highestSupportedApi(): Level? {
-        for (level in Level.values()) if (level.isSupported && apiLevels?.contains(level.level) == true) return level
+        for (level in Level.values())
+            if (level.isSupported && apiLevels.contains(level.level))
+                return level
         return null
-    }
-
-    fun setApiLevels(apiLevels: List<String>?) {
-        this.apiLevels = apiLevels
     }
 }
