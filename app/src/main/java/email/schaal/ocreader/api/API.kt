@@ -58,7 +58,7 @@ class API {
                 .add(Feed::class.java, FeedTypeAdapter())
                 .add(Item::class.java, ItemTypeAdapter())
                 .add(User::class.java, UserTypeAdapter())
-                .add(Status::class.java, StatusTypeAdapter())
+                .add(VersionTypeAdapter())
                 .build()
         val converterFactory: MoshiConverterFactory = MoshiConverterFactory.create(moshi)
 

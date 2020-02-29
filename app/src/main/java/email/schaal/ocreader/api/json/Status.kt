@@ -19,31 +19,16 @@
  */
 package email.schaal.ocreader.api.json
 
-import android.util.Log
-import com.github.zafarkhaja.semver.UnexpectedCharacterException
 import com.github.zafarkhaja.semver.Version
-import email.schaal.ocreader.database.model.User
+import com.squareup.moshi.JsonClass
 
 /**
  * Encapsulates the JSON response for the status api call
  */
-class Status {
-    var version: Version? = null
-        private set
-    var isImproperlyConfiguredCron = false
-    /* Only returned by API v2 */
-    var user: User? = null
+@JsonClass(generateAdapter = true)
+class Status(val version: Version,
+     val warnings: Map<String, Boolean>? = null) {
 
-    fun setVersion(version: String) {
-        try {
-            this.version = Version.valueOf(version)
-        } catch (e: UnexpectedCharacterException) {
-            this.version = null
-            Log.e(TAG, "Failed to parse version: $version", e)
-        }
-    }
-
-    companion object {
-        private val TAG = Status::class.java.name
-    }
+    val isImproperlyConfiguredCron: Boolean
+        get() = warnings?.get("isImproperlyConfiguredCron") ?: false
 }
