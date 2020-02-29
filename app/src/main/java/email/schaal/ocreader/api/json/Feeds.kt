@@ -5,9 +5,8 @@ import email.schaal.ocreader.database.model.Feed
 /**
  * Class to deserialize the json response for feeds
  */
-class Feeds {
-    var feeds: List<Feed>? = null
-    var starredCount = 0
-    var newestItemId: Long? = null
-
-}
+class Feeds (
+    val feeds: List<Feed>,
+    val starredCount: Int = 0,
+    val newestItemId: Long? = null
+)
