@@ -22,6 +22,7 @@ package email.schaal.ocreader.api.json
 import com.github.zafarkhaja.semver.Version
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.ToJson
+import java.util.*
 
 class VersionTypeAdapter {
     @FromJson
@@ -32,5 +33,17 @@ class VersionTypeAdapter {
     @ToJson
     fun toJson(version: Version): String {
         return version.toString()
+    }
+}
+
+class DateTypeAdapter {
+    @FromJson
+    fun fromJson(timestamp: Long) : Date {
+        return Date(timestamp * 1000)
+    }
+
+    @ToJson
+    fun toJson(date: Date): Long {
+        return date.time / 1000
     }
 }
