@@ -22,27 +22,24 @@
 package email.schaal.ocreader.util
 
 import android.content.Context
-import android.text.Html
 import android.text.format.DateUtils
 import email.schaal.ocreader.R
+import org.jsoup.Jsoup
+import org.jsoup.safety.Whitelist
 import java.util.*
 
 /**
  * Utility functions to handle Strings.
  */
-fun getByLine(context: Context, template: String?, author: String?): String {
+fun getByLine(context: Context, template: String, author: String?): String {
     return if (author != null) {
-        String.format(template!!, context.getString(R.string.by_author, author))
+        String.format(template, context.getString(R.string.by_author, author))
     } else {
         ""
     }
 }
 
-fun getTimeSpanString(context: Context, startDate: Date): String {
-    return getTimeSpanString(context, startDate, Date())
-}
-
-fun getTimeSpanString(context: Context, startDate: Date, endDate: Date): String {
+fun getTimeSpanString(context: Context, startDate: Date, endDate: Date = Date()): String {
     val timeSpanString: String
     val timeDiff = endDate.time - startDate.time
     timeSpanString = if (timeDiff <= 0) context.getString(R.string.now) else if (timeDiff <= 59 * DateUtils.MINUTE_IN_MILLIS) context.getString(R.string.minutes, timeDiff / DateUtils.MINUTE_IN_MILLIS) else if (timeDiff <= 23 * DateUtils.HOUR_IN_MILLIS) context.getString(R.string.hours, timeDiff / DateUtils.HOUR_IN_MILLIS) else context.getString(R.string.days, timeDiff / DateUtils.DAY_IN_MILLIS)
@@ -50,13 +47,5 @@ fun getTimeSpanString(context: Context, startDate: Date, endDate: Date): String 
 }
 
 fun cleanString(source: String): String {
-    return Html.fromHtml(source).toString()
-}
-
-fun emptyToNull(source: String): String? {
-    return if (source.isEmpty()) null else source
-}
-
-fun nullToEmpty(source: String?): String {
-    return source ?: ""
+    return Jsoup.clean(source, Whitelist.simpleText())
 }
