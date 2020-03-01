@@ -123,7 +123,7 @@ class ArticleWebView : NestedScrollWebView {
         try {
             var child = document.body().child(0)
             // if document starts with <br>, remove it
-            if (child!!.tagName() == "br") {
+            if (child?.tagName() == "br") {
                 val brChild = child
                 child = child.nextElementSibling()
                 brChild.remove()

@@ -92,37 +92,36 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
             bottomSheetDialogFragment.show(fm, null)
         }
         binding.bottomAppbar.setOnMenuItemClickListener { item: MenuItem ->
-            when (item.itemId) {
+            return@setOnMenuItemClickListener when (item.itemId) {
                 R.id.menu_settings -> {
                     val settingsIntent = Intent(this@ListActivity, SettingsActivity::class.java)
                     startActivity(settingsIntent)
-                    return@setOnMenuItemClickListener true
+                    true
                 }
                 R.id.menu_show_only_unread -> {
                     val showOnlyUnread = !item.isChecked
                     preferences.edit().putBoolean(Preferences.SHOW_ONLY_UNREAD.key, showOnlyUnread).apply()
                     item.isChecked = showOnlyUnread
                     reloadListFragment()
-                    return@setOnMenuItemClickListener true
+                    true
                 }
                 R.id.menu_sync -> {
                     feedViewModel.sync(this, SyncType.FULL_SYNC)
-                    return@setOnMenuItemClickListener true
+                    true
                 }
                 R.id.menu_about -> {
                     showAboutDialog()
-                    return@setOnMenuItemClickListener true
+                    true
                 }
                 R.id.menu_mark_all_as_read -> {
                     feedViewModel.markTemporaryFeedAsRead()
-                    return@setOnMenuItemClickListener true
+                    true
                 }
                 R.id.menu_manage_feeds -> {
                     startActivityForResult(Intent(this@ListActivity, ManageFeedsActivity::class.java), ManageFeedsActivity.REQUEST_CODE)
-                    return@setOnMenuItemClickListener true
-                }
+                    true
+                } else -> false
             }
-            false
         }
 
         preferenceChangeListener = OnSharedPreferenceChangeListener { _: SharedPreferences?, key: String ->
