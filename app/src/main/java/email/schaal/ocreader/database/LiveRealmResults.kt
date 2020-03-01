@@ -44,6 +44,7 @@ class LiveRealmResults<T : RealmModel> @MainThread constructor(results: RealmRes
         super.onActive()
         if (results.isValid) { // invalidated results can no longer be observed.
             results.addChangeListener(listener)
+            value = results
         }
     }
 
