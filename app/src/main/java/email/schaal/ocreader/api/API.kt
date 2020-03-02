@@ -224,7 +224,7 @@ class API {
             }
         }
 
-        return if (response != null && response.isSuccessful) results else throw IllegalStateException("Marking items failed")
+        return if (response?.isSuccessful == true) results else throw IllegalStateException("Marking items failed")
     }
 
     private enum class QueryType(val type: Int) {
