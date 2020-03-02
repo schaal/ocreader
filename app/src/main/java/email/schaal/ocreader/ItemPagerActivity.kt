@@ -199,11 +199,11 @@ class ItemPagerActivity : AppCompatActivity() {
     private inner class SectionsPagerAdapter internal constructor(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
         private val fragments: WeakHashMap<Int, ItemPageFragment?>
         override fun getItem(position: Int): Fragment {
-            val fragment: ItemPageFragment
-            if (fragments.containsKey(position)) fragment = fragments[position]!! else {
-                fragment = newInstance(getItemForPosition(position))
+            val fragment: ItemPageFragment = fragments[position] ?: newInstance(getItemForPosition(position))
+
+            if (fragments[position] == null)
                 fragments[position] = fragment
-            }
+
             return fragment
         }
 
