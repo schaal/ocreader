@@ -20,6 +20,7 @@ package email.schaal.ocreader.database
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.widget.Toast
 import androidx.lifecycle.*
 import androidx.preference.PreferenceManager
 import email.schaal.ocreader.Preferences
@@ -28,9 +29,7 @@ import email.schaal.ocreader.database.model.*
 import email.schaal.ocreader.database.model.TemporaryFeed.Companion.getListTemporaryFeed
 import email.schaal.ocreader.service.SyncType
 import io.realm.Realm
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import kotlin.IllegalArgumentException
 
 class FeedViewModel(context: Context) : RealmViewModel() {
@@ -61,12 +60,15 @@ class FeedViewModel(context: Context) : RealmViewModel() {
         if(syncType != SyncType.SYNC_CHANGES_ONLY)
             syncStatusLiveData.value = true
 
-        viewModelScope.launch {
+        viewModelScope.async {
             withContext(Dispatchers.IO) {
                 API(context).sync(syncType)
             }
         }.invokeOnCompletion {
-            it?.printStackTrace()
+            it?.let {
+                it.printStackTrace()
+                Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
+            }
             syncStatusLiveData.value = false
         }
     }
