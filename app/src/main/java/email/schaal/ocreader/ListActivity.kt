@@ -30,14 +30,12 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.google.android.material.snackbar.Snackbar
-import com.mikepenz.aboutlibraries.Libs.ActivityStyle
 import com.mikepenz.aboutlibraries.LibsBuilder
 import email.schaal.ocreader.R.string
 import email.schaal.ocreader.database.FeedViewModel
