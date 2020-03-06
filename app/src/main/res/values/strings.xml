@@ -50,6 +50,8 @@
     <string name="fresh_items">Fresh articles</string>
 
     <string name="by_author">by %1$s</string>
+    <string name="by_author_on_feed">by %1$s on %2$s</string>
+    <string name="on_feed">on %1$s</string>
 
     <string name="title_activity_item_pager">Item</string>
 

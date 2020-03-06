@@ -83,7 +83,6 @@ class ItemPagerActivity : AppCompatActivity() {
             val temporaryFeed = pagerViewModel.pager.value
             items = temporaryFeed?.items?.sort(sortField, order) ?: throw IllegalStateException()
             binding.toolbarLayout.toolbar.title = temporaryFeed.name
-            binding.toolbarLayout.toolbar.subtitle = ""
 
             val position = intent.getIntExtra(EXTRA_CURRENT_POSITION, 0)
 
@@ -242,7 +241,7 @@ class ItemPagerActivity : AppCompatActivity() {
     }
 
     private inner class MyOnPageChangeListener internal constructor(private val mSectionsPagerAdapter: SectionsPagerAdapter) : OnPageChangeListener {
-        private val DURATION = 250
+        private val DURATION = 250L
 
         private val currentNightMode: Int = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         private val statusBarChanger: StatusBarChanger = StatusBarChangerLollipop()
@@ -290,7 +289,6 @@ class ItemPagerActivity : AppCompatActivity() {
             invalidateOptionsMenu()
             item = getItemForPosition(position)
             setItemUnread(false)
-            binding.toolbarLayout.toolbar.subtitle = item.feed?.name
             FaviconLoader.Builder(binding.fabOpenInBrowser)
                     .withGenerateFallbackImage(false)
                     .withPlaceholder(R.drawable.ic_open_in_browser)
@@ -302,7 +300,7 @@ class ItemPagerActivity : AppCompatActivity() {
             binding.fabOpenInBrowser.show()
             val progressAnimator = ObjectAnimator
                     .ofFloat(binding.fabOpenInBrowser, "progress", progressFrom, progressTo)
-                    .setDuration(DURATION.toLong())
+                    .setDuration(DURATION)
             progressAnimator.start()
         }
 

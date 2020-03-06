@@ -24,6 +24,7 @@ package email.schaal.ocreader.util
 import android.content.Context
 import android.text.format.DateUtils
 import email.schaal.ocreader.R
+import email.schaal.ocreader.database.model.Feed
 import org.jsoup.Jsoup
 import org.jsoup.safety.Whitelist
 import java.util.*
@@ -31,9 +32,13 @@ import java.util.*
 /**
  * Utility functions to handle Strings.
  */
-fun getByLine(context: Context, template: String, author: String?): String {
-    return if (author != null) {
+fun getByLine(context: Context, template: String, author: String?, feed: Feed?): String {
+    return if (author != null && feed != null) {
+        String.format(template, context.getString(R.string.by_author_on_feed, author, "<a href=\"${feed.link}\">${feed.name}</a>"))
+    } else if(author != null) {
         String.format(template, context.getString(R.string.by_author, author))
+    } else if (feed != null) {
+        String.format(template, context.getString(R.string.on_feed, "<a href=\"${feed.link}\">${feed.name}</a>"))
     } else {
         ""
     }

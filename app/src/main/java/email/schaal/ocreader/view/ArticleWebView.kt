@@ -111,7 +111,7 @@ class ArticleWebView : NestedScrollWebView {
                     FaviconLoader.getCssColor(ContextCompat.getColor(context, R.color.selected_background)),
                     item?.url ?: "",
                     item?.title,
-                    getByLine(context, "<p class=\"byline\">%s</p>", item?.author),
+                    getByLine(context, "<p class=\"byline\">%s</p>", item?.author, item?.feed),
                     document.body().html(),
                     firstImgString,
                     if ("system" != font) context.getString(R.string.crimson_font_css) else ""

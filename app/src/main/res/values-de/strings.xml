@@ -21,6 +21,8 @@
     <string name="title_activity_login">Anmelden</string>
     <string name="unread_items">Ungelesene Artikel</string>
     <string name="by_author">von %1$s</string>
+    <string name="by_author_on_feed">von %1$s auf %2$s</string>
+    <string name="on_feed">auf %1$s</string>
     <string name="days">%dd</string>
     <string name="hours">%dh</string>
     <string name="minutes">%dm</string>
