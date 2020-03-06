@@ -33,18 +33,14 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import email.schaal.ocreader.LoginActivity
 import email.schaal.ocreader.Preferences
+import email.schaal.ocreader.R
 import email.schaal.ocreader.database.FeedViewModel
 import email.schaal.ocreader.databinding.UserBottomsheetBinding
 import java.io.ByteArrayInputStream
 
-
 class UserBottomSheetDialogFragment: BottomSheetDialogFragment() {
     private lateinit var binding: UserBottomsheetBinding
     private val feedViewModel: FeedViewModel by viewModels { FeedViewModel.FeedViewModelFactory(requireContext()) }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = UserBottomsheetBinding.inflate(inflater, container, true)
@@ -57,13 +53,13 @@ class UserBottomSheetDialogFragment: BottomSheetDialogFragment() {
             if(user != null) {
                 val url = Preferences.URL.getString(PreferenceManager.getDefaultSharedPreferences(requireContext()))
                 binding.textViewUrl.visibility = View.VISIBLE
-                binding.textViewUser.text = "${user.displayName}"
+                binding.textViewUser.text = user.displayName
                 binding.textViewUrl.text =  "${user.userId}@${url}"
                 user.avatar?.let {
                     binding.imageviewAvatar.setImageBitmap(BitmapFactory.decodeStream(Base64InputStream(ByteArrayInputStream(it.toByteArray()), Base64.DEFAULT)))
                 }
             } else {
-                binding.textViewUser.text = "Not logged in"
+                binding.textViewUser.text = getString(R.string.prompt_username)
                 binding.textViewUrl.visibility = View.GONE
             }
         })

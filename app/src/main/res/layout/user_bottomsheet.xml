@@ -17,11 +17,11 @@
   ~ along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -42,7 +42,6 @@
             android:layout_margin="@dimen/materialize_spacing"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageview_avatar"
-            android:textAppearance="?textAppearanceBody1"
             tools:text="Username" />
 
         <TextView
@@ -52,7 +51,6 @@
             android:layout_margin="@dimen/materialize_spacing"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView_user"
-            android:textAppearance="?textAppearanceBody1"
             tools:text="user@cloud.example.com" />
 
         <Button
@@ -60,7 +58,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/materialize_spacing"
-            android:text="Change login"
+            android:text="@string/account_settings"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView_url" />
     </androidx.constraintlayout.widget.ConstraintLayout>
