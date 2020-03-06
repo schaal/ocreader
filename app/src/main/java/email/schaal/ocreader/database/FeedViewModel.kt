@@ -29,6 +29,7 @@ import email.schaal.ocreader.database.model.*
 import email.schaal.ocreader.database.model.TemporaryFeed.Companion.getListTemporaryFeed
 import email.schaal.ocreader.service.SyncType
 import io.realm.Realm
+import io.realm.kotlin.where
 import kotlinx.coroutines.*
 import kotlin.IllegalArgumentException
 
@@ -37,6 +38,7 @@ class FeedViewModel(context: Context) : RealmViewModel() {
     private val itemsLiveData: MutableLiveData<List<Item>>
     private val foldersLiveData: MutableLiveData<List<Folder>>
     private val selectedTreeItemLiveData: MutableLiveData<TreeItem>
+    val userLiveData: LiveData<User?>
     private val syncStatusLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
 
     val topFolders: Array<TreeItem>
@@ -144,6 +146,7 @@ class FeedViewModel(context: Context) : RealmViewModel() {
                 FreshFolder(context)
         )
         selectedTreeItemLiveData = MutableLiveData(topFolders[0])
+        userLiveData = LiveRealmObject(realm.where<User>().findFirst())
         updateTemporaryFeed(preferences, false)
     }
 }

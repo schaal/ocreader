@@ -35,7 +35,7 @@ import io.realm.RealmObjectChangeListener
  *
  * @param <T> the type of the RealmModel
 </T> */
-class LiveRealmObject<T : RealmModel> @MainThread constructor(obj: T) : MutableLiveData<T>() {
+class LiveRealmObject<T : RealmModel?> @MainThread constructor(obj: T) : MutableLiveData<T>() {
     // The listener will listen until the object is deleted.
 // An invalidated object shouldn't be set in LiveData, null is set instead.
     private val listener = RealmObjectChangeListener<T> { obj, objectChangeSet ->

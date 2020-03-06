@@ -46,11 +46,8 @@ import email.schaal.ocreader.database.model.TemporaryFeed
 import email.schaal.ocreader.database.model.TreeItem
 import email.schaal.ocreader.databinding.ActivityListBinding
 import email.schaal.ocreader.service.SyncType
-import email.schaal.ocreader.view.DividerItemDecoration
-import email.schaal.ocreader.view.FolderBottomSheetDialogFragment
+import email.schaal.ocreader.view.*
 import email.schaal.ocreader.view.FoldersAdapter.TreeItemClickListener
-import email.schaal.ocreader.view.ItemViewHolder
-import email.schaal.ocreader.view.LiveItemsAdapter
 
 class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefreshListener, ActionMode.Callback, TreeItemClickListener {
     private var actionMode: ActionMode? = null
@@ -194,8 +191,9 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_account -> {
-                val loginIntent = Intent(this@ListActivity, LoginActivity::class.java)
-                startActivityForResult(loginIntent, LoginActivity.REQUEST_CODE)
+                val bottomSheetDialogFragment = UserBottomSheetDialogFragment()
+                bottomSheetDialogFragment.show(supportFragmentManager, null)
+
                 return true
             }
         }

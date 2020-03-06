@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright © 2020. Daniel Schaal <daniel@schaal.email>
+  ~
+  ~ This file is part of ocreader.
+  ~
+  ~ ocreader is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ocreader is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<layout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/imageview_avatar"
+            android:layout_width="@dimen/fab_size_normal"
+            android:layout_height="@dimen/fab_size_normal"
+            android:layout_margin="@dimen/materialize_spacing"
+            android:tint="?colorOnSurface"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/account_circle" />
+
+        <TextView
+            android:id="@+id/textView_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/materialize_spacing"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageview_avatar"
+            android:textAppearance="?textAppearanceBody1"
+            tools:text="Username" />
+
+        <TextView
+            android:id="@+id/textView_url"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/materialize_spacing"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView_user"
+            android:textAppearance="?textAppearanceBody1"
+            tools:text="user@cloud.example.com" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/materialize_spacing"
+            android:text="Change login"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView_url" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
