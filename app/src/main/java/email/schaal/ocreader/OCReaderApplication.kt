@@ -31,6 +31,7 @@ class OCReaderApplication : Application() {
         super.onCreate()
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        preferences.edit().putBoolean(Preferences.SYS_SYNC_RUNNING.key, false).apply()
         AppCompatDelegate.setDefaultNightMode(Preferences.getNightMode(preferences))
 
         Queries.init(this)

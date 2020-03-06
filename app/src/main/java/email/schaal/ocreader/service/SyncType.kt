@@ -9,7 +9,7 @@ enum class SyncType(val action: String) {
     LOAD_MORE("email.schaal.ocreader.action.LOAD_MORE");
 
     companion object {
-        operator fun get(action: String): SyncType? {
+        operator fun get(action: String?): SyncType? {
             for (syncType in values()) if (syncType.action == action) return syncType
             return null
         }

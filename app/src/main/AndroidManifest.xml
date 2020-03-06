@@ -22,6 +22,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name="email.schaal.ocreader.OCReaderApplication"
@@ -71,6 +72,7 @@
             android:label="Settings"
             android:parentActivityName=".ListActivity" />
 
+        <service android:name=".service.SyncJobIntentService" android:permission="android.permission.BIND_JOB_SERVICE" android:exported="false" />
     </application>
 
 </manifest>

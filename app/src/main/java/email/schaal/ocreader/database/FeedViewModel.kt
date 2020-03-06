@@ -27,6 +27,7 @@ import email.schaal.ocreader.Preferences
 import email.schaal.ocreader.api.API
 import email.schaal.ocreader.database.model.*
 import email.schaal.ocreader.database.model.TemporaryFeed.Companion.getListTemporaryFeed
+import email.schaal.ocreader.service.SyncJobIntentService
 import email.schaal.ocreader.service.SyncType
 import io.realm.Realm
 import io.realm.kotlin.where
@@ -59,20 +60,7 @@ class FeedViewModel(context: Context) : RealmViewModel() {
         get() = selectedTreeItemLiveData
 
     fun sync(context: Context, syncType: SyncType) {
-        if(syncType != SyncType.SYNC_CHANGES_ONLY)
-            syncStatusLiveData.value = true
-
-        viewModelScope.async {
-            withContext(Dispatchers.IO) {
-                API(context).sync(syncType)
-            }
-        }.invokeOnCompletion {
-            it?.let {
-                it.printStackTrace()
-                Toast.makeText(context, it.localizedMessage, Toast.LENGTH_LONG).show()
-            }
-            syncStatusLiveData.value = false
-        }
+        SyncJobIntentService.enqueueWork(context, syncType)
     }
 
     fun updateFolders(onlyUnread: Boolean) {

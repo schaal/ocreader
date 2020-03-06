@@ -120,10 +120,16 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
         }
 
         preferenceChangeListener = OnSharedPreferenceChangeListener { _: SharedPreferences?, key: String ->
-            if (Preferences.SHOW_ONLY_UNREAD.key == key) {
-                feedViewModel.updateFolders(Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences))
+            when (key) {
+                Preferences.SHOW_ONLY_UNREAD.key -> {
+                    feedViewModel.updateFolders(Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences))
+                }
+                Preferences.SYS_SYNC_RUNNING.key -> {
+                    updateSyncStatus(Preferences.SYS_SYNC_RUNNING.getBoolean(preferences))
+                }
             }
         }
+
         preferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
         binding.swipeRefreshLayout.setColorSchemeResources(R.color.primary)
         binding.swipeRefreshLayout.setOnRefreshListener(this)
@@ -137,6 +143,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
             binding.listviewSwitcher.displayedChild = if (items.isEmpty()) 0 else 1
         })
         feedViewModel.temporaryFeed.observe(this, Observer { temporaryFeed: TemporaryFeed -> supportActionBar?.title = temporaryFeed.name })
+
         feedViewModel.syncStatus.observe(this, Observer { updateSyncStatus(it) })
 
         binding.itemsRecyclerview.adapter = adapter
