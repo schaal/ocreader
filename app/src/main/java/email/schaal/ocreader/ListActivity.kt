@@ -30,6 +30,8 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.widget.Toolbar.OnMenuItemClickListener
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -50,6 +52,7 @@ import email.schaal.ocreader.view.*
 import email.schaal.ocreader.view.FoldersAdapter.TreeItemClickListener
 
 class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefreshListener, ActionMode.Callback, TreeItemClickListener {
+    private lateinit var bottomMenuClickListener: OnMenuItemClickListener
     private var actionMode: ActionMode? = null
     private lateinit var binding: ActivityListBinding
     private lateinit var adapter: LiveItemsAdapter
@@ -86,8 +89,9 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
             bottomSheetDialogFragment.setTreeItemClickListener(this)
             bottomSheetDialogFragment.show(fm, null)
         }
-        binding.bottomAppbar.setOnMenuItemClickListener { item: MenuItem ->
-            return@setOnMenuItemClickListener when (item.itemId) {
+
+        bottomMenuClickListener = OnMenuItemClickListener { item: MenuItem ->
+            when (item.itemId) {
                 R.id.menu_settings -> {
                     val settingsIntent = Intent(this@ListActivity, SettingsActivity::class.java)
                     startActivity(settingsIntent)
@@ -118,6 +122,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
                 } else -> false
             }
         }
+        binding.bottomAppbar.setOnMenuItemClickListener(bottomMenuClickListener)
 
         preferenceChangeListener = OnSharedPreferenceChangeListener { _: SharedPreferences?, key: String ->
             when (key) {
@@ -205,6 +210,10 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    fun onNavigationItemClick(item: MenuItem): Boolean {
+        return bottomMenuClickListener.onMenuItemClick(item)
     }
 
     private fun showAboutDialog() {

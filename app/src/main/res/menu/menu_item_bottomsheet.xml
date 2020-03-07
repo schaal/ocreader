@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright © 2019. Daniel Schaal <daniel@schaal.email>
+  ~ Copyright © 2020. Daniel Schaal <daniel@schaal.email>
   ~
   ~ This file is part of ocreader.
   ~
@@ -21,18 +21,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_sync"
-        android:title="@string/action_sync"
-        android:icon="@drawable/ic_refresh"
-        app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/menu_mark_all_as_read"
-        android:title="@string/mark_all_as_read"
-        android:icon="@drawable/ic_done_all"
-        app:showAsAction="ifRoom"/>
+        android:id="@+id/menu_settings"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/settings"
+        app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_show_only_unread"
-        android:title="@string/only_unread"
-        android:checkable="true" />
+        android:id="@+id/menu_manage_feeds"
+        android:icon="@drawable/ic_feed_icon"
+        android:title="@string/title_activity_managefeeds"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_about"
+        android:icon="@drawable/ic_info"
+        android:title="@string/about"
+        app:showAsAction="never" />
 </menu>

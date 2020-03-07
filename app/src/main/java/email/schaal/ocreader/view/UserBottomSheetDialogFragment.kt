@@ -20,10 +20,7 @@
 package email.schaal.ocreader.view
 
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Base64
-import android.util.Base64InputStream
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,19 +28,22 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import email.schaal.ocreader.ListActivity
 import email.schaal.ocreader.LoginActivity
 import email.schaal.ocreader.Preferences
 import email.schaal.ocreader.R
 import email.schaal.ocreader.database.FeedViewModel
+import email.schaal.ocreader.databinding.BottomNavigationviewBinding
 import email.schaal.ocreader.databinding.UserBottomsheetBinding
-import java.io.ByteArrayInputStream
 
 class UserBottomSheetDialogFragment: BottomSheetDialogFragment() {
-    private lateinit var binding: UserBottomsheetBinding
+    private lateinit var binding: BottomNavigationviewBinding
+    private lateinit var headerBinding: UserBottomsheetBinding
     private val feedViewModel: FeedViewModel by viewModels { FeedViewModel.FeedViewModelFactory(requireContext()) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = UserBottomsheetBinding.inflate(inflater, container, true)
+        binding = BottomNavigationviewBinding.inflate(inflater, container, true)
+        headerBinding = UserBottomsheetBinding.bind(binding.navigationView.getHeaderView(0))
         return binding.root
     }
 
@@ -52,19 +52,21 @@ class UserBottomSheetDialogFragment: BottomSheetDialogFragment() {
         feedViewModel.userLiveData.observe(viewLifecycleOwner, Observer { user ->
             if(user != null) {
                 val url = Preferences.URL.getString(PreferenceManager.getDefaultSharedPreferences(requireContext()))
-                binding.textViewUrl.visibility = View.VISIBLE
-                binding.textViewUser.text = user.displayName
-                binding.textViewUrl.text =  "${user.userId}@${url}"
-                user.avatar?.let {
-                    binding.imageviewAvatar.setImageBitmap(BitmapFactory.decodeStream(Base64InputStream(ByteArrayInputStream(it.toByteArray()), Base64.DEFAULT)))
-                }
+                headerBinding.textViewUrl.visibility = View.VISIBLE
+                headerBinding.textViewUser.text = user.displayName
+                headerBinding.textViewUrl.text =  "${user.userId}@${url}"
             } else {
-                binding.textViewUser.text = getString(R.string.prompt_username)
-                binding.textViewUrl.visibility = View.GONE
+                headerBinding.textViewUser.text = getString(R.string.prompt_username)
+                headerBinding.textViewUrl.visibility = View.GONE
             }
         })
 
-        binding.button.setOnClickListener {
+        binding.navigationView.setNavigationItemSelectedListener {
+            dismiss()
+            (requireActivity() as? ListActivity)?.onNavigationItemClick(it) ?: false
+        }
+
+        headerBinding.button.setOnClickListener {
             val loginIntent = Intent(requireActivity(), LoginActivity::class.java)
             startActivityForResult(loginIntent, LoginActivity.REQUEST_CODE)
             dismiss()
