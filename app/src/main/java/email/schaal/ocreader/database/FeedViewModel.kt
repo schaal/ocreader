@@ -116,9 +116,9 @@ class FeedViewModel(context: Context) : RealmViewModel() {
 
     class FeedViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if(modelClass.isAssignableFrom(FeedViewModel::class.java))
-                return FeedViewModel(context) as T
-            throw IllegalArgumentException("Unknown ViewModel class")
+            @Suppress("UNCHECKED_CAST")
+            return FeedViewModel(context) as? T
+                    ?: throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
 
