@@ -15,28 +15,22 @@ class FeedColors {
         TEXT, BACKGROUND
     }
 
-    internal constructor(palette: Palette) {
+    internal constructor(palette: Palette?) {
         this.palette = palette
     }
 
     internal constructor(@ColorInt color: Int?) {
-        val swatch: Swatch? = if (color != null) {
-            Swatch(color, 1)
-        } else {
-            null
-        }
-        palette = if (swatch != null) Palette.Builder(listOf(swatch)).addTarget(Target.MUTED).generate() else null
+        val swatch: Swatch? = color?.let { Swatch(it, 1) }
+        palette = swatch?.let { Palette.Builder(listOf(it)).addTarget(Target.MUTED).generate() }
     }
 
     @ColorInt
     fun getColor(type: Type, @ColorInt defaultColor: Int): Int {
-        val swatch: Swatch? = if (palette != null) {
+        val swatch: Swatch? = palette?.let {
             when (type) {
-                Type.TEXT -> palette.dominantSwatch
-                Type.BACKGROUND -> palette.mutedSwatch
+                Type.TEXT -> it.dominantSwatch
+                Type.BACKGROUND -> it.mutedSwatch
             }
-        } else {
-            null
         }
         return swatch?.rgb ?: defaultColor
     }
