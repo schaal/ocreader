@@ -126,7 +126,7 @@ class API {
         suspend fun feeds(): Feeds
 
         @POST("feeds")
-        suspend fun createFeed(@Body feedMap: Map<String, Any>): Feeds
+        suspend fun createFeed(@Body feedMap: Map<String, @JvmSuppressWildcards Any>): Feeds
 
         @PUT("feeds/{feedId}/move")
         suspend fun moveFeed(@Path("feedId") feedId: Long, @Body folderIdMap: Map<String, Long>): Response<Void>
