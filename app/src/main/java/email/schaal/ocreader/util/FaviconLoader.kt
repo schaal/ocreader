@@ -68,9 +68,12 @@ class FaviconLoader private constructor(builder: Builder) {
     }
 
     private fun generatePalette(bitmap: Bitmap?, filter: Palette.Filter, paletteAsyncListener: PaletteAsyncListener) {
-        Palette.Builder(bitmap!!)
-                .addFilter(filter)
-                .generate(paletteAsyncListener)
+        if(bitmap != null)
+            Palette.Builder(bitmap)
+                    .addFilter(filter)
+                    .generate(paletteAsyncListener)
+        else
+            paletteAsyncListener.onGenerated(null)
     }
 
     interface FeedColorsListener {
