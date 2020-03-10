@@ -51,8 +51,7 @@ class ItemViewHolder(private val binding: ListItemBinding, private val clickList
             binding.textViewFeedTitle.text = ""
         }
         val preferences = PreferenceManager.getDefaultSharedPreferences(binding.root.context)
-        val date: Date
-        date = if (Preferences.SORT_FIELD.getString(preferences) == Item::updatedAt.name) item.updatedAt!! else item.pubDate!!
+        val date: Date? = if (Preferences.SORT_FIELD.getString(preferences) == Item::updatedAt.name) item.updatedAt else item.pubDate
         binding.textViewTime.text = getTimeSpanString(itemView.context, date)
         binding.textViewFeedTitle.setTextColor(defaultFeedTextColor)
         FaviconLoader.Builder(binding.imageviewFavicon).build().load(binding.imageviewFavicon.context, feed, this)

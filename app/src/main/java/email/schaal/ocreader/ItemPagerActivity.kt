@@ -273,7 +273,7 @@ class ItemPagerActivity : AppCompatActivity() {
                         statusBarAnimator.setEvaluator(argbEvaluator)
                         animatorSetBuilder.with(statusBarAnimator)
                     }
-                    animatorSet.duration = DURATION.toLong()
+                    animatorSet.duration = DURATION
                     animatorSet.start()
                 }
             }
