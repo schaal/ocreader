@@ -25,5 +25,6 @@
     <dimen name="divider_inset">40dp</dimen>
     <dimen name="materialize_spacing">8dp</dimen>
     <dimen name="row_padding">12dp</dimen>
-    <dimen name="icon_size">24dp</dimen>
+    <dimen name="icon_size">38dp</dimen>
+    <dimen name="icon_padding">8dp</dimen>
 </resources>
