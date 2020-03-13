@@ -101,7 +101,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime:${versions.lifecycle}"
     implementation "androidx.lifecycle:lifecycle-common-java8:${versions.lifecycle}"
 
-    implementation "androidx.work:work-runtime-ktx:2.3.2"
+    implementation "androidx.work:work-runtime-ktx:2.3.3"
     implementation "androidx.fragment:fragment-ktx:1.2.2"
 
     implementation "androidx.recyclerview:recyclerview:1.1.0"
