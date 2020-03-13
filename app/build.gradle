@@ -79,7 +79,7 @@ android {
 ext {
     versions = [
             okhttp: '4.4.1',
-            retrofit: '2.7.1',
+            retrofit: '2.7.2',
             glide: '4.11.0',
             lifecycle: '2.2.0',
             moshi: '1.9.2',
