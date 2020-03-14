@@ -30,8 +30,8 @@ class AddNewFeedDialogFragment : BottomSheetDialogFragment() {
         val activity = requireActivity() as ManageFeedsActivity
         val builder = AlertDialog.Builder(activity)
         val binding = FragmentAddNewFeedBinding.inflate(activity.layoutInflater)
-        val arguments = arguments
-        val feedId = arguments!!.getLong(ARG_FEED_ID, -1)
+        val arguments = requireArguments()
+        val feedId = arguments.getLong(ARG_FEED_ID, -1)
         val newFeed = feedId < 0
         builder.setTitle(if (newFeed) R.string.add_new_feed else R.string.edit_feed)
         binding.feedUrl.isEnabled = newFeed
