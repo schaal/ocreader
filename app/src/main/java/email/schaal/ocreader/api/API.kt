@@ -328,32 +328,40 @@ class API {
         }
     }
 
-    suspend fun createFeed(realm: Realm, url: String, folderId: Long) {
+    suspend fun createFeed(url: String, folderId: Long) {
         val feeds = api?.createFeed(mapOf("url" to url, "folderId" to folderId))?.feeds
 
         feeds?.get(0)?.let { feed: Feed ->
-            realm.executeTransaction {
-                feed.unreadCount = 0
-                feed.insert(it)
+            Realm.getDefaultInstance().use { realm ->
+                realm.executeTransaction {
+                    feed.unreadCount = 0
+                    feed.insert(it)
+                }
             }
         }
     }
 
-    suspend fun deleteFeed(realm: Realm, feed: Feed) {
+    suspend fun deleteFeed(feed: Feed) {
         val response = api?.deleteFeed(feed.id)
         if(response?.isSuccessful == true) {
-            realm.executeTransaction {
-                feed.delete(it)
+            Realm.getDefaultInstance().use { realm ->
+                realm.executeTransaction {
+                    feed.delete(it)
+                }
             }
         }
     }
 
-    suspend fun moveFeed(realm: Realm, feed: Feed, folderId: Long) {
-        val response = api?.moveFeed(feed.id, mapOf("folderId" to folderId))
-        if(response?.isSuccessful == true) {
-            realm.executeTransaction {
-                feed.folderId = folderId
-                feed.folder = Folder.getOrCreate(it, folderId)
+    suspend fun moveFeed(feedId: Long, folderId: Long) {
+        Realm.getDefaultInstance().use { realm ->
+            val feed = Feed.get(realm, feedId) ?: return
+
+            val response = api?.moveFeed(feed.id, mapOf("folderId" to folderId))
+            if (response?.isSuccessful == true) {
+                realm.executeTransaction {
+                    feed.folderId = folderId
+                    feed.folder = Folder.getOrCreate(it, folderId)
+                }
             }
         }
     }

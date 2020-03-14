@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -19,7 +20,7 @@ import email.schaal.ocreader.databinding.ActivityManageFeedsBinding
 import email.schaal.ocreader.view.*
 import kotlinx.coroutines.launch
 
-class ManageFeedsActivity : RealmActivity(), FeedManageListener {
+class ManageFeedsActivity : AppCompatActivity(), FeedManageListener {
     lateinit var folderSpinnerAdapter: FolderSpinnerAdapter
     private lateinit var feedsAdapter: FeedsAdapter
     private val folderViewModel by viewModels<FolderViewModel>()
@@ -54,7 +55,7 @@ class ManageFeedsActivity : RealmActivity(), FeedManageListener {
     override fun addNewFeed(url: String, folderId: Long, finishAfterAdd: Boolean) {
         val progressDialog = showProgress(this, getString(R.string.adding_feed))
         lifecycleScope.launch {
-            API(this@ManageFeedsActivity).createFeed(realm, url, folderId)
+            API(this@ManageFeedsActivity).createFeed(url, folderId)
         }.invokeOnCompletion { throwable ->
             if(throwable != null) {
                 throwable.printStackTrace()
@@ -72,7 +73,7 @@ class ManageFeedsActivity : RealmActivity(), FeedManageListener {
                 .setPositiveButton(R.string.delete) { _: DialogInterface?, _: Int ->
                     val progressDialog = showProgress(this@ManageFeedsActivity, getString(R.string.deleting_feed, feed.name))
                     lifecycleScope.launch {
-                        API(this@ManageFeedsActivity).deleteFeed(realm, feed)
+                        API(this@ManageFeedsActivity).deleteFeed(feed)
                     }.invokeOnCompletion { throwable ->
                         if(throwable != null) {
                             throwable.printStackTrace()
@@ -90,10 +91,9 @@ class ManageFeedsActivity : RealmActivity(), FeedManageListener {
     }
 
     override fun changeFeed(feedId: Long, folderId: Long) {
-        val feed = Feed.get(realm, feedId) ?: return
         val progressDialog = showProgress(this, getString(R.string.moving_feed))
         lifecycleScope.launch {
-            API(this@ManageFeedsActivity).moveFeed(realm, feed, folderId)
+            API(this@ManageFeedsActivity).moveFeed(feedId, folderId)
         }.invokeOnCompletion { throwable ->
             if(throwable != null) {
                 throwable.printStackTrace()
