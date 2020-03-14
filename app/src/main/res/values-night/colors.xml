@@ -21,6 +21,7 @@
 
 <resources>
     <color name="selected_background">@color/md_grey_800</color>
+    <color name="favicon_background">@color/md_grey_600</color>
     <color name="textdrawable_text">@color/design_dark_default_color_background</color>
 
     <!-- Background colors for textdrawable -->
