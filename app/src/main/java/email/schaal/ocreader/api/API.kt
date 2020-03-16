@@ -65,9 +65,9 @@ class API {
 
         var instance: API? = null
 
-        suspend fun login(context: Context, baseUrl: HttpUrl, username: String, password: String): Status? {
-            val httpManager = HttpManager(username, password, baseUrl)
-            val resolvedBaseUrl = baseUrl.resolve("") ?: throw IllegalStateException("Couldn't parse URL")
+        suspend fun login(context: Context, baseUrl: HttpUrl, username: String, apptoken: String): Status? {
+            val httpManager = HttpManager(username, apptoken, baseUrl)
+            val resolvedBaseUrl = baseUrl.resolve("") ?: throw IllegalArgumentException("Couldn't parse URL")
 
             val moshi = Moshi.Builder().build()
 
@@ -81,14 +81,14 @@ class API {
             val response = commonAPI.apiLevels()
             if(response.isSuccessful) {
                 val apiLevels = response.body()
-                val apiLevel = apiLevels?.highestSupportedApi() ?: throw IllegalStateException(context.getString(R.string.error_not_compatible))
+                val apiLevel = apiLevels?.highestSupportedApi() ?: throw IllegalArgumentException(context.getString(R.string.error_not_compatible))
                 val loginInstance = Level.getAPI(context, apiLevel, httpManager)
                 val status = loginInstance.metaData()
                 val version = status?.version
                 if(version != null && MIN_VERSION.lessThanOrEqualTo(version)) {
                     PreferenceManager.getDefaultSharedPreferences(context).edit()
                             .putString(Preferences.USERNAME.key, username)
-                            .putString(Preferences.PASSWORD.key, password)
+                            .putString(Preferences.APPTOKEN.key, apptoken)
                             .putString(Preferences.URL.key, resolvedBaseUrl.toString())
                             .putString(Preferences.SYS_DETECTED_API_LEVEL.key, apiLevel.level)
                             .apply()
@@ -174,13 +174,13 @@ class API {
     constructor(context: Context) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val username = Preferences.USERNAME.getString(sharedPreferences)
-        val password = Preferences.PASSWORD.getString(sharedPreferences)
+        val apptoken = Preferences.APPTOKEN.getString(sharedPreferences)
         val url = Preferences.URL.getString(sharedPreferences)?.toHttpUrlOrNull()
 
-        if(username == null || password == null || url == null)
+        if(username == null || apptoken == null || url == null)
             throw IllegalStateException()
 
-        val httpManager = HttpManager(username, password, url)
+        val httpManager = HttpManager(username, apptoken, url)
 
         api = setupApi(httpManager)
     }

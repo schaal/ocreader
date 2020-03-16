@@ -31,7 +31,17 @@ class OCReaderApplication : Application() {
         super.onCreate()
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        preferences.edit().putBoolean(Preferences.SYS_SYNC_RUNNING.key, false).apply()
+        val editor = preferences.edit()
+        // Migrate to apptoken
+        if(preferences.contains(Preferences.PASSWORD.key)) {
+            editor
+                    .remove(Preferences.USERNAME.key)
+                    .remove(Preferences.PASSWORD.key)
+                    .remove(Preferences.URL.key)
+        }
+        editor.putBoolean(Preferences.SYS_SYNC_RUNNING.key, false)
+                .apply()
+
         AppCompatDelegate.setDefaultNightMode(Preferences.getNightMode(preferences))
 
         Queries.init(this)

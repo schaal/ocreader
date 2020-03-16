@@ -28,10 +28,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import email.schaal.ocreader.ListActivity
-import email.schaal.ocreader.LoginActivity
-import email.schaal.ocreader.Preferences
-import email.schaal.ocreader.R
+import email.schaal.ocreader.*
 import email.schaal.ocreader.database.FeedViewModel
 import email.schaal.ocreader.databinding.BottomNavigationviewBinding
 import email.schaal.ocreader.databinding.UserBottomsheetBinding
@@ -49,9 +46,11 @@ class UserBottomSheetDialogFragment: BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val url = Preferences.URL.getString(PreferenceManager.getDefaultSharedPreferences(requireContext()))
+
         feedViewModel.userLiveData.observe(viewLifecycleOwner, Observer { user ->
             if(user != null) {
-                val url = Preferences.URL.getString(PreferenceManager.getDefaultSharedPreferences(requireContext()))
                 headerBinding.textViewUrl.visibility = View.VISIBLE
                 headerBinding.textViewUser.text = user.displayName
                 headerBinding.textViewUrl.text =  "${user.userId}@${url}"
@@ -67,8 +66,9 @@ class UserBottomSheetDialogFragment: BottomSheetDialogFragment() {
         }
 
         headerBinding.button.setOnClickListener {
-            val loginIntent = Intent(requireActivity(), LoginActivity::class.java)
-            startActivityForResult(loginIntent, LoginActivity.REQUEST_CODE)
+            val loginIntent = Intent(requireActivity(), LoginFlowActivity::class.java)
+            loginIntent.putExtra(LoginFlowActivity.EXTRA_URL, url)
+            requireActivity().startActivityForResult(loginIntent, LoginFlowActivity.REQUEST_CODE)
             dismiss()
         }
     }

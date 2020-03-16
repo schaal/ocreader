@@ -34,6 +34,7 @@ enum class Preferences constructor(val key: String, private val defaultValue: An
     SHOW_ONLY_UNREAD("show_only_unread", false),
     USERNAME("username"),
     PASSWORD("password"),
+    APPTOKEN("apptoken"),
     URL("url"),
     ORDER("order", Sort.ASCENDING.name, ChangeAction.UPDATE),
     SORT_FIELD("sort_field", Item::id.name, ChangeAction.UPDATE),

@@ -21,22 +21,26 @@ package email.schaal.ocreader.service
 
 import android.content.Context
 import android.content.Intent
-import android.widget.Toast
+import android.os.Bundle
+import android.os.ResultReceiver
 import androidx.core.app.JobIntentService
 import androidx.preference.PreferenceManager
 import email.schaal.ocreader.Preferences
 import email.schaal.ocreader.api.API
+import email.schaal.ocreader.service.SyncResultReceiver.Companion.EXCEPTION_DATA_KEY
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class SyncJobIntentService: JobIntentService() {
     companion object {
         const val SYNC_TYPE_EXTRA = "email.schaal.ocreader.SYNC_TYPE"
         const val JOB_ID = 12345
 
-        fun enqueueWork(context: Context, syncType: SyncType) {
-            val intent: Intent = Intent()
-            intent.putExtra(SYNC_TYPE_EXTRA, syncType.action)
+        fun enqueueWork(context: Context, syncType: SyncType, resultReceiver: SyncResultReceiver?) {
+            val intent = Intent()
+            intent
+                    .putExtra(SYNC_TYPE_EXTRA, syncType.action)
+                    .putExtra(SyncResultReceiver.INTENT_KEY,resultReceiver)
             enqueueWork(context, SyncJobIntentService::class.java, JOB_ID, intent)
         }
     }
@@ -44,17 +48,19 @@ class SyncJobIntentService: JobIntentService() {
     override fun onHandleWork(intent: Intent) {
         val syncType = SyncType[intent.getStringExtra(SYNC_TYPE_EXTRA)] ?: SyncType.FULL_SYNC
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val syncResultReceiver = intent.getParcelableExtra<ResultReceiver>(SyncResultReceiver.INTENT_KEY)
 
         if(syncType != SyncType.SYNC_CHANGES_ONLY)
             preferences.edit().putBoolean(Preferences.SYS_SYNC_RUNNING.key, true).apply()
 
-        GlobalScope.async {
-            API(this@SyncJobIntentService).sync(syncType)
-        }.invokeOnCompletion {
-            it?.let {
-                it.printStackTrace()
-                Toast.makeText(this@SyncJobIntentService, it.localizedMessage, Toast.LENGTH_LONG).show()
+        GlobalScope.launch {
+            try {
+                API(this@SyncJobIntentService).sync(syncType)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                syncResultReceiver?.send(0, Bundle().apply { putSerializable(EXCEPTION_DATA_KEY, e) })
             }
+        }.invokeOnCompletion {
             preferences.edit().putBoolean(Preferences.SYS_SYNC_RUNNING.key, false).apply()
         }
     }

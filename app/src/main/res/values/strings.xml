@@ -122,4 +122,6 @@
     <string name="update_value" translatable="false">updatedAt</string>
     <string name="default_sort_key">Default</string>
     <string name="sort_by">Sort by</string>
+
+    <string name="error_access_forbidden">Access forbidden, please check password</string>
 </resources>

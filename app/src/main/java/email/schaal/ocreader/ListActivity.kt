@@ -30,7 +30,6 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.widget.Toolbar.OnMenuItemClickListener
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -47,6 +46,7 @@ import email.schaal.ocreader.database.model.Item
 import email.schaal.ocreader.database.model.TemporaryFeed
 import email.schaal.ocreader.database.model.TreeItem
 import email.schaal.ocreader.databinding.ActivityListBinding
+import email.schaal.ocreader.service.SyncResultReceiver
 import email.schaal.ocreader.service.SyncType
 import email.schaal.ocreader.view.*
 import email.schaal.ocreader.view.FoldersAdapter.TreeItemClickListener
@@ -57,6 +57,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
     private lateinit var binding: ActivityListBinding
     private lateinit var adapter: LiveItemsAdapter
     private lateinit var layoutManager: LinearLayoutManager
+    private lateinit var syncResultReceiver: SyncResultReceiver
     private val feedViewModel: FeedViewModel by viewModels { FeedViewModelFactory(this) }
     private lateinit var preferenceChangeListener: OnSharedPreferenceChangeListener
 
@@ -71,13 +72,14 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
     override fun onStart() {
         super.onStart()
         if (!Preferences.hasCredentials(PreferenceManager.getDefaultSharedPreferences(this))) {
-            startActivityForResult(Intent(this, LoginActivity::class.java), LoginActivity.REQUEST_CODE)
+            startActivityForResult(Intent(this, LoginFlowActivity::class.java), LoginFlowActivity.REQUEST_CODE)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_list)
+        syncResultReceiver = SyncResultReceiver(binding.listviewSwitcher)
         setSupportActionBar(binding.toolbarLayout.toolbar)
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         val menuItemShowOnlyUnread = binding.bottomAppbar.menu.findItem(R.id.menu_show_only_unread)
@@ -105,7 +107,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
                     true
                 }
                 R.id.menu_sync -> {
-                    feedViewModel.sync(this, SyncType.FULL_SYNC)
+                    feedViewModel.sync(this, SyncType.FULL_SYNC, syncResultReceiver)
                     true
                 }
                 R.id.menu_about -> {
@@ -177,20 +179,28 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                LoginActivity.REQUEST_CODE -> {
-                    if (data != null && data.getBooleanExtra(LoginActivity.EXTRA_IMPROPERLY_CONFIGURED_CRON, false)) {
-                        Snackbar.make(binding.coordinatorLayout, string.updater_improperly_configured, Snackbar.LENGTH_INDEFINITE)
-                                .setAction(string.more_info) { startActivity(data) }
-                                .setActionTextColor(ContextCompat.getColor(this, R.color.warning))
-                                .show()
+        when (resultCode) {
+            Activity.RESULT_OK -> {
+                when (requestCode) {
+                    LoginFlowActivity.REQUEST_CODE -> {
+                        if (data?.getBooleanExtra(LoginFlowActivity.EXTRA_IMPROPERLY_CONFIGURED_CRON, false) == true) {
+                            Snackbar.make(binding.coordinatorLayout, string.updater_improperly_configured, Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(string.more_info) { startActivity(data) }
+                                    .setActionTextColor(ContextCompat.getColor(this, R.color.warning))
+                                    .show()
+                        }
+                        Queries.resetDatabase()
+                        feedViewModel.sync(this, SyncType.FULL_SYNC, syncResultReceiver)
                     }
-                    Queries.resetDatabase()
-                    feedViewModel.sync(this, SyncType.FULL_SYNC)
+                    ItemPagerActivity.REQUEST_CODE -> if (data != null) binding.itemsRecyclerview.smoothScrollToPosition(data.getIntExtra(ItemPagerActivity.EXTRA_CURRENT_POSITION, -1))
+                    ManageFeedsActivity.REQUEST_CODE -> reloadListFragment()
                 }
-                ItemPagerActivity.REQUEST_CODE -> if (data != null) binding.itemsRecyclerview.smoothScrollToPosition(data.getIntExtra(ItemPagerActivity.EXTRA_CURRENT_POSITION, -1))
-                ManageFeedsActivity.REQUEST_CODE -> reloadListFragment()
+            }
+            Activity.RESULT_CANCELED -> {
+                data?.getStringExtra(LoginFlowActivity.EXTRA_MESSAGE)?.let {
+                    Snackbar.make(binding.coordinatorLayout, it, Snackbar.LENGTH_LONG)
+                            .show()
+                }
             }
         }
     }
@@ -249,7 +259,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
     }
 
     override fun onRefresh() {
-        feedViewModel.sync(this, SyncType.FULL_SYNC)
+        feedViewModel.sync(this, SyncType.FULL_SYNC, syncResultReceiver)
     }
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {

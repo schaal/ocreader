@@ -20,18 +20,16 @@ package email.schaal.ocreader.database
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.widget.Toast
 import androidx.lifecycle.*
 import androidx.preference.PreferenceManager
 import email.schaal.ocreader.Preferences
-import email.schaal.ocreader.api.API
 import email.schaal.ocreader.database.model.*
 import email.schaal.ocreader.database.model.TemporaryFeed.Companion.getListTemporaryFeed
 import email.schaal.ocreader.service.SyncJobIntentService
+import email.schaal.ocreader.service.SyncResultReceiver
 import email.schaal.ocreader.service.SyncType
 import io.realm.Realm
 import io.realm.kotlin.where
-import kotlinx.coroutines.*
 import kotlin.IllegalArgumentException
 
 class FeedViewModel(context: Context) : RealmViewModel() {
@@ -59,8 +57,8 @@ class FeedViewModel(context: Context) : RealmViewModel() {
     val selectedTreeItem: LiveData<TreeItem>
         get() = selectedTreeItemLiveData
 
-    fun sync(context: Context, syncType: SyncType) {
-        SyncJobIntentService.enqueueWork(context, syncType)
+    fun sync(context: Context, syncType: SyncType, resultReceiver: SyncResultReceiver? = null) {
+        SyncJobIntentService.enqueueWork(context, syncType, resultReceiver)
     }
 
     fun updateFolders(onlyUnread: Boolean) {
