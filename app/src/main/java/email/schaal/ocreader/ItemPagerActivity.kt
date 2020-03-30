@@ -31,7 +31,6 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import androidx.preference.PreferenceManager
 import android.view.Menu
 import android.view.MenuItem
 import android.webkit.WebView
@@ -43,9 +42,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.ColorUtils
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import androidx.preference.PreferenceManager
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import email.schaal.ocreader.ItemPageFragment.Companion.newInstance
 import email.schaal.ocreader.database.PagerViewModel
 import email.schaal.ocreader.database.model.Item
@@ -95,11 +94,12 @@ class ItemPagerActivity : AppCompatActivity() {
             }
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-            val mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
+            val mSectionsPagerAdapter = SectionsPagerAdapter()
             binding.container.adapter = mSectionsPagerAdapter
 
-            val pageChangeListener: OnPageChangeListener = MyOnPageChangeListener(mSectionsPagerAdapter)
-            binding.container.addOnPageChangeListener(pageChangeListener)
+            val pageChangeListener: ViewPager2.OnPageChangeCallback = MyOnPageChangeListener(mSectionsPagerAdapter)
+            binding.container.registerOnPageChangeCallback(pageChangeListener)
+
             // The initial position is 0, so the pageChangeListener won't be called when setting the position to 0
             if (position == 0) pageChangeListener.onPageSelected(position)
             binding.container.setCurrentItem(position, false)
@@ -195,9 +195,10 @@ class ItemPagerActivity : AppCompatActivity() {
         }
     }
 
-    private inner class SectionsPagerAdapter internal constructor(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    private inner class SectionsPagerAdapter internal constructor() : FragmentStateAdapter(this) {
         private val fragments: WeakHashMap<Int, ItemPageFragment?>
-        override fun getItem(position: Int): Fragment {
+
+        override fun createFragment(position: Int): Fragment {
             val fragment: ItemPageFragment = fragments[position] ?: newInstance(getItemForPosition(position))
 
             if (fragments[position] == null)
@@ -206,12 +207,12 @@ class ItemPagerActivity : AppCompatActivity() {
             return fragment
         }
 
-        override fun getCount(): Int {
+        override fun getItemCount(): Int {
             return items.size
         }
 
         init {
-            fragments = WeakHashMap(count)
+            fragments = WeakHashMap(itemCount)
         }
     }
 
@@ -240,7 +241,7 @@ class ItemPagerActivity : AppCompatActivity() {
         }
     }
 
-    private inner class MyOnPageChangeListener internal constructor(private val mSectionsPagerAdapter: SectionsPagerAdapter) : OnPageChangeListener {
+    private inner class MyOnPageChangeListener internal constructor(private val mSectionsPagerAdapter: SectionsPagerAdapter) : ViewPager2.OnPageChangeCallback() {
         private val DURATION = 250L
 
         private val currentNightMode: Int = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
@@ -295,7 +296,7 @@ class ItemPagerActivity : AppCompatActivity() {
                     .build()
                     .load(this@ItemPagerActivity, item.feed, toListener)
             progressFrom = progressTo
-            progressTo = (position + 1).toFloat() / mSectionsPagerAdapter.count.toFloat()
+            progressTo = (position + 1).toFloat() / mSectionsPagerAdapter.itemCount.toFloat()
             binding.bottomAppbar.performShow()
             binding.fabOpenInBrowser.show()
             val progressAnimator = ObjectAnimator
