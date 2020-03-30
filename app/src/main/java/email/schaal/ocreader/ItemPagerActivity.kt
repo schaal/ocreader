@@ -52,7 +52,6 @@ import email.schaal.ocreader.databinding.ActivityItemPagerBinding
 import email.schaal.ocreader.util.FaviconLoader
 import email.schaal.ocreader.util.FaviconLoader.FeedColorsListener
 import email.schaal.ocreader.util.FeedColors
-import java.util.*
 
 class ItemPagerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityItemPagerBinding
@@ -196,23 +195,12 @@ class ItemPagerActivity : AppCompatActivity() {
     }
 
     private inner class SectionsPagerAdapter internal constructor() : FragmentStateAdapter(this) {
-        private val fragments: WeakHashMap<Int, ItemPageFragment?>
-
         override fun createFragment(position: Int): Fragment {
-            val fragment: ItemPageFragment = fragments[position] ?: newInstance(getItemForPosition(position))
-
-            if (fragments[position] == null)
-                fragments[position] = fragment
-
-            return fragment
+            return newInstance(getItemForPosition(position))
         }
 
         override fun getItemCount(): Int {
             return items.size
-        }
-
-        init {
-            fragments = WeakHashMap(itemCount)
         }
     }
 
