@@ -23,10 +23,9 @@ package email.schaal.ocreader.util
 
 import android.content.Context
 import android.text.format.DateUtils
+import androidx.core.text.HtmlCompat
 import email.schaal.ocreader.R
 import email.schaal.ocreader.database.model.Feed
-import org.jsoup.Jsoup
-import org.jsoup.safety.Whitelist
 import java.util.*
 
 /**
@@ -50,10 +49,15 @@ fun getTimeSpanString(context: Context, startDate: Date?, endDate: Date? = Date(
 
     val timeSpanString: String
     val timeDiff = endDate.time - startDate.time
-    timeSpanString = if (timeDiff <= 0) context.getString(R.string.now) else if (timeDiff <= 59 * DateUtils.MINUTE_IN_MILLIS) context.getString(R.string.minutes, timeDiff / DateUtils.MINUTE_IN_MILLIS) else if (timeDiff <= 23 * DateUtils.HOUR_IN_MILLIS) context.getString(R.string.hours, timeDiff / DateUtils.HOUR_IN_MILLIS) else context.getString(R.string.days, timeDiff / DateUtils.DAY_IN_MILLIS)
+    timeSpanString = when {
+        timeDiff <= 0 -> context.getString(R.string.now)
+        timeDiff <= 59 * DateUtils.MINUTE_IN_MILLIS -> context.getString(R.string.minutes, timeDiff / DateUtils.MINUTE_IN_MILLIS)
+        timeDiff <= 23 * DateUtils.HOUR_IN_MILLIS -> context.getString(R.string.hours, timeDiff / DateUtils.HOUR_IN_MILLIS)
+        else -> context.getString(R.string.days, timeDiff / DateUtils.DAY_IN_MILLIS)
+    }
     return timeSpanString
 }
 
 fun cleanString(source: String): String {
-    return Jsoup.clean(source, Whitelist.simpleText())
+    return HtmlCompat.fromHtml(source, HtmlCompat.FROM_HTML_MODE_COMPACT).toString()
 }
