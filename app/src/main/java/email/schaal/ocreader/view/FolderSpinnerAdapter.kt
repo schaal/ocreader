@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.annotation.LayoutRes
 import email.schaal.ocreader.R
 import email.schaal.ocreader.database.model.Folder
-import io.realm.OrderedRealmCollection
 
 /**
  * Adapter for Spinner to display Folders

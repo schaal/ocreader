@@ -14,7 +14,7 @@
             android:id="@+id/toolbar_layout"
             layout="@layout/toolbar" />
 
-        <fragment
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment_settings"
             class="email.schaal.ocreader.SettingsFragment"
             android:layout_width="match_parent"

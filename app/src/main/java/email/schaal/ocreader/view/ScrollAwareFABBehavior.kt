@@ -30,9 +30,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton.OnV
 
 @Keep
 class ScrollAwareFABBehavior() : FloatingActionButton.Behavior() {
-    constructor(context: Context, attributeSet: AttributeSet) : this() {
-
-    }
+    constructor(context: Context, attributeSet: AttributeSet) : this()
 
     override fun onStartNestedScroll(coordinatorLayout: CoordinatorLayout, child: FloatingActionButton, directTargetChild: View, target: View, axes: Int, type: Int): Boolean {
         return axes == ViewCompat.SCROLL_AXIS_VERTICAL ||

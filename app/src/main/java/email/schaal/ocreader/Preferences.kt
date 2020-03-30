@@ -22,7 +22,6 @@ package email.schaal.ocreader
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.NightMode
-import email.schaal.ocreader.database.model.AllUnreadFolder
 import email.schaal.ocreader.database.model.Item
 import io.realm.Sort
 

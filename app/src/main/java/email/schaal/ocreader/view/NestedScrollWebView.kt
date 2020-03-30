@@ -19,7 +19,7 @@ open class NestedScrollWebView : WebView, NestedScrollingChild, GestureDetector.
     private val helper = NestedScrollingChildHelper(this)
     private val gestureDetector = GestureDetector(context, this)
 
-    constructor(context: Context?) : super(context) {}
+    constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
         ViewCompat.setNestedScrollingEnabled(this, true)
     }

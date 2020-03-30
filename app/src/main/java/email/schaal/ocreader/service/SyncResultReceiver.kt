@@ -25,7 +25,6 @@ import android.os.Looper
 import android.os.ResultReceiver
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
-import email.schaal.ocreader.R
 import email.schaal.ocreader.util.LoginError
 
 class SyncResultReceiver(private val view: View): ResultReceiver(Handler(Looper.getMainLooper())) {

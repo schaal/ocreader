@@ -25,7 +25,6 @@ package email.schaal.ocreader.util
 
 import androidx.annotation.ColorRes
 import email.schaal.ocreader.R
-import java.util.*
 import kotlin.math.abs
 
 /**

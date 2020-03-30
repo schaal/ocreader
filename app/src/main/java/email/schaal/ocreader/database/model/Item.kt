@@ -23,7 +23,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Parcelable
-import android.util.Log
 import io.realm.Realm
 import io.realm.RealmModel
 import io.realm.RealmObject
@@ -31,7 +30,6 @@ import io.realm.Sort
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 import io.realm.annotations.RealmField
-import io.realm.exceptions.RealmException
 import io.realm.kotlin.isManaged
 import io.realm.kotlin.where
 import kotlinx.android.parcel.Parcelize

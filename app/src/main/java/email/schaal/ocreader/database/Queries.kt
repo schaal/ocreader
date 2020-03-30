@@ -24,7 +24,6 @@ import android.util.Log
 import email.schaal.ocreader.database.model.*
 import io.realm.Realm
 import io.realm.RealmConfiguration
-import io.realm.exceptions.RealmException
 import io.realm.exceptions.RealmPrimaryKeyConstraintException
 import io.realm.kotlin.createObject
 import io.realm.kotlin.where

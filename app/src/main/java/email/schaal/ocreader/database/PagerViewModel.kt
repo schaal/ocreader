@@ -20,7 +20,6 @@
 package email.schaal.ocreader.database
 
 import androidx.lifecycle.LiveData
-import email.schaal.ocreader.database.model.Item
 import email.schaal.ocreader.database.model.TemporaryFeed
 
 class PagerViewModel: RealmViewModel() {

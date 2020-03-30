@@ -19,13 +19,12 @@
  */
 package email.schaal.ocreader.view
 
-import androidx.preference.PreferenceManager
 import android.util.Log
 import android.view.View
 import androidx.annotation.ColorInt
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import email.schaal.ocreader.Preferences
-import email.schaal.ocreader.R
 import email.schaal.ocreader.database.model.Item
 import email.schaal.ocreader.databinding.ListItemBinding
 import email.schaal.ocreader.util.FaviconLoader

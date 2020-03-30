@@ -20,15 +20,15 @@
 package email.schaal.ocreader.ui.loginflow
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.*
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import email.schaal.ocreader.R
-
 import email.schaal.ocreader.databinding.FragmentLoginFlowWebViewBinding
 import email.schaal.ocreader.view.LoginViewModel
 import java.util.*

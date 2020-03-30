@@ -168,10 +168,6 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
         adapter.onSaveInstanceState(outState)
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
-
     private fun reloadListFragment() {
         feedViewModel.updateTemporaryFeed(PreferenceManager.getDefaultSharedPreferences(this), true)
         binding.itemsRecyclerview.scrollToPosition(0)
