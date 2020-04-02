@@ -6,18 +6,8 @@ import java.util.*
 /**
  * Aggregates feedIds and guidHashes, used to mark multiple items as starred
  */
-class ItemMap(items: Iterable<Item>) {
-    private val items: MutableSet<Map<String, Any>> = HashSet()
-    fun getItems(): Set<Map<String, Any>> {
-        return items
-    }
-
-    init {
-        for (item in items) {
-            val itemMap = HashMap<String, Any>()
-            itemMap["feedId"] = item.feedId
-            itemMap["guidHash"] = item.guidHash ?: ""
-            this.items.add(itemMap)
-        }
+class ItemMap(sourceItems: Iterable<Item>) {
+    val items: Iterable<Map<String, Any?>> = sourceItems.map {
+        mapOf("feedId" to it.feedId, "guidHash" to it.guidHash)
     }
 }
