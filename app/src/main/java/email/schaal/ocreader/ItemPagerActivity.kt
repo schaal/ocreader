@@ -23,13 +23,11 @@ import android.animation.AnimatorSet
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -218,14 +216,6 @@ class ItemPagerActivity : AppCompatActivity() {
     }
 
     private open inner class StatusBarChanger {
-        @Keep
-        open fun setStatusBarColor(backgroundColor: Int) {
-            binding.toolbarLayout.toolbar.setBackgroundColor(backgroundColor)
-            binding.bottomAppbar.backgroundTint = ColorStateList.valueOf(backgroundColor)
-        }
-    }
-
-    private inner class StatusBarChangerLollipop : StatusBarChanger() {
         private val hsl = FloatArray(3)
         private fun changeLightness(backgroundColor: Int, lightnessChange: Float): Int {
             ColorUtils.colorToHSL(backgroundColor, hsl)
@@ -233,12 +223,13 @@ class ItemPagerActivity : AppCompatActivity() {
             return ColorUtils.HSLToColor(hsl)
         }
 
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         @Keep
-        override fun setStatusBarColor(backgroundColor: Int) {
+        open fun setStatusBarColor(backgroundColor: Int) {
             val statusbarColor = changeLightness(backgroundColor, 0.7f)
             window.statusBarColor = statusbarColor
-            super.setStatusBarColor(backgroundColor)
+
+            binding.toolbarLayout.toolbar.setBackgroundColor(backgroundColor)
+            binding.bottomAppbar.backgroundTint = ColorStateList.valueOf(backgroundColor)
         }
     }
 
@@ -246,7 +237,7 @@ class ItemPagerActivity : AppCompatActivity() {
         private val DURATION = 250L
 
         private val currentNightMode: Int = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        private val statusBarChanger: StatusBarChanger = StatusBarChangerLollipop()
+        private val statusBarChanger: StatusBarChanger = StatusBarChanger()
         private var fabColorFrom = 0
         private var colorTo = defaultToolbarColor
         private var fabColorTo = defaultAccent
