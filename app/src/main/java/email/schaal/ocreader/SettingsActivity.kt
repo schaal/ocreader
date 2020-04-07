@@ -41,6 +41,10 @@ class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setTitle(R.string.settings)
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this)
+
+        supportFragmentManager.beginTransaction()
+                .add(R.id.fragment_settings, SettingsFragment())
+                .commit()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

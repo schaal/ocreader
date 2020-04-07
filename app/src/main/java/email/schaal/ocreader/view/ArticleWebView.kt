@@ -27,7 +27,8 @@ import java.util.regex.Pattern
 /**
  * WebView to display a Item
  */
-class ArticleWebView : NestedScrollWebView {
+@SuppressLint("SetJavaScriptEnabled")
+class ArticleWebView(context: Context, attrs: AttributeSet?, defStyleAttr: Int): NestedScrollWebView(context, attrs, defStyleAttr) {
     @ColorInt
     private var defaultLinkColor = 0
     private var item: Item? = null
@@ -46,21 +47,10 @@ class ArticleWebView : NestedScrollWebView {
     @ColorInt
     private var backColor = 0
 
-    constructor(context: Context) : super(context) {
-        init(context, null)
-    }
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    constructor(context: Context) : this(context, null)
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        init(context, attrs)
-    }
-
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        init(context, attrs)
-    }
-
-    // All js from external sites gets stripped using jsoup
-    @SuppressLint("AddJavascriptInterface", "SetJavaScriptEnabled")
-    private fun init(context: Context, attrs: AttributeSet?) {
+    init {
         var typedArray: TypedArray? = null
         try {
             typedArray = context.obtainStyledAttributes(attrs, R.styleable.ArticleWebView)

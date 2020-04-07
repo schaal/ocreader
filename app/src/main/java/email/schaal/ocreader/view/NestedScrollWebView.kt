@@ -19,6 +19,9 @@ open class NestedScrollWebView(context: Context, attrs: AttributeSet? = null, de
     private val helper = NestedScrollingChildHelper(rootView)
     private val gestureDetector = GestureDetector(context, ScrollGestureListener())
 
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    constructor(context: Context) : this(context, null)
+
     private inner class ScrollGestureListener: GestureDetector.SimpleOnGestureListener() {
 
         override fun onSingleTapUp(e: MotionEvent?): Boolean {
