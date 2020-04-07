@@ -19,6 +19,7 @@
 
 package email.schaal.ocreader.ui.loginflow
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -55,12 +56,13 @@ class LoginFlowWebViewFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         binding = FragmentLoginFlowWebViewBinding.inflate(inflater, container, false)
         binding.webViewLogin.settings.also {
             it.javaScriptEnabled = true
-            it.userAgentString = "${getString(R.string.app_name)} on ${android.os.Build.MANUFACTURER.toUpperCase(Locale.getDefault())} ${android.os.Build.MODEL}"
+            it.userAgentString = "${getString(R.string.app_name)} on ${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}"
         }
         binding.webViewLogin.webViewClient = object: WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
