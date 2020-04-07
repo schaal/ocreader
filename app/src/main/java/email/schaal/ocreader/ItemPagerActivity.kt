@@ -43,6 +43,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import email.schaal.ocreader.ItemPageFragment.Companion.newInstance
@@ -64,6 +65,20 @@ class ItemPagerActivity : AppCompatActivity() {
 
     private val pagerViewModel:PagerViewModel by viewModels()
 
+    /**
+     * Reduces drag sensitivity of [ViewPager2] widget
+     */
+    private fun ViewPager2.reduceDragSensitivity() {
+        val recyclerViewField = ViewPager2::class.java.getDeclaredField("mRecyclerView")
+        recyclerViewField.isAccessible = true
+        val recyclerView = recyclerViewField.get(this) as RecyclerView
+
+        val touchSlopField = RecyclerView::class.java.getDeclaredField("mTouchSlop")
+        touchSlopField.isAccessible = true
+        val touchSlop = touchSlopField.get(recyclerView) as Int
+        touchSlopField.set(recyclerView, touchSlop * 3) // "3" was obtained experimentally
+    }
+
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         if (Build.VERSION.SDK_INT >= 24) {
@@ -72,6 +87,7 @@ class ItemPagerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_item_pager)
         setSupportActionBar(binding.bottomAppbar)
+        binding.container.reduceDragSensitivity()
 
         val order = Preferences.ORDER.getOrder(PreferenceManager.getDefaultSharedPreferences(this))
         val sortField = Preferences.SORT_FIELD.getString(PreferenceManager.getDefaultSharedPreferences(this))
