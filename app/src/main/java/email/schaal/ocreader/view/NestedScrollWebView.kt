@@ -1,6 +1,6 @@
 package email.schaal.ocreader.view
 
-import android.annotation.TargetApi
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.GestureDetector
@@ -15,24 +15,45 @@ import kotlin.math.abs
  * Workaround until WebView supports nested scrolling (according to
  * http://b.android.com/201385#c3 probably not any time soon)
  */
-open class NestedScrollWebView : WebView, NestedScrollingChild, GestureDetector.OnGestureListener {
-    private val helper = NestedScrollingChildHelper(this)
-    private val gestureDetector = GestureDetector(context, this)
+open class NestedScrollWebView(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : WebView(context, attrs, defStyleAttr), NestedScrollingChild {
+    private val helper = NestedScrollingChildHelper(rootView)
+    private val gestureDetector = GestureDetector(context, ScrollGestureListener())
 
-    constructor(context: Context?) : super(context)
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
-        ViewCompat.setNestedScrollingEnabled(this, true)
+    private inner class ScrollGestureListener: GestureDetector.SimpleOnGestureListener() {
+
+        override fun onSingleTapUp(e: MotionEvent?): Boolean {
+            return false
+        }
+
+        override fun onDown(e: MotionEvent?): Boolean {
+            startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL)
+            return true
+        }
+
+        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
+            dispatchNestedPreScroll(0, distanceY.toInt(), null, null)
+
+            val newDistanceY: Float = if (abs(distanceY) < 10.0f || abs(distanceX) > 10.0f)
+                0.0f
+            else
+                distanceY
+
+            dispatchNestedScroll(0, newDistanceY.toInt(), 0, 0, null)
+
+            return true
+        }
+
+        override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
+            return true
+        }
     }
 
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-        ViewCompat.setNestedScrollingEnabled(this, true)
+
+    init {
+        ViewCompat.setNestedScrollingEnabled(rootView, true)
     }
 
-    @TargetApi(21)
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
-        ViewCompat.setNestedScrollingEnabled(this, true)
-    }
-
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val handled = gestureDetector.onTouchEvent(event)
         if (!handled && event.action == MotionEvent.ACTION_UP) {
@@ -80,33 +101,5 @@ open class NestedScrollWebView : WebView, NestedScrollingChild, GestureDetector.
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         helper.onDetachedFromWindow()
-    }
-
-    override fun onDown(e: MotionEvent): Boolean {
-        startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL)
-        return true
-    }
-
-    override fun onShowPress(e: MotionEvent) {}
-    override fun onSingleTapUp(e: MotionEvent): Boolean {
-        return false
-    }
-
-    override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
-        dispatchNestedPreScroll(0, distanceY.toInt(), null, null)
-
-        val newDistanceY: Float = if (abs(distanceY) < 10.0f || abs(distanceX) > 10.0f)
-            0.0f
-        else
-            distanceY
-
-        dispatchNestedScroll(0, newDistanceY.toInt(), 0, 0, null)
-
-        return true
-    }
-
-    override fun onLongPress(e: MotionEvent) {}
-    override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
-        return true
     }
 }
