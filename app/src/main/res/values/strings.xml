@@ -124,4 +124,6 @@
     <string name="sort_by">Sort by</string>
 
     <string name="error_access_forbidden">Access forbidden, please check password</string>
+    <string name="reset_database">Reset Database</string>
+    <string name="miscellanous">Miscellaneous</string>
 </resources>

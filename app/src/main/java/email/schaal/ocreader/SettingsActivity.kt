@@ -24,15 +24,18 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import androidx.preference.PreferenceManager
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModel
 import email.schaal.ocreader.Preferences.ChangeAction
 import email.schaal.ocreader.databinding.ActivitySettingsBinding
 import email.schaal.ocreader.util.FaviconLoader
 
 class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
-    private var recreateActivity = false
+    private var recreateActivity: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (intent.hasExtra(EXTRA_RECREATE_ACTIVITY)) recreateActivity = intent.getBooleanExtra(EXTRA_RECREATE_ACTIVITY, false)

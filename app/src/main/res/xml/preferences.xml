@@ -36,4 +36,9 @@
             app:useSimpleSummaryProvider="true"
             app:title="@string/dark_theme" />
     </PreferenceCategory>
+    <PreferenceCategory app:title="@string/miscellanous">
+        <Preference
+            app:title="@string/reset_database"
+            app:key="reset_database" />
+    </PreferenceCategory>
 </PreferenceScreen>
