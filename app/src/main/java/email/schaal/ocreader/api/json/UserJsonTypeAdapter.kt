@@ -20,6 +20,7 @@
 package email.schaal.ocreader.api.json
 
 import com.squareup.moshi.FromJson
+import com.squareup.moshi.JsonClass
 import com.squareup.moshi.ToJson
 import email.schaal.ocreader.database.model.User
 import java.util.*
@@ -36,6 +37,7 @@ class UserJsonTypeAdapter {
     }
 }
 
+@JsonClass(generateAdapter = true)
 class JsonUser (
         val userId: String,
         val displayName: String,
