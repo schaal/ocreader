@@ -22,7 +22,7 @@
     <dimen name="dialog_margin">24dp</dimen>
     <dimen name="fab_size_normal">56dp</dimen>
     <dimen name="play_button">32dp</dimen>
-    <dimen name="divider_inset">40dp</dimen>
+    <dimen name="divider_inset">54dp</dimen>
     <dimen name="materialize_spacing">8dp</dimen>
     <dimen name="row_padding">12dp</dimen>
     <dimen name="small_icon_size">24dp</dimen>
