@@ -86,8 +86,8 @@
 
             <ImageView
                 android:id="@+id/imageview_star"
-                android:layout_width="@dimen/icon_size"
-                android:layout_height="@dimen/icon_size"
+                android:layout_width="@dimen/small_icon_size"
+                android:layout_height="@dimen/small_icon_size"
                 android:contentDescription="@string/starred"
                 android:src="@drawable/ic_star"
                 android:tint="@color/star"
