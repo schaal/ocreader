@@ -98,13 +98,11 @@ class ItemPagerActivity : AppCompatActivity() {
 
             val position = intent.getIntExtra(EXTRA_CURRENT_POSITION, 0)
 
-            val typedArray = obtainStyledAttributes(intArrayOf(R.attr.colorPrimary, R.attr.colorAccent))
-            try {
-                defaultToolbarColor = typedArray.getColor(0, 0)
-                defaultAccent = typedArray.getColor(1, 0)
-            } finally {
-                typedArray.recycle()
-            }
+            obtainStyledAttributes(intArrayOf(R.attr.colorPrimary, R.attr.colorAccent)).also {
+                defaultToolbarColor = it.getColor(0, 0)
+                defaultAccent = it.getColor(1, 0)
+            }.recycle()
+
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
             val mSectionsPagerAdapter = SectionsPagerAdapter()
