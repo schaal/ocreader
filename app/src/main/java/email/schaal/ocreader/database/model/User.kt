@@ -29,12 +29,14 @@ import java.util.Date
 
 @RealmClass
 open class User(
-        @PrimaryKey @Required var userId: String = "",
+        var userId: String = "",
         var displayName: String = "",
         var lastLogin: Date = Date(),
         var avatar: String? = null,
         var avatarMime: String? = null
 ) : RealmModel, Insertable {
+    @PrimaryKey var id = 0L
+
     override fun insert(realm: Realm) {
         realm.insertOrUpdate(this)
     }

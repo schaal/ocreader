@@ -28,7 +28,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import email.schaal.ocreader.*
+import email.schaal.ocreader.ListActivity
+import email.schaal.ocreader.LoginFlowActivity
+import email.schaal.ocreader.Preferences
+import email.schaal.ocreader.R
 import email.schaal.ocreader.database.FeedViewModel
 import email.schaal.ocreader.databinding.BottomNavigationviewBinding
 import email.schaal.ocreader.databinding.UserBottomsheetBinding
@@ -49,7 +52,7 @@ class UserBottomSheetDialogFragment: BottomSheetDialogFragment() {
 
         val url = Preferences.URL.getString(PreferenceManager.getDefaultSharedPreferences(requireContext()))
 
-        feedViewModel.userLiveData.observe(viewLifecycleOwner, Observer { user ->
+        feedViewModel.user.observe(viewLifecycleOwner, Observer { user ->
             if(user != null) {
                 headerBinding.textViewUrl.visibility = View.VISIBLE
                 headerBinding.textViewUser.text = user.displayName

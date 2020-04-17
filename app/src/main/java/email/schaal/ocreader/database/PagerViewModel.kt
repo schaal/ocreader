@@ -19,14 +19,10 @@
 
 package email.schaal.ocreader.database
 
-import androidx.lifecycle.LiveData
 import email.schaal.ocreader.database.model.TemporaryFeed
 
 class PagerViewModel: RealmViewModel() {
-    private val pagerLiveData = LiveRealmObject(TemporaryFeed.getPagerTemporaryFeed(realm)!!)
-
-    val pager: LiveData<TemporaryFeed>
-        get() {return pagerLiveData}
+    val pager = TemporaryFeed.getPagerTemporaryFeed(realm)
 
     fun updatePager() {
         TemporaryFeed.updatePagerTemporaryFeed(realm)

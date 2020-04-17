@@ -84,14 +84,17 @@ class ItemPagerActivity : AppCompatActivity() {
         setSupportActionBar(binding.bottomAppbar)
         binding.container.reduceDragSensitivity()
 
-        val order = Preferences.ORDER.getOrder(PreferenceManager.getDefaultSharedPreferences(this))
-        val sortField = Preferences.SORT_FIELD.getString(PreferenceManager.getDefaultSharedPreferences(this))
-
         try {
             pagerViewModel.updatePager()
-            val temporaryFeed = pagerViewModel.pager.value
-            items = temporaryFeed?.items?.sort(sortField, order) ?: throw IllegalStateException()
-            binding.toolbarLayout.toolbar.title = temporaryFeed.name
+            pagerViewModel.pager?.let {
+                val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+
+                val order = Preferences.ORDER.getOrder(preferences)
+                val sortField = Preferences.SORT_FIELD.getString(preferences)
+
+                items = it.items?.sort(sortField ?: Item::id.name, order) ?: throw IllegalStateException("pager feed Items is null")
+                binding.toolbarLayout.toolbar.title = it.name
+            } ?: throw IllegalStateException("pager is null")
 
             val position = intent.getIntExtra(EXTRA_CURRENT_POSITION, 0)
 
@@ -121,6 +124,7 @@ class ItemPagerActivity : AppCompatActivity() {
                 }
             }
         } catch (e: IllegalStateException) {
+            e.printStackTrace()
             setResult(Activity.RESULT_CANCELED)
             finish()
         }

@@ -1,10 +1,12 @@
 package email.schaal.ocreader.api.json
 
+import com.squareup.moshi.JsonClass
 import email.schaal.ocreader.api.Level
 
 /**
  * API response containing supported API levels
  */
+@JsonClass(generateAdapter = true)
 data class APILevels(
         val apiLevels: List<String> = emptyList()
 ) {

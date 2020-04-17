@@ -35,7 +35,7 @@ import io.realm.RealmObjectChangeListener
  *
  * @param <T> the type of the RealmModel
 </T> */
-class LiveRealmObject<T : RealmModel?> @MainThread constructor(obj: T) : MutableLiveData<T>() {
+class LiveRealmObject<T : RealmModel?> @MainThread constructor(private val obj: T?) : MutableLiveData<T>() {
     // The listener will listen until the object is deleted.
 // An invalidated object shouldn't be set in LiveData, null is set instead.
     private val listener = RealmObjectChangeListener<T> { obj, objectChangeSet ->
@@ -54,8 +54,11 @@ class LiveRealmObject<T : RealmModel?> @MainThread constructor(obj: T) : Mutable
     override fun onActive() {
         super.onActive()
         val obj = value
-        if (RealmObject.isValid(obj)) {
+        if (obj != null && RealmObject.isValid(obj)) {
             RealmObject.addChangeListener(obj, listener)
+        } else if(this.obj != null && RealmObject.isValid(this.obj)) {
+            value = this.obj
+            RealmObject.addChangeListener(this.obj, listener)
         }
     }
 
@@ -64,9 +67,10 @@ class LiveRealmObject<T : RealmModel?> @MainThread constructor(obj: T) : Mutable
      */
     override fun onInactive() {
         super.onInactive()
-        val obj = value
-        if (RealmObject.isValid(obj)) {
-            RealmObject.removeChangeListener(obj, listener)
+        value?.let {
+            if (RealmObject.isValid(it)) {
+                RealmObject.removeChangeListener(it, listener)
+            }
         }
     }
 
@@ -78,8 +82,7 @@ class LiveRealmObject<T : RealmModel?> @MainThread constructor(obj: T) : Mutable
      * @param object the managed RealmModel to wrap as LiveData
      */
     init {
-        require(RealmObject.isManaged(obj)) { "LiveRealmObject only supports managed RealmModel instances!" }
-        require(RealmObject.isValid(obj)) { "The provided RealmObject is no longer valid, and therefore cannot be observed for changes." }
-        value = obj
+        //require(RealmObject.isManaged(obj)) { "LiveRealmObject only supports managed RealmModel instances!" }
+        //require(RealmObject.isValid(obj)) { "The provided RealmObject is no longer valid, and therefore cannot be observed for changes." }
     }
 }

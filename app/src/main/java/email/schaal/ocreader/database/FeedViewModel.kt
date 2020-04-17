@@ -37,7 +37,7 @@ class FeedViewModel(context: Context) : RealmViewModel() {
     private val itemsLiveData: MutableLiveData<List<Item>>
     private val foldersLiveData: MutableLiveData<List<Folder>>
     private val selectedTreeItemLiveData: MutableLiveData<TreeItem>
-    val userLiveData: LiveData<User?>
+    private val userLiveData: MutableLiveData<User>
     private val syncStatusLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
 
     val topFolders: Array<TreeItem>
@@ -56,6 +56,9 @@ class FeedViewModel(context: Context) : RealmViewModel() {
 
     val selectedTreeItem: LiveData<TreeItem>
         get() = selectedTreeItemLiveData
+
+    val user: LiveData<User>
+        get() = userLiveData
 
     fun sync(context: Context, syncType: SyncType, resultReceiver: SyncResultReceiver? = null) {
         SyncJobIntentService.enqueueWork(context, syncType, resultReceiver)
