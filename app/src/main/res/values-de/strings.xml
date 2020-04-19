@@ -82,4 +82,5 @@
     <string name="default_sort_key">Standard</string>
     <string name="sort_by">Sortieren nach</string>
     <string name="error_access_forbidden">Zugriff verweigert, bitte Passwort überprüfen</string>
+    <string name="action_continue">Continue</string>
 </resources>
