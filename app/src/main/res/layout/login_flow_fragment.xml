@@ -42,7 +42,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textUri"
-                android:hint="@string/prompt_url" />
+                android:hint="@string/prompt_url">
+                <requestFocus />
+            </com.google.android.material.textfield.TextInputEditText>
 
         </com.google.android.material.textfield.TextInputLayout>
 
