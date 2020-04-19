@@ -65,10 +65,19 @@ class LoginFlowFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.buttonLogin.setOnClickListener {
-            val url = binding.inputUrl.text?.toString()
+            // Check if inputUrl starts with a scheme (http or https)
+            val urlString = binding.inputUrl.text?.let {
+                if(!it.startsWith("http"))
+                   "https://${it}"
+                else
+                    it
+            }?.toString()
+
+            val url = urlString
                     ?.toHttpUrlOrNull()
                     ?.newBuilder()
                     ?.addPathSegments("index.php/login/flow")
+
             if(url != null) {
                 parentFragmentManager.beginTransaction()
                         .replace(R.id.container, LoginFlowWebViewFragment.newInstance(url.toString()))
