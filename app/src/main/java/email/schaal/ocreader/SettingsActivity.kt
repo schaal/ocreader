@@ -61,8 +61,7 @@ class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-        val preference = Preferences.getPreference(key)
-        if (preference != null) {
+        Preferences.getPreference(key)?.let { preference ->
             when (preference.changeAction) {
                 ChangeAction.NOTHING -> {
                 }
