@@ -22,13 +22,11 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
-import androidx.preference.PreferenceManager
 import android.view.MenuItem
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModel
+import androidx.preference.PreferenceManager
 import email.schaal.ocreader.Preferences.ChangeAction
 import email.schaal.ocreader.databinding.ActivitySettingsBinding
 import email.schaal.ocreader.util.FaviconLoader
@@ -38,7 +36,7 @@ class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (intent.hasExtra(EXTRA_RECREATE_ACTIVITY)) recreateActivity = intent.getBooleanExtra(EXTRA_RECREATE_ACTIVITY, false)
+        recreateActivity = intent.getBooleanExtra(EXTRA_RECREATE_ACTIVITY, false)
         val binding = DataBindingUtil.setContentView<ActivitySettingsBinding>(this, R.layout.activity_settings)
         setSupportActionBar(binding.toolbarLayout.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -88,22 +86,19 @@ class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun checkRecreateActivity(): Boolean {
-        if (recreateActivity) {
-            val intent = Intent(this, ListActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-        }
-        return recreateActivity
+    private fun checkRecreateActivity() {
+        setResult(REQUEST_CODE, Intent().apply {
+            putExtra(EXTRA_RECREATE_ACTIVITY, recreateActivity)
+        })
     }
 
     override fun onBackPressed() { // Recreate the parent activity if necessary to apply theme change, go back normally otherwise
-        if (!checkRecreateActivity()) {
-            super.onBackPressed()
-        }
+        checkRecreateActivity()
+        super.onBackPressed()
     }
 
     companion object {
-        private const val EXTRA_RECREATE_ACTIVITY = "recreateActivity"
+        const val EXTRA_RECREATE_ACTIVITY = "recreateActivity"
+        const val REQUEST_CODE = 267
     }
 }

@@ -96,7 +96,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
             when (item.itemId) {
                 R.id.menu_settings -> {
                     val settingsIntent = Intent(this@ListActivity, SettingsActivity::class.java)
-                    startActivity(settingsIntent)
+                    startActivityForResult(settingsIntent, SettingsActivity.REQUEST_CODE)
                     true
                 }
                 R.id.menu_show_only_unread -> {
@@ -190,6 +190,11 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
                     }
                     ItemPagerActivity.REQUEST_CODE -> if (data != null) binding.itemsRecyclerview.smoothScrollToPosition(data.getIntExtra(ItemPagerActivity.EXTRA_CURRENT_POSITION, -1))
                     ManageFeedsActivity.REQUEST_CODE -> reloadListFragment()
+                    SettingsActivity.REQUEST_CODE -> {
+                        if(data?.getBooleanExtra(SettingsActivity.EXTRA_RECREATE_ACTIVITY, false) == true) {
+                            recreate()
+                        }
+                    }
                 }
             }
             Activity.RESULT_CANCELED -> {
