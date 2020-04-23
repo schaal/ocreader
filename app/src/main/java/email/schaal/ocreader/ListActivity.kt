@@ -84,19 +84,11 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         val menuItemShowOnlyUnread = binding.bottomAppbar.menu.findItem(R.id.menu_show_only_unread)
         menuItemShowOnlyUnread.isChecked = Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences)
-        binding.bottomAppbar.setNavigationIcon(R.drawable.ic_folder)
-        binding.bottomAppbar.setNavigationOnClickListener {
-            val fm = supportFragmentManager
-            val bottomSheetDialogFragment = FolderBottomSheetDialogFragment()
-            bottomSheetDialogFragment.setTreeItemClickListener(this)
-            bottomSheetDialogFragment.show(fm, null)
-        }
 
         bottomMenuClickListener = OnMenuItemClickListener { item: MenuItem ->
             when (item.itemId) {
                 R.id.menu_settings -> {
-                    val settingsIntent = Intent(this@ListActivity, SettingsActivity::class.java)
-                    startActivityForResult(settingsIntent, SettingsActivity.REQUEST_CODE)
+                    startActivityForResult(Intent(this@ListActivity, SettingsActivity::class.java), SettingsActivity.REQUEST_CODE)
                     true
                 }
                 R.id.menu_show_only_unread -> {
@@ -124,7 +116,16 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
                 } else -> false
             }
         }
-        binding.bottomAppbar.setOnMenuItemClickListener(bottomMenuClickListener)
+
+        binding.bottomAppbar.apply {
+            setOnMenuItemClickListener(bottomMenuClickListener)
+            setNavigationIcon(R.drawable.ic_folder)
+            setNavigationOnClickListener {
+                FolderBottomSheetDialogFragment().apply {
+                    setTreeItemClickListener(this@ListActivity)
+                }.show(supportFragmentManager, null)
+            }
+        }
 
         preferenceChangeListener = OnSharedPreferenceChangeListener { _: SharedPreferences?, key: String ->
             when (key) {
