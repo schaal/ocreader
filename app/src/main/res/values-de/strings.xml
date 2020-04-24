@@ -83,4 +83,6 @@
     <string name="sort_by">Sortieren nach</string>
     <string name="error_access_forbidden">Zugriff verweigert, bitte Passwort überprüfen</string>
     <string name="action_continue">Continue</string>
+    <string name="reset_database">Datenbank zurücksetzen</string>
+    <string name="miscellaneous">Verschiedenes</string>
 </resources>
