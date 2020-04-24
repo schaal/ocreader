@@ -38,21 +38,26 @@ class JsonTest {
                 Item(3)
         )
         val itemIds = ItemIds(items)
-        val adapterJsonString = Moshi.Builder().build().adapter(ItemIds::class.java).toJson(itemIds)
-        val expectedJsonString = """{"items":[1,2,3]}"""
-        Assert.assertEquals(expectedJsonString, adapterJsonString)
+
+        val adapter = Moshi.Builder().build().adapter(ItemIds::class.java)
+        val adapterJsonString = adapter.toJson(itemIds)
+
+        Assert.assertEquals(adapter.fromJson(adapterJsonString), itemIds)
     }
 
     @Test
     fun testItemMap() {
         val items = listOf(
-                Item(1, feedId = 11, guidHash = "hash1"),
-                Item(2, feedId = 12, guidHash = "hash2"),
-                Item(3, feedId = 13, guidHash = "hash3")
+                Item(1, feedId = 11L, guidHash = "hash1"),
+                Item(2, feedId = 12L, guidHash = "hash2"),
+                Item(3, feedId = 13L, guidHash = "hash3")
         )
+
         val itemMap = ItemMap(items)
-        val adapterJsonString = Moshi.Builder().build().adapter(ItemMap::class.java).toJson(itemMap)
-        val expectedJsonString = """{"items":[{"feedId":11,"guidHash":"hash1"},{"feedId":12,"guidHash":"hash2"},{"feedId":13,"guidHash":"hash3"}]}"""
-        Assert.assertEquals(expectedJsonString, adapterJsonString)
+
+        val adapter = Moshi.Builder().build().adapter(ItemMap::class.java)
+        val adapterJsonString = adapter.toJson(itemMap)
+
+        Assert.assertEquals(adapter.fromJson(adapterJsonString), itemMap)
     }
 }

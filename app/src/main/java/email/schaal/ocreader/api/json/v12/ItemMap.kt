@@ -8,8 +8,11 @@ import java.util.*
  * Aggregates feedIds and guidHashes, used to mark multiple items as starred
  */
 @JsonClass(generateAdapter = true)
-class ItemMap(val items: List<Map<String, Any?>>) {
+data class ItemMap(val items: List<MappedItem>) {
+    @JsonClass(generateAdapter = true)
+    data class MappedItem(val feedId: Long, val guidHash: String?)
+
     constructor(sourceItems: Iterable<Item>) : this(sourceItems.map {
-        mapOf("feedId" to it.feedId, "guidHash" to it.guidHash)
+        MappedItem(it.feedId, it.guidHash)
     })
 }
