@@ -127,4 +127,5 @@
     <string name="reset_database">Reset Database</string>
     <string name="miscellaneous">Miscellaneous</string>
     <string name="action_continue">Continue</string>
+    <string name="database_was_reset">Database was reset</string>
 </resources>

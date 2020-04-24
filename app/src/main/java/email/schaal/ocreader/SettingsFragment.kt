@@ -1,7 +1,6 @@
 package email.schaal.ocreader
 
 import android.os.Bundle
-import androidx.fragment.app.viewModels
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
@@ -20,6 +19,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         .edit()
                         .putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.key, true)
                         .apply()
+                it.title = getString(R.string.database_was_reset)
+                it.isEnabled = false
                 true
             }
         }

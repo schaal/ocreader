@@ -85,4 +85,5 @@
     <string name="action_continue">Continue</string>
     <string name="reset_database">Datenbank zurücksetzen</string>
     <string name="miscellaneous">Verschiedenes</string>
+    <string name="database_was_reset">Datenbank wurde zurückgesetzt</string>
 </resources>
