@@ -142,19 +142,13 @@ class FaviconLoader private constructor(builder: Builder) {
         }
 
         fun getDrawable(context: Context, feed: Feed?): Drawable? {
-            var drawable: Drawable?
-            if (feed != null && feed.faviconLink == null) {
-                drawable = faviconCache[feed.id]
-                if (drawable == null) {
-                    drawable = TextDrawable.Builder(if (feed.name.isNotEmpty()) feed.name.substring(0, 1) else "?", getFeedColor(context, feed))
-                            .textColor(ContextCompat.getColor(context, R.color.textdrawable_text))
-                            .build()
-                    faviconCache.put(feed.id, drawable)
-                }
-            } else {
-                drawable = AppCompatResources.getDrawable(context, R.drawable.ic_feed_icon)
-            }
-            return drawable
+            return feed?.faviconLink?.let {
+                faviconCache[feed.id]
+                        ?: TextDrawable.Builder(
+                                if (feed.name.isNotEmpty()) feed.name.substring(0, 1) else "?", getFeedColor(context, feed))
+                                .textColor(ContextCompat.getColor(context, R.color.textdrawable_text))
+                                .build().also { faviconCache.put(feed.id, it) }
+            } ?: AppCompatResources.getDrawable(context, R.drawable.ic_feed_icon)
         }
 
         private fun getFeedColor(context: Context, feed: Feed): Int {
