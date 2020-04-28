@@ -56,7 +56,7 @@ class API {
 
         val moshi: Moshi = Moshi.Builder()
                 .add(Feed::class.java, FeedTypeAdapter())
-                .add(Item::class.java, ItemTypeAdapter())
+                .add(ItemJsonTypeAdapter())
                 .add(DateTypeAdapter())
                 .add(UserJsonTypeAdapter())
                 .add(VersionTypeAdapter())
