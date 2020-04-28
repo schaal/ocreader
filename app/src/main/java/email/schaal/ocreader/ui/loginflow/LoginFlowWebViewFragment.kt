@@ -32,10 +32,6 @@ import androidx.fragment.app.activityViewModels
 import email.schaal.ocreader.R
 import email.schaal.ocreader.databinding.FragmentLoginFlowWebViewBinding
 import email.schaal.ocreader.view.LoginViewModel
-import java.util.*
-
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_URL = "ARG_URL"
 
 /**
  * A simple [Fragment] subclass.
@@ -80,14 +76,12 @@ class LoginFlowWebViewFragment : Fragment() {
                 return false
             }
         }
-        val headers = mapOf(
-                "OCS-APIREQUEST" to "true"
-        )
-        binding.webViewLogin.loadUrl(url, headers)
+        binding.webViewLogin.loadUrl(url, mapOf("OCS-APIREQUEST" to "true"))
         return binding.root
     }
 
     companion object {
+        private const val ARG_URL = "ARG_URL"
         private val credentialRegex = Regex("""/server:(?<server>[^&]+)&user:(?<user>[^&]+)&password:(?<password>[^&]+)""")
 
         @JvmStatic
