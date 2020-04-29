@@ -55,7 +55,7 @@ class API {
         val MIN_VERSION: Version = Version.forIntegers(8, 8, 2)
 
         val moshi: Moshi = Moshi.Builder()
-                .add(Feed::class.java, FeedTypeAdapter())
+                .add(FeedJsonTypeAdapter())
                 .add(ItemJsonTypeAdapter())
                 .add(DateTypeAdapter())
                 .add(UserJsonTypeAdapter())

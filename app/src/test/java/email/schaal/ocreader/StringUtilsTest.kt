@@ -42,7 +42,7 @@ class StringUtilsTest {
     fun testCleanString() {
         val html = "<span>Test</span>"
         val entity = "Test &gt; Test"
-        Assert.assertEquals("Test", cleanString(html))
-        Assert.assertEquals("Test > Test", cleanString(entity))
+        Assert.assertEquals("Test", html.cleanString())
+        Assert.assertEquals("Test > Test", entity.cleanString())
     }
 }

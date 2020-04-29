@@ -58,6 +58,6 @@ fun getTimeSpanString(context: Context, startDate: Date?, endDate: Date? = Date(
     return timeSpanString
 }
 
-fun cleanString(source: String): String {
-    return HtmlCompat.fromHtml(source, HtmlCompat.FROM_HTML_MODE_COMPACT).toString()
+fun String.cleanString(): String {
+    return HtmlCompat.fromHtml(this, HtmlCompat.FROM_HTML_MODE_COMPACT).toString()
 }
