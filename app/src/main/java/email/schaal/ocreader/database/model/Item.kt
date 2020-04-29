@@ -82,58 +82,6 @@ open class Item(
 
     }
 
-    class Builder {
-        var id: Long = 0
-        var guid: String? = null
-        var guidHash: String? = null
-        var url: String? = null
-        var title: String? = null
-        var author: String? = null
-        var pubDate: Date? = null
-        var updatedAt: Date? = null
-        var body: String = ""
-        var enclosureMime: String? = null
-        var enclosureLink: String? = null
-        var feed: Feed? = null
-        var feedId: Long = 0
-        var unread: Boolean = true
-        var unreadChanged: Boolean = false
-        var starred: Boolean = false
-        var starredChanged: Boolean = false
-        var lastModified: Long = 0
-        var fingerprint: String? = null
-        var contentHash: String? = null
-        var active: Boolean = true
-
-        fun build() : Item {
-            return Item(this)
-        }
-    }
-
-    constructor(builder: Builder) :this(
-            builder.id,
-            builder.guid,
-            builder.guidHash,
-            builder.url,
-            builder.title,
-            builder.author,
-            builder.pubDate,
-            builder.updatedAt,
-            builder.body,
-            builder.enclosureMime,
-            builder.enclosureLink,
-            builder.feed,
-            builder.feedId,
-            builder.unread,
-            builder.unreadChanged,
-            builder.starred,
-            builder.starredChanged,
-            builder.lastModified,
-            builder.fingerprint,
-            builder.contentHash,
-            builder.active
-    )
-
     var unread: Boolean
         get() { return actualUnread }
         set(value) {

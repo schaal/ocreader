@@ -35,7 +35,7 @@ internal object TestGenerator {
         get() = getTestItem(1)
 
     fun getTestItem(id: Long): Item {
-        return Item.Builder().also {
+        return Item().also {
             it.id = id
             it.title = ITEM_TITLE
             it.body = BODY
@@ -43,6 +43,6 @@ internal object TestGenerator {
             it.feedId = 1
             it.feed = testFeed
             it.lastModified = Date().time / 1000
-        }.build()
+        }
     }
 }

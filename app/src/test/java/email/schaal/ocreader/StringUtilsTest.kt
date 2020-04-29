@@ -19,7 +19,7 @@ class StringUtilsTest {
     @Test
     @Throws(Exception::class)
     fun testGetByLine() {
-        val item = Item.Builder().build()
+        val item = Item()
         Assert.assertEquals("", getByLine(ApplicationProvider.getApplicationContext(), "<p class=\"byline\">%s</p>", null, item.feed))
         Assert.assertEquals("<p class=\"byline\">by testAuthor</p>", getByLine(ApplicationProvider.getApplicationContext(), "<p class=\"byline\">%s</p>", "testAuthor", item?.feed))
     }
