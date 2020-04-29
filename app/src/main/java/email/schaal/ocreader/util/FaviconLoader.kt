@@ -142,7 +142,7 @@ class FaviconLoader private constructor(builder: Builder) {
         }
 
         fun getDrawable(context: Context, feed: Feed?): Drawable? {
-            return feed?.faviconLink?.let {
+            return feed?.let {
                 faviconCache[feed.id]
                         ?: TextDrawable.Builder(
                                 if (feed.name.isNotEmpty()) feed.name.substring(0, 1) else "?", getFeedColor(context, feed))
