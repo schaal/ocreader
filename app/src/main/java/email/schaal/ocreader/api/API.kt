@@ -245,7 +245,7 @@ class API {
                     }
                 }
                 SyncType.FULL_SYNC -> {
-                    val lastSync = realm.where<Item>().max(Item::lastModified.name)?.toLong() ?: 0L
+                    val lastSync = realm.where<Item>().maximumDate(Item::lastModified.name)?.time?.let { it / 1000L } ?: 0L
 
                     val folders = api?.folders()?.folders
                     val feeds = api?.feeds()?.feeds

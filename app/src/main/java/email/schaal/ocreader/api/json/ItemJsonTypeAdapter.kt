@@ -22,7 +22,7 @@ class ItemJsonTypeAdapter {
             feedId = jsonItem.feedId
             unread = jsonItem.unread
             starred = jsonItem.starred
-            lastModified = jsonItem.lastModified
+            lastModified = Date(jsonItem.lastModified * 1000)
             fingerprint = jsonItem.fingerprint
             contentHash = jsonItem.contentHash
         }
@@ -49,7 +49,6 @@ class JsonItem(
         val title: String?,
         val author: String?,
         val pubDate: Long,
-        val updatedAt: Long?,
         val body: String,
         val enclosureMime: String?,
         val enclosureLink: String?,

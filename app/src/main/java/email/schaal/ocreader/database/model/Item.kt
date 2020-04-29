@@ -45,7 +45,6 @@ open class Item(
         var title: String? = null,
         var author: String? = null,
         var pubDate: Date? = null,
-        var updatedAt: Date? = null,
         var body: String = "",
         var enclosureMime: String? = null,
         var enclosureLink: String? = null,
@@ -57,7 +56,7 @@ open class Item(
         @RealmField(name = "starred")
         private var actualStarred: Boolean = false,
         var starredChanged: Boolean = false,
-        var lastModified: Long = 0,
+        var lastModified: Date? = null,
         var fingerprint: String? = null,
         var contentHash: String? = null,
         var active: Boolean = true
