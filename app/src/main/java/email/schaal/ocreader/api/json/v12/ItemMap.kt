@@ -2,7 +2,6 @@ package email.schaal.ocreader.api.json.v12
 
 import com.squareup.moshi.JsonClass
 import email.schaal.ocreader.database.model.Item
-import java.util.*
 
 /**
  * Aggregates feedIds and guidHashes, used to mark multiple items as starred

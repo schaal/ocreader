@@ -21,7 +21,7 @@ class FeedJsonTypeAdapter {
             unreadCount = jsonFeed.unreadCount
             ordering = jsonFeed.ordering
             pinned = jsonFeed.pinned
-            updateErrorCount = jsonFeed.updateErrorCount
+            updateErrorCount = jsonFeed.updateErrorCount ?: 0
             lastUpdateError = jsonFeed.lastUpdateError
         }
     }
@@ -47,6 +47,6 @@ class JsonFeed(
         val unreadCount: Int,
         val ordering: Int,
         val pinned: Boolean,
-        val updateErrorCount: Int,
+        val updateErrorCount: Int?,
         val lastUpdateError: String?
 )
