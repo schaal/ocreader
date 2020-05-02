@@ -20,20 +20,23 @@
 package email.schaal.ocreader
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
-import androidx.preference.PreferenceManager
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.invoke
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar.OnMenuItemClickListener
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.google.android.material.snackbar.Snackbar
@@ -72,8 +75,26 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
     override fun onStart() {
         super.onStart()
         if (!Preferences.hasCredentials(PreferenceManager.getDefaultSharedPreferences(this))) {
-            startActivityForResult(Intent(this, LoginFlowActivity::class.java), LoginFlowActivity.REQUEST_CODE)
+            getLoginResult()
         }
+    }
+
+    private val getSettingsResult = registerForActivityResult(object : ActivityResultContract<Unit, Boolean>() {
+        override fun createIntent(context: Context, input: Unit?): Intent {
+            return Intent(this@ListActivity, SettingsActivity::class.java)
+        }
+
+        override fun parseResult(resultCode: Int, intent: Intent?): Boolean {
+            return if (resultCode == Activity.RESULT_OK && intent != null)
+                intent.getBooleanExtra(SettingsActivity.EXTRA_RECREATE_ACTIVITY, false)
+            else false
+        }
+
+    }) { if (it) recreate() }
+
+    private val getManageFeedsResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == Activity.RESULT_OK)
+            reloadListFragment()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,7 +109,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
         bottomMenuClickListener = OnMenuItemClickListener { item: MenuItem ->
             when (item.itemId) {
                 R.id.menu_settings -> {
-                    startActivityForResult(Intent(this@ListActivity, SettingsActivity::class.java), SettingsActivity.REQUEST_CODE)
+                    getSettingsResult()
                     true
                 }
                 R.id.menu_show_only_unread -> {
@@ -111,7 +132,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
                     true
                 }
                 R.id.menu_manage_feeds -> {
-                    startActivityForResult(Intent(this@ListActivity, ManageFeedsActivity::class.java), ManageFeedsActivity.REQUEST_CODE)
+                    getManageFeedsResult(Intent(this, ManageFeedsActivity::class.java))
                     true
                 } else -> false
             }
@@ -174,37 +195,31 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
         binding.itemsRecyclerview.scrollToPosition(0)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (resultCode) {
-            Activity.RESULT_OK -> {
-                when (requestCode) {
-                    LoginFlowActivity.REQUEST_CODE -> {
-                        if (data?.getBooleanExtra(LoginFlowActivity.EXTRA_IMPROPERLY_CONFIGURED_CRON, false) == true) {
-                            Snackbar.make(binding.coordinatorLayout, string.updater_improperly_configured, Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(string.more_info) { startActivity(data) }
-                                    .setActionTextColor(ContextCompat.getColor(this, R.color.warning))
-                                    .show()
-                        }
-                        Queries.resetDatabase()
-                        feedViewModel.sync(this, SyncType.FULL_SYNC, syncResultReceiver)
-                    }
-                    ItemPagerActivity.REQUEST_CODE -> if (data != null) binding.itemsRecyclerview.smoothScrollToPosition(data.getIntExtra(ItemPagerActivity.EXTRA_CURRENT_POSITION, -1))
-                    ManageFeedsActivity.REQUEST_CODE -> reloadListFragment()
-                    SettingsActivity.REQUEST_CODE -> {
-                        if(data?.getBooleanExtra(SettingsActivity.EXTRA_RECREATE_ACTIVITY, false) == true) {
-                            recreate()
-                        }
-                    }
+    private val getLoginResult = registerForActivityResult(object: ActivityResultContract<Unit, String?>() {
+        override fun createIntent(context: Context, input: Unit): Intent {
+            return Intent(this@ListActivity, LoginFlowActivity::class.java)
+        }
+
+        override fun parseResult(resultCode: Int, intent: Intent?): String? {
+            return when(resultCode) {
+                Activity.RESULT_OK -> {
+                    if(intent?.getBooleanExtra(LoginFlowActivity.EXTRA_IMPROPERLY_CONFIGURED_CRON, false) == true)
+                        getString(string.updater_improperly_configured)
+                    else
+                        null
                 }
-            }
-            Activity.RESULT_CANCELED -> {
-                data?.getStringExtra(LoginFlowActivity.EXTRA_MESSAGE)?.let {
-                    Snackbar.make(binding.coordinatorLayout, it, Snackbar.LENGTH_LONG)
-                            .show()
+                else -> {
+                    intent?.getStringExtra(LoginFlowActivity.EXTRA_MESSAGE)
                 }
             }
         }
+    }) { message ->
+        message?.let {
+            Snackbar.make(binding.coordinatorLayout, it, Snackbar.LENGTH_LONG)
+                    .show()
+        }
+        Queries.resetDatabase()
+        feedViewModel.sync(this, SyncType.FULL_SYNC, syncResultReceiver)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -240,11 +255,25 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
                 .start(this)
     }
 
+    private val getItemPagerResult = registerForActivityResult(object: ActivityResultContract<Int, Int>() {
+        override fun createIntent(context: Context, position: Int): Intent {
+            return Intent(this@ListActivity, ItemPagerActivity::class.java).apply {
+                putExtra(ItemPagerActivity.EXTRA_CURRENT_POSITION, position)
+            }
+        }
+
+        override fun parseResult(resultCode: Int, intent: Intent?): Int {
+            return if(resultCode == Activity.RESULT_OK && intent != null)
+                intent.getIntExtra(ItemPagerActivity.EXTRA_CURRENT_POSITION, -1) else -1
+        }
+
+    }) {
+        if(it >= 0) binding.itemsRecyclerview.smoothScrollToPosition(it)
+    }
+
     override fun onItemClick(item: Item, position: Int) {
         if (actionMode == null) {
-            val itemActivityIntent = Intent(this, ItemPagerActivity::class.java)
-            itemActivityIntent.putExtra(ItemPagerActivity.EXTRA_CURRENT_POSITION, position)
-            startActivityForResult(itemActivityIntent, ItemPagerActivity.REQUEST_CODE)
+            getItemPagerResult(position)
         } else {
             adapter.toggleSelection(position)
             if (adapter.selectedItemsCount == 0) actionMode?.finish() else {
