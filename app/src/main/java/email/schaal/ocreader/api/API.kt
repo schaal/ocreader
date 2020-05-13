@@ -35,6 +35,7 @@ import email.schaal.ocreader.service.SyncType
 import io.realm.Realm
 import io.realm.kotlin.where
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
@@ -49,7 +50,7 @@ class API {
     companion object {
         private const val TAG = "API"
 
-        const val BATCH_SIZE = 100
+        const val BATCH_SIZE = 100L
         const val API_ROOT = "./index.php/apps/news/api/"
 
         val MIN_VERSION: Version = Version.forIntegers(8, 8, 2)
@@ -234,6 +235,18 @@ class API {
         ALL(3)
     }
 
+    private suspend fun batchedItemLoad(collector: FlowCollector<List<Insertable>>, queryType: QueryType, getRead: Boolean = false) {
+        var offset = 0L
+        do {
+            val resultCount = api?.items(BATCH_SIZE, offset, queryType.type, 0L, getRead = getRead, oldestFirst = true)?.items?.let {
+                collector.emit(it)
+                offset = it.firstOrNull()?.id ?: 0L
+                it.size.toLong()
+            }
+            Log.d(TAG, "offset: $offset, resultCount: $resultCount")
+        } while(resultCount == BATCH_SIZE)
+    }
+
     suspend fun sync(syncType: SyncType) {
         Log.d(TAG, "Sync started: ${syncType.action}")
         Realm.getDefaultInstance().use { realm ->
@@ -254,8 +267,8 @@ class API {
                         api?.user()?.let { emit(listOf(it))}
 
                         if(lastSync == 0L) {
-                            api?.items(-1L, 0L, QueryType.STARRED.type, 0L, getRead = true, oldestFirst = false)?.items?.let { emit(it) }
-                            api?.items(-1L, 0L, QueryType.ALL.type, 0L, getRead = false, oldestFirst = false)?.items?.let { emit(it) }
+                            batchedItemLoad(this, QueryType.STARRED, true)
+                            batchedItemLoad(this, QueryType.ALL, false)
                         } else {
                             api?.updatedItems(lastSync, QueryType.ALL.type, 0L)?.items?.let { emit(it) }
                         }
