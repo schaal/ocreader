@@ -14,24 +14,19 @@ import email.schaal.ocreader.R
  */
 class ProgressFloatingActionButton(context: Context, attrs: AttributeSet?) : FloatingActionButton(context, attrs) {
     private val circlePaint = Paint()
-    private var progress = 0f
-    private val diameter: Float
-    @Keep
-    fun getProgress(): Float {
-        return progress
-    }
 
-    // Used by animator in ItemPagerActivity
-    @Keep
-    fun setProgress(progress: Float) {
-        this.progress = progress
-        invalidate()
-    }
+    var progress = 0f
+        @Keep
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+    private val diameter: Float = resources.getDimensionPixelSize(R.dimen.fab_size_normal).toFloat()
 
     @Keep
     fun setFabBackgroundColor(color: Int) {
-        val colorStateList = ColorStateList.valueOf(color)
-        backgroundTintList = colorStateList
+        backgroundTintList = ColorStateList.valueOf(color)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -45,12 +40,8 @@ class ProgressFloatingActionButton(context: Context, attrs: AttributeSet?) : Flo
     }
 
     init {
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.ProgressFloatingActionButton)
-        try {
-            circlePaint.color = typedArray.getColor(R.styleable.ProgressFloatingActionButton_progressColor, 0)
-        } finally {
-            typedArray.recycle()
-        }
-        diameter = resources.getDimensionPixelSize(R.dimen.fab_size_normal).toFloat()
+        context.obtainStyledAttributes(attrs, R.styleable.ProgressFloatingActionButton).also {
+            circlePaint.color = it.getColor(R.styleable.ProgressFloatingActionButton_progressColor, 0)
+        }.recycle()
     }
 }
