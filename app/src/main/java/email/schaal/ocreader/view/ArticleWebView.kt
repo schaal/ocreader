@@ -2,14 +2,13 @@ package email.schaal.ocreader.view
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.TypedArray
-import androidx.preference.PreferenceManager
 import android.util.AttributeSet
 import android.util.Log
 import android.webkit.JavascriptInterface
 import androidx.annotation.ColorInt
 import androidx.annotation.Keep
 import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 import email.schaal.ocreader.Preferences
 import email.schaal.ocreader.R
 import email.schaal.ocreader.database.model.Item
@@ -28,10 +27,15 @@ import java.util.regex.Pattern
  * WebView to display a Item
  */
 @SuppressLint("SetJavaScriptEnabled")
-class ArticleWebView(context: Context, attrs: AttributeSet?, defStyleAttr: Int): NestedScrollWebView(context, attrs, defStyleAttr) {
-    @ColorInt
-    private var defaultLinkColor = 0
+class ArticleWebView(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0): NestedScrollWebView(context, attrs, defStyleAttr) {
+    @ColorInt private var defaultLinkColor = 0
+    @ColorInt private var fontColor = 0
+    @ColorInt private var backColor = 0
     private var item: Item? = null
+
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    constructor(context: Context) : this(context, null)
+
     private val feedColorsListener: FeedColorsListener = object : FeedColorsListener {
         override fun onGenerated(feedColors: FeedColors) {
             val titleColor = feedColors.getColor(FeedColors.Type.TEXT, defaultLinkColor)
@@ -42,29 +46,20 @@ class ArticleWebView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
 
         override fun onStart() {}
     }
-    @ColorInt
-    private var fontColor = 0
-    @ColorInt
-    private var backColor = 0
-
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-    constructor(context: Context) : this(context, null)
 
     init {
-        var typedArray: TypedArray? = null
-        try {
-            typedArray = context.obtainStyledAttributes(attrs, R.styleable.ArticleWebView)
+        context.obtainStyledAttributes(attrs, R.styleable.ArticleWebView).also { typedArray ->
             defaultLinkColor = typedArray.getColor(R.styleable.ArticleWebView_linkColor, 0)
             fontColor = typedArray.getColor(R.styleable.ArticleWebView_fontColor, 0)
             backColor = typedArray.getColor(R.styleable.ArticleWebView_backgroundColor, 0)
             setBackgroundColor(backColor)
-        } finally {
-            typedArray?.recycle()
+        }.recycle()
+
+        settings.apply {
+            javaScriptEnabled = true
+            builtInZoomControls = true
+            displayZoomControls = false
         }
-        val webSettings = settings
-        webSettings.javaScriptEnabled = true
-        webSettings.builtInZoomControls = true
-        webSettings.displayZoomControls = false
         addJavascriptInterface(JsCallback(), "JsCallback")
     }
 
@@ -136,7 +131,8 @@ class ArticleWebView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
      * Enum to convert some common iframe urls to simpler formats
      */
     private enum class IframePattern(val pattern: Pattern, val baseUrl: String, val thumbUrl: String?) {
-        YOUTUBE(Pattern.compile("(https?://)(?:www\\.)?youtube\\.com/embed/([a-zA-Z0-9-_]+)(?:\\?.*)?"), "youtu.be/", "%simg.youtube.com/vi/%s/sddefault.jpg"), VIMEO(Pattern.compile("(https?://)(?:www\\.)?player\\.vimeo\\.com/video/([a-zA-Z0-9]+)"), "vimeo.com/", null);
+        YOUTUBE(Pattern.compile("(https?://)(?:www\\.)?youtube\\.com/embed/([a-zA-Z0-9-_]+)(?:\\?.*)?"), "youtu.be/", "%simg.youtube.com/vi/%s/sddefault.jpg"),
+        VIMEO(Pattern.compile("(https?://)(?:www\\.)?player\\.vimeo\\.com/video/([a-zA-Z0-9]+)"), "vimeo.com/", null);
 
     }
 
@@ -151,7 +147,7 @@ class ArticleWebView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
                     val matcher = iframePattern.pattern.matcher(href)
                     if (matcher.matches()) {
                         val videoId = matcher.group(2)
-                        val urlPrefix = matcher.group(1)
+                        val urlPrefix = matcher.group(1) ?: "https://"
                         href = urlPrefix + iframePattern.baseUrl + videoId
                         // use thumbnail if available
                         if (iframePattern.thumbUrl != null) {
@@ -172,7 +168,7 @@ class ArticleWebView(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
         private val TAG = ArticleWebView::class.java.name
         // iframes are replaced in prepareDocument()
         private val cleaner = Cleaner(Whitelist.relaxed().addTags("video", "iframe").addAttributes("iframe", "src"))
-        private const val videoThumbLink = "<div style=\"position:relative\"><a href=\"%s\"><img src=\"%s\" class=\"videothumb\"></img><span class=\"play\">▶</span></a></div>"
-        private const val videoLink = "<a href=\"%s\">%s</a>"
+        private const val videoThumbLink = """<div style="position:relative"><a href="%s"><img src="%s" class="videothumb"></img><span class="play">▶</span></a></div>"""
+        private const val videoLink = """<a href="%s">%s</a>"""
     }
 }
