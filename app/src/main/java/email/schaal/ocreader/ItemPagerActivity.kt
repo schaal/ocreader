@@ -52,11 +52,10 @@ import email.schaal.ocreader.util.FaviconLoader.FeedColorsListener
 import email.schaal.ocreader.util.FeedColors
 
 class ItemPagerActivity : AppCompatActivity() {
+    @ColorInt private var defaultToolbarColor = 0
+    @ColorInt private var defaultAccent = 0
+
     private lateinit var binding: ActivityItemPagerBinding
-    @ColorInt
-    private var defaultToolbarColor = 0
-    @ColorInt
-    private var defaultAccent = 0
     private lateinit var item: Item
     private lateinit var items: List<Item>
 
@@ -117,8 +116,7 @@ class ItemPagerActivity : AppCompatActivity() {
 
             binding.fabOpenInBrowser.setOnClickListener {
                 if (item.url != null) {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
-                    startActivity(intent)
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(item.url)))
                 }
             }
         } catch (e: IllegalStateException) {
@@ -130,10 +128,10 @@ class ItemPagerActivity : AppCompatActivity() {
 
     private fun shareArticle() {
         if (item.url != null) {
-            val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.type = "text/plain"
-            shareIntent.putExtra(Intent.EXTRA_TEXT, item.title + " - " + item.url)
-            startActivity(Intent.createChooser(shareIntent, getString(R.string.share_article)))
+            startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, "${item.title} - ${item.url}")
+            }, getString(R.string.share_article)))
         }
     }
 
@@ -148,10 +146,8 @@ class ItemPagerActivity : AppCompatActivity() {
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         menu.findItem(R.id.action_play_enclosure_media).isVisible = item.enclosureLink != null
-        val menuItemRead = menu.findItem(R.id.menu_mark_read)
-        updateMenuItem(menuItemRead, !item.unread, R.drawable.ic_check_box, R.drawable.ic_check_box_outline_blank)
-        val menuItemStarred = menu.findItem(R.id.menu_mark_starred)
-        updateMenuItem(menuItemStarred, item.starred, R.drawable.ic_star, R.drawable.ic_star_outline)
+        updateMenuItem(menu.findItem(R.id.menu_mark_read), !item.unread, R.drawable.ic_check_box, R.drawable.ic_check_box_outline_blank)
+        updateMenuItem(menu.findItem(R.id.menu_mark_starred), item.starred, R.drawable.ic_star, R.drawable.ic_star_outline)
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -217,7 +213,7 @@ class ItemPagerActivity : AppCompatActivity() {
         }
     }
 
-    private open inner class StatusBarChanger {
+    private inner class StatusBarChanger {
         private val hsl = FloatArray(3)
         private fun changeLightness(backgroundColor: Int, lightnessChange: Float): Int {
             ColorUtils.colorToHSL(backgroundColor, hsl)
@@ -226,7 +222,7 @@ class ItemPagerActivity : AppCompatActivity() {
         }
 
         @Keep
-        open fun setStatusBarColor(backgroundColor: Int) {
+        fun setStatusBarColor(backgroundColor: Int) {
             val statusbarColor = changeLightness(backgroundColor, 0.7f)
             window.statusBarColor = statusbarColor
 
@@ -293,17 +289,16 @@ class ItemPagerActivity : AppCompatActivity() {
             progressTo = (position + 1).toFloat() / mSectionsPagerAdapter.itemCount.toFloat()
             binding.bottomAppbar.performShow()
             binding.fabOpenInBrowser.show()
-            val progressAnimator = ObjectAnimator
+            ObjectAnimator
                     .ofFloat(binding.fabOpenInBrowser, "progress", progressFrom, progressTo)
                     .setDuration(DURATION)
-            progressAnimator.start()
+                    .start()
         }
 
         override fun onPageScrollStateChanged(state: Int) {}
     }
 
     companion object {
-        const val REQUEST_CODE = 2
         const val EXTRA_CURRENT_POSITION = "email.schaal.ocreader.extra.CURRENT_POSIION"
     }
 }
