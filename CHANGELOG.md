@@ -1,3 +1,15 @@
+## 0.45 (2020-05-18)
+
+* Add option to reset database
+* Use nextcloud login flow to get an apptoken instead of asking for password
+  * User has to login again
+* Update UI
+  * Use Bottomsheet instead of Drawers
+* Add system setting to dark theme preference
+* Rewrite in Kotlin
+* Target SDK 29
+* Update app icon background layer
+
 ## 0.44 (2019-01-06)
 
 * Disable ACRA
