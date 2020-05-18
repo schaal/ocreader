@@ -19,17 +19,16 @@
 
 package email.schaal.ocreader.view
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.invoke
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import email.schaal.ocreader.ListActivity
-import email.schaal.ocreader.LoginFlowActivity
 import email.schaal.ocreader.Preferences
 import email.schaal.ocreader.R
 import email.schaal.ocreader.database.FeedViewModel
@@ -69,9 +68,9 @@ class UserBottomSheetDialogFragment: BottomSheetDialogFragment() {
         }
 
         headerBinding.button.setOnClickListener {
-            val loginIntent = Intent(requireActivity(), LoginFlowActivity::class.java)
-            loginIntent.putExtra(LoginFlowActivity.EXTRA_URL, url)
-            requireActivity().startActivityForResult(loginIntent, LoginFlowActivity.REQUEST_CODE)
+            (requireActivity() as? ListActivity)?.let {
+                it.getLoginResult()
+            }
             dismiss()
         }
     }

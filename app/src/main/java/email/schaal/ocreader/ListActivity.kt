@@ -195,9 +195,13 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
         binding.itemsRecyclerview.scrollToPosition(0)
     }
 
-    private val getLoginResult = registerForActivityResult(object: ActivityResultContract<Unit, String?>() {
-        override fun createIntent(context: Context, input: Unit): Intent {
-            return Intent(this@ListActivity, LoginFlowActivity::class.java)
+    val getLoginResult = registerForActivityResult(object: ActivityResultContract<Void?, String?>() {
+        override fun createIntent(context: Context, input: Void?): Intent {
+            return Intent(this@ListActivity, LoginFlowActivity::class.java).apply {
+                Preferences.URL.getString(PreferenceManager.getDefaultSharedPreferences(this@ListActivity))?.let {
+                    putExtra(LoginFlowActivity.EXTRA_URL, it)
+                }
+            }
         }
 
         override fun parseResult(resultCode: Int, intent: Intent?): String? {

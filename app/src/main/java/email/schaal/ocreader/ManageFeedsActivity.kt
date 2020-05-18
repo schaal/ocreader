@@ -116,8 +116,4 @@ class ManageFeedsActivity : AppCompatActivity(), FeedManageListener {
         progressDialog.show()
         return progressDialog
     }
-
-    companion object {
-        const val REQUEST_CODE = 3
-    }
 }
