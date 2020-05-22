@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/schaal/ocreader.svg?branch=master)](https://travis-ci.org/schaal/ocreader)
+![Android CI](https://github.com/schaal/ocreader/workflows/Android%20CI/badge.svg)
 
 # [OCReader][1] - Android client for [Nextcloud News][0]
 
