@@ -28,6 +28,7 @@ apply plugin: 'com.mikepenz.aboutlibraries.plugin'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
+    ndkVersion "21.1.6352462"
 
     dataBinding.enabled = true
 
