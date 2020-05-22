@@ -23,7 +23,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.invoke
+import androidx.activity.result.launch
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
@@ -69,7 +69,7 @@ class UserBottomSheetDialogFragment: BottomSheetDialogFragment() {
 
         headerBinding.button.setOnClickListener {
             (requireActivity() as? ListActivity)?.let {
-                it.getLoginResult()
+                it.getLoginResult.launch()
             }
             dismiss()
         }

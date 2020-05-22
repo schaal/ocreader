@@ -28,9 +28,9 @@ import android.os.Bundle
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.invoke
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar.OnMenuItemClickListener
@@ -75,7 +75,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
     override fun onStart() {
         super.onStart()
         if (!Preferences.hasCredentials(PreferenceManager.getDefaultSharedPreferences(this))) {
-            getLoginResult()
+            getLoginResult.launch()
         }
     }
 
@@ -109,7 +109,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
         bottomMenuClickListener = OnMenuItemClickListener { item: MenuItem ->
             when (item.itemId) {
                 R.id.menu_settings -> {
-                    getSettingsResult()
+                    getSettingsResult.launch()
                     true
                 }
                 R.id.menu_show_only_unread -> {
@@ -132,7 +132,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
                     true
                 }
                 R.id.menu_manage_feeds -> {
-                    getManageFeedsResult(Intent(this, ManageFeedsActivity::class.java))
+                    getManageFeedsResult.launch(Intent(this, ManageFeedsActivity::class.java))
                     true
                 } else -> false
             }
@@ -277,7 +277,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
 
     override fun onItemClick(item: Item, position: Int) {
         if (actionMode == null) {
-            getItemPagerResult(position)
+            getItemPagerResult.launch(position)
         } else {
             adapter.toggleSelection(position)
             if (adapter.selectedItemsCount == 0) actionMode?.finish() else {
