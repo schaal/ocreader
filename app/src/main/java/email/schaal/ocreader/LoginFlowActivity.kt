@@ -40,7 +40,6 @@ class LoginFlowActivity : AppCompatActivity() {
     private val loginViewModel: LoginViewModel by viewModels()
 
     companion object {
-        const val REQUEST_CODE: Int = 1
         const val EXTRA_URL = "email.schaal.ocreader.extra.url"
         const val EXTRA_IMPROPERLY_CONFIGURED_CRON = "email.schaal.ocreader.extra.improperlyConfiguredCron"
         const val EXTRA_MESSAGE = "email.schaal.ocreader.extra.message"
@@ -80,7 +79,9 @@ class LoginFlowActivity : AppCompatActivity() {
                     finish()
                 }
             } else {
-
+                setResult(Activity.RESULT_CANCELED, Intent().apply {
+                    putExtra(EXTRA_MESSAGE, "Couldn't parse response from server")
+                })
             }
         })
         if (savedInstanceState == null) {
