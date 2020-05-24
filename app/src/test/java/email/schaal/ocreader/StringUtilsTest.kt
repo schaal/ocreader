@@ -26,19 +26,6 @@ class StringUtilsTest {
 
     @Test
     @Throws(Exception::class)
-    fun testGetTimeSpanString() {
-        val testDateStart = Date(1469849100000L)
-        val testDateMinute = Date(1469849100000L + 60 * 1000)
-        val testDateHour = Date(1469849100000L + 60 * 60 * 1000)
-        val testDateDay = Date(1469849100000L + 24 * 60 * 60 * 1000)
-        Assert.assertEquals("now", getTimeSpanString(ApplicationProvider.getApplicationContext(), testDateStart, testDateStart))
-        Assert.assertEquals("1m", getTimeSpanString(ApplicationProvider.getApplicationContext(), testDateStart, testDateMinute))
-        Assert.assertEquals("1h", getTimeSpanString(ApplicationProvider.getApplicationContext(), testDateStart, testDateHour))
-        Assert.assertEquals("1d", getTimeSpanString(ApplicationProvider.getApplicationContext(), testDateStart, testDateDay))
-    }
-
-    @Test
-    @Throws(Exception::class)
     fun testCleanString() {
         val html = "<span>Test</span>"
         val entity = "Test &gt; Test"

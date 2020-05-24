@@ -51,7 +51,7 @@ class ItemViewHolder(private val binding: ListItemBinding, private val clickList
         }
         val preferences = PreferenceManager.getDefaultSharedPreferences(binding.root.context)
         val date: Date? = if (Preferences.SORT_FIELD.getString(preferences) == Item::lastModified.name) item.lastModified else item.pubDate
-        binding.textViewTime.text = getTimeSpanString(itemView.context, date)
+        binding.textViewTime.text = date?.getTimeSpanString()
         binding.textViewFeedTitle.setTextColor(defaultFeedTextColor)
         FaviconLoader.Builder(binding.imageviewFavicon).build().load(binding.imageviewFavicon.context, feed, this)
         itemView.setOnClickListener { clickListener.onItemClick(item, position) }

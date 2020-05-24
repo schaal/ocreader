@@ -43,19 +43,12 @@ fun getByLine(context: Context, template: String, author: String?, feed: Feed?):
     }
 }
 
-fun getTimeSpanString(context: Context, startDate: Date?, endDate: Date? = Date()): String {
-    if(startDate == null || endDate == null)
-        return ""
-
-    val timeSpanString: String
-    val timeDiff = endDate.time - startDate.time
-    timeSpanString = when {
-        timeDiff <= 0 -> context.getString(R.string.now)
-        timeDiff <= 59 * DateUtils.MINUTE_IN_MILLIS -> context.getString(R.string.minutes, timeDiff / DateUtils.MINUTE_IN_MILLIS)
-        timeDiff <= 23 * DateUtils.HOUR_IN_MILLIS -> context.getString(R.string.hours, timeDiff / DateUtils.HOUR_IN_MILLIS)
-        else -> context.getString(R.string.days, timeDiff / DateUtils.DAY_IN_MILLIS)
-    }
-    return timeSpanString
+fun Date.getTimeSpanString(endDate: Date = Date()): CharSequence {
+    return DateUtils.getRelativeTimeSpanString(
+            this.time,
+            endDate.time,
+            DateUtils.MINUTE_IN_MILLIS,
+            DateUtils.FORMAT_ABBREV_ALL)
 }
 
 fun String.cleanString(): String {
