@@ -28,18 +28,49 @@ import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.OvalShape
 import android.graphics.drawable.shapes.Shape
 import androidx.annotation.ColorInt
-import java.util.*
+import java.util.Locale
 import kotlin.math.min
 
 /**
  * @author amulya
  */
-class TextDrawable private constructor(builder: Builder) : ShapeDrawable(builder.shape) {
-    private val textPaint: Paint
-    private val text: String
-    private val height: Int
-    private val width: Int
-    private val fontSize: Int
+class TextDrawable constructor(
+        origText: String,
+        @ColorInt private val color: Int,
+        @ColorInt private val textColor: Int,
+        private val borderThickness: Int = 0,
+        private val width: Int = -1,
+        private val height: Int = -1,
+        shape: Shape = OvalShape(),
+        private val fontSize: Int = -1,
+        bold: Boolean = false,
+        upperCase: Boolean = true
+
+) : ShapeDrawable(shape) {
+    private val text: String = origText.substring(0, 1).ifEmpty { "?" }.let {
+        if(upperCase)
+            it.toUpperCase(Locale.getDefault())
+        else
+            it
+    }
+
+    private val textPaint: Paint = Paint().apply {
+        // text paint settings
+        color = textColor
+        isAntiAlias = true
+        isFakeBoldText = bold
+        style = Paint.Style.FILL
+        typeface = Typeface.DEFAULT_BOLD
+        textAlign = Paint.Align.CENTER
+        strokeWidth = borderThickness.toFloat()
+
+    }
+
+    init {
+        // drawable paint color
+        paint.color = color
+    }
+
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
         val r = bounds
@@ -72,77 +103,5 @@ class TextDrawable private constructor(builder: Builder) : ShapeDrawable(builder
 
     override fun getIntrinsicHeight(): Int {
         return height
-    }
-
-    class Builder(text: String, @ColorInt color: Int) {
-        val text: String
-        @ColorInt
-        var color: Int
-        val borderThickness: Int
-        var width: Int
-        var height: Int
-        val shape: Shape
-        @ColorInt
-        var textColor: Int
-        val fontSize: Int
-        val isBold: Boolean
-        val toUpperCase: Boolean
-        fun textColor(@ColorInt textColor: Int): Builder {
-            this.textColor = textColor
-            return this
-        }
-
-        fun color(@ColorInt color: Int): Builder {
-            this.color = color
-            return this
-        }
-
-        fun width(width: Int): Builder {
-            this.width = width
-            return this
-        }
-
-        fun height(height: Int): Builder {
-            this.height = height
-            return this
-        }
-
-        fun build(): TextDrawable {
-            return TextDrawable(this)
-        }
-
-        init {
-            textColor = Color.WHITE
-            borderThickness = 0
-            width = -1
-            height = -1
-            shape = OvalShape()
-            fontSize = -1
-            isBold = false
-            toUpperCase = true
-            this.text = text
-            this.color = color
-        }
-    }
-
-    init {
-        // shape properties
-        height = builder.height
-        width = builder.width
-        // text and color
-        text = if (builder.toUpperCase) builder.text.toUpperCase(Locale.getDefault()) else builder.text
-        // text paint settings
-        fontSize = builder.fontSize
-        textPaint = Paint()
-        textPaint.color = builder.textColor
-        textPaint.isAntiAlias = true
-        textPaint.isFakeBoldText = builder.isBold
-        textPaint.style = Paint.Style.FILL
-        textPaint.typeface = Typeface.DEFAULT_BOLD
-        textPaint.textAlign = Paint.Align.CENTER
-        textPaint.strokeWidth = builder.borderThickness.toFloat()
-        // drawable paint color
-        val paint = paint
-        paint.color = builder.color
     }
 }
