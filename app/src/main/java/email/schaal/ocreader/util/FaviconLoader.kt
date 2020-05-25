@@ -22,7 +22,6 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import email.schaal.ocreader.R
 import email.schaal.ocreader.database.model.Feed
-import java.util.*
 
 /**
  * Load favicons
@@ -133,13 +132,6 @@ class FaviconLoader private constructor(builder: Builder) {
         private val TAG = FaviconLoader::class.java.name
         private val feedColorsCache = LruCache<Long, FeedColors>(32)
         private val faviconCache = LruCache<Long, Drawable?>(32)
-        fun getCssColor(color: Int): String { // Use US locale so we always get a . as decimal separator for a valid css value
-            return String.format(Locale.US, "rgba(%d,%d,%d,%.2f)",
-                    Color.red(color),
-                    Color.green(color),
-                    Color.blue(color),
-                    Color.alpha(color) / 255.0)
-        }
 
         fun getDrawable(context: Context, feed: Feed?): Drawable? {
             return feed?.let {

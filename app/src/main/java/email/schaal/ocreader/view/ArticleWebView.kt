@@ -15,6 +15,7 @@ import email.schaal.ocreader.database.model.Item
 import email.schaal.ocreader.util.FaviconLoader
 import email.schaal.ocreader.util.FaviconLoader.FeedColorsListener
 import email.schaal.ocreader.util.FeedColors
+import email.schaal.ocreader.util.asCssString
 import email.schaal.ocreader.util.getByLine
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -39,8 +40,7 @@ class ArticleWebView(context: Context, attrs: AttributeSet? = null, defStyleAttr
     private val feedColorsListener: FeedColorsListener = object : FeedColorsListener {
         override fun onGenerated(feedColors: FeedColors) {
             val titleColor = feedColors.getColor(FeedColors.Type.TEXT, defaultLinkColor)
-            val cssColor = FaviconLoader.getCssColor(titleColor)
-            val javascript = resources.getString(R.string.style_change_js, cssColor)
+            val javascript = resources.getString(R.string.style_change_js, titleColor.asCssString())
             loadUrl(javascript)
         }
 
@@ -90,10 +90,10 @@ class ArticleWebView(context: Context, attrs: AttributeSet? = null, defStyleAttr
             prepareDocument(document)
             document.outputSettings().prettyPrint(false)
             return context.getString(R.string.article_html_template,
-                    FaviconLoader.getCssColor(defaultLinkColor),
-                    FaviconLoader.getCssColor(fontColor),
-                    FaviconLoader.getCssColor(backColor),
-                    FaviconLoader.getCssColor(ContextCompat.getColor(context, R.color.selected_background)),
+                    defaultLinkColor.asCssString(),
+                    fontColor.asCssString(),
+                    backColor.asCssString(),
+                    ContextCompat.getColor(context, R.color.selected_background).asCssString(),
                     item?.url ?: "",
                     item?.title,
                     getByLine(context, "<p class=\"byline\">%s</p>", item?.author, item?.feed),

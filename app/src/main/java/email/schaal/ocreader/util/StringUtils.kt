@@ -22,6 +22,7 @@
 package email.schaal.ocreader.util
 
 import android.content.Context
+import android.graphics.Color
 import android.text.format.DateUtils
 import androidx.core.text.HtmlCompat
 import email.schaal.ocreader.R
@@ -53,4 +54,12 @@ fun Date.getTimeSpanString(endDate: Date = Date()): CharSequence {
 
 fun String.cleanString(): String {
     return HtmlCompat.fromHtml(this, HtmlCompat.FROM_HTML_MODE_COMPACT).toString()
+}
+
+fun Int.asCssString(): String { // Use US locale so we always get a . as decimal separator for a valid css value
+    return String.format(Locale.US, "rgba(%d,%d,%d,%.2f)",
+            Color.red(this),
+            Color.green(this),
+            Color.blue(this),
+            Color.alpha(this) / 255.0)
 }
