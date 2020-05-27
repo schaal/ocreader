@@ -21,9 +21,8 @@ package email.schaal.ocreader
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.squareup.moshi.Moshi
-import email.schaal.ocreader.api.json.ItemJsonTypeAdapter
-import email.schaal.ocreader.api.json.v12.ItemIds
-import email.schaal.ocreader.api.json.v12.ItemMap
+import email.schaal.ocreader.api.json.ItemIds
+import email.schaal.ocreader.api.json.ItemMap
 import email.schaal.ocreader.database.model.Item
 import org.junit.Assert
 import org.junit.Test

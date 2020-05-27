@@ -45,3 +45,24 @@ class Folders(val folders: List<Folder>)
  */
 @JsonClass(generateAdapter = true)
 class Items(val items: List<Item>)
+
+/**
+ * Aggregates item ids, used to mark multiple items as read
+ */
+@JsonClass(generateAdapter = true)
+data class ItemIds(val items: List<Long>) {
+    constructor(sourceItems: Iterable<Item>) : this(sourceItems.map { it.id })
+}
+
+/**
+ * Aggregates feedIds and guidHashes, used to mark multiple items as starred
+ */
+@JsonClass(generateAdapter = true)
+data class ItemMap(val items: List<MappedItem>) {
+    @JsonClass(generateAdapter = true)
+    data class MappedItem(val feedId: Long, val guidHash: String?)
+
+    constructor(sourceItems: Iterable<Item>) : this(sourceItems.map {
+        MappedItem(it.feedId, it.guidHash)
+    })
+}

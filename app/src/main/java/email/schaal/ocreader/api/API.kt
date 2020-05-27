@@ -27,8 +27,8 @@ import com.squareup.moshi.Moshi
 import email.schaal.ocreader.Preferences
 import email.schaal.ocreader.R
 import email.schaal.ocreader.api.json.*
-import email.schaal.ocreader.api.json.v12.ItemIds
-import email.schaal.ocreader.api.json.v12.ItemMap
+import email.schaal.ocreader.api.json.ItemIds
+import email.schaal.ocreader.api.json.ItemMap
 import email.schaal.ocreader.database.model.*
 import email.schaal.ocreader.http.HttpManager
 import email.schaal.ocreader.service.SyncType
