@@ -27,11 +27,10 @@ import com.squareup.moshi.Moshi
 import email.schaal.ocreader.Preferences
 import email.schaal.ocreader.R
 import email.schaal.ocreader.api.json.*
-import email.schaal.ocreader.api.json.ItemIds
-import email.schaal.ocreader.api.json.ItemMap
 import email.schaal.ocreader.database.model.*
 import email.schaal.ocreader.http.HttpManager
 import email.schaal.ocreader.service.SyncType
+import email.schaal.ocreader.util.buildBaseUrl
 import io.realm.Realm
 import io.realm.kotlin.where
 import kotlinx.coroutines.flow.Flow
@@ -51,7 +50,7 @@ class API {
         private const val TAG = "API"
 
         const val BATCH_SIZE = 100L
-        const val API_ROOT = "./index.php/apps/news/api/"
+        const val API_ROOT = "index.php/apps/news/api/"
 
         val MIN_VERSION: Version = Version.forIntegers(8, 8, 2)
 
@@ -68,12 +67,11 @@ class API {
 
         suspend fun login(context: Context, baseUrl: HttpUrl, username: String, apptoken: String): Status? {
             val httpManager = HttpManager(username, apptoken, baseUrl)
-            val resolvedBaseUrl = baseUrl.resolve("") ?: throw IllegalArgumentException("Couldn't parse URL")
 
             val moshi = Moshi.Builder().build()
 
             val retrofit = Retrofit.Builder()
-                    .baseUrl(resolvedBaseUrl)
+                    .baseUrl(baseUrl)
                     .client(httpManager.client)
                     .addConverterFactory(MoshiConverterFactory.create(moshi))
                     .build()
@@ -90,7 +88,7 @@ class API {
                     PreferenceManager.getDefaultSharedPreferences(context).edit()
                             .putString(Preferences.USERNAME.key, username)
                             .putString(Preferences.APPTOKEN.key, apptoken)
-                            .putString(Preferences.URL.key, resolvedBaseUrl.toString())
+                            .putString(Preferences.URL.key, baseUrl.toString())
                             .putString(Preferences.SYS_DETECTED_API_LEVEL.key, apiLevel.level)
                             .apply()
                     instance = loginInstance
@@ -188,7 +186,7 @@ class API {
 
     private fun setupApi(httpManager: HttpManager): APIv12Interface {
         val retrofit = Retrofit.Builder()
-                .baseUrl(httpManager.credentials.rootUrl.resolve(String.format("%s%s/", API_ROOT, Level.V12.level))!!)
+                .baseUrl(httpManager.credentials.rootUrl.buildBaseUrl("$API_ROOT${Level.V12.level}/"))
                 .client(httpManager.client)
                 .addConverterFactory(converterFactory)
                 .build()

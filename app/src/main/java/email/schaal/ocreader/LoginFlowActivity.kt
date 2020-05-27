@@ -32,6 +32,7 @@ import email.schaal.ocreader.api.API
 import email.schaal.ocreader.databinding.LoginFlowActivityBinding
 import email.schaal.ocreader.ui.loginflow.LoginFlowFragment
 import email.schaal.ocreader.util.LoginError
+import email.schaal.ocreader.util.buildBaseUrl
 import email.schaal.ocreader.view.LoginViewModel
 import kotlinx.coroutines.launch
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -55,7 +56,8 @@ class LoginFlowActivity : AppCompatActivity() {
         supportActionBar?.title = getString(R.string.title_activity_login)
 
         loginViewModel.credentialsLiveData.observe(this, Observer {
-            val server = it?.get("server")?.toHttpUrlOrNull()
+            val server = it?.get("server")?.let { urlString ->
+                if(!urlString.endsWith("/")) "$urlString/" else urlString }?.toHttpUrlOrNull()
             val user = it?.get("user")
             val password = it?.get("password")
             if (server != null && user != null && password != null) {
@@ -63,7 +65,7 @@ class LoginFlowActivity : AppCompatActivity() {
                     try {
                         val status = API.login(this@LoginFlowActivity, server, user, password)
                         if (status != null) {
-                            val data = Intent(Intent.ACTION_VIEW, Uri.parse(server.resolve("/index.php/apps/news").toString()))
+                            val data = Intent(Intent.ACTION_VIEW, Uri.parse(server.buildBaseUrl("index.php/apps/news").toString()))
                             data.putExtra(EXTRA_IMPROPERLY_CONFIGURED_CRON, status.isImproperlyConfiguredCron)
                             setResult(Activity.RESULT_OK, data)
                         } else {

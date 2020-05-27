@@ -27,6 +27,7 @@ import android.text.format.DateUtils
 import androidx.core.text.HtmlCompat
 import email.schaal.ocreader.R
 import email.schaal.ocreader.database.model.Feed
+import okhttp3.HttpUrl
 import java.util.*
 
 /**
@@ -62,4 +63,11 @@ fun Int.asCssString(): String { // Use US locale so we always get a . as decimal
             Color.green(this),
             Color.blue(this),
             Color.alpha(this) / 255.0)
+}
+
+fun HttpUrl.buildBaseUrl(apiRoot: String): HttpUrl {
+    return this
+            .newBuilder()
+            .addPathSegments(apiRoot)
+            .build()
 }
