@@ -1,4 +1,4 @@
-![Android CI](https://github.com/schaal/ocreader/workflows/Android%20CI/badge.svg)
+[![Android CI](https://github.com/schaal/ocreader/workflows/Android%20CI/badge.svg)](https://github.com/schaal/ocreader/actions?query=workflow%3A%22Android+CI%22)
 
 # [OCReader][1] - Android client for [Nextcloud News][0]
 
