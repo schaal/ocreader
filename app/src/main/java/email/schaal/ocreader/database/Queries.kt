@@ -43,7 +43,6 @@ object Queries {
             realm.createObject<TemporaryFeed>(TemporaryFeed.LIST_ID)
             realm.createObject<TemporaryFeed>(TemporaryFeed.PAGER_ID)
         } catch (e: RealmPrimaryKeyConstraintException) {
-            e.printStackTrace()
         }
     }
 
