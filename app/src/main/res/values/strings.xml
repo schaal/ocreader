@@ -119,7 +119,7 @@
     <string name="no_folders_to_show">No folders/feeds to show</string>
     <string name="default_sort_field_value" translatable="false">id</string>
     <string name="publication_value" translatable="false">pubDate</string>
-    <string name="update_value" translatable="false">updatedAt</string>
+    <string name="update_value" translatable="false">lastModified</string>
     <string name="default_sort_key">Default</string>
     <string name="sort_by">Sort by</string>
 
