@@ -19,8 +19,8 @@
 package email.schaal.ocreader
 
 import android.app.Application
-import androidx.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.preference.PreferenceManager
 import email.schaal.ocreader.database.Queries
 import email.schaal.ocreader.database.model.Item
 
@@ -32,22 +32,21 @@ class OCReaderApplication : Application() {
         super.onCreate()
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val editor = preferences.edit()
 
-        // Migrate to apptoken
-        if(preferences.contains(Preferences.PASSWORD.key)) {
-            editor
-                    .remove(Preferences.USERNAME.key)
-                    .remove(Preferences.PASSWORD.key)
-                    .remove(Preferences.URL.key)
-        }
+        preferences.edit().apply {
+            // Migrate to apptoken
+            if (preferences.contains(Preferences.PASSWORD.key)) {
+                remove(Preferences.USERNAME.key)
+                remove(Preferences.PASSWORD.key)
+                remove(Preferences.URL.key)
+            }
 
-        // Migrate updatedAt to lastModified
-        if(Preferences.SORT_FIELD.getString(preferences) == "updatedAt")
-            editor.putString(Preferences.SORT_FIELD.key, Item::lastModified.name)
+            // Migrate updatedAt to lastModified
+            if (Preferences.SORT_FIELD.getString(preferences) == "updatedAt")
+                putString(Preferences.SORT_FIELD.key, Item::lastModified.name)
 
-        editor.putBoolean(Preferences.SYS_SYNC_RUNNING.key, false)
-                .apply()
+            putBoolean(Preferences.SYS_SYNC_RUNNING.key, false)
+        }.apply()
 
         AppCompatDelegate.setDefaultNightMode(Preferences.getNightMode(preferences))
 
