@@ -1,3 +1,9 @@
+## 0.46 (2020-05-28)
+
+* Use DateUtils to format relative time span
+* Use addPathSegments to build API base url (Closes: #95)
+* Migrate updatedAt to lastModified (Closes: #97)
+
 ## 0.45 (2020-05-18)
 
 * Add option to reset database
