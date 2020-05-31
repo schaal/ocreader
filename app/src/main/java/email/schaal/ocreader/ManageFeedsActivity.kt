@@ -55,15 +55,15 @@ class ManageFeedsActivity : AppCompatActivity(), FeedManageListener {
     override fun addNewFeed(url: String, folderId: Long, finishAfterAdd: Boolean) {
         val progressDialog = showProgress(this, getString(R.string.adding_feed))
         lifecycleScope.launch {
-            API(this@ManageFeedsActivity).createFeed(url, folderId)
-        }.invokeOnCompletion { throwable ->
-            if(throwable != null) {
-                throwable.printStackTrace()
-                showErrorMessage(getString(R.string.feed_add_failed), throwable.localizedMessage ?: "")
+            try {
+                API(this@ManageFeedsActivity).createFeed(url, folderId)
+            } catch(e: Exception) {
+                showErrorMessage(getString(R.string.feed_add_failed), e)
+            } finally {
+                progressDialog.dismiss()
+                if(finishAfterAdd)
+                    finish()
             }
-            progressDialog.dismiss()
-            if(finishAfterAdd)
-                finish()
         }
     }
 
@@ -73,34 +73,39 @@ class ManageFeedsActivity : AppCompatActivity(), FeedManageListener {
                 .setPositiveButton(R.string.delete) { _: DialogInterface?, _: Int ->
                     val progressDialog = showProgress(this@ManageFeedsActivity, getString(R.string.deleting_feed, feed.name))
                     lifecycleScope.launch {
-                        API(this@ManageFeedsActivity).deleteFeed(feed)
-                    }.invokeOnCompletion { throwable ->
-                        if(throwable != null) {
-                            throwable.printStackTrace()
-                            showErrorMessage(getString(R.string.delete_feed_failed), throwable.localizedMessage ?: "")
+                        try {
+                            API(this@ManageFeedsActivity).deleteFeed(feed)
+                        } catch(e: Exception) {
+                            showErrorMessage(getString(R.string.delete_feed_failed), e)
+                        } finally {
+                            progressDialog.dismiss()
                         }
-                        progressDialog.dismiss()
                     }
                 }
                 .setNegativeButton(android.R.string.cancel, null)
                 .show()
     }
 
+    override fun changeFeed(feedId: Long, folderId: Long) {
+        val progressDialog = showProgress(this, getString(R.string.moving_feed))
+        lifecycleScope.launch {
+            try {
+                API(this@ManageFeedsActivity).moveFeed(feedId, folderId)
+            } catch(e: Exception) {
+                showErrorMessage(getString(R.string.feed_move_failed), e)
+            } finally {
+                progressDialog.dismiss()
+            }
+        }
+    }
+
     override fun showFeedDialog(feed: Feed) {
         AddNewFeedDialogFragment.show(this, feed, false)
     }
 
-    override fun changeFeed(feedId: Long, folderId: Long) {
-        val progressDialog = showProgress(this, getString(R.string.moving_feed))
-        lifecycleScope.launch {
-            API(this@ManageFeedsActivity).moveFeed(feedId, folderId)
-        }.invokeOnCompletion { throwable ->
-            if(throwable != null) {
-                throwable.printStackTrace()
-                showErrorMessage(getString(R.string.feed_move_failed), throwable.localizedMessage ?: "")
-            }
-            progressDialog.dismiss()
-        }
+    private fun showErrorMessage(title: String, e: Exception) {
+        e.printStackTrace()
+        showErrorMessage(title, e.localizedMessage ?: "")
     }
 
     private fun showErrorMessage(title: String, message: String) {
