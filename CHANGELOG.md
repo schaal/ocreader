@@ -1,3 +1,7 @@
+## 0.47 (2020-06-02)
+
+* Fix F-Droid build
+
 ## 0.46 (2020-05-28)
 
 * Use DateUtils to format relative time span
