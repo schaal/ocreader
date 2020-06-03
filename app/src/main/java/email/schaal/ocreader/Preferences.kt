@@ -22,7 +22,9 @@ package email.schaal.ocreader
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.NightMode
+import email.schaal.ocreader.database.model.AllUnreadFolder
 import email.schaal.ocreader.database.model.Item
+import email.schaal.ocreader.database.model.TreeItem
 import io.realm.Sort
 
 /**
@@ -39,6 +41,7 @@ enum class Preferences constructor(val key: String, private val defaultValue: An
     SORT_FIELD("sort_field", Item::id.name, ChangeAction.UPDATE),
     DARK_THEME("dark_theme", "system", ChangeAction.RECREATE),
     ARTICLE_FONT("article_font", "system"),
+    BREADCRUMBS("breadcrumbs"),
     /** System preferences  */
     SYS_SYNC_RUNNING("sync_running", false),
     SYS_NEEDS_UPDATE_AFTER_SYNC("needs_update_after_sync", false),
@@ -59,6 +62,14 @@ enum class Preferences constructor(val key: String, private val defaultValue: An
 
     fun getBoolean(preferences: SharedPreferences): Boolean {
         return preferences.getBoolean(key, (defaultValue as Boolean?) ?: false)
+    }
+
+    fun getBreadCrumbs(preferences: SharedPreferences): List<Pair<Long, Boolean>> {
+        return (preferences.getString(key, defaultValue as String?)?.split(";") ?: listOf("${AllUnreadFolder.ID},false")).map {
+            it.split(",").let { pair ->
+                pair[0].toLong() to pair[1].toBoolean()
+            }
+        }
     }
 
     fun getLong(preferences: SharedPreferences): Long {
@@ -104,4 +115,11 @@ enum class Preferences constructor(val key: String, private val defaultValue: An
         }
     }
 
+}
+
+fun SharedPreferences.Editor.putBreadCrumbs(breadcrumbs: List<Pair<Long, Boolean>>): SharedPreferences.Editor {
+    putString(Preferences.BREADCRUMBS.key, breadcrumbs.joinToString(";") {
+        "${it.first},${it.second}"
+    })
+    return this
 }

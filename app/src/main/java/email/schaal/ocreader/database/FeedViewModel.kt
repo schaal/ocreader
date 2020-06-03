@@ -25,6 +25,7 @@ import androidx.preference.PreferenceManager
 import email.schaal.ocreader.Preferences
 import email.schaal.ocreader.database.model.*
 import email.schaal.ocreader.database.model.TemporaryFeed.Companion.getListTemporaryFeed
+import email.schaal.ocreader.putBreadCrumbs
 import email.schaal.ocreader.service.SyncJobIntentService
 import email.schaal.ocreader.service.SyncResultReceiver
 import email.schaal.ocreader.service.SyncType
@@ -68,8 +69,10 @@ class FeedViewModel(context: Context) : RealmViewModel() {
         foldersLiveData.value = Folder.getAll(realm, onlyUnread)
     }
 
-    fun updateSelectedTreeItem(treeItem: TreeItem?) {
-        selectedTreeItemLiveData.value = treeItem ?: topFolders[0]
+    fun updateSelectedTreeItem(context: Context, treeItem: TreeItem?) {
+        val newTreeItem = treeItem ?: topFolders[0]
+        selectedTreeItemLiveData.value = newTreeItem
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBreadCrumbs(listOf(newTreeItem.treeItemId() to (newTreeItem is Feed))).apply()
     }
 
     fun updateTemporaryFeed(preferences: SharedPreferences, updateTemporaryFeed: Boolean) {
@@ -123,6 +126,21 @@ class FeedViewModel(context: Context) : RealmViewModel() {
         }
     }
 
+    companion object {
+        fun getTreeItem(realm: Realm, breadcrumb: Pair<Long, Boolean>, staticFolders: Array<TreeItem>): TreeItem {
+            val (treeItemId, isFeed) = breadcrumb
+
+            for(treeItem in staticFolders)
+                if(treeItem.treeItemId() == treeItemId)
+                    return treeItem
+
+            return if(isFeed)
+                realm.where<Feed>().equalTo(Feed::id.name, treeItemId).findFirst() ?: staticFolders[0]
+            else
+                realm.where<Folder>().equalTo(Folder::id.name, treeItemId).findFirst() ?: staticFolders[0]
+        }
+    }
+
     init {
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val temporaryFeed = getListTemporaryFeed(realm)!!
@@ -134,7 +152,7 @@ class FeedViewModel(context: Context) : RealmViewModel() {
                 StarredFolder(context),
                 FreshFolder(context)
         )
-        selectedTreeItemLiveData = MutableLiveData(topFolders[0])
+        selectedTreeItemLiveData = MutableLiveData(getTreeItem(realm, Preferences.BREADCRUMBS.getBreadCrumbs(preferences).last(), topFolders))
         userLiveData = LiveRealmObject(realm.where<User>().findFirst())
         updateTemporaryFeed(preferences, false)
     }

@@ -359,7 +359,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
     }
 
     override fun onTreeItemClick(treeItem: TreeItem) {
-        feedViewModel.updateSelectedTreeItem(treeItem)
+        feedViewModel.updateSelectedTreeItem(this, treeItem)
         reloadListFragment()
     }
 
