@@ -52,7 +52,7 @@ import email.schaal.ocreader.databinding.ActivityListBinding
 import email.schaal.ocreader.service.SyncResultReceiver
 import email.schaal.ocreader.service.SyncType
 import email.schaal.ocreader.view.*
-import email.schaal.ocreader.view.FoldersAdapter.TreeItemClickListener
+import email.schaal.ocreader.view.TreeItemsAdapter.TreeItemClickListener
 
 class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefreshListener, ActionMode.Callback, TreeItemClickListener {
     private lateinit var bottomMenuClickListener: OnMenuItemClickListener
