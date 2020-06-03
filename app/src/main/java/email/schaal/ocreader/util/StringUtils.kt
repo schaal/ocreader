@@ -28,18 +28,22 @@ import androidx.core.text.HtmlCompat
 import email.schaal.ocreader.R
 import email.schaal.ocreader.database.model.Feed
 import okhttp3.HttpUrl
+import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 import java.util.*
+
+fun String.htmlLink(href: String?) = if(href != null) "<a href=\"${href}\">${this}</a>" else this
 
 /**
  * Utility functions to handle Strings.
  */
 fun getByLine(context: Context, template: String, author: String?, feed: Feed?): String {
     return if (author != null && feed != null) {
-        String.format(template, context.getString(R.string.by_author_on_feed, author, "<a href=\"${feed.link}\">${feed.name}</a>"))
+        String.format(template, context.getString(R.string.by_author_on_feed, author, feed.name.htmlLink(feed.link)))
     } else if(author != null) {
         String.format(template, context.getString(R.string.by_author, author))
     } else if (feed != null) {
-        String.format(template, context.getString(R.string.on_feed, "<a href=\"${feed.link}\">${feed.name}</a>"))
+        String.format(template, context.getString(R.string.on_feed, feed.name.htmlLink(feed.link)))
     } else {
         ""
     }

@@ -15,7 +15,7 @@ class FeedJsonTypeAdapter {
             folderId = jsonFeed.folderId
             url = jsonFeed.url
             name = jsonFeed.title.cleanString()
-            link = jsonFeed.link
+            link = jsonFeed.link?.ifBlank { null }
             faviconLink = jsonFeed.faviconLink?.ifBlank { null }
             added = Date(jsonFeed.added * 1000)
             unreadCount = jsonFeed.unreadCount
@@ -41,7 +41,7 @@ class JsonFeed(
         val folderId: Long,
         val url: String,
         val title: String,
-        val link: String,
+        val link: String?,
         val faviconLink: String?,
         val added: Long,
         val unreadCount: Int,

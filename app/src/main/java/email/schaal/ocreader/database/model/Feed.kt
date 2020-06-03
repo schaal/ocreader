@@ -40,7 +40,7 @@ open class Feed(
         var folder: Folder? = null,
         var url: String = "",
         var name: String = "",
-        var link: String = "",
+        var link: String? = null,
         var faviconLink: String? = null,
         var added: Date = Date(),
         var unreadCount: Int = 0,
