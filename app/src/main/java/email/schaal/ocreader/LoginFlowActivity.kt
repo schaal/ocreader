@@ -63,22 +63,19 @@ class LoginFlowActivity : AppCompatActivity() {
             if (server != null && user != null && password != null) {
                 lifecycleScope.launch {
                     try {
-                        val status = API.login(this@LoginFlowActivity, server, user, password)
-                        if (status != null) {
-                            val data = Intent(Intent.ACTION_VIEW, Uri.parse(server.buildBaseUrl("index.php/apps/news").toString()))
-                            data.putExtra(EXTRA_IMPROPERLY_CONFIGURED_CRON, status.isImproperlyConfiguredCron)
-                            setResult(Activity.RESULT_OK, data)
-                        } else {
-                            setResult(Activity.RESULT_CANCELED)
-                        }
+                        API.login(this@LoginFlowActivity, server, user, password)?.let {status ->
+                            setResult(Activity.RESULT_OK,
+                                    Intent(Intent.ACTION_VIEW, Uri.parse(server.buildBaseUrl("index.php/apps/news").toString()))
+                                            .putExtra(EXTRA_IMPROPERLY_CONFIGURED_CRON, status.isImproperlyConfiguredCron))
+                        } ?: setResult(Activity.RESULT_CANCELED)
                     } catch(e: Exception) {
                         e.printStackTrace()
                         setResult(Activity.RESULT_CANCELED, Intent().apply {
                             putExtra(EXTRA_MESSAGE, LoginError.getError(this@LoginFlowActivity, e).message)
                         })
+                    } finally {
+                        finish()
                     }
-                }.invokeOnCompletion {
-                    finish()
                 }
             } else {
                 setResult(Activity.RESULT_CANCELED, Intent().apply {
