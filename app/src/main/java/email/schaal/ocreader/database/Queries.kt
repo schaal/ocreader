@@ -33,7 +33,9 @@ import io.realm.kotlin.where
  */
 object Queries {
     private val TAG = Queries::class.java.name
-    const val SCHEMA_VERSION = 12L
+
+    const val SCHEMA_VERSION = 13L
+
     private val initialData = Realm.Transaction { realm: Realm ->
         realm.where<User>().findAll().deleteAllFromRealm()
         realm.where<Item>().findAll().deleteAllFromRealm()
