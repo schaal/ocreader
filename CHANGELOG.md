@@ -1,3 +1,8 @@
+## 0.48 (2020-06-09)
+
+* Make feed.link nullable (Closes: #99)
+* 0517944 Add breadcrumbs to preferences, remember last selected treeItem (Closes: #98)
+
 ## 0.47 (2020-06-02)
 
 * Fix F-Droid build
