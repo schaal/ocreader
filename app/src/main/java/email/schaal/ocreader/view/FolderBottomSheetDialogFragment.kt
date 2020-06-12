@@ -39,17 +39,8 @@ import email.schaal.ocreader.view.TreeItemsAdapter.TreeItemClickListener
 class FolderBottomSheetDialogFragment : BottomSheetDialogFragment() {
     private lateinit var binding: DialogFoldersBinding
     private val viewModel: FeedViewModel by activityViewModels { FeedViewModelFactory(requireContext()) }
-    private var foldersAdapter: TreeItemsAdapter? = null
+    private lateinit var foldersAdapter: TreeItemsAdapter
     private var treeItemClickListener: TreeItemClickListener? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        // TODO: 12/24/19 Find out why RealmChangeListener for folders is not triggered when syncing
-        viewModel.updateFolders(Preferences.SHOW_ONLY_UNREAD.getBoolean(PreferenceManager.getDefaultSharedPreferences(requireContext())))
-        viewModel.folders.observe(this, Observer {
-            folders: List<Folder>? -> foldersAdapter?.updateTreeItems(folders)
-        })
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DialogFoldersBinding.inflate(inflater, container, true)
@@ -68,7 +59,13 @@ class FolderBottomSheetDialogFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         foldersAdapter = TreeItemsAdapter(requireContext(), viewModel.folders.value, treeItemClickListener, viewModel.topFolders)
-        foldersAdapter?.setSelectedTreeItemId(viewModel.selectedTreeItem.value?.treeItemId() ?: AllUnreadFolder.ID)
+        foldersAdapter.setSelectedTreeItemId(viewModel.selectedTreeItem.value?.treeItemId() ?: AllUnreadFolder.ID)
+
+        viewModel.updateFolders(Preferences.SHOW_ONLY_UNREAD.getBoolean(PreferenceManager.getDefaultSharedPreferences(requireContext())))
+        viewModel.folders.observe(this, Observer {
+            folders: List<Folder>? -> foldersAdapter.updateTreeItems(folders)
+        })
+
         binding.recyclerViewFolders.adapter = foldersAdapter
         binding.recyclerViewFolders.layoutManager = LinearLayoutManager(requireContext())
     }
