@@ -47,7 +47,7 @@ class ManageFeedsActivity : AppCompatActivity(), FeedManageListener {
         binding.fabAddFeed.setOnClickListener { AddNewFeedDialogFragment.show(this@ManageFeedsActivity, null, false) }
         if (Intent.ACTION_SEND == intent.action) {
             val feed = Feed(-1)
-            feed.url = intent.getStringExtra(Intent.EXTRA_TEXT)
+            feed.url = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
             AddNewFeedDialogFragment.show(this, feed, true)
         }
     }

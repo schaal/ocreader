@@ -26,15 +26,15 @@ apply plugin: 'realm-android'
 apply plugin: 'com.mikepenz.aboutlibraries.plugin'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.0"
 
     buildFeatures.dataBinding = true
 
     defaultConfig {
         applicationId "email.schaal.ocreader"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 52
         versionName "0.52"
 

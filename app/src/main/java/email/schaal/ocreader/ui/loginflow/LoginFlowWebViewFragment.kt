@@ -45,13 +45,11 @@ class LoginFlowWebViewFragment : Fragment() {
 
     private lateinit var binding: FragmentLoginFlowWebViewBinding
 
-    private var url: String? = null
+    private lateinit var url: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            url = it.getString(ARG_URL)
-        }
+        url = arguments?.getString(ARG_URL) ?: ""
     }
 
     @SuppressLint("SetJavaScriptEnabled")
