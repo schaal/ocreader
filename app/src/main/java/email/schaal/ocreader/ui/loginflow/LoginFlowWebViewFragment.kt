@@ -20,6 +20,7 @@
 package email.schaal.ocreader.ui.loginflow
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +28,7 @@ import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import email.schaal.ocreader.R
@@ -61,9 +63,17 @@ class LoginFlowWebViewFragment : Fragment() {
             it.userAgentString = "${getString(R.string.app_name)} on ${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}"
         }
         binding.webViewLogin.webViewClient = object: WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-                val url = request?.url
-                if(url?.scheme == "nc") {
+            // For API < 24 the WebResourceRequest variant is not defined
+            override fun shouldOverrideUrlLoading(view: WebView, urlString: String): Boolean {
+                return checkUrl(urlString.toUri())
+            }
+
+            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+                return checkUrl(request.url)
+            }
+
+            private fun checkUrl(url: Uri): Boolean {
+                if(url.scheme == "nc") {
                     val encodedPath = url.encodedPath ?: throw IllegalStateException("url path is null")
                     val groups = credentialRegex.matchEntire(encodedPath)?.groups ?: throw IllegalStateException("couldn't match credentials")
                     loginViewModel.credentialsLiveData.value = mapOf(
