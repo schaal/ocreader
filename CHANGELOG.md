@@ -1,3 +1,8 @@
+## 0.49 (2020-06-19)
+
+* Override String variant of shouldOverrideUrlLoading to fix login on API < 24 (Closes: #106)
+* Use primary dark color as background for action mode to make icons visible (Closes: #105)
+
 ## 0.48 (2020-06-09)
 
 * Make feed.link nullable (Closes: #99)
