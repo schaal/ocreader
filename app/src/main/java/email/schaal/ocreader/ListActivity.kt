@@ -195,7 +195,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
         binding.itemsRecyclerview.scrollToPosition(0)
     }
 
-    val getLoginResult = registerForActivityResult(object: ActivityResultContract<Void?, String?>() {
+    val getLoginResult = registerForActivityResult(object: ActivityResultContract<Void?, Pair<Int, String?>>() {
         override fun createIntent(context: Context, input: Void?): Intent {
             return Intent(this@ListActivity, LoginFlowActivity::class.java).apply {
                 Preferences.URL.getString(PreferenceManager.getDefaultSharedPreferences(this@ListActivity))?.let {
@@ -204,8 +204,8 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
             }
         }
 
-        override fun parseResult(resultCode: Int, intent: Intent?): String? {
-            return when(resultCode) {
+        override fun parseResult(resultCode: Int, intent: Intent?): Pair<Int, String?> {
+            return resultCode to when(resultCode) {
                 Activity.RESULT_OK -> {
                     if(intent?.getBooleanExtra(LoginFlowActivity.EXTRA_IMPROPERLY_CONFIGURED_CRON, false) == true)
                         getString(string.updater_improperly_configured)
@@ -217,13 +217,15 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
                 }
             }
         }
-    }) { message ->
-        message?.let {
+    }) { result ->
+        result.second?.let {
             Snackbar.make(binding.coordinatorLayout, it, Snackbar.LENGTH_LONG)
                     .show()
         }
-        Queries.resetDatabase()
-        feedViewModel.sync(this, SyncType.FULL_SYNC, syncResultReceiver)
+        if(result.first == Activity.RESULT_OK) {
+            Queries.resetDatabase()
+            feedViewModel.sync(this, SyncType.FULL_SYNC, syncResultReceiver)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
