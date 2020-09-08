@@ -29,6 +29,7 @@ import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
+import androidx.preference.PreferenceManager
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
@@ -39,10 +40,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.ColorUtils
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import email.schaal.ocreader.ItemPageFragment.Companion.newInstance
 import email.schaal.ocreader.database.PagerViewModel
 import email.schaal.ocreader.database.model.Item
@@ -50,6 +50,7 @@ import email.schaal.ocreader.databinding.ActivityItemPagerBinding
 import email.schaal.ocreader.util.FaviconLoader
 import email.schaal.ocreader.util.FaviconLoader.FeedColorsListener
 import email.schaal.ocreader.util.FeedColors
+import java.util.*
 
 class ItemPagerActivity : AppCompatActivity() {
     @ColorInt private var defaultToolbarColor = 0
@@ -61,27 +62,12 @@ class ItemPagerActivity : AppCompatActivity() {
 
     private val pagerViewModel:PagerViewModel by viewModels()
 
-    /**
-     * Reduces drag sensitivity of [ViewPager2] widget
-     */
-    private fun ViewPager2.reduceDragSensitivity() {
-        val recyclerViewField = ViewPager2::class.java.getDeclaredField("mRecyclerView")
-        recyclerViewField.isAccessible = true
-        val recyclerView = recyclerViewField.get(this) as RecyclerView
-
-        val touchSlopField = RecyclerView::class.java.getDeclaredField("mTouchSlop")
-        touchSlopField.isAccessible = true
-        val touchSlop = touchSlopField.get(recyclerView) as Int
-        touchSlopField.set(recyclerView, touchSlop * 3) // "3" was obtained experimentally
-    }
-
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_item_pager)
         setSupportActionBar(binding.bottomAppbar)
-        binding.container.reduceDragSensitivity()
 
         try {
             pagerViewModel.updatePager()
@@ -104,12 +90,11 @@ class ItemPagerActivity : AppCompatActivity() {
 
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-            val mSectionsPagerAdapter = SectionsPagerAdapter()
+            val mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
             binding.container.adapter = mSectionsPagerAdapter
 
-            val pageChangeListener: ViewPager2.OnPageChangeCallback = MyOnPageChangeListener(mSectionsPagerAdapter)
-            binding.container.registerOnPageChangeCallback(pageChangeListener)
-
+            val pageChangeListener: OnPageChangeListener = MyOnPageChangeListener(mSectionsPagerAdapter)
+            binding.container.addOnPageChangeListener(pageChangeListener)
             // The initial position is 0, so the pageChangeListener won't be called when setting the position to 0
             if (position == 0) pageChangeListener.onPageSelected(position)
             binding.container.setCurrentItem(position, false)
@@ -203,13 +188,23 @@ class ItemPagerActivity : AppCompatActivity() {
         }
     }
 
-    private inner class SectionsPagerAdapter internal constructor() : FragmentStateAdapter(this) {
-        override fun createFragment(position: Int): Fragment {
-            return newInstance(getItemForPosition(position))
+    private inner class SectionsPagerAdapter internal constructor(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+        private val fragments: WeakHashMap<Int, ItemPageFragment?>
+        override fun getItem(position: Int): Fragment {
+            val fragment: ItemPageFragment = fragments[position] ?: newInstance(getItemForPosition(position))
+
+            if (fragments[position] == null)
+                fragments[position] = fragment
+
+            return fragment
         }
 
-        override fun getItemCount(): Int {
+        override fun getCount(): Int {
             return items.size
+        }
+
+        init {
+            fragments = WeakHashMap(count)
         }
     }
 
@@ -231,7 +226,7 @@ class ItemPagerActivity : AppCompatActivity() {
         }
     }
 
-    private inner class MyOnPageChangeListener internal constructor(private val mSectionsPagerAdapter: SectionsPagerAdapter) : ViewPager2.OnPageChangeCallback() {
+    private inner class MyOnPageChangeListener internal constructor(private val mSectionsPagerAdapter: SectionsPagerAdapter) : OnPageChangeListener {
         private val DURATION = 250L
 
         private val currentNightMode: Int = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
@@ -286,7 +281,7 @@ class ItemPagerActivity : AppCompatActivity() {
                     .build()
                     .load(this@ItemPagerActivity, item.feed, toListener)
             progressFrom = progressTo
-            progressTo = (position + 1).toFloat() / mSectionsPagerAdapter.itemCount.toFloat()
+            progressTo = (position + 1).toFloat() / mSectionsPagerAdapter.count.toFloat()
             binding.bottomAppbar.performShow()
             binding.fabOpenInBrowser.show()
             ObjectAnimator
