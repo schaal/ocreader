@@ -1,3 +1,7 @@
+## 0.53 (2020-09-08)
+
+* Use ViewPager instead of ViewPager2 (Closes: #108)
+
 ## 0.52 (2020-06-19)
 
 * Override String variant of shouldOverrideUrlLoading to fix login on API < 24 (Closes: #106)
