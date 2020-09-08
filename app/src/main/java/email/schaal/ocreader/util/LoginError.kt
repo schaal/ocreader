@@ -1,6 +1,7 @@
 package email.schaal.ocreader.util
 
 import android.content.Context
+import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import email.schaal.ocreader.R
 import retrofit2.HttpException
@@ -17,7 +18,8 @@ class LoginError private constructor(val section: Section, val message: String, 
         URL, USER, PASSWORD, NONE, UNKNOWN
     }
 
-    private class ErrorMessage(val message: String)
+    @JsonClass(generateAdapter = true)
+    internal class ErrorMessage(val message: String)
 
     constructor(message: String) : this(Section.NONE, message)
     private constructor(throwable: Throwable) : this(Section.UNKNOWN, throwable.message ?: "", throwable)
