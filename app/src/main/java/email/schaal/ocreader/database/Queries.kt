@@ -55,6 +55,7 @@ object Queries {
                 .deleteRealmIfMigrationNeeded()
                 .initialData(initialData)
                 .compactOnLaunch()
+                .allowWritesOnUiThread(true)
                 .build()
         Realm.setDefaultConfiguration(realmConfiguration)
 
