@@ -36,7 +36,9 @@ class AddNewFeedDialogFragment : BottomSheetDialogFragment() {
             feedUrl.isEnabled = newFeed
             folder.adapter = activity.folderSpinnerAdapter
             feedUrl.setText(arguments.getString(ARG_URL))
-            folder.setSelection(activity.folderSpinnerAdapter.getPosition(arguments.getLong(ARG_FOLDER_ID, 0)))
+            folder.setSelection(activity.folderSpinnerAdapter.getPosition(
+                    if (arguments.containsKey(ARG_FOLDER_ID)) arguments.getLong(ARG_FOLDER_ID) else null
+            ))
         }
 
         return AlertDialog.Builder(activity).setTitle(if (newFeed) R.string.add_new_feed else R.string.edit_feed)
@@ -70,7 +72,7 @@ class AddNewFeedDialogFragment : BottomSheetDialogFragment() {
                     putString(ARG_URL, feed.url)
                     if (feed.id >= 0) {
                         putLong(ARG_FEED_ID, feed.id)
-                        putLong(ARG_FOLDER_ID, feed.folderId)
+                        feed.folderId?.let { putLong(ARG_FOLDER_ID, it) }
                     }
                 }
             }

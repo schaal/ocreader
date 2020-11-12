@@ -38,7 +38,7 @@ class FeedJsonTypeAdapter {
 @JsonClass(generateAdapter = true)
 class JsonFeed(
         val id: Long,
-        val folderId: Long,
+        val folderId: Long?,
         val url: String,
         val title: String,
         val link: String?,

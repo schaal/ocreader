@@ -54,8 +54,8 @@ class FolderSpinnerAdapter(context: Context, private var folders: List<Folder> =
         return true
     }
 
-    fun getPosition(folderId: Long): Int {
-        if (folderId == 0L) return 0
+    fun getPosition(folderId: Long?): Int {
+        if (folderId == 0L || folderId == null) return 0
         var i = 1
         while (i - 1 < folders.size) {
             if (folders[i - 1].id == folderId) {

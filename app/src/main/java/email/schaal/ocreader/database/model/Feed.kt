@@ -36,7 +36,7 @@ import java.util.*
 @RealmClass
 open class Feed(
         @PrimaryKey var id: Long = 0,
-        var folderId: Long = 0,
+        var folderId: Long? = null,
         var folder: Folder? = null,
         var url: String = "",
         var name: String = "",
@@ -101,7 +101,7 @@ open class Feed(
     }
 
     override fun insert(realm: Realm) {
-        folder = Folder.getOrCreate(realm, folderId)
+        folder = folderId?.let { Folder.getOrCreate(realm, it) }
         realm.insertOrUpdate(this)
     }
 
