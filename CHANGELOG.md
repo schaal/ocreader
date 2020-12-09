@@ -1,3 +1,7 @@
+## 0.54 (2020-12-09)
+
+* Support for nextcloud-news 15.1.0 (Closes: #110)
+
 ## 0.53 (2020-09-08)
 
 * Use ViewPager instead of ViewPager2 (Closes: #108)
