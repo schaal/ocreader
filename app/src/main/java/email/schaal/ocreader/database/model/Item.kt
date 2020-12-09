@@ -32,7 +32,7 @@ import io.realm.annotations.RealmClass
 import io.realm.annotations.RealmField
 import io.realm.kotlin.isManaged
 import io.realm.kotlin.where
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import java.util.*
 
 @Parcelize

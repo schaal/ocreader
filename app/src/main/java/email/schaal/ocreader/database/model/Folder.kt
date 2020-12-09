@@ -27,7 +27,7 @@ import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 import io.realm.kotlin.createObject
 import io.realm.kotlin.where
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @RealmClass
