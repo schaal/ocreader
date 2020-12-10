@@ -18,12 +18,14 @@
  *
  */
 
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-parcelize'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'realm-android'
-apply plugin: 'com.mikepenz.aboutlibraries.plugin'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id 'realm-android'
+    id 'com.mikepenz.aboutlibraries.plugin'
+}
 
 android {
     compileSdkVersion 30
