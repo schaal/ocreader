@@ -34,6 +34,7 @@ import androidx.fragment.app.activityViewModels
 import email.schaal.ocreader.R
 import email.schaal.ocreader.databinding.FragmentLoginFlowWebViewBinding
 import email.schaal.ocreader.view.LoginViewModel
+import java.net.URLDecoder
 
 /**
  * A simple [Fragment] subclass.
@@ -73,11 +74,13 @@ class LoginFlowWebViewFragment : Fragment() {
             private fun checkUrl(url: Uri): Boolean {
                 if(url.scheme == "nc") {
                     val encodedPath = url.encodedPath ?: throw IllegalStateException("url path is null")
-                    val groups = credentialRegex.matchEntire(encodedPath)?.groups ?: throw IllegalStateException("couldn't match credentials")
+
+                    val decodedCredentials = credentialRegex.matchEntire(encodedPath)?.groupValues?.map { URLDecoder.decode(it, "UTF-8") } ?: throw IllegalStateException("couldn't match credentials")
+
                     loginViewModel.credentialsLiveData.value = mapOf(
-                            "server" to (groups[1]?.value ?: throw IllegalStateException("server is null")),
-                            "user" to (groups[2]?.value ?: throw IllegalStateException("user is null")),
-                            "password" to (groups[3]?.value ?: throw IllegalStateException("password is null"))
+                            "server" to decodedCredentials[1],
+                            "user" to decodedCredentials[2],
+                            "password" to (decodedCredentials[3])
                     )
                     return true
                 }
