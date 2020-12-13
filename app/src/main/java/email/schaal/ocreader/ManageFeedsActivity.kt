@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import email.schaal.ocreader.api.API
@@ -34,11 +33,11 @@ class ManageFeedsActivity : AppCompatActivity(), FeedManageListener {
         feedsAdapter = FeedsAdapter(this)
         binding.feedsRecyclerview.adapter = feedsAdapter
 
-        folderViewModel.foldersLiveData.observe(this, Observer {
+        folderViewModel.foldersLiveData.observe(this, {
             folderSpinnerAdapter.updateFolders(it)
         })
 
-        folderViewModel.feedsLiveData.observe(this, Observer {
+        folderViewModel.feedsLiveData.observe(this, {
             feedsAdapter.feeds = it
         })
 
@@ -105,11 +104,7 @@ class ManageFeedsActivity : AppCompatActivity(), FeedManageListener {
 
     private fun showErrorMessage(title: String, e: Exception) {
         e.printStackTrace()
-        showErrorMessage(title, e.localizedMessage ?: "")
-    }
-
-    private fun showErrorMessage(title: String, message: String) {
-        Toast.makeText(this@ManageFeedsActivity, "$title\n$message", Toast.LENGTH_LONG).show()
+        Toast.makeText(this@ManageFeedsActivity, "$title\n${e.localizedMessage ?: ""}", Toast.LENGTH_LONG).show()
     }
 
     private fun showProgress(context: Context, message: String): ProgressDialog {
