@@ -141,14 +141,6 @@ class ItemPagerActivity : AppCompatActivity() {
         menuItem.setIcon(if (value) checkedIcon else uncheckedIcon)
     }
 
-    private fun setItemUnread(unread: Boolean) {
-        pagerViewModel.setItemUnread(unread, item)
-    }
-
-    private fun setItemStarred(starred: Boolean) {
-        pagerViewModel.setItemStarred(starred, item)
-    }
-
     fun updateResult() {
         val result = Intent()
         result.putExtra(EXTRA_CURRENT_POSITION, binding.container.currentItem)
@@ -175,12 +167,12 @@ class ItemPagerActivity : AppCompatActivity() {
                 true
             }
             R.id.menu_mark_read -> {
-                setItemUnread(!item.unread)
+                pagerViewModel.setItemUnread(!item.unread, item)
                 updateMenuItem(menuItem, !item.unread, R.drawable.ic_check_box, R.drawable.ic_check_box_outline_blank)
                 true
             }
             R.id.menu_mark_starred -> {
-                setItemStarred(!item.starred)
+                pagerViewModel.setItemStarred(!item.starred, item)
                 updateMenuItem(menuItem, item.starred, R.drawable.ic_star, R.drawable.ic_star_outline)
                 true
             }
@@ -274,7 +266,7 @@ class ItemPagerActivity : AppCompatActivity() {
         override fun onPageSelected(position: Int) {
             invalidateOptionsMenu()
             item = getItemForPosition(position)
-            setItemUnread(false)
+            pagerViewModel.setItemUnread(false, item)
             FaviconLoader.Builder(binding.fabOpenInBrowser)
                     .withGenerateFallbackImage(false)
                     .withPlaceholder(R.drawable.ic_open_in_browser)
