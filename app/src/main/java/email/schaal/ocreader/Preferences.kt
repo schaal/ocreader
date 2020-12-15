@@ -64,7 +64,7 @@ enum class Preferences constructor(val key: String, private val defaultValue: An
         return preferences.getBoolean(key, (defaultValue as Boolean?) ?: false)
     }
 
-    fun getBreadCrumbs(preferences: SharedPreferences): List<Pair<Long, Boolean>> {
+    fun getBreadCrumbs(preferences: SharedPreferences): List<Pair<Long?, Boolean>> {
         return (preferences.getString(key, defaultValue as String?)?.split(";") ?: listOf("${AllUnreadFolder.ID},false")).map {
             it.split(",").let { pair ->
                 pair[0].toLong() to pair[1].toBoolean()
@@ -117,7 +117,7 @@ enum class Preferences constructor(val key: String, private val defaultValue: An
 
 }
 
-fun SharedPreferences.Editor.putBreadCrumbs(breadcrumbs: List<Pair<Long, Boolean>>): SharedPreferences.Editor {
+fun SharedPreferences.Editor.putBreadCrumbs(breadcrumbs: List<Pair<Long?, Boolean>>): SharedPreferences.Editor {
     putString(Preferences.BREADCRUMBS.key, breadcrumbs.joinToString(";") {
         "${it.first},${it.second}"
     })

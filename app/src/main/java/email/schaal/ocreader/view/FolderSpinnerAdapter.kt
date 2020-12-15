@@ -29,7 +29,7 @@ class FolderSpinnerAdapter(context: Context, private var folders: List<Folder> =
     }
 
     override fun getItemId(position: Int): Long {
-        return if (position == 0) 0 else folders[position - 1].id
+        return if (position == 0) 0 else (folders[position - 1].id ?: 0)
     }
 
     override fun getItemViewType(position: Int): Int {

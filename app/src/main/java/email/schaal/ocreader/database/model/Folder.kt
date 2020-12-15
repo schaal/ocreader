@@ -33,19 +33,19 @@ import kotlinx.parcelize.Parcelize
 @RealmClass
 @JsonClass(generateAdapter = true)
 open class Folder(
-        @PrimaryKey var id: Long = 0,
+        @PrimaryKey var id: Long? = null,
         var name: String = ""
 ) : RealmModel, TreeItem, Insertable, Parcelable {
 
     companion object {
-        fun get(realm: Realm, folderId: Long) : Folder? {
+        fun get(realm: Realm, folderId: Long?) : Folder? {
             return realm.where<Folder>().equalTo(Folder::id.name, folderId).findFirst()
         }
 
-        fun getOrCreate(realm: Realm, folderId: Long): Folder? {
-            if(folderId == 0L)
+        fun getOrCreate(realm: Realm, folderId: Long?): Folder? {
+            if(folderId == 0L || folderId == null)
                 return null
-            return get(realm ,folderId) ?: realm.createObject(folderId)
+            return get(realm, folderId) ?: realm.createObject(folderId)
         }
 
         fun getAll(realm: Realm, onlyUnread: Boolean) : RealmResults<Folder> {
@@ -65,7 +65,7 @@ open class Folder(
         }
     }
 
-    override fun treeItemId(): Long {
+    override fun treeItemId(): Long? {
         return id
     }
 

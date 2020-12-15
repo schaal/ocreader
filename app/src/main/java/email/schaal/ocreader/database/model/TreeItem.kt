@@ -23,7 +23,7 @@ import androidx.annotation.DrawableRes
 import io.realm.Realm
 
 interface TreeItem {
-    fun treeItemId() : Long
+    fun treeItemId() : Long?
     fun treeItemName(): String
     @DrawableRes fun getIcon(): Int
     fun getCount(realm: Realm): Int

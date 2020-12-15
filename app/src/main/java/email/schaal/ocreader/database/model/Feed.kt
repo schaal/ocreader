@@ -111,7 +111,7 @@ open class Feed(
     }
 
     fun getFolderTitle(context: Context?): CharSequence? {
-        return folder?.name ?: if(folderId == 0.toLong()) context?.getString(R.string.root_folder) else null
+        return folder?.name ?: if(folderId == 0L || folderId == null) context?.getString(R.string.root_folder) else null
     }
 
     override fun equals(other: Any?): Boolean {

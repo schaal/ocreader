@@ -33,7 +33,7 @@ import io.realm.kotlin.where
 open class TemporaryFeed() : RealmModel {
     @PrimaryKey
     var id: Long = 0
-    var treeItemId: Long = 0
+    var treeItemId: Long? = null
     var name: String = ""
     var items: RealmList<Item>? = null
 
