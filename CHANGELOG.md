@@ -1,3 +1,8 @@
+## 0.55 (2020-12-24)
+
+* Decode received credentials after logging in (Closes: #112)
+* Make folderId nullable (Closes: #113)
+
 ## 0.54 (2020-12-09)
 
 * Support for nextcloud-news 15.1.0 (Closes: #110)
