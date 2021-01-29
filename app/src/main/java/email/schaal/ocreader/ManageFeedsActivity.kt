@@ -44,9 +44,9 @@ class ManageFeedsActivity : AppCompatActivity(), FeedManageListener {
         binding.feedsRecyclerview.layoutManager = LinearLayoutManager(this)
         binding.feedsRecyclerview.addItemDecoration(DividerItemDecoration(this, R.dimen.divider_inset))
         binding.fabAddFeed.setOnClickListener { AddNewFeedDialogFragment.show(this@ManageFeedsActivity, null, false) }
-        if (Intent.ACTION_SEND == intent.action) {
+        if (Intent.ACTION_SEND == intent.action || Intent.ACTION_VIEW == intent.action) {
             val feed = Feed(-1)
-            feed.url = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
+            feed.url = intent.getStringExtra(Intent.EXTRA_TEXT) ?: intent.dataString ?: ""
             AddNewFeedDialogFragment.show(this, feed, true)
         }
     }
