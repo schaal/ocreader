@@ -1,3 +1,7 @@
+## 0.56 (2021-02-16)
+
+* Open feed urls with OCReader (Thanks to @s3lph)
+
 ## 0.55 (2020-12-24)
 
 * Decode received credentials after logging in (Closes: #112)
