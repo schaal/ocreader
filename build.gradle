@@ -20,7 +20,7 @@
 
 buildscript {
     ext.kotlin_version = '1.4.21'
-    ext.about_libraries_version = '8.8.0'
+    ext.about_libraries_version = '8.8.2'
 
     repositories {
         jcenter()
