@@ -20,7 +20,7 @@
 
 buildscript {
     ext.kotlin_version = '1.4.31'
-    ext.about_libraries_version = '8.8.2'
+    ext.about_libraries_version = '8.8.4'
 
     repositories {
         mavenCentral()
