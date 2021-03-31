@@ -19,7 +19,7 @@
  */
 
 buildscript {
-    ext.kotlin_version = '1.4.31'
+    ext.kotlin_version = '1.4.32'
     ext.about_libraries_version = '8.8.4'
 
     repositories {
