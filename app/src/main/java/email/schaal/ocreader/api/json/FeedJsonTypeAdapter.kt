@@ -18,7 +18,7 @@ class FeedJsonTypeAdapter {
             link = jsonFeed.link?.ifBlank { null }
             faviconLink = jsonFeed.faviconLink?.ifBlank { null }
             added = Date(jsonFeed.added * 1000)
-            unreadCount = jsonFeed.unreadCount
+            unreadCount = jsonFeed.unreadCount ?: 0
             ordering = jsonFeed.ordering
             pinned = jsonFeed.pinned
             updateErrorCount = jsonFeed.updateErrorCount ?: 0
@@ -44,7 +44,7 @@ class JsonFeed(
         val link: String?,
         val faviconLink: String?,
         val added: Long,
-        val unreadCount: Int,
+        val unreadCount: Int?,
         val ordering: Int,
         val pinned: Boolean,
         val updateErrorCount: Int?,
