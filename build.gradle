@@ -29,7 +29,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'io.realm:realm-gradle-plugin:10.4.0'
+        classpath 'io.realm:realm-gradle-plugin:10.6.0'
     }
 }
 
