@@ -19,6 +19,7 @@
 
 package email.schaal.ocreader.view
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,6 +35,7 @@ import email.schaal.ocreader.R
 import email.schaal.ocreader.database.FeedViewModel
 import email.schaal.ocreader.databinding.BottomNavigationviewBinding
 import email.schaal.ocreader.databinding.UserBottomsheetBinding
+import email.schaal.ocreader.util.GlideApp
 
 class UserBottomSheetDialogFragment: BottomSheetDialogFragment() {
     private lateinit var binding: BottomNavigationviewBinding
@@ -46,16 +48,20 @@ class UserBottomSheetDialogFragment: BottomSheetDialogFragment() {
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val url = Preferences.URL.getString(PreferenceManager.getDefaultSharedPreferences(requireContext()))
 
         feedViewModel.user.observe(viewLifecycleOwner, Observer { user ->
-            if(user != null) {
+            if(user != null && url != null) {
                 headerBinding.textViewUrl.visibility = View.VISIBLE
-                headerBinding.textViewUser.text = user.displayName
-                headerBinding.textViewUrl.text =  "${user.userId}@${url}"
+                headerBinding.textViewUser.text = "${user.displayName} (${user.userId})"
+                headerBinding.textViewUrl.text = url
+                GlideApp.with(this).load(user.avatarUrl(url))
+                    .placeholder(R.drawable.account_circle)
+                    .into(headerBinding.imageviewAvatar)
             } else {
                 headerBinding.textViewUser.text = getString(R.string.prompt_username)
                 headerBinding.textViewUrl.visibility = View.GONE

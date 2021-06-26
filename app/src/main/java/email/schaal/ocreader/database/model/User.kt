@@ -19,13 +19,13 @@
 
 package email.schaal.ocreader.database.model
 
+import android.util.Log
 import io.realm.Realm
 import io.realm.RealmModel
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
-import io.realm.annotations.Required
-import java.util.Date
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 @RealmClass
 open class User(
@@ -40,5 +40,13 @@ open class User(
 
     override fun delete(realm: Realm) {
         RealmObject.deleteFromRealm(this)
+    }
+
+    fun avatarUrl(baseUrl: String): String? {
+        return baseUrl.toHttpUrlOrNull()?.resolve("avatar/${userId}/128")?.toString().also {
+            if (it != null) {
+                Log.d("User", it)
+            }
+        }
     }
 }
