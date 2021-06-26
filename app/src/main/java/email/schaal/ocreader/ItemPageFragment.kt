@@ -19,19 +19,43 @@
  */
 package email.schaal.ocreader
 
+import android.app.ActivityManager
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.annotation.RequiresApi
+import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import email.schaal.ocreader.database.model.Item
 import email.schaal.ocreader.databinding.FragmentItemPagerBinding
+
+internal class SavedStateViewModel(private val state: SavedStateHandle): ViewModel() {
+    companion object {
+        private const val POSITION: String = "POSITION"
+    }
+
+    var position: Float
+        set(value) { state.set(POSITION, value)}
+        get() { return state.get(POSITION) ?: 0f }
+}
 
 /**
  * Fragment to display a single feed item using a WebView.
  */
 class ItemPageFragment : Fragment() {
     private lateinit var binding: FragmentItemPagerBinding
+    private val vm: SavedStateViewModel by viewModels()
 
     override fun onStart() {
         super.onStart()
@@ -60,11 +84,41 @@ class ItemPageFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentItemPagerBinding.inflate(inflater, container, false)
+        binding.webView.webViewClient = object: WebViewClient() {
+            override fun onPageFinished(view: WebView?, url: String?) {
+                if (vm.position > 0f) {
+                    view?.apply {
+                        postVisualStateCallback(0, object : WebView.VisualStateCallback() {
+                                override fun onComplete(requestId: Long) {
+                                    post {
+                                        scrollY = (contentHeight * scale * vm.position).toInt()
+                                    }
+                                }
+                            })
+                    }
+                }
+            }
+
+            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+                    startActivity(this)
+                }
+                return true
+            }
+        }
         return binding.root
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        binding.webView.apply {
+            vm.position = scrollY / (contentHeight * scale)
+        }
     }
 
     companion object {
         private const val ARG_ITEM = "ARG_ITEM"
+
         fun newInstance(item: Item?): ItemPageFragment {
             return ItemPageFragment().apply {
                 arguments = Bundle().apply {
