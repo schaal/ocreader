@@ -31,9 +31,6 @@ import java.util.Date
 open class User(
         var userId: String = "",
         var displayName: String = "",
-        var lastLogin: Date = Date(),
-        var avatar: String? = null,
-        var avatarMime: String? = null
 ) : RealmModel, Insertable {
     @PrimaryKey var id = 0L
 
