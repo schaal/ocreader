@@ -27,27 +27,23 @@ import java.util.*
 
 class UserJsonTypeAdapter {
     @FromJson
-    fun fromJson(jsonUser: JsonUser): User {
-        return User(jsonUser.userId, jsonUser.displayName, jsonUser.lastLoginTimestamp, jsonUser.avatar?.get("data"), jsonUser.avatar?.get("mime"))
-    }
-
-    @ToJson
-    fun toJson(user: User): JsonUser {
-        return JsonUser(user.userId, user.displayName, user.lastLogin, user.avatar, user.avatarMime)
+    fun fromJson(ocs: OCS): User {
+        return User(ocs.ocs.data.id, ocs.ocs.data.displayname)
     }
 }
 
 @JsonClass(generateAdapter = true)
+class OCS (
+    val ocs: JsonUserData
+)
+
+@JsonClass(generateAdapter = true)
+class JsonUserData (
+    val data: JsonUser
+)
+
+@JsonClass(generateAdapter = true)
 class JsonUser (
-        val userId: String,
-        val displayName: String,
-        val lastLoginTimestamp: Date,
-        val avatar: Map<String, String>? = null
-) {
-    constructor(userId: String, displayName: String, lastLoginTimeStamp: Date, avatar: String?, avatarMime: String?) : this(
-            userId,
-            displayName,
-            lastLoginTimeStamp,
-            if(avatar != null && avatarMime != null ) mapOf("data" to avatar, "mime" to avatarMime) else null
-    )
-}
+    val id: String,
+    val displayname: String
+)

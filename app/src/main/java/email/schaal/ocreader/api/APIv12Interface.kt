@@ -7,10 +7,6 @@ import retrofit2.http.*
 
 interface APIv12Interface {
     /* SERVER **/
-    /** Since 6.0.5  */
-    @GET("user")
-    suspend fun user(): User
-
     @GET("status")
     suspend fun status(): Status
 

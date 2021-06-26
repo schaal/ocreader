@@ -107,14 +107,18 @@ class API {
     }
 
     private val api: APIv12Interface?
+    private val ocsapi: OCSAPI?
+    private val username: String?
 
     constructor(context: Context, httpManager: HttpManager) {
         api = setupApi(httpManager)
+        username = Preferences.USERNAME.getString(PreferenceManager.getDefaultSharedPreferences(context))
+        ocsapi = setupOCSApi(httpManager)
     }
 
     constructor(context: Context) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val username = Preferences.USERNAME.getString(sharedPreferences)
+        username = Preferences.USERNAME.getString(sharedPreferences)
         val apptoken = Preferences.APPTOKEN.getString(sharedPreferences)
         val url = Preferences.URL.getString(sharedPreferences)?.toHttpUrlOrNull()
 
@@ -124,6 +128,17 @@ class API {
         val httpManager = HttpManager(username, apptoken, url)
 
         api = setupApi(httpManager)
+        ocsapi = setupOCSApi(httpManager)
+    }
+
+    private fun setupOCSApi(httpManager: HttpManager): OCSAPI {
+        val retrofit = Retrofit.Builder()
+            .baseUrl(httpManager.credentials.rootUrl.buildBaseUrl("/"))
+            .client(httpManager.client)
+            .addConverterFactory(converterFactory)
+            .build()
+
+        return retrofit.create(OCSAPI::class.java)
     }
 
     private fun setupApi(httpManager: HttpManager): APIv12Interface {
@@ -204,7 +219,9 @@ class API {
                     val feeds = api?.feeds()?.feeds
 
                     val insertFlow = flow<List<Insertable>> {
-                        api?.user()?.let { emit(listOf(it))}
+                        username?.let {
+                            ocsapi?.user(username)?.let { emit(listOf(it))}
+                        }
 
                         if(lastSync == 0L) {
                             batchedItemLoad(this, QueryType.STARRED, true)
