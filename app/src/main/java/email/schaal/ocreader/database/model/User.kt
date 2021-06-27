@@ -19,7 +19,6 @@
 
 package email.schaal.ocreader.database.model
 
-import android.util.Log
 import io.realm.Realm
 import io.realm.RealmModel
 import io.realm.RealmObject
@@ -43,10 +42,6 @@ open class User(
     }
 
     fun avatarUrl(baseUrl: String): String? {
-        return baseUrl.toHttpUrlOrNull()?.resolve("avatar/${userId}/128")?.toString().also {
-            if (it != null) {
-                Log.d("User", it)
-            }
-        }
+        return baseUrl.toHttpUrlOrNull()?.resolve("avatar/${userId}/128")?.toString()
     }
 }
