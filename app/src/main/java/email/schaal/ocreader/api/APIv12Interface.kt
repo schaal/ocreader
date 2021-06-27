@@ -1,7 +1,6 @@
 package email.schaal.ocreader.api
 
 import email.schaal.ocreader.api.json.*
-import email.schaal.ocreader.database.model.User
 import retrofit2.Response
 import retrofit2.http.*
 

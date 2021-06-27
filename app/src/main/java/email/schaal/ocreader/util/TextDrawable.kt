@@ -49,7 +49,7 @@ class TextDrawable constructor(
 ) : ShapeDrawable(shape) {
     private val text: String = origText.substring(0, 1).ifEmpty { "?" }.let {
         if(upperCase)
-            it.toUpperCase(Locale.getDefault())
+            it.uppercase(Locale.getDefault())
         else
             it
     }

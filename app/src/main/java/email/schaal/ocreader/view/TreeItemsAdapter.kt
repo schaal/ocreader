@@ -20,11 +20,13 @@ package email.schaal.ocreader.view
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import email.schaal.ocreader.R
-import email.schaal.ocreader.database.model.*
+import email.schaal.ocreader.database.model.AllUnreadFolder
+import email.schaal.ocreader.database.model.Feed
+import email.schaal.ocreader.database.model.Item
+import email.schaal.ocreader.database.model.TreeItem
 import email.schaal.ocreader.databinding.ListDividerBinding
 import email.schaal.ocreader.databinding.ListFolderBinding
 import io.realm.Realm

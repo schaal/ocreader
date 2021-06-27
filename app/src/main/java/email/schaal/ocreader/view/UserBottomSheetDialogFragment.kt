@@ -74,9 +74,7 @@ class UserBottomSheetDialogFragment: BottomSheetDialogFragment() {
         }
 
         headerBinding.button.setOnClickListener {
-            (requireActivity() as? ListActivity)?.let {
-                it.getLoginResult.launch()
-            }
+            (requireActivity() as? ListActivity)?.getLoginResult?.launch()
             dismiss()
         }
     }
