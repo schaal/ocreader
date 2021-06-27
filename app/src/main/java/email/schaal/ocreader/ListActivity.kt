@@ -173,8 +173,6 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
         })
         feedViewModel.temporaryFeed.observe(this, Observer { temporaryFeed: TemporaryFeed -> supportActionBar?.title = temporaryFeed.name })
 
-        feedViewModel.syncStatus.observe(this, Observer { updateSyncStatus(it) })
-
         binding.itemsRecyclerview.adapter = adapter
         binding.itemsRecyclerview.layoutManager = layoutManager
         binding.itemsRecyclerview.addItemDecoration(DividerItemDecoration(this, R.dimen.divider_inset))
@@ -290,7 +288,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
     }
 
     override fun onItemLongClick(item: Item, position: Int) {
-        if (actionMode != null || feedViewModel.syncStatus.value == true) return
+        if (actionMode != null || Preferences.SYS_SYNC_RUNNING.getBoolean(PreferenceManager.getDefaultSharedPreferences(this))) return
         adapter.toggleSelection(position)
         actionMode = startActionMode(this)
     }

@@ -39,7 +39,6 @@ class FeedViewModel(context: Context) : RealmViewModel() {
     private val foldersLiveData: MutableLiveData<List<Folder>>
     private val selectedTreeItemLiveData: MutableLiveData<TreeItem>
     private val userLiveData: MutableLiveData<User>
-    private val syncStatusLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
 
     val topFolders: Array<TreeItem>
 
@@ -51,9 +50,6 @@ class FeedViewModel(context: Context) : RealmViewModel() {
 
     val folders: LiveData<List<Folder>>
         get() = foldersLiveData
-
-    val syncStatus: LiveData<Boolean>
-        get() = syncStatusLiveData
 
     val selectedTreeItem: LiveData<TreeItem>
         get() = selectedTreeItemLiveData
