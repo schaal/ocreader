@@ -39,9 +39,12 @@ class ArticleWebView(context: Context, attrs: AttributeSet? = null, defStyleAttr
 
     private val feedColorsListener: FeedColorsListener = object : FeedColorsListener {
         override fun onGenerated(feedColors: FeedColors) {
-            val titleColor = feedColors.getColor(FeedColors.Type.TEXT, defaultLinkColor)
-            val javascript = resources.getString(R.string.style_change_js, titleColor.asCssString())
-            loadUrl(javascript)
+            evaluateJavascript(
+                resources.getString(
+                    R.string.style_change_js,
+                    feedColors.getColor(FeedColors.Type.TEXT, defaultLinkColor).asCssString()
+                ), null
+            )
         }
 
         override fun onStart() {}
