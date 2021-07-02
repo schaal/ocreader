@@ -4,9 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
-import android.webkit.JavascriptInterface
 import androidx.annotation.ColorInt
-import androidx.annotation.Keep
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import email.schaal.ocreader.Preferences
@@ -64,24 +62,19 @@ class ArticleWebView(context: Context, attrs: AttributeSet? = null, defStyleAttr
             displayZoomControls = false
             offscreenPreRaster = true
         }
-        addJavascriptInterface(JsCallback(), "JsCallback")
     }
 
     fun setItem(item: Item?) {
         this.item = item
         loadDataWithBaseURL("file:///android_asset/", html, "text/html", "UTF-8", null)
-    }
-
-    @Keep
-    private inner class JsCallback {
-        @JavascriptInterface
-        fun startLoading() {
-            post {
+        postVisualStateCallback(1, object: VisualStateCallback() {
+            override fun onComplete(requestId: Long) {
                 FaviconLoader.Builder()
-                        .build()
-                        .load(this@ArticleWebView.context, item?.feed, feedColorsListener)
+                    .build()
+                    .load(this@ArticleWebView.context, item?.feed, feedColorsListener)
             }
-        }
+
+        })
     }
 
     private val html: String

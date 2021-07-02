@@ -114,11 +114,6 @@
   }
   %10$s
   </style>
-  <script>
-    document.addEventListener(\"DOMContentLoaded\", function(event) {
-        JsCallback.startLoading();
-    });
-  </script>
 
 </head>
 <body>
