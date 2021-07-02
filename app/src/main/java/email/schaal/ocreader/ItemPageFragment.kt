@@ -53,7 +53,16 @@ class ItemPageFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        binding.webView.setItem(arguments?.getParcelable(ARG_ITEM))
+        binding.webView.apply {
+            setItem(arguments?.getParcelable(ARG_ITEM))
+            if (vm.position > 0f) {
+                postVisualStateCallback(0, object : WebView.VisualStateCallback() {
+                    override fun onComplete(requestId: Long) {
+                        scrollY = (contentHeight * scale * vm.position).toInt()
+                    }
+                })
+            }
+        }
     }
 
     override fun onPause() {
@@ -78,26 +87,6 @@ class ItemPageFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentItemPagerBinding.inflate(inflater, container, false)
-        binding.webView.webViewClient = object: WebViewClient() {
-            override fun onPageFinished(view: WebView?, url: String?) {
-                if (vm.position > 0f) {
-                    view?.apply {
-                        postVisualStateCallback(0, object : WebView.VisualStateCallback() {
-                                override fun onComplete(requestId: Long) {
-                                    scrollY = (contentHeight * scale * vm.position).toInt()
-                                }
-                            })
-                    }
-                }
-            }
-
-            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
-                    startActivity(this)
-                }
-                return true
-            }
-        }
         return binding.root
     }
 
