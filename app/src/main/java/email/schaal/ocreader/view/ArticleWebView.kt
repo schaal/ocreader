@@ -59,6 +59,7 @@ class ArticleWebView(context: Context, attrs: AttributeSet? = null, defStyleAttr
             javaScriptEnabled = true
             builtInZoomControls = true
             displayZoomControls = false
+            offscreenPreRaster = true
         }
         addJavascriptInterface(JsCallback(), "JsCallback")
     }
