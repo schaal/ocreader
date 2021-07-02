@@ -90,9 +90,7 @@ class ItemPageFragment : Fragment() {
                     view?.apply {
                         postVisualStateCallback(0, object : WebView.VisualStateCallback() {
                                 override fun onComplete(requestId: Long) {
-                                    post {
-                                        scrollY = (contentHeight * scale * vm.position).toInt()
-                                    }
+                                    scrollY = (contentHeight * scale * vm.position).toInt()
                                 }
                             })
                     }
