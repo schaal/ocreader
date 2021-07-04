@@ -30,7 +30,7 @@
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
             android:layout_margin="@dimen/materialize_spacing"
-            android:tint="?colorOnSurface"
+            app:tint="?colorOnSurface"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/account_circle" />
