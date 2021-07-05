@@ -1,3 +1,8 @@
+## 0.57 (2021-07-05)
+
+* Restore scroll position (Closes: #27)
+* Use OCS Api to retrieve user info (Closes: #109, #115)
+
 ## 0.56 (2021-02-16)
 
 * Open feed urls with OCReader (Thanks to @s3lph)
