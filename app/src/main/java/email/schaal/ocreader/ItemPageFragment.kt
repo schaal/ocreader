@@ -55,7 +55,7 @@ class ItemPageFragment : Fragment() {
             if (vm.position > 0f) {
                 postVisualStateCallback(0, object : WebView.VisualStateCallback() {
                     override fun onComplete(requestId: Long) {
-                        scrollY = (contentHeight * scale * vm.position).toInt()
+                        scrollY = (contentHeight * resources.displayMetrics.density * vm.position).toInt()
                     }
                 })
             }
@@ -90,7 +90,7 @@ class ItemPageFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         binding.webView.apply {
-            vm.position = scrollY / (contentHeight * scale)
+            vm.position = scrollY / (contentHeight * resources.displayMetrics.density)
         }
     }
 
