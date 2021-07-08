@@ -77,11 +77,6 @@ class ItemPageFragment : Fragment() {
         super.onDestroy()
     }
 
-    override fun onDestroyView() {
-        binding.webView.settings.javaScriptEnabled = false
-        super.onDestroyView()
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentItemPagerBinding.inflate(inflater, container, false)
         return binding.root
