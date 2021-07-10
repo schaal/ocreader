@@ -27,7 +27,7 @@
     app:cardCornerRadius="@dimen/cardview_default_radius"
     app:cardElevation="@dimen/cardview_default_elevation">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/materialize_spacing">
@@ -36,32 +36,33 @@
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/materialize_spacing"
             android:contentDescription="@string/warning"
-            android:src="@drawable/ic_warning" />
+            android:src="@drawable/ic_warning"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:layout_gravity="center"
-            android:layout_toEndOf="@+id/imageView"
-            android:text="@string/feed_update_error" />
+            android:layout_marginStart="@dimen/materialize_spacing"
+            android:text="@string/feed_update_error"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textViewError"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="false"
-            android:layout_alignStart="@+id/textView"
-            android:layout_below="@+id/textView"
             android:layout_gravity="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="@color/md_red_500"
+            app:layout_constraintStart_toStartOf="@+id/textView"
+            app:layout_constraintTop_toBottomOf="@+id/textView"
             tools:text="This is the error message" />
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
