@@ -36,7 +36,7 @@
             android:contentDescription="@string/feed_icon_description"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:tint="?colorOnSurface"
+            app:tint="?colorOnSurface"
             tools:src="@drawable/ic_feed_icon"/>
 
         <TextView
