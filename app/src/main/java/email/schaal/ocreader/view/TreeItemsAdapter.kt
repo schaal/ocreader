@@ -45,7 +45,7 @@ class TreeItemsAdapter(context: Context, private var treeItems: List<TreeItem>?,
             return 0
         }
 
-        override fun treeItemName(): String {
+        override fun treeItemName(context: Context): String {
             return name
         }
 
@@ -110,7 +110,7 @@ class TreeItemsAdapter(context: Context, private var treeItems: List<TreeItem>?,
 
     private class DividerViewHolder internal constructor(private val binding: ListDividerBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(treeItem: TreeItem) {
-            binding.textViewDivider.text = treeItem.treeItemName()
+            binding.textViewDivider.text = treeItem.treeItemName(binding.root.context)
         }
     }
 
@@ -120,7 +120,7 @@ class TreeItemsAdapter(context: Context, private var treeItems: List<TreeItem>?,
                 itemView.isSelected = treeItem.treeItemId() == selectedTreeItemId
                 itemView.setOnClickListener { clickListener?.onTreeItemClick(treeItem) }
                 binding.imageviewFavicon.setImageResource(treeItem.getIcon())
-                binding.textViewTitle.text = treeItem.treeItemName()
+                binding.textViewTitle.text = treeItem.treeItemName(binding.root.context)
             }
         }
     }

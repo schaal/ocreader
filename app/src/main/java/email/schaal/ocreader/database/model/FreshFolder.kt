@@ -19,15 +19,12 @@
 
 package email.schaal.ocreader.database.model
 
-import android.content.Context
 import email.schaal.ocreader.R
 import io.realm.Realm
 import io.realm.kotlin.where
 import java.util.*
 
-class FreshFolder(context: Context) : TreeItem {
-    val name = context.getString(R.string.fresh_items)
-
+class FreshFolder: SpecialFolder(R.string.fresh_items) {
     companion object {
         private const val MAX_ARTICLE_AGE = 24 * 60 * 60 * 1000
         const val ID: Long = -12
@@ -35,10 +32,6 @@ class FreshFolder(context: Context) : TreeItem {
 
     override fun treeItemId(): Long {
         return ID
-    }
-
-    override fun treeItemName(): String {
-        return name
     }
 
     override fun getIcon(): Int {

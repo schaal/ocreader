@@ -71,7 +71,7 @@ class FeedViewModel(context: Context) : RealmViewModel() {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putBreadCrumbs(listOf(newTreeItem.treeItemId() to (newTreeItem is Feed))).apply()
     }
 
-    fun updateTemporaryFeed(preferences: SharedPreferences, updateTemporaryFeed: Boolean) {
+    fun updateTemporaryFeed(context: Context, preferences: SharedPreferences, updateTemporaryFeed: Boolean) {
         val temporaryFeed = temporaryFeedLiveData.value
         val selectedTreeItem = selectedTreeItemLiveData.value
         if (temporaryFeed == null || selectedTreeItem == null) return
@@ -79,7 +79,7 @@ class FeedViewModel(context: Context) : RealmViewModel() {
             realm.executeTransaction { realm: Realm ->
                 val tempItems = selectedTreeItem.getItems(realm, Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences))
                 temporaryFeed.treeItemId = selectedTreeItem.treeItemId()
-                temporaryFeed.name = selectedTreeItem.treeItemName()
+                temporaryFeed.name = selectedTreeItem.treeItemName(context)
                 temporaryFeed.items?.clear()
                 temporaryFeed.items?.addAll(tempItems)
             }
@@ -144,12 +144,12 @@ class FeedViewModel(context: Context) : RealmViewModel() {
         itemsLiveData = LiveRealmResults<Item>(temporaryFeed.items?.sort(Preferences.SORT_FIELD.getString(preferences) ?: Item::pubDate.name, Preferences.ORDER.getOrder(preferences))!!)
         foldersLiveData = LiveRealmResults(Folder.getAll(realm, Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences)))
         topFolders = arrayOf(
-                AllUnreadFolder(context),
-                StarredFolder(context),
-                FreshFolder(context)
+                AllUnreadFolder(),
+                StarredFolder(),
+                FreshFolder()
         )
         selectedTreeItemLiveData = MutableLiveData(getTreeItem(realm, Preferences.BREADCRUMBS.getBreadCrumbs(preferences).last(), topFolders))
         userLiveData = LiveRealmObject(realm.where<User>().findFirst())
-        updateTemporaryFeed(preferences, false)
+        updateTemporaryFeed(context, preferences, false)
     }
 }

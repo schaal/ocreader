@@ -19,6 +19,7 @@
 
 package email.schaal.ocreader.database.model
 
+import android.content.Context
 import android.os.Parcelable
 import com.squareup.moshi.JsonClass
 import email.schaal.ocreader.R
@@ -69,7 +70,7 @@ open class Folder(
         return id
     }
 
-    override fun treeItemName(): String {
+    override fun treeItemName(context: Context): String {
         return name
     }
 

@@ -19,12 +19,13 @@
 
 package email.schaal.ocreader.database.model
 
+import android.content.Context
 import androidx.annotation.DrawableRes
 import io.realm.Realm
 
 interface TreeItem {
     fun treeItemId() : Long?
-    fun treeItemName(): String
+    fun treeItemName(context: Context): String
     @DrawableRes fun getIcon(): Int
     fun getCount(realm: Realm): Int
     fun getFeeds(realm: Realm, onlyUnread: Boolean = false): List<Feed>

@@ -66,7 +66,10 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
 
     private fun updateSyncStatus(syncRunning: Boolean) {
         if(!syncRunning)
-            feedViewModel.updateTemporaryFeed(PreferenceManager.getDefaultSharedPreferences(this), true)
+            feedViewModel.updateTemporaryFeed(this,
+                PreferenceManager.getDefaultSharedPreferences(this),
+                true
+            )
 
         binding.swipeRefreshLayout.isRefreshing = syncRunning
         binding.bottomAppbar.menu.findItem(R.id.menu_sync).isEnabled = !syncRunning
@@ -189,7 +192,10 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
     }
 
     private fun reloadListFragment() {
-        feedViewModel.updateTemporaryFeed(PreferenceManager.getDefaultSharedPreferences(this), true)
+        feedViewModel.updateTemporaryFeed(this,
+            PreferenceManager.getDefaultSharedPreferences(this),
+            true
+        )
         binding.itemsRecyclerview.scrollToPosition(0)
     }
 

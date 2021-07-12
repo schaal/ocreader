@@ -19,25 +19,18 @@
 
 package email.schaal.ocreader.database.model
 
-import android.content.Context
 import email.schaal.ocreader.R
 import io.realm.Realm
 import io.realm.Sort
 import io.realm.kotlin.where
 
-class AllUnreadFolder(context: Context) : TreeItem {
-    val name: String = context.getString(R.string.unread_items)
-
+class AllUnreadFolder: SpecialFolder(R.string.unread_items) {
     companion object {
         const val ID: Long = -10
     }
 
     override fun treeItemId(): Long {
         return ID
-    }
-
-    override fun treeItemName(): String {
-        return name
     }
 
     override fun getIcon(): Int {

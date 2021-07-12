@@ -69,7 +69,7 @@ open class Feed(
         return id
     }
 
-    override fun treeItemName(): String {
+    override fun treeItemName(context: Context): String {
         return name
     }
 

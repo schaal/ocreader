@@ -19,25 +19,18 @@
 
 package email.schaal.ocreader.database.model
 
-import android.content.Context
 import email.schaal.ocreader.R
 import io.realm.Realm
 import io.realm.Sort
 import io.realm.kotlin.where
 
-class StarredFolder(context: Context): TreeItem {
-    val name = context.getString(R.string.starred_items)
-
+class StarredFolder: SpecialFolder(R.string.starred_items) {
     companion object {
         const val ID: Long = -11
     }
 
     override fun treeItemId(): Long {
         return ID
-    }
-
-    override fun treeItemName(): String {
-        return name
     }
 
     override fun getIcon(): Int {
