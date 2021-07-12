@@ -25,7 +25,7 @@ import io.realm.Realm
 import io.realm.Sort
 import io.realm.kotlin.where
 
-class StarredFolder(val context: Context): TreeItem {
+class StarredFolder(context: Context): TreeItem {
     val name = context.getString(R.string.starred_items)
 
     companion object {

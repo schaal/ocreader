@@ -25,7 +25,7 @@ import io.realm.Realm
 import io.realm.kotlin.where
 import java.util.*
 
-class FreshFolder(val context: Context) : TreeItem {
+class FreshFolder(context: Context) : TreeItem {
     val name = context.getString(R.string.fresh_items)
 
     companion object {

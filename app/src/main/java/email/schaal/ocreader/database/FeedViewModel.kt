@@ -123,7 +123,7 @@ class FeedViewModel(context: Context) : RealmViewModel() {
     }
 
     companion object {
-        fun getTreeItem(realm: Realm, breadcrumb: Pair<Long?, Boolean>, staticFolders: Array<TreeItem>): TreeItem {
+        private fun getTreeItem(realm: Realm, breadcrumb: Pair<Long?, Boolean>, staticFolders: Array<TreeItem>): TreeItem {
             val (treeItemId, isFeed) = breadcrumb
 
             for(treeItem in staticFolders)
