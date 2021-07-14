@@ -59,7 +59,7 @@ class ItemViewHolder(private val binding: ListItemBinding, private val clickList
             clickListener.onItemLongClick(item, position)
             true
         }
-        if (item.enclosureLink != null) {
+        if (item.isPlayable()) {
             binding.play.visibility = View.VISIBLE
             binding.play.setOnClickListener { item.play(itemView.context) }
         } else {

@@ -130,7 +130,7 @@ class ItemPagerActivity : AppCompatActivity() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        menu.findItem(R.id.action_play_enclosure_media).isVisible = item.enclosureLink != null
+        menu.findItem(R.id.action_play_enclosure_media).isVisible = item.isPlayable()
         updateMenuItem(menu.findItem(R.id.menu_mark_read), !item.unread, R.drawable.ic_check_box, R.drawable.ic_check_box_outline_blank)
         updateMenuItem(menu.findItem(R.id.menu_mark_starred), item.starred, R.drawable.ic_star, R.drawable.ic_star_outline)
         return super.onPrepareOptionsMenu(menu)

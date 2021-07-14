@@ -116,6 +116,10 @@ open class Item(
         RealmObject.deleteFromRealm(this)
     }
 
+    fun isPlayable(): Boolean {
+        return enclosureMime?.run { startsWith("video/") || startsWith("audio/") } ?: false
+    }
+
     fun play(context: Context) {
         if(enclosureLink != null) {
             val playIntent = Intent(Intent.ACTION_VIEW)
