@@ -190,11 +190,13 @@ class API {
         ALL(3)
     }
 
-    private suspend fun batchedItemLoad(collector: FlowCollector<List<Insertable>>, queryType: QueryType, getRead: Boolean = false) {
+    private suspend fun batchedItemLoad(collector: FlowCollector<Insertable>, queryType: QueryType, getRead: Boolean = false) {
         var offset = 0L
         do {
             val resultCount = api?.items(BATCH_SIZE, offset, queryType.type, 0L, getRead = getRead, oldestFirst = true)?.items?.let {
-                collector.emit(it)
+                for (insertable in it) {
+                    collector.emit(insertable)
+                }
                 offset = it.firstOrNull()?.id ?: 0L
                 it.size.toLong()
             }
@@ -218,16 +220,20 @@ class API {
                     val folders = api?.folders()?.folders
                     val feeds = api?.feeds()?.feeds
 
-                    val insertFlow = flow<List<Insertable>> {
+                    val insertFlow = flow {
                         username?.let {
-                            ocsapi?.user(username)?.let { emit(listOf(it))}
+                            ocsapi?.user(username)?.let { emit(it)}
                         }
 
                         if(lastSync == 0L) {
                             batchedItemLoad(this, QueryType.STARRED, true)
                             batchedItemLoad(this, QueryType.ALL, false)
                         } else {
-                            api?.updatedItems(lastSync, QueryType.ALL.type, 0L)?.items?.let { emit(it) }
+                            api?.updatedItems(lastSync, QueryType.ALL.type, 0L)?.items?.let {
+                                for (insertable in it) {
+                                    emit(insertable)
+                                }
+                            }
                         }
                     }
 
@@ -257,10 +263,7 @@ class API {
                                 feed.delete(realm)
                         }
 
-                        insertFlow.collect {
-                            for(insertable in it)
-                                insertable.insert(realm)
-                        }
+                        insertFlow.collect { it.insert(realm) }
 
                         for (feed in dbFeeds) {
                             feed.starredCount = realm.where<Item>()
