@@ -39,7 +39,7 @@ import java.util.*
 class ItemViewHolder(private val binding: ListItemBinding, private val clickListener: OnClickListener) : RecyclerView.ViewHolder(binding.root), FeedColorsListener {
     @ColorInt
     private var defaultFeedTextColor = 0
-    private val alphaViews: Array<View>
+
     fun bindItem(item: Item, position: Int, selected: Boolean) {
         binding.textViewTitle.text = item.title
         val feed = item.feed
@@ -72,10 +72,7 @@ class ItemViewHolder(private val binding: ListItemBinding, private val clickList
     }
 
     private fun setUnreadState(unread: Boolean) {
-        val alpha = if (unread) 1.0f else 0.5f
-        for (view in alphaViews) {
-            view.alpha = alpha
-        }
+        itemView.alpha = if (unread) 1.0f else 0.5f
     }
 
     private fun setStarredState(starred: Boolean) {
@@ -104,13 +101,5 @@ class ItemViewHolder(private val binding: ListItemBinding, private val clickList
         } finally {
             typedArray.recycle()
         }
-        alphaViews = arrayOf(
-                binding.textViewTitle,
-                binding.textViewFeedTitle,
-                binding.textViewTime,
-                binding.imageviewFavicon,
-                binding.imageviewStar,
-                binding.play
-        )
     }
 }
