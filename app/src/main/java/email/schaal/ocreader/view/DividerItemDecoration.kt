@@ -25,6 +25,7 @@ import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.annotation.DimenRes
+import androidx.core.content.res.use
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
@@ -69,10 +70,9 @@ class DividerItemDecoration(context: Context, @DimenRes insetRes: Int) : ItemDec
     }
 
     init {
-        val a = context
-                .obtainStyledAttributes(intArrayOf(android.R.attr.listDivider))
-        mDivider = a.getDrawable(0)
-        a.recycle()
+        mDivider = context.obtainStyledAttributes(intArrayOf(android.R.attr.listDivider)).use {
+            it.getDrawable(0)
+        }
         if (mDivider != null) size = mDivider.intrinsicHeight
     }
 }

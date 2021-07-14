@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.use
 import androidx.preference.PreferenceManager
 import email.schaal.ocreader.Preferences
 import email.schaal.ocreader.R
@@ -49,12 +50,13 @@ class ArticleWebView(context: Context, attrs: AttributeSet? = null, defStyleAttr
     }
 
     init {
-        context.obtainStyledAttributes(attrs, R.styleable.ArticleWebView).also { typedArray ->
+        context.obtainStyledAttributes(attrs, R.styleable.ArticleWebView).use { typedArray ->
             defaultLinkColor = typedArray.getColor(R.styleable.ArticleWebView_linkColor, 0)
             fontColor = typedArray.getColor(R.styleable.ArticleWebView_fontColor, 0)
             backColor = typedArray.getColor(R.styleable.ArticleWebView_backgroundColor, 0)
-            setBackgroundColor(backColor)
-        }.recycle()
+        }
+
+        setBackgroundColor(backColor)
 
         settings.apply {
             javaScriptEnabled = true

@@ -22,6 +22,7 @@ package email.schaal.ocreader.view
 import android.util.Log
 import android.view.View
 import androidx.annotation.ColorInt
+import androidx.core.content.res.use
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import email.schaal.ocreader.Preferences
@@ -37,8 +38,10 @@ import java.util.*
  * RecyclerView.ViewHolder to display a feed Item.
  */
 class ItemViewHolder(private val binding: ListItemBinding, private val clickListener: OnClickListener) : RecyclerView.ViewHolder(binding.root), FeedColorsListener {
-    @ColorInt
-    private var defaultFeedTextColor = 0
+    @ColorInt private val defaultFeedTextColor: Int =
+        itemView.context.obtainStyledAttributes(intArrayOf(android.R.attr.textColorSecondary)).use {
+            it.getColor(0,0)
+        }
 
     fun bindItem(item: Item, position: Int, selected: Boolean) {
         binding.textViewTitle.text = item.title
@@ -94,12 +97,4 @@ class ItemViewHolder(private val binding: ListItemBinding, private val clickList
         private val TAG = ItemViewHolder::class.java.name
     }
 
-    init {
-        val typedArray = itemView.context.obtainStyledAttributes(intArrayOf(android.R.attr.textColorSecondary))
-        defaultFeedTextColor = try {
-            typedArray.getColor(0, 0)
-        } finally {
-            typedArray.recycle()
-        }
-    }
 }

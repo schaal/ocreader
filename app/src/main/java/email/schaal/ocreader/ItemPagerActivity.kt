@@ -37,6 +37,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.Keep
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.use
 import androidx.core.graphics.ColorUtils
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -83,10 +84,10 @@ class ItemPagerActivity : AppCompatActivity() {
 
             val position = intent.getIntExtra(EXTRA_CURRENT_POSITION, 0)
 
-            obtainStyledAttributes(intArrayOf(R.attr.colorPrimary, R.attr.colorAccent)).also {
+            obtainStyledAttributes(intArrayOf(R.attr.colorPrimary, R.attr.colorAccent)).use {
                 defaultToolbarColor = it.getColor(0, 0)
                 defaultAccent = it.getColor(1, 0)
-            }.recycle()
+            }
 
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
 

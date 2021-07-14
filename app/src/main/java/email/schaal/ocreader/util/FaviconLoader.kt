@@ -12,6 +12,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.use
 import androidx.core.graphics.ColorUtils
 import androidx.palette.graphics.Palette
 import androidx.palette.graphics.Palette.PaletteAsyncListener
@@ -40,9 +41,9 @@ class FaviconLoader private constructor(builder: Builder) {
             return
         }
         if (feed.faviconLink != null) {
-            val typedArray = context.obtainStyledAttributes(intArrayOf(android.R.attr.colorBackground))
-            val colorBackground = typedArray.getColor(0, Color.WHITE)
-            typedArray.recycle()
+            val colorBackground = context.obtainStyledAttributes(intArrayOf(android.R.attr.colorBackground)).use {
+                it.getColor(0, Color.WHITE)
+            }
             // load favicon
             val requestBuilder: RequestBuilder<Bitmap> = GlideApp.with(context)
                     .asBitmap()
