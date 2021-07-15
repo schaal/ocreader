@@ -142,7 +142,7 @@ class ItemPagerActivity : AppCompatActivity() {
         menuItem.setIcon(if (value) checkedIcon else uncheckedIcon)
     }
 
-    fun updateResult() {
+    private fun updateResult() {
         val result = Intent()
         result.putExtra(EXTRA_CURRENT_POSITION, binding.container.currentItem)
         setResult(Activity.RESULT_OK, result)
@@ -182,22 +182,16 @@ class ItemPagerActivity : AppCompatActivity() {
     }
 
     private inner class SectionsPagerAdapter internal constructor(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-        private val fragments: WeakHashMap<Int, ItemPageFragment?>
+        private val fragments: WeakHashMap<Int, ItemPageFragment?> = WeakHashMap(count)
+
         override fun getItem(position: Int): Fragment {
-            val fragment: ItemPageFragment = fragments[position] ?: newInstance(getItemForPosition(position))
-
-            if (fragments[position] == null)
-                fragments[position] = fragment
-
-            return fragment
+            return fragments[position] ?: newInstance(getItemForPosition(position)).also {
+                fragments[position] = it
+            }
         }
 
         override fun getCount(): Int {
             return items.size
-        }
-
-        init {
-            fragments = WeakHashMap(count)
         }
     }
 
@@ -211,8 +205,7 @@ class ItemPagerActivity : AppCompatActivity() {
 
         @Keep
         fun setStatusBarColor(backgroundColor: Int) {
-            val statusbarColor = changeLightness(backgroundColor, 0.7f)
-            window.statusBarColor = statusbarColor
+            window.statusBarColor = changeLightness(backgroundColor, 0.7f)
 
             binding.toolbarLayout.toolbar.setBackgroundColor(backgroundColor)
             binding.bottomAppbar.backgroundTint = ColorStateList.valueOf(backgroundColor)
