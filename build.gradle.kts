@@ -19,22 +19,21 @@
  */
 
 buildscript {
-    ext.kotlin_version = "1.5.21"
-    ext.about_libraries_version = "8.9.0"
-
     repositories {
         mavenCentral()
         google()
     }
     dependencies {
         classpath("com.android.tools.build:gradle:4.2.2")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+        // keep kotlin version in sync with app/build.gradle.kts
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21")
         classpath("io.realm:realm-gradle-plugin:10.6.1")
     }
 }
 
 plugins {
-    id("com.mikepenz.aboutlibraries.plugin") version "${about_libraries_version}" apply false
+    // keep aboutlibraries version in sync with app/build.gradle.kts
+    id("com.mikepenz.aboutlibraries.plugin") version "8.9.0" apply false
 }
 
 allprojects {
@@ -44,6 +43,6 @@ allprojects {
     }
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+tasks.register("clean",  Delete::class)  {
+    delete(rootProject.buildDir)
 }

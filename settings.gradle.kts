@@ -18,4 +18,4 @@
  *
  */
 
-include ':app'
+include(":app")

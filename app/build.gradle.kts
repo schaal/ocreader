@@ -1,0 +1,152 @@
+/*
+ * Copyright (C) 2015-2016 Daniel Schaal <daniel@schaal.email>
+ *
+ * This file is part of OCReader.
+ *
+ * OCReader is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * OCReader is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with OCReader.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+    id("kotlin-parcelize")
+    id("kotlin-kapt")
+    id("realm-android")
+    id("com.mikepenz.aboutlibraries.plugin")
+}
+
+android {
+    compileSdkVersion(30)
+    buildToolsVersion = "30.0.3"
+
+    buildFeatures.dataBinding = true
+
+    defaultConfig {
+        applicationId = "email.schaal.ocreader"
+        minSdkVersion(23)
+        targetSdkVersion(30)
+        versionCode = 57
+        versionName = "0.57"
+
+        base.archivesName.set("${applicationId}_${versionCode}")
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    buildTypes {
+        getByName("debug") {
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            applicationIdSuffix = ".debug"
+        }
+        getByName("release") {
+            isShrinkResources = true
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+    }
+
+    lintOptions {
+        isAbortOnError = true
+        disable.add("MissingTranslation")
+    }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+}
+
+dependencies {
+    val okhttp     = "4.9.1"
+    val retrofit   = "2.9.0"
+    val glide      = "4.12.0"
+    val lifecycle  = "2.3.1"
+    val moshi      = "1.12.0"
+    val core       = "1.6.0"
+    val annotation = "1.2.0"
+    val junit_ext  = "1.1.3"
+    val espresso   = "3.4.0"
+
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.21")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
+
+    implementation("androidx.core:core-ktx:${core}")
+    implementation("androidx.core:core-ktx:${core}")
+
+    implementation("androidx.appcompat:appcompat:1.3.0")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:${lifecycle}")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:${lifecycle}")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:${lifecycle}")
+    implementation("androidx.lifecycle:lifecycle-common-java8:${lifecycle}")
+
+    implementation("androidx.work:work-runtime-ktx:2.5.0")
+    implementation("androidx.fragment:fragment-ktx:1.3.5")
+    implementation("androidx.activity:activity-ktx:1.2.3")
+
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
+    implementation("androidx.palette:palette-ktx:1.0.0")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation("androidx.preference:preference-ktx:1.1.1")
+    implementation("androidx.viewpager2:viewpager2:1.1.0-alpha01")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
+
+    implementation("androidx.annotation:annotation:${annotation}")
+    kapt("androidx.annotation:annotation:${annotation}")
+
+    implementation("com.google.android.material:material:1.4.0")
+
+    implementation("com.mikepenz:aboutlibraries:8.9.0")
+
+    implementation("org.jsoup:jsoup:1.13.1")
+
+    implementation("com.squareup.okhttp3:okhttp:${okhttp}")
+
+    implementation("com.squareup.retrofit2:retrofit:${retrofit}")
+    implementation("com.squareup.retrofit2:converter-moshi:${retrofit}")
+
+    implementation("com.squareup.moshi:moshi:${moshi}")
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:${moshi}")
+
+    implementation("com.github.bumptech.glide:glide:${glide}")
+    kapt("com.github.bumptech.glide:compiler:${glide}")
+
+    implementation("com.github.bumptech.glide:okhttp3-integration:${glide}")
+    implementation("com.github.bumptech.glide:recyclerview-integration:${glide}")
+
+    implementation("com.github.zafarkhaja:java-semver:0.9.0")
+
+    androidTestImplementation("androidx.test.ext:junit:${junit_ext}")
+    androidTestImplementation("androidx.test.espresso:espresso-core:${espresso}")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:${espresso}")
+
+    androidTestImplementation("com.squareup.okhttp3:mockwebserver:${okhttp}")
+
+    testImplementation("androidx.test:core:1.4.0")
+    testImplementation("androidx.test.ext:junit:${junit_ext}")
+    testImplementation("org.robolectric:robolectric:4.5.1")
+    testImplementation("junit:junit:4.13.2")
+}
