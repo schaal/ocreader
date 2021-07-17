@@ -149,6 +149,6 @@ dependencies {
 
     testImplementation("androidx.test:core:1.4.0")
     testImplementation("androidx.test.ext:junit:${Versions.junit_ext}")
-    testImplementation("org.robolectric:robolectric:4.5.1")
+    testImplementation("org.robolectric:robolectric:4.6.1")
     testImplementation("junit:junit:4.13.2")
 }
