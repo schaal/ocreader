@@ -79,29 +79,31 @@ android {
     }
 }
 
-dependencies {
-    val okhttp     = "4.9.1"
-    val retrofit   = "2.9.0"
-    val glide      = "4.12.0"
-    val lifecycle  = "2.3.1"
-    val moshi      = "1.12.0"
-    val core       = "1.6.0"
-    val annotation = "1.2.0"
-    val junit_ext  = "1.1.3"
-    val espresso   = "3.4.0"
+object Versions {
+    const val okhttp     = "4.9.1"
+    const val retrofit   = "2.9.0"
+    const val glide      = "4.12.0"
+    const val lifecycle  = "2.3.1"
+    const val moshi      = "1.12.0"
+    const val core       = "1.6.0"
+    const val annotation = "1.2.0"
+    const val junit_ext  = "1.1.3"
+    const val espresso   = "3.4.0"
+}
 
+dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.21")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
 
-    implementation("androidx.core:core-ktx:${core}")
-    implementation("androidx.core:core-ktx:${core}")
+    implementation("androidx.core:core-ktx:${Versions.core}")
+    implementation("androidx.core:core-ktx:${Versions.core}")
 
     implementation("androidx.appcompat:appcompat:1.3.0")
 
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:${lifecycle}")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:${lifecycle}")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:${lifecycle}")
-    implementation("androidx.lifecycle:lifecycle-common-java8:${lifecycle}")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}")
+    implementation("androidx.lifecycle:lifecycle-common-java8:${Versions.lifecycle}")
 
     implementation("androidx.work:work-runtime-ktx:2.5.0")
     implementation("androidx.fragment:fragment-ktx:1.3.5")
@@ -114,8 +116,8 @@ dependencies {
     implementation("androidx.viewpager2:viewpager2:1.1.0-alpha01")
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
 
-    implementation("androidx.annotation:annotation:${annotation}")
-    kapt("androidx.annotation:annotation:${annotation}")
+    implementation("androidx.annotation:annotation:${Versions.annotation}")
+    kapt("androidx.annotation:annotation:${Versions.annotation}")
 
     implementation("com.google.android.material:material:1.4.0")
 
@@ -123,30 +125,30 @@ dependencies {
 
     implementation("org.jsoup:jsoup:1.14.1")
 
-    implementation("com.squareup.okhttp3:okhttp:${okhttp}")
+    implementation("com.squareup.okhttp3:okhttp:${Versions.okhttp}")
 
-    implementation("com.squareup.retrofit2:retrofit:${retrofit}")
-    implementation("com.squareup.retrofit2:converter-moshi:${retrofit}")
+    implementation("com.squareup.retrofit2:retrofit:${Versions.retrofit}")
+    implementation("com.squareup.retrofit2:converter-moshi:${Versions.retrofit}")
 
-    implementation("com.squareup.moshi:moshi:${moshi}")
-    kapt("com.squareup.moshi:moshi-kotlin-codegen:${moshi}")
+    implementation("com.squareup.moshi:moshi:${Versions.moshi}")
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:${Versions.moshi}")
 
-    implementation("com.github.bumptech.glide:glide:${glide}")
-    kapt("com.github.bumptech.glide:compiler:${glide}")
+    implementation("com.github.bumptech.glide:glide:${Versions.glide}")
+    kapt("com.github.bumptech.glide:compiler:${Versions.glide}")
 
-    implementation("com.github.bumptech.glide:okhttp3-integration:${glide}")
-    implementation("com.github.bumptech.glide:recyclerview-integration:${glide}")
+    implementation("com.github.bumptech.glide:okhttp3-integration:${Versions.glide}")
+    implementation("com.github.bumptech.glide:recyclerview-integration:${Versions.glide}")
 
     implementation("com.github.zafarkhaja:java-semver:0.9.0")
 
-    androidTestImplementation("androidx.test.ext:junit:${junit_ext}")
-    androidTestImplementation("androidx.test.espresso:espresso-core:${espresso}")
-    androidTestImplementation("androidx.test.espresso:espresso-intents:${espresso}")
+    androidTestImplementation("androidx.test.ext:junit:${Versions.junit_ext}")
+    androidTestImplementation("androidx.test.espresso:espresso-core:${Versions.espresso}")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:${Versions.espresso}")
 
-    androidTestImplementation("com.squareup.okhttp3:mockwebserver:${okhttp}")
+    androidTestImplementation("com.squareup.okhttp3:mockwebserver:${Versions.okhttp}")
 
     testImplementation("androidx.test:core:1.4.0")
-    testImplementation("androidx.test.ext:junit:${junit_ext}")
+    testImplementation("androidx.test.ext:junit:${Versions.junit_ext}")
     testImplementation("org.robolectric:robolectric:4.5.1")
     testImplementation("junit:junit:4.13.2")
 }
