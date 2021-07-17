@@ -14,35 +14,38 @@ internal object TestGenerator {
     const val ITEM_TITLE = "TestItemTitle"
     const val BODY = "<p>TestBody</p>"
     const val AUTHOR = "TestAuthor"
+
     val testFolder: Folder
         get() {
-            val folder = Folder(1)
-            folder.name = FOLDER_TITLE
-            return folder
+            return Folder().apply {
+                id = 1L
+                name = FOLDER_TITLE
+            }
         }
 
     val testFeed: Feed
         get() = getTestFeed(1)
 
     fun getTestFeed(id: Long): Feed {
-        val feed = Feed(id)
-        feed.folderId = 0L
-        feed.name = FEED_TITLE
-        return feed
+        return Feed().apply {
+            this.id = id
+            folderId = 0L
+            name = FEED_TITLE
+        }
     }
 
     val testItem: Item
         get() = getTestItem(1)
 
     fun getTestItem(id: Long): Item {
-        return Item().also {
-            it.id = id
-            it.title = ITEM_TITLE
-            it.body = BODY
-            it.author = AUTHOR
-            it.feedId = 1
-            it.feed = testFeed
-            it.lastModified = Date().time / 1000
+        return Item().apply {
+            this.id = id
+            title = ITEM_TITLE
+            body = BODY
+            author = AUTHOR
+            feedId = 1
+            feed = testFeed
+            lastModified = Date()
         }
     }
 }

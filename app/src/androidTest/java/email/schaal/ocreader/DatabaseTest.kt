@@ -19,8 +19,8 @@
  */
 package email.schaal.ocreader
 
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.rule.ActivityTestRule
 import email.schaal.ocreader.database.Queries
 import email.schaal.ocreader.database.model.Feed
 import email.schaal.ocreader.database.model.Folder
@@ -35,8 +35,8 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class DatabaseTest {
-    @Rule
-    var activityTestRule = ActivityTestRule(ListActivity::class.java)
+    @get:Rule
+    var activityTestRule = ActivityScenarioRule(ListActivity::class.java)
 
     @Before
     fun setUp() {
@@ -57,60 +57,44 @@ class DatabaseTest {
 
     @Test
     fun testFolderInsert() {
-        var realm: Realm? = null
-        try {
-            val folder = TestGenerator.testFolder
-            realm = Realm.getDefaultInstance()
+        Realm.getDefaultInstance().use { realm ->
             realm.beginTransaction()
-            folder.insert(realm)
+            TestGenerator.testFolder.insert(realm)
             realm.commitTransaction()
-            val dbFolder = Folder.get(realm, 1)
-            Assert.assertNotNull(dbFolder)
-            Assert.assertEquals(dbFolder?.name, TestGenerator.FOLDER_TITLE)
-        } finally {
-            Assert.assertNotNull(realm)
-            realm?.close()
+            Folder.get(realm, 1).let { dbFolder ->
+                Assert.assertNotNull(dbFolder)
+                Assert.assertEquals(dbFolder?.name, TestGenerator.FOLDER_TITLE)
+            }
         }
     }
 
     @Test
     fun testFeedInsert() {
-        var realm: Realm? = null
-        try {
-            var feed: Feed? = TestGenerator.testFeed
-            realm = Realm.getDefaultInstance()
+        Realm.getDefaultInstance().use { realm ->
             realm.beginTransaction()
-            feed?.insert(realm)
+            TestGenerator.testFeed.insert(realm)
             realm.commitTransaction()
-            feed = Feed.get(realm, 1)
-            Assert.assertNotNull(feed)
-            Assert.assertEquals(feed!!.name, TestGenerator.FEED_TITLE)
-        } finally {
-            Assert.assertNotNull(realm)
-            realm!!.close()
+            Feed.get(realm, 1).let { feed ->
+                Assert.assertNotNull(feed)
+                Assert.assertEquals(feed?.name, TestGenerator.FEED_TITLE)
+            }
         }
     }
 
     @Test
     fun testItemInsert() {
-        var realm: Realm? = null
-        try {
-            val feed: Feed? = TestGenerator.testFeed
-            var item: Item? = TestGenerator.testItem
-            realm = Realm.getDefaultInstance()
+        Realm.getDefaultInstance().use { realm ->
             realm.beginTransaction()
-            feed?.insert(realm)
-            item?.insert(realm)
+            TestGenerator.testFeed.insert(realm)
+            TestGenerator.testItem.insert(realm)
             realm.commitTransaction()
-            item = realm.where<Item>().findFirst()
-            Assert.assertEquals(item!!.id, 1)
-            Assert.assertEquals(item.title, TestGenerator.ITEM_TITLE)
-            Assert.assertEquals(item.body, TestGenerator.BODY)
-            Assert.assertEquals(item.author, TestGenerator.AUTHOR)
-            Assert.assertNull(item.enclosureLink)
-        } finally {
-            Assert.assertNotNull(realm)
-            realm?.close()
+            realm.where<Item>().findFirst().let { item ->
+                Assert.assertEquals(item?.id, 1)
+                Assert.assertEquals(item?.title, TestGenerator.ITEM_TITLE)
+                Assert.assertEquals(item?.body, TestGenerator.BODY)
+                Assert.assertEquals(item?.author, TestGenerator.AUTHOR)
+                Assert.assertNull(item?.enclosureLink)
+            }
         }
     }
 }
