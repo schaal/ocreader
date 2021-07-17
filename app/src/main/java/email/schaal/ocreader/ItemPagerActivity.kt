@@ -270,6 +270,7 @@ class ItemPagerActivity : AppCompatActivity() {
             progressTo = (position + 1).toFloat() / mSectionsPagerAdapter.count.toFloat()
             binding.bottomAppbar.performShow()
             binding.fabOpenInBrowser.show()
+            binding.toolbarLayout.appbar.setExpanded(true, true)
             ObjectAnimator
                     .ofFloat(binding.fabOpenInBrowser, "progress", progressFrom, progressTo)
                     .setDuration(DURATION)
