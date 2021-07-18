@@ -79,11 +79,6 @@
             android:name=".SettingsActivity"
             android:label="Settings"
             android:parentActivityName=".ListActivity" />
-
-        <service
-            android:name=".service.SyncJobIntentService"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>

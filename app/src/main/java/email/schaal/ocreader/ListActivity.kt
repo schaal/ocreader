@@ -35,10 +35,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar.OnMenuItemClickListener
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
+import androidx.work.WorkInfo
 import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.aboutlibraries.LibsBuilder
 import email.schaal.ocreader.R.string
@@ -49,8 +51,8 @@ import email.schaal.ocreader.database.model.Item
 import email.schaal.ocreader.database.model.TemporaryFeed
 import email.schaal.ocreader.database.model.TreeItem
 import email.schaal.ocreader.databinding.ActivityListBinding
-import email.schaal.ocreader.service.SyncResultReceiver
 import email.schaal.ocreader.service.SyncType
+import email.schaal.ocreader.service.SyncWorker
 import email.schaal.ocreader.view.*
 import email.schaal.ocreader.view.TreeItemsAdapter.TreeItemClickListener
 
@@ -60,7 +62,6 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
     private lateinit var binding: ActivityListBinding
     private lateinit var adapter: LiveItemsAdapter
     private lateinit var layoutManager: LinearLayoutManager
-    private lateinit var syncResultReceiver: SyncResultReceiver
     private val feedViewModel: FeedViewModel by viewModels { FeedViewModelFactory(this) }
     private lateinit var preferenceChangeListener: OnSharedPreferenceChangeListener
 
@@ -103,7 +104,6 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_list)
-        syncResultReceiver = SyncResultReceiver(binding.listviewSwitcher)
         setSupportActionBar(binding.toolbarLayout.toolbar)
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         val menuItemShowOnlyUnread = binding.bottomAppbar.menu.findItem(R.id.menu_show_only_unread)
@@ -123,7 +123,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
                     true
                 }
                 R.id.menu_sync -> {
-                    feedViewModel.sync(this, SyncType.FULL_SYNC, syncResultReceiver)
+                    observeWork(feedViewModel.sync(this, SyncType.FULL_SYNC))
                     true
                 }
                 R.id.menu_about -> {
@@ -185,6 +185,17 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
         }
     }
 
+    private fun observeWork(workLiveData: LiveData<WorkInfo>) {
+        workLiveData.observe(this, { info ->
+            if(info != null && info.state.isFinished) {
+                info.outputData.getString(SyncWorker.KEY_EXCEPTION)?.let {
+                    Snackbar.make(binding.listviewSwitcher,
+                        it, Snackbar.LENGTH_LONG).show()
+                }
+            }
+        })
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelable(LAYOUT_MANAGER_STATE, layoutManager.onSaveInstanceState())
@@ -228,7 +239,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
         }
         if(result.first == Activity.RESULT_OK) {
             Queries.resetDatabase()
-            feedViewModel.sync(this, SyncType.FULL_SYNC, syncResultReceiver)
+            observeWork(feedViewModel.sync(this, SyncType.FULL_SYNC))
         }
     }
 
@@ -300,7 +311,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
     }
 
     override fun onRefresh() {
-        feedViewModel.sync(this, SyncType.FULL_SYNC, syncResultReceiver)
+        observeWork(feedViewModel.sync(this, SyncType.FULL_SYNC))
     }
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {

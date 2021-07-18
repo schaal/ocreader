@@ -22,13 +22,16 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.lifecycle.*
 import androidx.preference.PreferenceManager
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import email.schaal.ocreader.Preferences
 import email.schaal.ocreader.database.model.*
 import email.schaal.ocreader.database.model.TemporaryFeed.Companion.getListTemporaryFeed
 import email.schaal.ocreader.putBreadCrumbs
-import email.schaal.ocreader.service.SyncJobIntentService
-import email.schaal.ocreader.service.SyncResultReceiver
 import email.schaal.ocreader.service.SyncType
+import email.schaal.ocreader.service.SyncWorker
 import io.realm.Realm
 import io.realm.kotlin.where
 import kotlin.IllegalArgumentException
@@ -57,8 +60,13 @@ class FeedViewModel(context: Context) : RealmViewModel() {
     val user: LiveData<User>
         get() = userLiveData
 
-    fun sync(context: Context, syncType: SyncType, resultReceiver: SyncResultReceiver? = null) {
-        SyncJobIntentService.enqueueWork(context, syncType, resultReceiver)
+    fun sync(context: Context, syncType: SyncType): LiveData<WorkInfo> {
+        val workManager = WorkManager.getInstance(context)
+        val syncWork = OneTimeWorkRequestBuilder<SyncWorker>()
+            .setInputData(workDataOf(SyncWorker.KEY_SYNC_TYPE to syncType.action))
+            .build()
+        workManager.enqueue(syncWork)
+        return workManager.getWorkInfoByIdLiveData(syncWork.id)
     }
 
     fun updateFolders(onlyUnread: Boolean) {
