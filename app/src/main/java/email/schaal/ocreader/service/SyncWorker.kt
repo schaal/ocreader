@@ -1,10 +1,9 @@
 package email.schaal.ocreader.service
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import androidx.preference.PreferenceManager
-import androidx.work.CoroutineWorker
-import androidx.work.WorkerParameters
-import androidx.work.workDataOf
+import androidx.work.*
 import email.schaal.ocreader.Preferences
 import email.schaal.ocreader.api.API
 import email.schaal.ocreader.util.LoginError
@@ -13,6 +12,15 @@ class SyncWorker(context: Context, workerParams: WorkerParameters) : CoroutineWo
     companion object {
         const val KEY_SYNC_TYPE = "KEY_SYNC_TYPE"
         const val KEY_EXCEPTION = "KEY_EXCEPTION"
+
+        fun sync(context: Context, syncType: SyncType): LiveData<WorkInfo> {
+            val workManager = WorkManager.getInstance(context)
+            val syncWork = OneTimeWorkRequestBuilder<SyncWorker>()
+                .setInputData(workDataOf(KEY_SYNC_TYPE to syncType.action))
+                .build()
+            workManager.enqueue(syncWork)
+            return workManager.getWorkInfoByIdLiveData(syncWork.id)
+        }
     }
 
     override suspend fun doWork(): Result {

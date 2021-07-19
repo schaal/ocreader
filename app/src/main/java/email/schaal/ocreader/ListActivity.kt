@@ -123,7 +123,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
                     true
                 }
                 R.id.menu_sync -> {
-                    observeWork(feedViewModel.sync(this, SyncType.FULL_SYNC))
+                    observeWork(SyncWorker.sync(this, SyncType.FULL_SYNC))
                     true
                 }
                 R.id.menu_about -> {
@@ -239,7 +239,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
         }
         if(result.first == Activity.RESULT_OK) {
             Queries.resetDatabase()
-            observeWork(feedViewModel.sync(this, SyncType.FULL_SYNC))
+            observeWork(SyncWorker.sync(this, SyncType.FULL_SYNC))
         }
     }
 
@@ -311,7 +311,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
     }
 
     override fun onRefresh() {
-        observeWork(feedViewModel.sync(this, SyncType.FULL_SYNC))
+        observeWork(SyncWorker.sync(this, SyncType.FULL_SYNC))
     }
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
