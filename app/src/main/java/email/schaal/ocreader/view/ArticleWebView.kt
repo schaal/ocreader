@@ -18,6 +18,7 @@ import email.schaal.ocreader.util.asCssString
 import email.schaal.ocreader.util.getByLine
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 import org.jsoup.safety.Cleaner
 import org.jsoup.safety.Whitelist
 import java.util.*
@@ -105,7 +106,7 @@ class ArticleWebView(context: Context, attrs: AttributeSet? = null, defStyleAttr
     private fun extractFirstImg(document: Document): String {
         var firstImgString = ""
         try {
-            var child = document.body().child(0)
+            var child: Element? = document.body().child(0)
             // if document starts with <br>, remove it
             if (child?.tagName() == "br") {
                 val brChild = child
