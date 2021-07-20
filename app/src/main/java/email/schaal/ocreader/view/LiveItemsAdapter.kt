@@ -35,14 +35,18 @@ class LiveItemsAdapter(private var items: List<Item>?, private val clickListener
     private val selections: MutableSet<Int> = LinkedHashSet()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        var holder: RecyclerView.ViewHolder? = null
-        when (viewType) {
+        return when (viewType) {
             R.id.viewtype_item -> {
-                val binding = ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                holder = ItemViewHolder(binding, clickListener)
+                ItemViewHolder(
+                    ListItemBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    ), clickListener
+                )
             }
+            else -> throw IllegalArgumentException("Unknown view type")
         }
-        return holder ?: throw IllegalArgumentException("Unknown view type")
     }
 
     override fun getItemId(position: Int): Long {
@@ -80,9 +84,9 @@ class LiveItemsAdapter(private var items: List<Item>?, private val clickListener
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ItemViewHolder) {
-            val item = items?.get(position)
-            if(item != null)
-                holder.bindItem(item, position, selections.contains(position))
+            items?.get(position)?.let {
+                holder.bindItem(it, position, selections.contains(position))
+            }
         }
     }
 
@@ -104,9 +108,8 @@ class LiveItemsAdapter(private var items: List<Item>?, private val clickListener
     }
 
     fun onRestoreInstanceState(bundle: Bundle) {
-        val savedSelections = bundle.getIntegerArrayList("adapter_selections")
-        if (savedSelections != null) {
-            selections.addAll(savedSelections)
+        bundle.getIntegerArrayList("adapter_selections")?.let {
+            selections.addAll(it)
         }
     }
 
