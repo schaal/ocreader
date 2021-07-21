@@ -20,7 +20,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.safety.Cleaner
-import org.jsoup.safety.Whitelist
+import org.jsoup.safety.Safelist
 import java.util.*
 import java.util.regex.Pattern
 
@@ -84,29 +84,32 @@ class ArticleWebView(context: Context, attrs: AttributeSet? = null, defStyleAttr
         get() {
             val context = context
             val font = Preferences.ARTICLE_FONT.getString(PreferenceManager.getDefaultSharedPreferences(context))
-            var document = Jsoup.parse(item?.body)
-            document = cleaner.clean(document)
-            val firstImgString = extractFirstImg(document)
-            prepareDocument(document)
-            document.outputSettings().prettyPrint(false)
-            return context.getString(R.string.article_html_template,
-                    defaultLinkColor.asCssString(),
-                    fontColor.asCssString(),
-                    backColor.asCssString(),
-                    ContextCompat.getColor(context, R.color.selected_background).asCssString(),
-                    item?.url ?: "",
-                    item?.title,
-                    getByLine(context, "<p class=\"byline\">%s</p>", item?.author, item?.feed),
-                    document.body().html(),
-                    firstImgString,
-                    if ("system" != font) context.getString(R.string.crimson_font_css) else ""
+
+            val document = cleaner.clean(Jsoup.parse(item?.body)).apply {
+                outputSettings().prettyPrint(false)
+                prepareDocument()
+            }
+
+            val firstImage = document.extractFirstImg()
+
+            return context.getString(
+                R.string.article_html_template,
+                defaultLinkColor.asCssString(),
+                fontColor.asCssString(),
+                backColor.asCssString(),
+                ContextCompat.getColor(context, R.color.selected_background).asCssString(),
+                item?.url ?: "",
+                item?.title,
+                getByLine(context, "<p class=\"byline\">%s</p>", item?.author, item?.feed),
+                document.body().html(),
+                firstImage ?: "",
+                if ("system" != font) context.getString(R.string.crimson_font_css) else ""
             )
         }
 
-    private fun extractFirstImg(document: Document): String {
-        var firstImgString = ""
+    private fun Document.extractFirstImg(): String? {
         try {
-            var child: Element? = document.body().child(0)
+            var child: Element? = body().child(0)
             // if document starts with <br>, remove it
             if (child?.tagName() == "br") {
                 val brChild = child
@@ -116,15 +119,16 @@ class ArticleWebView(context: Context, attrs: AttributeSet? = null, defStyleAttr
             while (child != null && child.tagName() != "img") {
                 child = child.children().first()
             }
-            if (child != null) {
-                child.remove()
-                child.addClass("headerimg")
-                firstImgString = child.toString()
+
+            return child?.run {
+                remove()
+                addClass("headerimg")
+                toString()
             }
         } catch (e: IndexOutOfBoundsException) {
             Log.e(TAG, "Body has no children", e)
         }
-        return firstImgString
+        return null
     }
 
     /**
@@ -136,9 +140,8 @@ class ArticleWebView(context: Context, attrs: AttributeSet? = null, defStyleAttr
 
     }
 
-    private fun prepareDocument(document: Document) {
-        val iframes = document.getElementsByTag("iframe")
-        for (iframe in iframes) {
+    private fun Document.prepareDocument(): Document {
+        for (iframe in getElementsByTag("iframe")) {
             if (iframe.hasAttr("src")) {
                 var href = iframe.attr("src")
                 var html = String.format(Locale.US, videoLink, href, href)
@@ -162,12 +165,18 @@ class ArticleWebView(context: Context, attrs: AttributeSet? = null, defStyleAttr
                 iframe.remove()
             }
         }
+        return this
     }
 
     companion object {
         private val TAG = ArticleWebView::class.java.name
+
         // iframes are replaced in prepareDocument()
-        private val cleaner = Cleaner(Whitelist.relaxed().addTags("video", "iframe").addAttributes("iframe", "src"))
+        private val cleaner =
+            Cleaner(Safelist.relaxed()
+                .addTags("video", "iframe")
+                .addAttributes("iframe", "src")
+                .preserveRelativeLinks(true))
         private const val videoThumbLink = """<div style="position:relative"><a href="%s"><img src="%s" class="videothumb"></img><span class="play">▶</span></a></div>"""
         private const val videoLink = """<a href="%s">%s</a>"""
     }
