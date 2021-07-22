@@ -4,6 +4,7 @@ import android.content.Context
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import email.schaal.ocreader.R
+import email.schaal.ocreader.api.API
 import retrofit2.HttpException
 import java.io.IOException
 import java.net.ConnectException
@@ -29,7 +30,7 @@ class LoginError private constructor(val section: Section, val message: String, 
             return when (code) {
                 401 -> LoginError(Section.USER, context.getString(R.string.error_access_forbidden))
                 403, 404 -> LoginError(Section.URL, context.getString(R.string.error_oc_not_found))
-                405 -> LoginError(Section.URL, context.getString(R.string.ncnews_too_old))
+                405 -> LoginError(Section.URL, context.getString(R.string.ncnews_too_old, API.MIN_VERSION.toString()))
                 else -> {
                     val message = e.response()?.errorBody()?.source()?.let { source ->
                         Moshi.Builder().build().adapter(ErrorMessage::class.java).fromJson(source)?.message }
@@ -44,7 +45,7 @@ class LoginError private constructor(val section: Section, val message: String, 
                 is UnknownHostException -> LoginError(Section.URL, context.getString(R.string.error_unknown_host))
                 is SSLHandshakeException -> LoginError(Section.URL, context.getString(R.string.untrusted_certificate))
                 is ConnectException -> LoginError(Section.URL, context.getString(R.string.could_not_connect))
-                is IOException -> return LoginError(Section.NONE, context.getString(R.string.ncnews_too_old))
+                is IOException -> return LoginError(Section.NONE, context.getString(R.string.ncnews_too_old, API.MIN_VERSION.toString()))
                 else -> LoginError(t)
             }
         }
