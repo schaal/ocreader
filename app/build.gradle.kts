@@ -98,7 +98,7 @@ dependencies {
     implementation("androidx.core:core-ktx:${Versions.core}")
     implementation("androidx.core:core-ktx:${Versions.core}")
 
-    implementation("androidx.appcompat:appcompat:1.3.0")
+    implementation("androidx.appcompat:appcompat:1.3.1")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}")
@@ -106,8 +106,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-common-java8:${Versions.lifecycle}")
 
     implementation("androidx.work:work-runtime-ktx:2.5.0")
-    implementation("androidx.fragment:fragment-ktx:1.3.5")
-    implementation("androidx.activity:activity-ktx:1.2.3")
+    implementation("androidx.fragment:fragment-ktx:1.3.6")
+    implementation("androidx.activity:activity-ktx:1.2.4")
 
     implementation("androidx.recyclerview:recyclerview:1.2.1")
     implementation("androidx.palette:palette-ktx:1.0.0")
