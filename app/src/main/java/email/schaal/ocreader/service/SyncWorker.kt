@@ -12,13 +12,14 @@ class SyncWorker(context: Context, workerParams: WorkerParameters) : CoroutineWo
     companion object {
         const val KEY_SYNC_TYPE = "KEY_SYNC_TYPE"
         const val KEY_EXCEPTION = "KEY_EXCEPTION"
+        const val WORK_ID = "WORK_ID_SYNC"
 
         fun sync(context: Context, syncType: SyncType): LiveData<WorkInfo> {
             val workManager = WorkManager.getInstance(context)
             val syncWork = OneTimeWorkRequestBuilder<SyncWorker>()
                 .setInputData(workDataOf(KEY_SYNC_TYPE to syncType.action))
                 .build()
-            workManager.enqueue(syncWork)
+            workManager.enqueueUniqueWork(WORK_ID, ExistingWorkPolicy.KEEP, syncWork)
             return workManager.getWorkInfoByIdLiveData(syncWork.id)
         }
     }
