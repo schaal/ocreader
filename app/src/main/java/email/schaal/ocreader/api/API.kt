@@ -190,12 +190,14 @@ class API {
         ALL(3)
     }
 
-    private suspend fun batchedItemLoad(collector: FlowCollector<Insertable>, queryType: QueryType, getRead: Boolean = false) {
+    private suspend fun batchedItemLoad(realm: Realm, queryType: QueryType, getRead: Boolean = false) {
         var offset = 0L
         do {
             val resultCount = api?.items(BATCH_SIZE, offset, queryType.type, 0L, getRead = getRead, oldestFirst = true)?.items?.let {
-                for (insertable in it) {
-                    collector.emit(insertable)
+                realm.executeTransaction { realm ->
+                    for (insertable in it) {
+                        insertable.insert(realm)
+                    }
                 }
                 offset = it.firstOrNull()?.id ?: 0L
                 it.size.toLong()
@@ -217,65 +219,66 @@ class API {
                 SyncType.FULL_SYNC -> {
                     val lastSync = realm.where<Item>().maximumDate(Item::lastModified.name)?.time?.let { it / 1000L } ?: 0L
 
+                    realm.executeTransaction {
+                        resetItemChanged(result)
+                    }
+
                     val folders = api?.folders()?.folders
                     val feeds = api?.feeds()?.feeds
+                    val user = username?.let { ocsapi?.user(it) }
 
-                    val insertFlow = flow {
-                        username?.let {
-                            ocsapi?.user(username)?.let { emit(it)}
+                    val dbFeeds = realm.where<Feed>().findAll()
+
+                    realm.executeTransaction {
+                        if (folders != null) {
+                            val dbFolders = realm.where<Folder>().findAll()
+                            val foldersToDelete = dbFolders.minus(folders)
+
+                            for (folder in folders)
+                                folder.insert(realm)
+
+                            for (folder in foldersToDelete)
+                                folder.delete(realm)
                         }
 
-                        if(lastSync == 0L) {
-                            batchedItemLoad(this, QueryType.STARRED, true)
-                            batchedItemLoad(this, QueryType.ALL, false)
-                        } else {
-                            api?.updatedItems(lastSync, QueryType.ALL.type, 0L)?.items?.let {
+                        if (feeds != null) {
+                            val feedsToDelete = dbFeeds.minus(feeds)
+
+                            for (feed in feeds)
+                                feed.insert(realm)
+
+                            for (feed in feedsToDelete)
+                                feed.delete(realm)
+                        }
+
+                        user?.insert(it)
+                    }
+
+                    if(lastSync == 0L) {
+                        batchedItemLoad(realm, QueryType.STARRED, true)
+                        batchedItemLoad(realm, QueryType.ALL, false)
+                    } else {
+                        api?.updatedItems(lastSync, QueryType.ALL.type, 0L)?.items?.let {
+                            realm.executeTransaction { realm ->
                                 for (insertable in it) {
-                                    emit(insertable)
+                                    insertable.insert(realm)
                                 }
                             }
                         }
                     }
 
-                    realm.beginTransaction()
-                        resetItemChanged(result)
-
-                        if(folders != null) {
-                            val dbFolders = realm.where<Folder>().findAll()
-                            val foldersToDelete = dbFolders.minus(folders)
-
-                            for(folder in folders)
-                                folder.insert(realm)
-
-                            for(folder in foldersToDelete)
-                                folder.delete(realm)
-                        }
-
-                        val dbFeeds = realm.where<Feed>().findAll()
-
-                        if(feeds != null) {
-                            val feedsToDelete = dbFeeds.minus(feeds)
-
-                            for(feed in feeds)
-                                feed.insert(realm)
-
-                            for(feed in feedsToDelete)
-                                feed.delete(realm)
-                        }
-
-                        insertFlow.collect { it.insert(realm) }
-
+                    realm.executeTransaction {
                         for (feed in dbFeeds) {
                             feed.starredCount = realm.where<Item>()
-                                    .equalTo(Item::feedId.name, feed.id)
-                                    .equalTo(Item.STARRED, true).count().toInt()
+                                .equalTo(Item::feedId.name, feed.id)
+                                .equalTo(Item.STARRED, true).count().toInt()
                             feed.unreadCount = realm.where<Item>()
-                                    .equalTo(Item::feedId.name, feed.id)
-                                    .equalTo(Item.UNREAD, true).count().toInt()
+                                .equalTo(Item::feedId.name, feed.id)
+                                .equalTo(Item.UNREAD, true).count().toInt()
                         }
 
                         Item.removeExcessItems(realm, 10000)
-                    realm.commitTransaction()
+                    }
 
                 }
                 SyncType.LOAD_MORE -> {
