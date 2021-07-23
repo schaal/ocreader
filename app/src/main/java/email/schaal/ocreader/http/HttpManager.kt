@@ -28,15 +28,19 @@ import java.util.concurrent.TimeUnit
  * the ownCloud instance.
  */
 class HttpManager(username: String, password: String, url: HttpUrl) {
-    val client: OkHttpClient
-    val credentials: HostCredentials
+    val client: OkHttpClient = OkHttpClient.Builder()
+            .connectTimeout(20, TimeUnit.SECONDS)
+            .readTimeout(3, TimeUnit.MINUTES)
+            .addInterceptor(AuthorizationInterceptor())
+            .build()
+    val credentials: HostCredentials = HostCredentials(username, password, url)
 
     inner class HostCredentials constructor(username: String, password: String, url: HttpUrl) {
         val credentials: String = Credentials.basic(username, password)
         val rootUrl: HttpUrl = url
     }
 
-    private inner class AuthorizationInterceptor internal constructor() : Interceptor {
+    private inner class AuthorizationInterceptor : Interceptor {
         @Throws(IOException::class)
         override fun intercept(chain: Interceptor.Chain): Response {
             var request = chain.request()
@@ -48,12 +52,4 @@ class HttpManager(username: String, password: String, url: HttpUrl) {
         }
     }
 
-    init {
-        client = OkHttpClient.Builder()
-                .connectTimeout(20, TimeUnit.SECONDS)
-                .readTimeout(3, TimeUnit.MINUTES)
-                .addInterceptor(AuthorizationInterceptor())
-                .build()
-        credentials = HostCredentials(username, password, url)
-    }
 }
