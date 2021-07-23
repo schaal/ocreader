@@ -51,7 +51,7 @@ class HttpManager(username: String, password: String, url: HttpUrl) {
     init {
         client = OkHttpClient.Builder()
                 .connectTimeout(20, TimeUnit.SECONDS)
-                .readTimeout(10, TimeUnit.MINUTES)
+                .readTimeout(3, TimeUnit.MINUTES)
                 .addInterceptor(AuthorizationInterceptor())
                 .build()
         credentials = HostCredentials(username, password, url)
