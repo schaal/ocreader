@@ -121,7 +121,7 @@ dependencies {
 
     implementation("com.google.android.material:material:1.4.0")
 
-    implementation("com.mikepenz:aboutlibraries:8.9.0")
+    implementation("com.mikepenz:aboutlibraries:8.9.1")
 
     implementation("org.jsoup:jsoup:1.14.1")
 

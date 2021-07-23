@@ -33,7 +33,7 @@ buildscript {
 
 plugins {
     // keep aboutlibraries version in sync with app/build.gradle.kts
-    id("com.mikepenz.aboutlibraries.plugin") version "8.9.0" apply false
+    id("com.mikepenz.aboutlibraries.plugin") version "8.9.1" apply false
 }
 
 allprojects {
