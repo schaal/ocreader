@@ -31,6 +31,7 @@ open class RealmViewModel : ViewModel() {
     protected val realm: Realm by lazy { Realm.getDefaultInstance() }
 
     override fun onCleared() {
+        Log.d(TAG, "onCleared called in ${this::class.simpleName}")
         realm.close()
         super.onCleared()
     }
@@ -54,7 +55,7 @@ open class RealmViewModel : ViewModel() {
                     }
                 }
             } catch (e: RealmException) {
-                Log.e("RealmViewModel", "Failed to set item as unread", e)
+                Log.e(TAG, "Failed to set item as unread", e)
             }
         }
     }
@@ -66,8 +67,12 @@ open class RealmViewModel : ViewModel() {
                     item.starred = starred
                 }
             } catch (e: RealmException) {
-                Log.e("Item", "Failed to set item as starred", e)
+                Log.e(TAG, "Failed to set item as starred", e)
             }
         }
+    }
+
+    companion object {
+        const val TAG = "RealmViewModel"
     }
 }
