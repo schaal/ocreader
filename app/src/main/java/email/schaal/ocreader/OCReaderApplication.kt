@@ -45,7 +45,8 @@ class OCReaderApplication : Application() {
             if (Preferences.SORT_FIELD.getString(preferences) == "updatedAt")
                 putString(Preferences.SORT_FIELD.key, Item::lastModified.name)
 
-            putBoolean(Preferences.SYS_SYNC_RUNNING.key, false)
+            // Directly observer WorkManager
+            remove("sync_running")
         }.apply()
 
         AppCompatDelegate.setDefaultNightMode(Preferences.getNightMode(preferences))

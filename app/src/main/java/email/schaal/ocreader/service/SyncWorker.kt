@@ -22,14 +22,14 @@ class SyncWorker(context: Context, workerParams: WorkerParameters) : CoroutineWo
             workManager.enqueueUniqueWork(WORK_ID, ExistingWorkPolicy.KEEP, syncWork)
             return workManager.getWorkInfoByIdLiveData(syncWork.id)
         }
+
+        fun getLiveData(context: Context): LiveData<List<WorkInfo>> {
+            return WorkManager.getInstance(context).getWorkInfosForUniqueWorkLiveData(WORK_ID)
+        }
     }
 
     override suspend fun doWork(): Result {
         val syncType: SyncType = SyncType[inputData.getString(KEY_SYNC_TYPE)] ?: SyncType.FULL_SYNC
-        val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-
-        if(syncType != SyncType.SYNC_CHANGES_ONLY)
-            preferences.edit().putBoolean(Preferences.SYS_SYNC_RUNNING.key, true).apply()
 
         return try {
             API(applicationContext).sync(syncType)
@@ -42,8 +42,6 @@ class SyncWorker(context: Context, workerParams: WorkerParameters) : CoroutineWo
                         applicationContext, e).message
                 )
             )
-        } finally {
-            preferences.edit().putBoolean(Preferences.SYS_SYNC_RUNNING.key, false).apply()
         }
     }
 }

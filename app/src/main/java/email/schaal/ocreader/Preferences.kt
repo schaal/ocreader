@@ -42,7 +42,6 @@ enum class Preferences constructor(val key: String, private val defaultValue: An
     ARTICLE_FONT("article_font", "system"),
     BREADCRUMBS("breadcrumbs"),
     /** System preferences  */
-    SYS_SYNC_RUNNING("sync_running", false),
     SYS_NEEDS_UPDATE_AFTER_SYNC("needs_update_after_sync", false),
     SYS_DETECTED_API_LEVEL("detected_api_level");
 

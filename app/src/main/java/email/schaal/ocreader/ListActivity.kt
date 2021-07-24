@@ -25,6 +25,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
+import android.util.Log
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
@@ -41,6 +42,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.google.android.material.snackbar.Snackbar
 import com.mikepenz.aboutlibraries.LibsBuilder
 import email.schaal.ocreader.R.string
@@ -123,7 +125,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
                     true
                 }
                 R.id.menu_sync -> {
-                    observeWork(SyncWorker.sync(this, SyncType.FULL_SYNC))
+                    SyncWorker.sync(this, SyncType.FULL_SYNC)
                     true
                 }
                 R.id.menu_about -> {
@@ -156,9 +158,6 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
                 Preferences.SHOW_ONLY_UNREAD.key -> {
                     feedViewModel.updateFolders(Preferences.SHOW_ONLY_UNREAD.getBoolean(preferences))
                 }
-                Preferences.SYS_SYNC_RUNNING.key -> {
-                    updateSyncStatus(Preferences.SYS_SYNC_RUNNING.getBoolean(preferences))
-                }
             }
         }
 
@@ -183,15 +182,16 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
             layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE))
             adapter.onRestoreInstanceState(savedInstanceState)
         }
-    }
 
-    private fun observeWork(workLiveData: LiveData<WorkInfo>) {
-        workLiveData.observe(this, { info ->
-            if(info != null && info.state.isFinished) {
-                info.outputData.getString(SyncWorker.KEY_EXCEPTION)?.let {
-                    Snackbar.make(binding.listviewSwitcher,
-                        it, Snackbar.LENGTH_LONG).show()
+        SyncWorker.getLiveData(applicationContext).observe(this, { infos ->
+            infos.firstOrNull()?.apply {
+                if(state.isFinished) {
+                    outputData.getString(SyncWorker.KEY_EXCEPTION)?.let {
+                        Snackbar.make(binding.listviewSwitcher,
+                            it, Snackbar.LENGTH_LONG).show()
+                    }
                 }
+                updateSyncStatus(!state.isFinished)
             }
         })
     }
@@ -239,7 +239,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
         }
         if(result.first == Activity.RESULT_OK) {
             Queries.resetDatabase()
-            observeWork(SyncWorker.sync(this, SyncType.FULL_SYNC))
+            SyncWorker.sync(this, SyncType.FULL_SYNC)
         }
     }
 
@@ -305,13 +305,13 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
     }
 
     override fun onItemLongClick(item: Item, position: Int) {
-        if (actionMode != null || Preferences.SYS_SYNC_RUNNING.getBoolean(PreferenceManager.getDefaultSharedPreferences(this))) return
+        if (actionMode != null || binding.swipeRefreshLayout.isRefreshing) return
         adapter.toggleSelection(position)
         actionMode = startActionMode(this)
     }
 
     override fun onRefresh() {
-        observeWork(SyncWorker.sync(this, SyncType.FULL_SYNC))
+        SyncWorker.sync(this, SyncType.FULL_SYNC)
     }
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
