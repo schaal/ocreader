@@ -49,7 +49,7 @@ class API {
         private const val TAG = "API"
 
         const val BATCH_SIZE = 100L
-        const val API_ROOT = "index.php/apps/news/api/"
+        const val API_ROOT = "index.php/apps/news/api"
 
         val MIN_VERSION: Version = Version.forIntegers(8, 8, 2)
 
@@ -143,7 +143,7 @@ class API {
 
     private fun setupApi(httpManager: HttpManager): APIv12Interface {
         val retrofit = Retrofit.Builder()
-                .baseUrl(httpManager.credentials.rootUrl.buildBaseUrl("$API_ROOT${Level.V12.level}/"))
+                .baseUrl(httpManager.credentials.rootUrl.buildBaseUrl("${API_ROOT}/${Level.V12.level}/"))
                 .client(httpManager.client)
                 .addConverterFactory(converterFactory)
                 .build()

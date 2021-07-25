@@ -42,7 +42,7 @@ class APITest {
                 "https://test.example.com/" to "https://test.example.com/index.php/apps/news/api/v1-2/",
                 "https://test.example.com/subdir" to "https://test.example.com/subdir/index.php/apps/news/api/v1-2/",
                 "https://test.example.com/subdir/" to "https://test.example.com/subdir/index.php/apps/news/api/v1-2/")) {
-            Assert.assertEquals(url.key.toHttpUrlOrNull()!!.buildBaseUrl("$API_ROOT${Level.V12.level}/").toString(), url.value)
+            Assert.assertEquals(url.key.toHttpUrlOrNull()!!.buildBaseUrl("${API_ROOT}/${Level.V12.level}/").toString(), url.value)
         }
     }
 }
