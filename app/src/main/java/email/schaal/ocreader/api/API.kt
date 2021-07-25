@@ -199,7 +199,7 @@ class API {
                         insertable.insert(realm)
                     }
                 }
-                offset = it.firstOrNull()?.id ?: 0L
+                offset = it.lastOrNull()?.id ?: 0L
                 it.size.toLong()
             }
             Log.d(TAG, "offset: $offset, resultCount: $resultCount")
