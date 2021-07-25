@@ -4,7 +4,10 @@ import android.os.Bundle
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import com.bumptech.glide.Glide
 import email.schaal.ocreader.database.Queries
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 
 /**
  * Preference Fragment
@@ -15,6 +18,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>("reset_database")?.apply {
             setOnPreferenceClickListener {
                 Queries.resetDatabase()
+                Glide.get(context).apply {
+                    runBlocking(Dispatchers.IO) {
+                        clearDiskCache()
+                    }
+                    clearMemory()
+                }
                 PreferenceManager.getDefaultSharedPreferences(requireContext())
                         .edit()
                         .putBoolean(Preferences.SYS_NEEDS_UPDATE_AFTER_SYNC.key, true)
