@@ -1,3 +1,7 @@
+## 0.58 (2022-01-15)
+
+* Fix batchedItemLoad (Closes: #107)
+
 ## 0.57 (2021-07-05)
 
 * Restore scroll position (Closes: #27)
