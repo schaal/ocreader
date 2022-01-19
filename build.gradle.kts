@@ -24,10 +24,10 @@ buildscript {
         google()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:4.2.2")
+        classpath("com.android.tools.build:gradle:7.0.4")
         // keep kotlin version in sync with app/build.gradle.kts
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21")
-        classpath("io.realm:realm-gradle-plugin:10.6.1")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
+        classpath("io.realm:realm-gradle-plugin:10.10.0")
     }
 }
 

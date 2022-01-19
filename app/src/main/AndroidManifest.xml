@@ -21,7 +21,8 @@
         <activity
             android:name=".ListActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,7 +40,8 @@
         <activity
             android:name=".ManageFeedsActivity"
             android:label="@string/title_activity_managefeeds"
-            android:parentActivityName=".ListActivity">
+            android:parentActivityName=".ListActivity"
+            android:exported="true">
             <intent-filter android:label="@string/add_new_feed">
                 <action android:name="android.intent.action.SEND" />
 

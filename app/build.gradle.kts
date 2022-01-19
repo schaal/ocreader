@@ -28,15 +28,15 @@ plugins {
 }
 
 android {
-    compileSdkVersion(30)
-    buildToolsVersion = "30.0.3"
+    compileSdk = 31
+    buildToolsVersion = "31.0.0"
 
     buildFeatures.dataBinding = true
 
     defaultConfig {
         applicationId = "email.schaal.ocreader"
-        minSdkVersion(23)
-        targetSdkVersion(30)
+        minSdk = 23
+        targetSdk = 31
         versionCode = 58
         versionName = "0.58"
 
@@ -67,7 +67,7 @@ android {
         }
     }
 
-    lintOptions {
+    lint {
         isAbortOnError = true
         disable.add("MissingTranslation")
     }
@@ -84,7 +84,7 @@ object Versions {
     const val retrofit   = "2.9.0"
     const val glide      = "4.12.0"
     const val lifecycle  = "2.3.1"
-    const val moshi      = "1.12.0"
+    const val moshi      = "1.13.0"
     const val core       = "1.6.0"
     const val annotation = "1.2.0"
     const val junit_ext  = "1.1.3"
@@ -92,38 +92,38 @@ object Versions {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.21")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
 
     implementation("androidx.core:core-ktx:${Versions.core}")
     implementation("androidx.core:core-ktx:${Versions.core}")
 
-    implementation("androidx.appcompat:appcompat:1.3.1")
+    implementation("androidx.appcompat:appcompat:1.4.1")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}")
     implementation("androidx.lifecycle:lifecycle-common-java8:${Versions.lifecycle}")
 
-    implementation("androidx.work:work-runtime-ktx:2.5.0")
-    implementation("androidx.fragment:fragment-ktx:1.3.6")
-    implementation("androidx.activity:activity-ktx:1.2.4")
+    implementation("androidx.work:work-runtime-ktx:2.7.1")
+    implementation("androidx.fragment:fragment-ktx:1.4.0")
+    implementation("androidx.activity:activity-ktx:1.4.0")
 
     implementation("androidx.recyclerview:recyclerview:1.2.1")
     implementation("androidx.palette:palette-ktx:1.0.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("androidx.preference:preference-ktx:1.1.1")
-    implementation("androidx.viewpager2:viewpager2:1.1.0-alpha01")
-    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
+    implementation("androidx.viewpager2:viewpager2:1.1.0-beta01")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
 
     implementation("androidx.annotation:annotation:${Versions.annotation}")
     kapt("androidx.annotation:annotation:${Versions.annotation}")
 
-    implementation("com.google.android.material:material:1.4.0")
+    implementation("com.google.android.material:material:1.5.0")
 
     implementation("com.mikepenz:aboutlibraries:8.9.1")
 
-    implementation("org.jsoup:jsoup:1.14.1")
+    implementation("org.jsoup:jsoup:1.14.3")
 
     implementation("com.squareup.okhttp3:okhttp:${Versions.okhttp}")
 

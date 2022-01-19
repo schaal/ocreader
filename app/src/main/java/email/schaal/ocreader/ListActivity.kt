@@ -86,7 +86,7 @@ class ListActivity : AppCompatActivity(), ItemViewHolder.OnClickListener, OnRefr
     }
 
     private val getSettingsResult = registerForActivityResult(object : ActivityResultContract<Unit, Boolean>() {
-        override fun createIntent(context: Context, input: Unit?): Intent {
+        override fun createIntent(context: Context, input: Unit): Intent {
             return Intent(this@ListActivity, SettingsActivity::class.java)
         }
 
