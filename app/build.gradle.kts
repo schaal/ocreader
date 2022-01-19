@@ -37,8 +37,8 @@ android {
         applicationId = "email.schaal.ocreader"
         minSdk = 23
         targetSdk = 31
-        versionCode = 58
-        versionName = "0.58"
+        versionCode = 59
+        versionName = "0.59"
 
         base.archivesName.set("${applicationId}_${versionCode}")
 

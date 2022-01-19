@@ -1,3 +1,7 @@
+## 0.59 (2022-01-19)
+
+* Update dependencies to hopefully fix build error on F-Droid
+
 ## 0.58 (2022-01-15)
 
 * Fix batchedItemLoad (Closes: #107)
